@@ -10,7 +10,9 @@ import se.scalablesolutions.akka.remote.protobuf.RemoteProtocol.{RemoteReply, Re
 import se.scalablesolutions.akka.config.Config.config
 import org.jboss.netty.channel._
 import org.jboss.netty.channel.group.ChannelGroup
-
+import java.lang.String
+import com.rabbitmq.client.AMQP.BasicProperties
+import com.rabbitmq.client.{Envelope, ShutdownSignalException, DefaultConsumer, Channel => AMQPChannel}
 
 /**
  * Use this object if you need a single remote server on a specific node.
@@ -50,12 +52,7 @@ object RemoteServer {
   val HOSTNAME = config.getString("akka.remote.server.hostname", "localhost")
   val PORT = config.getInt("akka.remote.server.port", 9999)
 
-  private val bootstrap = {
-    val _bootstrap = new AMQPBootstrap(config)
-    _bootstrap boot;
-    _bootstrap start;
-    _bootstrap
-  }
+  private[amqp] val bootstrap = AMQPBridge.getAMQPBridge(config)
 
   object Address {
     def apply(hostname: String, port: Int) = new Address(hostname, port)
@@ -100,11 +97,21 @@ object RemoteServer {
     else Some(server)
   }
 
-  private[remote] def register(hostname: String, port: Int, server: RemoteServer) =
-    remoteServers.put(Address(hostname, port), server)
-    
-  private[remote] def unregister(hostname: String, port: Int) =
-    remoteServers.remove(Address(hostname, port))
+  private[remote] def register(hostname: String, port: Int, server: RemoteServer) = {
+    val address = Address(hostname, port)
+    if(!remoteServers.containsKey(address)){
+      server createAMQPChannel
+    }
+    remoteServers.put(address, server)
+  }
+
+
+  private[remote] def unregister(hostname: String, port: Int) = {
+    val address = Address(hostname, port)
+    val server = remoteServers.get(address)
+    if(server != None) server.destroyAMQPChannel
+    remoteServers.remove(address)
+  }
 }
 
 /**
@@ -124,10 +131,14 @@ object RemoteServer {
  * @author <a href="http://jonasboner.com">Jonas Bon&#233;r</a>
  */
 class RemoteServer extends Logging {
-  val name = "RemoteServer@" + hostname + ":" + port
+  private var name = ""
 
   private var hostname = RemoteServer.HOSTNAME
   private var port =     RemoteServer.PORT
+
+  private var channel: AMQPChannel = null
+  private var queueName: String = null
+
 
   @volatile private var isRunning = false
   @volatile private var isConfigured = false
@@ -143,6 +154,7 @@ class RemoteServer extends Logging {
       if (!isRunning) {
         hostname = _hostname
         port = _port
+        name = hostname + ":" + port
         log.info("Starting remote server at [%s:%s]", hostname, port)
         RemoteServer.register(hostname, port, this)
         val remoteActorSet = RemoteServer.actorsFor(RemoteServer.Address(hostname, port))
@@ -152,6 +164,29 @@ class RemoteServer extends Logging {
     } catch {
       case e => log.error(e, "Could not start up remote server")
     }
+  }
+
+  private [amqp] def createAMQPChannel(): Unit = {
+    queueName = "actorQueueFor_"+name
+    val exchangeName = "actorExchangeFor_"+name
+    log.info("Setting up Channel to Queue,Exchange to: [%s,%s] ",queueName , exchangeName)
+    channel = RemoteServer.bootstrap.connection.createChannel()
+    channel.exchangeDeclare(exchangeName, "direct")
+    channel.queueDeclare(queueName)
+    channel.queueBind(queueName, exchangeName, "default")
+    log.info("Done!")
+  }
+
+  private [amqp] def destroyAMQPChannel(): Unit = {
+    val exchangeName = "exchangeFor"+name
+    log.info("Destroying Channel to Queue,Exchange to: [%s,%s] ",queueName , exchangeName)
+    // TODO check for pending messages
+    channel.queueDelete(queueName)
+    channel.exchangeDelete(exchangeName)
+    val conn = channel.getConnection
+    channel.close
+    conn.close
+    log.info("Done!")
   }
 
   def shutdown = if (isRunning) {
@@ -178,6 +213,35 @@ class RemoteServer extends Logging {
     RemoteServer.actorsFor(RemoteServer.Address(hostname, port)).actors.put(id, actor)
   }
 }
+
+
+class AMQPQueueConsumer (channel: AMQPChannel,
+                         val name: String,
+                         val applicationLoader: Option[ClassLoader],
+                         val actors: JMap[String, Actor],
+                         val activeObjects: JMap[String, AnyRef]) extends DefaultConsumer with Logging{
+  applicationLoader.foreach(RemoteProtocolBuilder.setClassLoader(_))
+
+  override def handleDelivery(consumerTag: String,
+                              envelope: Envelope,
+                              properties: BasicProperties,
+                              body: Array[Byte]) = {
+    
+  }
+
+  override def handleShutdownSignal(consumerTag: String, sig: ShutdownSignalException) = {
+    super.handleShutdownSignal(consumerTag, sig)
+  }
+
+  override def handleCancelOk(consumerTag: String) = {
+    super.handleCancelOk(consumerTag)    
+  }
+
+  override def handleConsumeOk(consumerTag: String) = {
+    super.handleConsumeOk(consumerTag)
+  }
+}
+
 
 class RemoteServerHandler(
     val name: String,

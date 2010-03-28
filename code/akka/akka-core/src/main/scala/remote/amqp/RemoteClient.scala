@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2009-2010 Scalable Solutions AB <http://scalablesolutions.se>
+ */
+
 package se.scalablesolutions.akka.remote.amqp
 
 import se.scalablesolutions.akka.remote.protobuf.RemoteProtocol.{RemoteRequest, RemoteReply}
@@ -7,8 +11,6 @@ import se.scalablesolutions.akka.util.{UUID, Logging}
 import se.scalablesolutions.akka.config.Config.config
 
 import org.jboss.netty.channel._
-import group.DefaultChannelGroup
-import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory
 import org.jboss.netty.bootstrap.ClientBootstrap
 import org.jboss.netty.handler.codec.frame.{LengthFieldBasedFrameDecoder, LengthFieldPrepender}
 import org.jboss.netty.handler.codec.compression.{ZlibDecoder, ZlibEncoder}
@@ -22,6 +24,10 @@ import java.util.concurrent.atomic.AtomicLong
 
 import scala.collection.mutable.{HashSet, HashMap}
 import se.scalablesolutions.akka.remote.protobuf.RemoteProtocol.RemoteRequest
+
+
+import com.rabbitmq.client.{Channel => AMQPChannel}
+
 
 /**
  * @author <a href="http://jonasboner.com">Jonas Bon&#233;r</a>
@@ -39,6 +45,8 @@ object RemoteRequestIdFactory {
 object RemoteClient extends Logging {
   val READ_TIMEOUT = config.getInt("akka.remote.client.read-timeout", 10000)
   val RECONNECT_DELAY = config.getInt("akka.remote.client.reconnect-delay", 5000)
+
+  private[amqp] val bootstrap = AMQPBridge.getAMQPBridge(config)
 
   private val remoteClients = new HashMap[String, RemoteClient]
   private val remoteActors = new HashMap[RemoteServer.Address, HashSet[String]]
@@ -162,44 +170,44 @@ object RemoteClient extends Logging {
  * @author <a href="http://jonasboner.com">Jonas Bon&#233;r</a>
  */
 class RemoteClient(hostname: String, port: Int) extends Logging {
-  val name = "RemoteClient@" + hostname + "::" + port
+  private var name = ""
 
   @volatile private[remote] var isRunning = false
   private val futures = new ConcurrentHashMap[Long, CompletableFuture]
   private val supervisors = new ConcurrentHashMap[String, Actor]
 
-  private val channelFactory = new NioClientSocketChannelFactory(
-    Executors.newCachedThreadPool,
-    Executors.newCachedThreadPool)
-
-  private val bootstrap = new ClientBootstrap(channelFactory)
-  private val openChannels = new DefaultChannelGroup(classOf[RemoteClient].getName);
-
   private val timer = new HashedWheelTimer
   private val remoteAddress = new InetSocketAddress(hostname, port)
-  private[remote] var connection: ChannelFuture = _
 
-  bootstrap.setPipelineFactory(new RemoteClientPipelineFactory(name, futures,  bootstrap, supervisors, remoteAddress, timer, this))
-  bootstrap.setOption("tcpNoDelay", true)
-  bootstrap.setOption("keepAlive", true)
+  private var channel: AMQPChannel = null
+  private var queueName: String = null
+
 
   def connect = synchronized {
     if (!isRunning) {
-      connection = bootstrap.connect(remoteAddress)
       log.info("Starting remote client connection to [%s:%s]", hostname, port)
-      // Wait until the connection attempt succeeds or fails.
-      val channel = connection.awaitUninterruptibly.getChannel
-      openChannels.add(channel)
-      if (!connection.isSuccess) log.error(connection.getCause, "Remote client connection to [%s:%s] has failed", hostname, port)
+      name = hostname + ":" + port
+      createAMQPChannel      
       isRunning = true
     }
+  }
+
+  private [amqp] def createAMQPChannel(): Unit = {
+    queueName = "actorQueueFor_"+name
+    val exchangeName = "actorExchangeFor_"+name
+    log.info("client Setting up Channel to Queue,Exchange to: [%s,%s] ",queueName , exchangeName)
+    channel = RemoteClient.bootstrap.connection.createChannel()
+    channel.exchangeDeclare(exchangeName, "direct")
+    channel.queueDeclare(queueName)
+    channel.queueBind(queueName, exchangeName, "default")
+    log.info("Done!")
   }
 
   def shutdown = synchronized {
     if (isRunning) {
       isRunning = false
-      openChannels.close.awaitUninterruptibly
-      bootstrap.releaseExternalResources
+      //openChannels.close.awaitUninterruptibly
+      //bootstrap.releaseExternalResources
       timer.stop
       log.info("%s has been shut down", name)
     }
@@ -207,14 +215,14 @@ class RemoteClient(hostname: String, port: Int) extends Logging {
 
   def send(request: RemoteRequest, senderFuture: Option[CompletableFuture]): Option[CompletableFuture] = if (isRunning) {
     if (request.getIsOneWay) {
-      connection.getChannel.write(request)
+      //connection.getChannel.write(request)
       None
     } else {
       futures.synchronized {
         val futureResult = if (senderFuture.isDefined) senderFuture.get
         else new DefaultCompletableFuture(request.getTimeout)
         futures.put(request.getId, futureResult)
-        connection.getChannel.write(request)
+        //connection.getChannel.write(request)
         Some(futureResult)
       }
     }
@@ -242,23 +250,22 @@ class RemoteClientPipelineFactory(name: String,
                                   timer: HashedWheelTimer,
                                   client: RemoteClient) extends ChannelPipelineFactory {
   def getPipeline: ChannelPipeline = {
-   /* val timeout = new ReadTimeoutHandler(timer, RemoteClient.READ_TIMEOUT)
+    val timeout = new ReadTimeoutHandler(timer, RemoteClient.READ_TIMEOUT)
     val lenDec = new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4)
     val lenPrep = new LengthFieldPrepender(4)
     val protobufDec = new ProtobufDecoder(RemoteReply.getDefaultInstance)
     val protobufEnc = new ProtobufEncoder
-    val zipCodec = RemoteServer.COMPRESSION_SCHEME match {
+    /*val zipCodec = RemoteServer.COMPRESSION_SCHEME match {
       case "zlib" => Some(Codec(new ZlibEncoder(RemoteServer.ZLIB_COMPRESSION_LEVEL), new ZlibDecoder))
       //case "lzf" => Some(Codec(new LzfEncoder, new LzfDecoder))
       case _ => None
-    }
-    val remoteClient = new RemoteClientHandler(name, futures, supervisors, bootstrap, remoteAddress, timer, client)
+    } */
+    /*val remoteClient = new RemoteClientHandler(name, futures, supervisors, bootstrap, remoteAddress, timer, client)
 
     val stages: Array[ChannelHandler] =
     zipCodec.map(codec => Array(timeout, codec.decoder, lenDec, protobufDec, codec.encoder, lenPrep, protobufEnc, remoteClient))
-        .getOrElse(Array(timeout, lenDec, protobufDec, lenPrep, protobufEnc, remoteClient))
-    new StaticChannelPipeline(stages: _*)*/
-  new StaticChannelPipeline()
+        .getOrElse(Array(timeout, lenDec, protobufDec, lenPrep, protobufEnc, remoteClient))*/
+    new StaticChannelPipeline()
   }
 }
 
@@ -317,11 +324,11 @@ class RemoteClientHandler(val name: String,
     timer.newTimeout(new TimerTask() {
       def run(timeout: Timeout) = {
         log.debug("Remote client reconnecting to [%s]", remoteAddress)
-        client.connection = bootstrap.connect(remoteAddress)
+        //client.connection = bootstrap.connect(remoteAddress)
 
         // Wait until the connection attempt succeeds or fails.
-        client.connection.awaitUninterruptibly
-        if (!client.connection.isSuccess) log.error(client.connection.getCause, "Reconnection to [%s] has failed", remoteAddress)
+        //client.connection.awaitUninterruptibly
+        //if (!client.connection.isSuccess) log.error(client.connection.getCause, "Reconnection to [%s] has failed", remoteAddress)
       }
     }, RemoteClient.RECONNECT_DELAY, TimeUnit.MILLISECONDS)
   }

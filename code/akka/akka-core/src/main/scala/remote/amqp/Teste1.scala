@@ -11,9 +11,6 @@ import se.scalablesolutions.akka.remote.amqp.{RemoteServer, RemoteNode}
  */
 
 object Teste1 extends Application {
-  new RemoteServer().start("localhost",21000)
-  new RemoteServer().start("localhost",22000)  
-
-    
+  
 
 }
