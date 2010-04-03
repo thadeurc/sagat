@@ -8,8 +8,6 @@ import se.scalablesolutions.akka.actor._
 import se.scalablesolutions.akka.util._
 import se.scalablesolutions.akka.remote.protobuf.RemoteProtocol.{RemoteReply, RemoteRequest}
 import se.scalablesolutions.akka.config.Config.config
-import org.jboss.netty.channel._
-import org.jboss.netty.channel.group.ChannelGroup
 import java.lang.String
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client.{Envelope, ShutdownSignalException, DefaultConsumer, Channel => AMQPChannel}
@@ -52,7 +50,9 @@ object RemoteServer {
   val HOSTNAME = config.getString("akka.remote.server.hostname", "localhost")
   val PORT = config.getInt("akka.remote.server.port", 9999)
 
-  private[amqp] val bootstrap = AMQPBridge.getAMQPBridge(config)
+  private[amqp] val bridge = {
+    AMQPBridge.getAMQPBridge(config)
+  }
 
   object Address {
     def apply(hostname: String, port: Int) = new Address(hostname, port)
@@ -78,8 +78,8 @@ object RemoteServer {
     val activeObjects = new ConcurrentHashMap[String, AnyRef]    
   }
 
-  private val remoteActorSets = new ConcurrentHashMap[Address, RemoteActorSet]
-  private val remoteServers = new ConcurrentHashMap[Address, RemoteServer]
+  private[amqp] val remoteActorSets = new ConcurrentHashMap[Address, RemoteActorSet]
+  private[amqp] val remoteServers = new ConcurrentHashMap[Address, RemoteServer]
     
   private[akka] def actorsFor(remoteServerAddress: RemoteServer.Address): RemoteActorSet = {
     val set = remoteActorSets.get(remoteServerAddress)
@@ -97,11 +97,8 @@ object RemoteServer {
     else Some(server)
   }
 
-  private[remote] def register(hostname: String, port: Int, server: RemoteServer) = {
+  private[remote] def register(hostname: String, port: Int, server: RemoteServer, loader: Option[ClassLoader]) = {
     val address = Address(hostname, port)
-    if(!remoteServers.containsKey(address)){
-      server createAMQPChannel
-    }
     remoteServers.put(address, server)
   }
 
@@ -136,9 +133,10 @@ class RemoteServer extends Logging {
   private var hostname = RemoteServer.HOSTNAME
   private var port =     RemoteServer.PORT
 
-  private var channel: AMQPChannel = null
-  private var queueName: String = null
-
+  private[akka] var channel: AMQPChannel = null
+  private[akka] var reqQueueName: String = null
+  private[akka] var repQueueName: String = null
+  private[akka] var exchangeName: String = null
 
   @volatile private var isRunning = false
   @volatile private var isConfigured = false
@@ -156,8 +154,11 @@ class RemoteServer extends Logging {
         port = _port
         name = hostname + ":" + port
         log.info("Starting remote server at [%s:%s]", hostname, port)
-        RemoteServer.register(hostname, port, this)
+        RemoteServer.register(hostname, port, this, loader)
         val remoteActorSet = RemoteServer.actorsFor(RemoteServer.Address(hostname, port))
+        //if(!RemoteServer.remoteServers.containsKey(RemoteServer.Address(hostname, port))){
+           this createAMQPChannel loader
+        //}
         isRunning = true
         Cluster.registerLocalNode(hostname, port)
       }      
@@ -166,22 +167,30 @@ class RemoteServer extends Logging {
     }
   }
 
-  private [amqp] def createAMQPChannel(): Unit = {
-    queueName = "actorQueueFor_"+name
-    val exchangeName = "actorExchangeFor_"+name
-    log.info("Setting up Channel to Queue,Exchange to: [%s,%s] ",queueName , exchangeName)
-    channel = RemoteServer.bootstrap.connection.createChannel()
+  private [amqp] def createAMQPChannel(loader: Option[ClassLoader]): Unit = {
+    reqQueueName = "actorQueueFor_"+name+"Req"
+    repQueueName = "actorQueueFor_"+name+"Rep"
+    exchangeName = "actorExchangeFor_"+name
+    log.info("Setting up Channel to Queue,Exchange to: [%s,%s,%s] ",reqQueueName, repQueueName , exchangeName)
+    channel = RemoteServer.bridge.connection.createChannel()
     channel.exchangeDeclare(exchangeName, "direct")
-    channel.queueDeclare(queueName)
-    channel.queueBind(queueName, exchangeName, "default")
+    channel.queueDeclare(reqQueueName)
+    channel.queueDeclare(repQueueName)
+    channel.queueBind(repQueueName, exchangeName, "remoteReply")
+    channel.queueBind(reqQueueName, exchangeName, "remoteRequest")
+    channel.basicConsume(reqQueueName, false, new ServerAMQPQueueConsumer(this,
+                                                                 name,
+                                                                 loader,
+                                                                 RemoteServer.remoteActorSets.get(RemoteServer.Address(hostname, port)).actors,
+                                                                 RemoteServer.remoteActorSets.get(RemoteServer.Address(hostname, port)).activeObjects))
     log.info("Done!")
   }
 
   private [amqp] def destroyAMQPChannel(): Unit = {
-    val exchangeName = "exchangeFor"+name
-    log.info("Destroying Channel to Queue,Exchange to: [%s,%s] ",queueName , exchangeName)
+    log.info("Destroying Channel to Queue,Exchange to: [%s,%s, %s] ",reqQueueName,repQueueName , exchangeName)
     // TODO check for pending messages
-    channel.queueDelete(queueName)
+    channel.queueDelete(repQueueName)
+    channel.queueDelete(reqQueueName)
     channel.exchangeDelete(exchangeName)
     val conn = channel.getConnection
     channel.close
@@ -215,18 +224,24 @@ class RemoteServer extends Logging {
 }
 
 
-class AMQPQueueConsumer (channel: AMQPChannel,
+class ServerAMQPQueueConsumer (val server: RemoteServer,
                          val name: String,
                          val applicationLoader: Option[ClassLoader],
                          val actors: JMap[String, Actor],
-                         val activeObjects: JMap[String, AnyRef]) extends DefaultConsumer with Logging{
+                         val activeObjects: JMap[String, AnyRef]) extends DefaultConsumer(server.channel) with Logging{
+  val AW_PROXY_PREFIX = "$$ProxiedByAW".intern  
   applicationLoader.foreach(RemoteProtocolBuilder.setClassLoader(_))
 
   override def handleDelivery(consumerTag: String,
                               envelope: Envelope,
                               properties: BasicProperties,
-                              body: Array[Byte]) = {
-    
+                              body: Array[Byte]) = {    
+    if (body eq null) throw new IllegalStateException("Message in remote handle delivery is null")
+    //if (body.isInstanceOf[RemoteRequest]) {
+    // TODO validate message to avoid exceptions
+      handleRemoteRequest(RemoteRequest.parseFrom(body))
+    //}
+    server.channel.basicAck(envelope.getDeliveryTag, false);
   }
 
   override def handleShutdownSignal(consumerTag: String, sig: ShutdownSignalException) = {
@@ -240,51 +255,14 @@ class AMQPQueueConsumer (channel: AMQPChannel,
   override def handleConsumeOk(consumerTag: String) = {
     super.handleConsumeOk(consumerTag)
   }
-}
 
-
-class RemoteServerHandler(
-    val name: String,
-    val openChannels: ChannelGroup,
-    val applicationLoader: Option[ClassLoader],
-    val actors: JMap[String, Actor],
-    val activeObjects: JMap[String, AnyRef]) extends SimpleChannelUpstreamHandler with Logging {
-  val AW_PROXY_PREFIX = "$$ProxiedByAW".intern
-
-  applicationLoader.foreach(RemoteProtocolBuilder.setClassLoader(_))
-
-  override def channelOpen(ctx: ChannelHandlerContext, event: ChannelStateEvent) {
-    openChannels.add(ctx.getChannel)
-  }
-
-  override def handleUpstream(ctx: ChannelHandlerContext, event: ChannelEvent) = {
-    if (event.isInstanceOf[ChannelStateEvent] &&
-        event.asInstanceOf[ChannelStateEvent].getState != ChannelState.INTEREST_OPS) {
-      log.debug(event.toString)
-    }
-    super.handleUpstream(ctx, event)
-  }
-
-  override def messageReceived(ctx: ChannelHandlerContext, event: MessageEvent) = {
-    val message = event.getMessage
-    if (message eq null) throw new IllegalStateException("Message in remote MessageEvent is null: " + event)
-    if (message.isInstanceOf[RemoteRequest]) {
-      handleRemoteRequest(message.asInstanceOf[RemoteRequest], event.getChannel)
-    }
-  }
-
-  override def exceptionCaught(ctx: ChannelHandlerContext, event: ExceptionEvent) = {
-    log.error(event.getCause, "Unexpected exception from remote downstream")
-    event.getChannel.close
-  }
-
-  private def handleRemoteRequest(request: RemoteRequest, channel: Channel) = {
+  private def handleRemoteRequest(request: RemoteRequest) = {
     log.debug("Received RemoteRequest[\n%s]", request.toString)
-    if (request.getIsActor) dispatchToActor(request, channel)
-    else dispatchToActiveObject(request, channel)
+    if (request.getIsActor) dispatchToActor(request)
+    else dispatchToActiveObject(request)
   }
 
-  private def dispatchToActor(request: RemoteRequest, channel: Channel) = {
+  private def dispatchToActor(request: RemoteRequest) = {
     log.debug("Dispatching to remote actor [%s]", request.getTarget)
     val actor = createActor(request.getTarget, request.getUuid, request.getTimeout)
     
@@ -317,7 +295,7 @@ class RemoteServerHandler(
         RemoteProtocolBuilder.setMessage(result, replyBuilder)
         if (request.hasSupervisorUuid) replyBuilder.setSupervisorUuid(request.getSupervisorUuid)
         val replyMessage = replyBuilder.build
-        channel.write(replyMessage)
+        server.channel.basicPublish(server.exchangeName,"remoteReply",null,replyMessage.toByteArray)
       } catch {
         case e: Throwable =>
           log.error(e, "Could not invoke remote actor [%s]", request.getTarget)
@@ -328,12 +306,12 @@ class RemoteServerHandler(
               .setIsActor(true)
           if (request.hasSupervisorUuid) replyBuilder.setSupervisorUuid(request.getSupervisorUuid)
           val replyMessage = replyBuilder.build
-          channel.write(replyMessage)
+          server.channel.basicPublish(server.exchangeName,"remoteReply",null,replyMessage.toByteArray)
       }
     }
   }
 
-  private def dispatchToActiveObject(request: RemoteRequest, channel: Channel) = {
+  private def dispatchToActiveObject(request: RemoteRequest) = {
     log.debug("Dispatching to remote active object [%s :: %s]", request.getMethod, request.getTarget)
     val activeObject = createActiveObject(request.getTarget, request.getTimeout)
 
@@ -341,7 +319,7 @@ class RemoteServerHandler(
     val argClasses = args.map(_.getClass)
     val (unescapedArgs, unescapedArgClasses) = unescapeArgs(args, argClasses, request.getTimeout)
 
-    //continueTransaction(request)
+
     try {
       val messageReceiver = activeObject.getClass.getDeclaredMethod(
         request.getMethod, unescapedArgClasses: _*)
@@ -356,7 +334,7 @@ class RemoteServerHandler(
         RemoteProtocolBuilder.setMessage(result, replyBuilder)
         if (request.hasSupervisorUuid) replyBuilder.setSupervisorUuid(request.getSupervisorUuid)
         val replyMessage = replyBuilder.build
-        channel.write(replyMessage)
+        server.channel.basicPublish(server.exchangeName,"remoteReply",null,replyMessage.toByteArray)
       }
     } catch {
       case e: InvocationTargetException =>
@@ -368,7 +346,7 @@ class RemoteServerHandler(
             .setIsActor(false)
         if (request.hasSupervisorUuid) replyBuilder.setSupervisorUuid(request.getSupervisorUuid)
         val replyMessage = replyBuilder.build
-        channel.write(replyMessage)
+        server.channel.basicPublish(server.exchangeName,"remoteReply",null,replyMessage.toByteArray)
       case e: Throwable =>
         log.error(e.getCause, "Could not invoke remote active object [%s :: %s]", request.getMethod, request.getTarget)
         val replyBuilder = RemoteReply.newBuilder
@@ -378,41 +356,8 @@ class RemoteServerHandler(
             .setIsActor(false)
         if (request.hasSupervisorUuid) replyBuilder.setSupervisorUuid(request.getSupervisorUuid)
         val replyMessage = replyBuilder.build
-        channel.write(replyMessage)
+        server.channel.basicPublish(server.exchangeName,"remoteReply",null,replyMessage.toByteArray)
     }
-  }
-
-  /*
-  private def continueTransaction(request: RemoteRequest) = {
-    val tx = request.tx
-    if (tx.isDefined) {
-      tx.get.reinit
-      TransactionManagement.threadBoundTx.set(tx)
-      setThreadLocalTransaction(tx.transaction)
-    } else {
-      TransactionManagement.threadBoundTx.set(None)     
-      setThreadLocalTransaction(null)
-    }
-  }
-  */
-  private def unescapeArgs(args: scala.List[AnyRef], argClasses: scala.List[Class[_]], timeout: Long) = {
-    val unescapedArgs = new Array[AnyRef](args.size)
-    val unescapedArgClasses = new Array[Class[_]](args.size)
-
-    val escapedArgs = for (i <- 0 until args.size) {
-      val arg = args(i)
-      if (arg.isInstanceOf[String] && arg.asInstanceOf[String].startsWith(AW_PROXY_PREFIX)) {
-        val argString = arg.asInstanceOf[String]
-        val proxyName = argString.replace(AW_PROXY_PREFIX, "") //argString.substring(argString.indexOf("$$ProxiedByAW"), argString.length)
-        val activeObject = createActiveObject(proxyName, timeout)
-        unescapedArgs(i) = activeObject
-        unescapedArgClasses(i) = Class.forName(proxyName)
-      } else {
-        unescapedArgs(i) = args(i)
-        unescapedArgClasses(i) = argClasses(i)
-      }
-    }
-    (unescapedArgs, unescapedArgClasses)
   }
 
   private def createActiveObject(name: String, timeout: Long): AnyRef = {
@@ -453,5 +398,25 @@ class RemoteServerHandler(
           throw e
       }
     } else actorOrNull
+  }
+
+  private def unescapeArgs(args: scala.List[AnyRef], argClasses: scala.List[Class[_]], timeout: Long) = {
+    val unescapedArgs = new Array[AnyRef](args.size)
+    val unescapedArgClasses = new Array[Class[_]](args.size)
+
+    val escapedArgs = for (i <- 0 until args.size) {
+      val arg = args(i)
+      if (arg.isInstanceOf[String] && arg.asInstanceOf[String].startsWith(AW_PROXY_PREFIX)) {
+        val argString = arg.asInstanceOf[String]
+        val proxyName = argString.replace(AW_PROXY_PREFIX, "") //argString.substring(argString.indexOf("$$ProxiedByAW"), argString.length)
+        val activeObject = createActiveObject(proxyName, timeout)
+        unescapedArgs(i) = activeObject
+        unescapedArgClasses(i) = Class.forName(proxyName)
+      } else {
+        unescapedArgs(i) = args(i)
+        unescapedArgClasses(i) = argClasses(i)
+      }
+    }
+    (unescapedArgs, unescapedArgClasses)
   }
 }

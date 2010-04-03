@@ -9,11 +9,12 @@ object AMQPBridge {
   private var bridge: AMQPBridge = null; 
 
   def getAMQPBridge(conf: Config): AMQPBridge = {
-    if(bridge != null){
+    if(bridge == null){
       bridge = new AMQPBridge(conf)
       bridge.boot
       bridge.start
     }
+
     bridge
   }
 }

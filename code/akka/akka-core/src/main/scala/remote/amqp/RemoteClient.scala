@@ -10,12 +10,9 @@ import se.scalablesolutions.akka.dispatch.{DefaultCompletableFuture, Completable
 import se.scalablesolutions.akka.util.{UUID, Logging}
 import se.scalablesolutions.akka.config.Config.config
 
-import org.jboss.netty.channel._
-import org.jboss.netty.bootstrap.ClientBootstrap
 import org.jboss.netty.handler.codec.frame.{LengthFieldBasedFrameDecoder, LengthFieldPrepender}
 import org.jboss.netty.handler.codec.compression.{ZlibDecoder, ZlibEncoder}
 import org.jboss.netty.handler.codec.protobuf.{ProtobufDecoder, ProtobufEncoder}
-import org.jboss.netty.handler.timeout.ReadTimeoutHandler
 import org.jboss.netty.util.{TimerTask, Timeout, HashedWheelTimer}
 
 import java.net.{SocketAddress, InetSocketAddress}
@@ -24,10 +21,8 @@ import java.util.concurrent.atomic.AtomicLong
 
 import scala.collection.mutable.{HashSet, HashMap}
 import se.scalablesolutions.akka.remote.protobuf.RemoteProtocol.RemoteRequest
-
-
-import com.rabbitmq.client.{Channel => AMQPChannel}
-
+import com.rabbitmq.client.AMQP.BasicProperties
+import com.rabbitmq.client.{Envelope, ShutdownSignalException, DefaultConsumer, Channel => AMQPChannel}
 
 /**
  * @author <a href="http://jonasboner.com">Jonas Bon&#233;r</a>
@@ -43,10 +38,8 @@ object RemoteRequestIdFactory {
  * @author <a href="http://jonasboner.com">Jonas Bon&#233;r</a>
  */
 object RemoteClient extends Logging {
-  val READ_TIMEOUT = config.getInt("akka.remote.client.read-timeout", 10000)
-  val RECONNECT_DELAY = config.getInt("akka.remote.client.reconnect-delay", 5000)
-
-  private[amqp] val bootstrap = AMQPBridge.getAMQPBridge(config)
+ 
+  private[amqp] val bridge = AMQPBridge.getAMQPBridge(config)
 
   private val remoteClients = new HashMap[String, RemoteClient]
   private val remoteActors = new HashMap[RemoteServer.Address, HashSet[String]]
@@ -180,8 +173,9 @@ class RemoteClient(hostname: String, port: Int) extends Logging {
   private val remoteAddress = new InetSocketAddress(hostname, port)
 
   private var channel: AMQPChannel = null
-  private var queueName: String = null
-
+  private var reqQueueName: String = null
+  private var repQueueName: String = null
+  private var exchangeName: String = null
 
   def connect = synchronized {
     if (!isRunning) {
@@ -193,13 +187,17 @@ class RemoteClient(hostname: String, port: Int) extends Logging {
   }
 
   private [amqp] def createAMQPChannel(): Unit = {
-    queueName = "actorQueueFor_"+name
-    val exchangeName = "actorExchangeFor_"+name
-    log.info("client Setting up Channel to Queue,Exchange to: [%s,%s] ",queueName , exchangeName)
-    channel = RemoteClient.bootstrap.connection.createChannel()
+    repQueueName = "actorQueueFor_"+name + "Rep"
+    reqQueueName = "actorQueueFor_"+name + "Req"
+    exchangeName = "actorExchangeFor_"+name
+    log.info("client Setting up Channel to Queue,Exchange to: [%s,%s,%s] ",repQueueName, reqQueueName , exchangeName)
+    channel = RemoteClient.bridge.connection.createChannel()
     channel.exchangeDeclare(exchangeName, "direct")
-    channel.queueDeclare(queueName)
-    channel.queueBind(queueName, exchangeName, "default")
+    channel.queueDeclare(repQueueName)
+    channel.queueDeclare(reqQueueName)
+    channel.queueBind(repQueueName, exchangeName, "remoteReply")
+    channel.queueBind(reqQueueName, exchangeName, "remoteRequest")
+    channel.basicConsume(repQueueName, false, new ClientAMQPQueueConsumer(name, futures, supervisors, channel, this))
     log.info("Done!")
   }
 
@@ -215,14 +213,14 @@ class RemoteClient(hostname: String, port: Int) extends Logging {
 
   def send(request: RemoteRequest, senderFuture: Option[CompletableFuture]): Option[CompletableFuture] = if (isRunning) {
     if (request.getIsOneWay) {
-      //connection.getChannel.write(request)
+      channel.basicPublish(exchangeName,"remoteRequest",null,request.toByteArray)
       None
     } else {
       futures.synchronized {
         val futureResult = if (senderFuture.isDefined) senderFuture.get
         else new DefaultCompletableFuture(request.getTimeout)
         futures.put(request.getId, futureResult)
-        //connection.getChannel.write(request)
+        channel.basicPublish(exchangeName,"remoteRequest",null,request.toByteArray)
         Some(futureResult)
       }
     }
@@ -239,63 +237,35 @@ class RemoteClient(hostname: String, port: Int) extends Logging {
 
 }
 
-/**
- * @author <a href="http://jonasboner.com">Jonas Bon&#233;r</a>
- */
-class RemoteClientPipelineFactory(name: String,
-                                  futures: ConcurrentMap[Long, CompletableFuture],
-                                  bootstrap: ClientBootstrap,
-                                  supervisors: ConcurrentMap[String, Actor],
-                                  remoteAddress: SocketAddress,
-                                  timer: HashedWheelTimer,
-                                  client: RemoteClient) extends ChannelPipelineFactory {
-  def getPipeline: ChannelPipeline = {
-    val timeout = new ReadTimeoutHandler(timer, RemoteClient.READ_TIMEOUT)
-    val lenDec = new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4)
-    val lenPrep = new LengthFieldPrepender(4)
-    val protobufDec = new ProtobufDecoder(RemoteReply.getDefaultInstance)
-    val protobufEnc = new ProtobufEncoder
-    /*val zipCodec = RemoteServer.COMPRESSION_SCHEME match {
-      case "zlib" => Some(Codec(new ZlibEncoder(RemoteServer.ZLIB_COMPRESSION_LEVEL), new ZlibDecoder))
-      //case "lzf" => Some(Codec(new LzfEncoder, new LzfDecoder))
-      case _ => None
-    } */
-    /*val remoteClient = new RemoteClientHandler(name, futures, supervisors, bootstrap, remoteAddress, timer, client)
-
-    val stages: Array[ChannelHandler] =
-    zipCodec.map(codec => Array(timeout, codec.decoder, lenDec, protobufDec, codec.encoder, lenPrep, protobufEnc, remoteClient))
-        .getOrElse(Array(timeout, lenDec, protobufDec, lenPrep, protobufEnc, remoteClient))*/
-    new StaticChannelPipeline()
-  }
-}
-
-/**
- * @author <a href="http://jonasboner.com">Jonas Bon&#233;r</a>
- */
-//@ChannelPipelineCoverage {val value = "all"}
-class RemoteClientHandler(val name: String,
+class ClientAMQPQueueConsumer(val name: String,
                           val futures: ConcurrentMap[Long, CompletableFuture],
                           val supervisors: ConcurrentMap[String, Actor],
-                          val bootstrap: ClientBootstrap,
-                          val remoteAddress: SocketAddress,
-                          val timer: HashedWheelTimer,
+                          val channel: AMQPChannel,
                           val client: RemoteClient)
-    extends SimpleChannelUpstreamHandler with Logging {
-  import Actor.Sender.Self
+    extends DefaultConsumer(channel) with Logging {
 
-  override def handleUpstream(ctx: ChannelHandlerContext, event: ChannelEvent) = {
-    if (event.isInstanceOf[ChannelStateEvent] &&
-        event.asInstanceOf[ChannelStateEvent].getState != ChannelState.INTEREST_OPS) {
-      log.debug(event.toString)
-    }
-    super.handleUpstream(ctx, event)
+  override def handleShutdownSignal(consumerTag: String, sig: ShutdownSignalException) = {
+    super.handleShutdownSignal(consumerTag, sig)
   }
 
-  override def messageReceived(ctx: ChannelHandlerContext, event: MessageEvent) {
+  override def handleCancelOk(consumerTag: String) = {
+    super.handleCancelOk(consumerTag)
+  }
+
+  override def handleConsumeOk(consumerTag: String) = {
+    super.handleConsumeOk(consumerTag)
+  }
+
+   override def handleDelivery(consumerTag: String,
+                              envelope: Envelope,
+                              properties: BasicProperties,
+                              body: Array[Byte]) = {
+    import Actor.Sender.Self 
     try {
-      val result = event.getMessage
-      if (result.isInstanceOf[RemoteReply]) {
-        val reply = result.asInstanceOf[RemoteReply]
+      //val result = body
+      //if (result.isInstanceOf[RemoteReply]) {
+        val reply = RemoteReply.parseFrom(body)//result.asInstanceOf[RemoteReply]
+        // TODO error handling
         log.debug("Remote client received RemoteReply[\n%s]", reply.toString)
         val future = futures.get(reply.getId)
         if (reply.getIsSuccessful) {
@@ -307,41 +277,20 @@ class RemoteClientHandler(val name: String,
             if (!supervisors.containsKey(supervisorUuid)) throw new IllegalStateException("Expected a registered supervisor for UUID [" + supervisorUuid + "] but none was found")
             val supervisedActor = supervisors.get(supervisorUuid)
             if (!supervisedActor._supervisor.isDefined) throw new IllegalStateException("Can't handle restart for remote actor " + supervisedActor + " since its supervisor has been removed")
-            else supervisedActor._supervisor.get ! Exit(supervisedActor, parseException(reply))
+            else {
+             val _actor:Actor = supervisedActor._supervisor.get
+             _actor ! Exit(supervisedActor, parseException(reply))
+            }
           }
           future.completeWithException(null, parseException(reply))
         }
         futures.remove(reply.getId)
-      } else throw new IllegalArgumentException("Unknown message received in remote client handler: " + result)
+      //} else throw new IllegalArgumentException("Unknown message received in remote client handler: " + result)
     } catch {
       case e: Exception =>
         log.error("Unexpected exception in remote client handler: %s", e)
         throw e
     }
-  }
-
-  override def channelClosed(ctx: ChannelHandlerContext, event: ChannelStateEvent) = if (client.isRunning) {
-    timer.newTimeout(new TimerTask() {
-      def run(timeout: Timeout) = {
-        log.debug("Remote client reconnecting to [%s]", remoteAddress)
-        //client.connection = bootstrap.connect(remoteAddress)
-
-        // Wait until the connection attempt succeeds or fails.
-        //client.connection.awaitUninterruptibly
-        //if (!client.connection.isSuccess) log.error(client.connection.getCause, "Reconnection to [%s] has failed", remoteAddress)
-      }
-    }, RemoteClient.RECONNECT_DELAY, TimeUnit.MILLISECONDS)
-  }
-
-  override def channelConnected(ctx: ChannelHandlerContext, event: ChannelStateEvent) =
-    log.debug("Remote client connected to [%s]", ctx.getChannel.getRemoteAddress)
-
-  override def channelDisconnected(ctx: ChannelHandlerContext, event: ChannelStateEvent) =
-    log.debug("Remote client disconnected from [%s]", ctx.getChannel.getRemoteAddress);
-
-  override def exceptionCaught(ctx: ChannelHandlerContext, event: ExceptionEvent) = {
-    log.error(event.getCause, "Unexpected exception from downstream in remote client")
-    event.getChannel.close
   }
 
   private def parseException(reply: RemoteReply) = {
@@ -352,4 +301,17 @@ class RemoteClientHandler(val name: String,
         .getConstructor(Array[Class[_]](classOf[String]): _*)
         .newInstance(exceptionMessage).asInstanceOf[Throwable]
   }
+
+/*  override def channelClosed(ctx: ChannelHandlerContext, event: ChannelStateEvent) = if (client.isRunning) {
+    timer.newTimeout(new TimerTask() {
+      def run(timeout: Timeout) = {
+        log.debug("Remote client reconnecting to [%s]", remoteAddress)
+        //client.connection = bootstrap.connect(remoteAddress)
+
+        // Wait until the connection attempt succeeds or fails.
+        //client.connection.awaitUninterruptibly
+        //if (!client.connection.isSuccess) log.error(client.connection.getCause, "Reconnection to [%s] has failed", remoteAddress)
+      }
+    }, RemoteClient.RECONNECT_DELAY, TimeUnit.MILLISECONDS)
+  }*/
 }
