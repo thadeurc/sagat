@@ -1,0 +1,194 @@
+\documentclass[titlepage,11pt,letterpaper,abstracton]{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{indentfirst}
+\usepackage{graphicx,url}
+\usepackage{epsfig}
+
+
+\setlength{\topmargin}{0.5in}
+\setlength{\oddsidemargin}{0in}%{0.3in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{8in}
+\setlength{\parindent}{0.4in}
+
+% Ajusta o cabeçalho e o rodapé.
+\pagestyle{fancy}
+\lhead{DCC - IME - USP}
+\chead{}
+\rhead{\textbf{Proposta de Dissertação -- Mestrado}}
+\lfoot{}
+\cfoot{}
+\rfoot{\thepage}
+
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\setlength{\headheight}{13.6pt}
+
+\newlength{\fmwidth}
+\setlength{\fmwidth}{\textwidth}
+\addtolength{\fmwidth}{-.1in}
+
+% Algumas macros.
+\newsavebox{\fmbox}
+\newenvironment{fmpage}[0]
+    {\begin{lrbox}{\fmbox}\begin{minipage}{\fmwidth}}
+    {\end{minipage}\end{lrbox}\vspace{2em}\noindent\fbox{\usebox{\fmbox}}\vspace{2em}}
+
+\newcommand{\code}[1]
+    {\texttt{#1}}
+
+\newcommand{\accentuate}[1]
+    {\textsf{#1}}
+
+\newcommand{\entry}[1]
+    {\textit{#1}}
+
+\newcommand{\english}[1]
+    {\textit{#1}}
+
+
+\begin{document}
+
+\begin{titlepage}
+
+  \begin{center}
+    \rule{\textwidth}{1pt} \\[3mm]
+    \textbf{\LARGE Universidade de São Paulo} \\[5mm]
+    \textbf{\Large Instituto de Matemática e Estatística} \\[3mm]
+    \textbf{\Large Departamento de Ciência da Computação} \\[3mm]
+    \rule{\textwidth}{1pt} \\[30mm]
+    
+    \textbf{\textsf{\LARGE AMQP para o Transporte de Mensages entre Atores Remotos}}
+    \\[10mm]
+    \textbf{\Large Exame de Qualificação de Mestrado} \\[20mm]
+    {\large São Paulo, XX de XXXXX de 2010}\\[10mm]
+    \rule{\textwidth}{1pt}\\[7mm]
+
+    \textsf{\Large Thadeu de Russo e Carmo}\\[10mm]
+    \textsc{\Large Orientador:}\\[5mm]
+    \textsf{\Large Francisco Carlos da Rocha Reverbel}\\[5mm]
+    \rule{\textwidth}{1pt}\\[5mm]
+   \end{center}
+
+\end{titlepage}
+
+
+\pagenumbering{roman}
+\begin{abstract}
+ 	\par Modelar sistemas computacionais especificando tarefas que podem acontecer de maneira independente, em paralelo, e
+	concorrentemente é algo extremamente comum, especialmente quando se busca performance. O modelo de atores com troca
+	de mensagens foi proposto como uma das possíveis soluções para os problemas oriundos da programação concorrente, como
+	o uso de travas e blocos sincronizados para a proteção de dados compartilhados. Atores são entidades baseadas em \english{threads}
+	que possuem uma caixa de correio para o recebimento e armazenamento das mensagens enviadas por outros atores para processamento
+	assíncrono.
+
+	\par Neste trabalho estudaremos o modelo de atores em um ambiente com instâncias distribuídas entre várias
+	máquinas virtuais Java. Faremos uma implementação em Scala tomando como base a abordagem proposta no projeto AKKA, 
+	substituindo o uso de \english{sockets} escolhido para o tráfego das mensagens, pelo padrão aberto voltado à
+	\english{middleware} orientado a mensagens, \english{Advanced Message Queuing Protocol}, ou AMQP. 
+	Além disso, faremos um comparativo entre as duas abordagens.
+ 
+
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
+\normalsize
+\onehalfspacing
+
+
+% ----------------------------------------------------------------------
+\newpage
+\section{Introdução}
+	Performance e escalabilidade são necessidades fundamentais e quase sempre obrigatórias para qualquer sistema computacional. 
+	Bons ganhos de performance podem ser obtidos, por exemplo, encontrando soluções alterativas para se obter o mesmo resultado com 
+	uma menor complexidade computacional, algo que nem sempre é possível ou viável do ponto de vista de desenvolvimento de algoritmos. 
+	Escalabilidade pode ser obtida através do uso de computadores com maior poder de processamento, algo que também nem sempre
+	é viável por questões de custo. Uma alternativa para se alcançar tanto performance quanto escalabilidade, é o uso de vários computadores
+	com processadores de menor capacidade de processamento, ou ainda o uso de processadores com múltiplos núcleos. 
+	Em ambos os casos estará implícito a necessidade e capacidade de execuções paralelas e concorrentes, de modo a existir uma interação 
+	significativa entre as tarefas e os processos executados\cite{dijkistra-65}.
+
+	\par Ultimamente, problemas relacionados ao desenvolvimento de sistemas com características concorrentes, como \english{deadlocks} e exclusão
+	mútua\cite{dijkistra-mutual-exclusion}, tem recebido enorme interesse por conta tanto da popularização de processadores com múltiplos núcleos, como
+	da computação distribuída e \english{web-services} serem inerementemente concorrentes. 	
+
+	\par A abordagem convencional no desenvolvimento deste tipo de sistemas é através do uso de travas e variáveis condicionais. Em linguagens orientadas
+	a objetos, como Java e C\#, cada instância de um objeto possui implicitamente sua própria trava e travamentos podem acontecer em blocos sincronizados dentro
+	de métodos. Esta abordagem contudo, não permite a componibilidade de travas de maneira segura, necessária quando se existe mais de uma instância
+	envolvida na ação a ser executada de modo exclusivo, criando uma situação fatalmente propensa a \english{deadlocks}. Existem ainda outras dificultades 
+	no uso de travas, como o esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias erradas, 
+	obtenção de travas em ordem errada, se manter o sistema consistente na presença de erros ou ainda o esquecimento da sinalização em variáveis de condição	
+	ou de se testar novamente uma condição após o despertar de um estado de espera \cite{sj:bc}, mostrando a inviabilidade desta abordagem para uma
+	 programação modular, ou seja, criação de grandes programas através de vários programas menores.
+	
+	\par Duas abordagens para os problemas citados são a memória transacional, uma abstração para compartilhamento 
+	seguro de uma mesma região de memória, e o uso do modelo de atores, baseado na troca de mensagens entre processos, não existindo 
+	compartilhamento de área comum de memória. 
+	
+	%% todo: melhorar parte de stm?  Colocar codigo haskell ou outro exemplo?
+
+	\par Como o escopo do presente trabalho não inclui discussões no nível de\english{hardware}, estaremos falando neste parágrafo especificamente de 
+	memória transacional de \english{software}\cite{STM}. Conhecida como STM (\english{Software Transactional Memory}), é um mecanismo de controle de
+	concorrência análogo às transações de bancos de dados para o controle de acesso à memória compartilhada. Neste contexto, a transação é um pedaço de
+	código que executa uma série de operações atômicas de leitura e escrita na memória compartilhada. 
+
+
+	%% preciso 'vender' mais erlang? falar dos 'problemas' de erlang (popularidade de vm), e justificar o pq de scala?
+	\par Atores\cite{gul-agha} são basicamente processos concorrentes que se comunicam através da troca de mensagens de modo assíncrono.
+	Quando combinado com o casamento de padrões, modelos de processos baseados em atores se mostraram muito efetivos, como por exemplo,
+	Erlang\cite{erlang-survey}. Um ator pode responder a uma mensagem assíncrona seja criado novos atores, enviando mensagens para atores conhecidos (incluindo
+	o próprio), ou alterando seu comportamento. Comportamento este que define como o ator respondera a próxima mensagem que ele recebe.\cite{haller-master}
+	Na linguagem Scala, um ator é uma entidade como uma \english{thread} que possui uma caixa de correio para o
+	recebimento	de mensagens. A criação de atores em Scala\cite{prog-scala} foi baseada no modelo de Erlang\cite{erlang-dev}. Para enviar uma mensagem 
+	\code{msg} para um ator \code{a}, usa-se a expressão \code{a ! msg}. A operação de recebimento segue o seguinte formato: \\
+	\\
+	\begin{fmpage}
+		\small{
+			\begin{verbatim}
+				receive {
+				    case padrao_1 => acao_1
+				    ...
+				    case padrao_n => acao_n
+				}
+			\end{verbatim}		
+		}
+	\end{fmpage}	
+	\par A primeira mensagem que casar com qualquer dos padrões $padrao_i$ é removida da caixa de correio, e a ação $acao_i$ correspondente é
+	executada. Caso não haja casamento de nenhum dos padrões, o ator é suspendido.
+	% falar sobre como criar os atores? Falar dos outros tipos de envios? !!, !? !!!
+
+	\par A linguagem Scala possui embutida na distribuição uma implementação de atores, chamada de \english{Scala Actors} com suporte para atores
+	remotos\cite{scala-api}. Esta biblioteca permite que se inicialize atores como serviços remotos associados a portas TCP. Em \cite{ping-pong-local}
+	podemos ver um exemplo de uma implementação de \english{ping-pong} entre atores locais. O mesmo exemplo com atores remotos pode ser visto em
+	 \cite{ping-pong-remoto}. Existem ainda algumas implementações alternativas que se propõe a dar este tipo de suporte, tal como o projeto AKKA\cite{akka}, 
+	que foi originado pelo descontinuado Scala OTP, cujo objetivo era de se portar as idéias do Erlang OTP para a linguagem Scala, possui mais robustes,
+	 funcionalidades e uma API mais simples para se trabalhar com atores remotos, usando também a abordagem com portas TCP para a disponibilização dos serviços
+	 aos clientes remotos. %citar codigo do akka? LIft actors?
+
+	
+\subsection{Objetivos}
+\subsection{Organização do texto}
+% ----------------------------------------------------------------------------
+\newpage
+\section{Trabalhos relacionados}
+\newpage
+\section{Transações distribuídas em ambientes Web services}
+\section{O projeto}
+% ----------------------------------------------------------------------
+\newpage
+\section{Próximas etapas}
+\subsection{Atividades programadas}
+\subsection{Cronograma}
+\bibliographystyle{plain}
+\bibliography{referencias}
+\end{document}
