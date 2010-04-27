@@ -64,7 +64,7 @@
     \textbf{\Large Departamento de Ciência da Computação} \\[3mm]
     \rule{\textwidth}{1pt} \\[30mm]
     
-    \textbf{\textsf{\LARGE AMQP para o Transporte de Mensages entre Atores Remotos}}
+    \textbf{\textsf{\LARGE AMQP para o Transporte de Mensagens entre Atores Remotos}}
     \\[10mm]
     \textbf{\Large Exame de Qualificação de Mestrado} \\[20mm]
     {\large São Paulo, XX de XXXXX de 2010}\\[10mm]
@@ -120,12 +120,12 @@
 
 	\par Ultimamente, problemas relacionados ao desenvolvimento de sistemas com características concorrentes, como \english{deadlocks} e exclusão
 	mútua\cite{dijkistra-mutual-exclusion}, tem recebido enorme interesse por conta tanto da popularização de processadores com múltiplos núcleos, como
-	da computação distribuída e \english{web-services} serem inerementemente concorrentes. 	
+	da computação distribuída e \english{web-services} serem inerentemente concorrentes. 	
 
 	\par A abordagem convencional no desenvolvimento deste tipo de sistemas é através do uso de travas e variáveis condicionais. Em linguagens orientadas
 	a objetos, como Java e C\#, cada instância de um objeto possui implicitamente sua própria trava e travamentos podem acontecer em blocos sincronizados dentro
 	de métodos. Esta abordagem contudo, não permite a componibilidade de travas de maneira segura, necessária quando se existe mais de uma instância
-	envolvida na ação a ser executada de modo exclusivo, criando uma situação fatalmente propensa a \english{deadlocks}. Existem ainda outras dificultades 
+	envolvida na ação a ser executada de modo exclusivo, criando uma situação fatalmente propensa a \english{deadlocks}. Existem ainda outras dificuldades 
 	no uso de travas, como o esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias erradas, 
 	obtenção de travas em ordem errada, se manter o sistema consistente na presença de erros ou ainda o esquecimento da sinalização em variáveis de condição	
 	ou de se testar novamente uma condição após o despertar de um estado de espera \cite{sj:bc}, mostrando a inviabilidade desta abordagem para uma
@@ -137,8 +137,7 @@
 	
 	%% todo: melhorar parte de stm?  Colocar codigo haskell ou outro exemplo?
 
-	\par Como o escopo do presente trabalho não inclui discussões no nível de\english{hardware}, estaremos falando neste parágrafo especificamente de 
-	memória transacional de \english{software}\cite{STM}. Conhecida como STM (\english{Software Transactional Memory}), é um mecanismo de controle de
+	\par Conhecida como STM\cite{STM} (\english{Software Transactional Memory}), é um mecanismo de controle de
 	concorrência análogo às transações de bancos de dados para o controle de acesso à memória compartilhada. Neste contexto, a transação é um pedaço de
 	código que executa uma série de operações atômicas de leitura e escrita na memória compartilhada. 
 
@@ -171,12 +170,26 @@
 	remotos\cite{scala-api}. Esta biblioteca permite que se inicialize atores como serviços remotos associados a portas TCP. Em \cite{ping-pong-local}
 	podemos ver um exemplo de uma implementação de \english{ping-pong} entre atores locais. O mesmo exemplo com atores remotos pode ser visto em
 	 \cite{ping-pong-remoto}. Existem ainda algumas implementações alternativas que se propõe a dar este tipo de suporte, tal como o projeto AKKA\cite{akka}, 
-	que foi originado pelo descontinuado Scala OTP, cujo objetivo era de se portar as idéias do Erlang OTP para a linguagem Scala, possui mais robustes,
-	 funcionalidades e uma API mais simples para se trabalhar com atores remotos, usando também a abordagem com portas TCP para a disponibilização dos serviços
-	 aos clientes remotos. %citar codigo do akka? LIft actors?
+	que foi originado pelo descontinuado Scala OTP, cujo objetivo era de se portar as idéias do Erlang OTP para a linguagem Scala, possui maior robustez,
+	 mais funcionalidades e uma API mais simples para se trabalhar com atores remotos, usando também a abordagem com portas TCP para a disponibilização dos
+	 serviços aos clientes remotos. %citar codigo do akka? LIft actors?
 
+	\par Dentro do projeto AKKA existe um módulo adicional\cite{akka-amqp} que abstrai a criação de produtores e consumidores AMQP como sendo atores.
+	AMQP\cite{amqp-spec} (\english{Advanced Message Queuing Protocol}) é um protocolo de internet aberto para mensageria corporativa. Especificado pelo
+	AMQP \english{Working Group}, o protocolo permite completa interoperabilidade para \english{middleware} orientado a mensagens, sendo ambos o protocolo
+	de rede como a semântica dos serviços do \english{broker} definidos por ele.
 	
 \subsection{Objetivos}
+	\par Os dois principais objetivos deste trabalho são:
+	\begin{enumerate}
+		\item A implementaÃ§Ã£o do modelo de atores remotos com o uso de AMQP para o transporte das mensagens: tomaremos como base a implementação feita
+		pelo projeto AKKA de atores remotos e substituiremos o mecanismo existente para o transporte de mensagens, que atualmente é feito pelo JBoss Netty
+		\cite{jboss-netty}. Utilizaremos o RabbitMQ\cite{rabbitmq}, uma implementação em Erlang da especificação AMQP como o mecanismo para cuidar do
+		transporte das mensagens.
+		
+		\item A comparação das duas implementações: ambos as abordagens tem o mesmo objetivo final. 
+	\end{enumerate}
+
 \subsection{Organização do texto}
 % ----------------------------------------------------------------------------
 \newpage
