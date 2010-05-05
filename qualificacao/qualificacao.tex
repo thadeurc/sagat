@@ -110,9 +110,9 @@
 \newpage
 \section{Introdução}
 	Performance e escalabilidade são necessidades fundamentais e quase sempre obrigatórias para qualquer sistema 
-	computacional. Bons ganhos de performance podem ser obtidos, por exemplo, encontrando soluções alterativas para 
+	computacional. Bons ganhos de performance podem ser obtidos, por exemplo, encontrando soluções alternativas para 
 	se obter o mesmo resultado com uma menor complexidade computacional, algo que nem sempre é possível ou viável do 
-	ponto de vista de desenvolvimento de algoritmos. Escalabilidade pode ser obtida através do uso de computadores com 
+	ponto de vista do desenvolvimento de algoritmos. Escalabilidade pode ser obtida através do uso de computadores com 
 	maior poder de processamento, algo que também nem sempre é viável por questões de custo. Uma alternativa para se alcançar 
 	tanto performance quanto escalabilidade, é o uso de vários computadores com processadores de menor capacidade de 
 	processamento, ou ainda o uso de processadores com múltiplos núcleos. Em ambos os casos estará implícito a necessidade 
@@ -121,70 +121,61 @@
 
 	\par Ultimamente, problemas relacionados ao desenvolvimento de sistemas com características concorrentes, como 
 	\english{deadlocks} e exclusão mútua\cite{dijkistra-mutual-exclusion}, tem recebido enorme interesse por conta tanto 
-	da popularização de processadores com múltiplos núcleos, como da computação distribuída e \english{web-services} serem 
+	da popularização de processadores com múltiplos núcleos, como da computação distribuída e de \english{web-services} serem 
 	inerentemente concorrentes. 	
 
 	\par A abordagem convencional no desenvolvimento deste tipo de sistemas é através do uso de travas e variáveis condicionais. 
-	Em linguagens orientadas a objetos, como Java e C\#, cada instância de um objeto possui implicitamente sua própria trava e 
+	Em linguagens orientadas a objetos como Java e C\#, cada instância possui implicitamente sua própria trava e 
 	travamentos podem acontecer em blocos sincronizados dentro de métodos. Esta abordagem contudo, não permite a componibilidade 
 	de travas de maneira segura, necessária quando se existe mais de uma instância envolvida na ação a ser executada de modo 
 	exclusivo, criando uma situação fatalmente propensa a \english{deadlocks}. Existem ainda outras dificuldades no uso de travas, 
 	como o esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias erradas, 
-	obtenção de travas em ordem errada, se manter o sistema consistente na presença de erros ou ainda o esquecimento da sinalização 
-	em variáveis de condição ou de se testar novamente uma condição após o despertar de um estado de espera \cite{sj:bc}, 
-	mostrando a inviabilidade desta abordagem para uma programação modular, ou seja, criação de grandes programas através 
+	obtenção de travas em ordem errada, manter o sistema consistente na presença de erros, o esquecimento da sinalização 
+	em variáveis de condição ou de se testar novamente uma condição após o despertar de um estado de espera \cite{sj:bc}.
+	Estas dificuldades são exemplos da inviabilidade desta abordagem para uma programação modular, ou seja, criação de grandes programas através 
 	de vários programas menores.
 	
 	\par Duas abordagens para os problemas citados são a memória transacional, uma abstração para compartilhamento 
-	seguro de uma mesma região de memória, e o uso do modelo de atores, baseado na troca de mensagens entre processos, não existindo 
-	compartilhamento de área comum de memória. 
+	seguro de uma mesma região de memória, e o uso do modelo de atores, baseado na troca de mensagens entre processos. 
 	
-	%% todo: melhorar parte de stm?  Colocar codigo haskell ou outro exemplo?
-
 	\par Conhecida como STM\cite{STM} (\english{Software Transactional Memory}), é um mecanismo de controle de
 	concorrência análogo às transações de bancos de dados para o controle de acesso à memória compartilhada. Neste contexto, 
 	a transação é um pedaço de código que executa uma série de operações atômicas de leitura e escrita na memória compartilhada. 
 
 
 	%% preciso 'vender' mais erlang? falar dos 'problemas' de erlang (popularidade de vm), e justificar o pq de scala?
-	\par Atores\cite{gul-agha} são basicamente processos concorrentes que se comunicam através da troca de mensagens de modo assíncrono.
-	Quando combinado com o casamento de padrões, modelos de processos baseados em atores se mostraram muito efetivos, como por exemplo,
-	Erlang\cite{erlang-survey}. Um ator pode responder a uma mensagem assíncrona seja criado novos atores, enviando mensagens 
-	para atores conhecidos (incluindo o próprio), ou alterando seu comportamento. Comportamento este que define como o ator 
-	respondera a próxima mensagem que ele recebe\cite{haller-master}.Na linguagem Scala, um ator é uma entidade como uma 
-	\english{thread} que possui uma caixa de correio para o recebimento	de mensagens. A criação de atores em Scala\cite{prog-scala} 
-	foi baseada no modelo de Erlang\cite{erlang-dev}. Para enviar uma mensagem \code{msg} para um ator \code{a}, usa-se a 
-	expressão \code{a ! msg}. A operação de recebimento segue o seguinte formato: \\
-	\\
-	\begin{fmpage}
-		\small{
-			\begin{verbatim}
-				receive {
-				    case padrao_1 => acao_1
-				    ...
-				    case padrao_n => acao_n
-				}
-			\end{verbatim}		
-		}
-	\end{fmpage}	
-	\par A primeira mensagem que casar com qualquer dos padrões $padrao_i$ é removida da caixa de correio, e a ação $acao_i$ correspondente é
-	executada. Caso não haja casamento de nenhum dos padrões, o ator é suspendido.
+	\par Atores são basicamente processos concorrentes que se comunicam através da troca de mensagens de modo 	
+	assíncrono\cite{gul-agha}\cite{gul-agha}. Quando combinado com o casamento de padrões, modelos de processos baseados 
+	em atores se mostraram muito efetivos 	
+	como por exemplo, Erlang\cite{erlang-survey}. Um ator pode responder a uma mensagem assíncrona seja criado novos atores,
+	 enviando mensagens para atores conhecidos (incluindo o próprio) ou alterando seu comportamento. Comportamento este que 
+	define como o ator responderá à  próxima mensagem recebida\cite{haller-master}.Na linguagem Scala, um ator é uma 
+	entidade como uma \english{thread} que possui uma caixa de correio para o recebimento	de mensagens. O modelo de atores 
+	criados na Scala\cite{prog-scala} foi baseada no modelo de Erlang\cite{erlang-dev}. Neste modelo, para se enviar uma mensagem 
+	\english{msg} para um ator \english{a}, usa-se a expressão \english{a ! msg}. O recebimento das mensagens é feito dentro de
+	 um bloco 
+	\english{receive}, onde estão definidos os padrões a serem casados e as ações associadas. A primeira mensagem que casar com 
+	qualquer dos padrões $padrao_i$, é removida da caixa de correio e a ação $acao_i$ correspondente é executada. 
+	Caso não haja casamento de nenhum dos padrões, o ator é suspendido.
 	% falar sobre como criar os atores? Falar dos outros tipos de envios? !!, !? !!!
 
 	\par A linguagem Scala possui embutida na distribuição uma implementação de atores, chamada de \english{Scala Actors} com 
-	suporte para atores remotos\cite{scala-api}. Esta biblioteca permite que se inicialize atores como serviços remotos associados 
-	a portas TCP. Em \cite{ping-pong-local} podemos ver um exemplo de uma implementação de \english{ping-pong} entre atores locais. 
-	O mesmo exemplo com atores remotos pode ser visto em \cite{ping-pong-remoto}. Existem ainda algumas implementações alternativas 
+	suporte para atores remotos\cite{scala-api}. Esta biblioteca permite que atores sejam registrados como serviços remotos,
+	de modo que a comunicação é via portas TCP.
+	Em \cite{ping-pong-local} podemos ver um exemplo de uma implementação de \english{ping-pong} entre atores locais. 
+	O mesmo exemplo, porém com atores remotos, pode ser visto em \cite{ping-pong-remoto}. 
+	Existem ainda algumas implementações alternativas 
 	que se propõe a dar este tipo de suporte, tal como o projeto AKKA\cite{akka}, que foi originado pelo descontinuado Scala OTP, 
-	cujo objetivo era de se portar as idéias do Erlang OTP para a linguagem Scala, possui maior robustez, mais funcionalidades e uma API 
-	mais simples para se trabalhar com atores remotos, usando também a abordagem com portas TCP para a disponibilização dos 
-	serviços aos clientes remotos. %citar codigo do akka? LIft actors?
+	cujo objetivo era de se portar as idéias de Erlang OTP\cite{prog-erlang} para a linguagem Scala proporcionando maior robustez,
+	 mais funcionalidades e uma API mais simples para se trabalhar com atores remotos, usando também a abordagem com portas
+	 TCP para a disponibilização dos serviços aos clientes remotos. %citar codigo do akka? LIft actors?
 
-	\par Dentro do projeto AKKA existe um módulo adicional\cite{akka-amqp} que abstrai a criação de produtores e consumidores 
-	AMQP como sendo atores. AMQP\cite{amqp-spec} (\english{Advanced Message Queuing Protocol}) é um protocolo de internet aberto 
+	\par Como já citado, uma das principais características do modelo de atores é a troca assíncrona de mensagens. \english{middlewares} orientados a mensagens, conhecidos como MOMs possuem esta característica e são frequentemente apresentados
+	como uma tecnologia que com pode mudar a maneira com que sistemas distribuídos são construídos\cite{alonso}.	
+	AMQP\cite{amqp-spec} (\english{Advanced Message Queuing Protocol}) é um protocolo de internet aberto 
 	para mensageria corporativa. Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
-	para \english{middleware} orientado a mensagens, sendo ambos o protocolo de rede como a semântica dos serviços do \english{broker} 
-	definidos por ele.
+	para \english{middleware} orientado a mensagens, sendo ambos o protocolo de rede como a semântica dos serviços do
+	\english{broker} definidos por ele.
 	
 \subsection{Objetivos}
 	\par Os dois principais objetivos deste trabalho são:
@@ -196,7 +187,7 @@
 		RabbitMQ\cite{rabbitmq}, uma implementação em Erlang da especificação AMQP, como o mecanismo para cuidar do transporte 
 		das mensagens.
 		
-		\item A comparação das duas implementações: será feito um comparativo do resultado de ambos as implementações para 
+		\item A comparação das duas implementações: será feito um comparativo do resultado de ambas as implementações para 
 		avaliar a robustes e escalabilidade de cada uma, as vantagens proporcionadas em uma possível implantação num ambiente
 		real, como segurança e infra-estrutura além de uma análise da sobrecarga imposta pelo uso de AMQP em relação ao uso de
 		portas TCP com o intuito de observar a viabilidade do uso desta implementação.
@@ -210,64 +201,82 @@ TODO: Colocar a descricao dos capitulos no termino.
 \section{Trabalhos relacionados}
 	\par Esta seção apresenta os trabalhos relacionados que foram estudados e contribuíram para o desenvolvimento
 	do nosso trabalho. Dividiremos essa seção em três partes. Na primeira parte apresentaremos a linguagem Erlang
-	e seu modelo de atores remotos; na segunda e na terceira parte apresentaremos o modelo de atores distribuídos
-	da linguagem Scala e do projeto AKKA. Nesta última, mostraremos também dois modulos adicionais do projeto sobre
-	atores remotos: AMQP e Camel.
+	e seu modelo de atores remotos; na segunda e na terceira parte apresentaremos a linguagem Scala, seu modelo de atores
+	remotos e o projeto AKKA.
 	
 \subsection{Atores remotos em Erlang}
-	\par Erlang\cite{erlang-dev} é uma linguagem funcional e interpretada para programação concorrente projetada para
-	o desenvolvimento de sistemas distribuídos de larga escala de tempo real, tendo sido desenvolvida nos laboratórios 
-	da Ericsson no período de 1985 à 1997. A linguagem em si, apesar de bem enxuta, possui conceitos interessantes em 
-	sua estrutura para simplificar o desenvolvimento de sistemas com características concorrentes. Exemplos destes 
-	conceitos são: variáveis de atribuição única, átomos, casamento de padrões e as primitivas \english{spawn} para 
-	criação de processos, \english{send} ou \emph{!} para o envio de mensagens entre os processos e \english{receive} 
-	para o recebimento de mensagens que foram enviadas para o processo.
+	\par Erlang\cite{erlang-dev} é uma linguagem funcional, dinamicamente tipada e interpretada 
+	voltada para o desenvolvimento de sistemas distribuídos de larga escala e tempo real, tendo sido desenvolvida 
+	nos laboratórios da Ericsson no período de 1985 à 1997. A linguagem em si, apesar de bem enxuta, possui conceitos 
+	interessantes em sua estrutura para simplificar o desenvolvimento de sistemas com características concorrentes. 
+	Exemplos destes conceitos são: variáveis de atribuição única, átomos, casamento de padrões e as primitivas \english{spawn} 
+	para criação de processos, \english{send} e \english{!} para o envio de mensagens entre os atores, \english{receive} 
+	para o recebimento de mensagens e \english{link} para a definição de adjacências entre os atores.
 
-	\par A criação de processos através de outros processos pode criar uma hierarquia de dependência entre eles, o que pode
-	implicar na necessidade de supervisão. Erlang possui embutido na linguagem algumas funções como \english{link} para a 
-	construção desta hierarquia de dependências, de modo que processos criadores podem definir ligações para serem notificados 
-	de términos tanto esperados, quando inesperados dos processos filhos. Estas notificações podem, eventualmente forçar um
-	término do processo criador, ou apenas notificá-lo para que outras ações sejam tomadas.
+	\par A criação de atores por outros atores pode criar uma hierarquia de dependências, podendo 
+	implicar na necessidade de supervisão de modo que atores criadores definam adjacências e tornando-se 
+	supervisores, para serem avisados
+	de eventos nos atores filhos. Estas notificações podem eventualmente forçar  o
+	término do ator supervisor.
 	
-	\par Uma vez que as máquinas virtuais Erlang, que uma vez nomeadas são chamadas de nós,  estão em execução nas 
-	diferentes máquinas de uma rede de computadores, os respectivos nós conectados e os fontes do código a ser 
-	executado como descrito em\cite{prog-erlang}, a criação de processos em nós remotos é semelhante a criação de 
-	processos locais e é feita pela função \english{spawn}, porém informando não só a função a ser executada mas 
-	também o nome do nó remoto. No modelo construído em Erlang, o tráfego das mensagens é feito através de portas TCP e UDP.
-	\\
-	\\
-	\begin{fmpage}
-		\small{
-			\begin{verbatim}
-				-module(sample_remoto).
-				-export([start/0]).
-					
-				start() ->
-				    Pid = spawn(node1@machine1.ime.usp.br, 
-					            fun() -> loop() end).
-				loop() ->
-				    receive
-				        {ProcId, {soma, Lista}} ->
-				            ProcId ! {resultado, somatorio(Lista)};
-						{ProcId, Msg} ->
-				            ProcId ! {erro, mensagem_desconhecida, Msg}
-					end,
-					loop().
-				
-				somatorio(Lista) ->
-				    somatorio_aux(Lista,0).
+	\par A criação de atores remotos é muito semelhante a criação de 
+	atores locais,sendo feita pela mesma função \english{spawn}, informando adicionalmente o nome do nó\footnote{As instâncias
+	das máquinas virtuais Erlang podem receber opcionalmente nomes.} e do \english{host} que executará o ator. É possível
+	também que atores iniciados remotamente recebam mensagens através da função auxiliar \code{call} do módulo \code{rpc},
+	onde deve-se informar o nome do nó, o \english{host}, o nome do módulo, a função e opcionalmente argumentos. Veja que neste caso
+	temos um exemplo clássico de chamada remota de procedimento. Em Erlang o tráfego das mensagens é feito através de
+	portas TCP e UDP\cite{prog-erlang}.
 
-				somatorio_aux([], Acumulador) ->
-				    Acumulador;
+\subsection{Scala Actors}
+	\par Scala é uma linguagem moderna, estaticamente tipada que unifica os paradigmas de programação funcional e 
+	orientado a objetos \cite{scala-overview}, tendo sido desenvolvida a partir de 2001 no laboratório de métodos de 
+	programação na EPFL(\english{Ecole Polytechnique Fédérale de Lausanne}). O código escrito em Scala é compilado
+	de modo a poder ser executado tanto na JVM (\english{Java Virtual Machine}) quanto na CLR (\english{Common Language Runtime}).
+	Diferentemente da linguagem Erlang, é uma linguagem consideravelmente extensa, possuindo conceitos não implementados nem
+	em Java e nem em C\#. Exemplos destes conceitos são: funções de ordem superior, criação de tipos de dados algébricos
+	 (\english{case classes}), casamento de padrões e funções parciais.
+	
+	\par Atores em Scala são subclasses de \code{scala.actors.Actor} e possuem métodos semelhantes as primitivas de Erlang, como 
+	\english{send}, \english{!}, \english{receive}, além de outros métodos como \english{act} e \english{react}. A implementação
+	dos atores é feita sobre \english{threads} Java, existindo recomendações para se atingir uma boa performance
+	através do uso de \english{react} no lugar de \english{receive} \cite{prog-scala}. Este uso proporciona o reuso
+	das \english{threads} criadas.
 
-				somatorio_aux([Cabeca|Cauda], Acumulador) ->
-				    somatorio_aux(Cauda, Cabeca + Acumulador).
-					
-			\end{verbatim}		
-		}
-	\end{fmpage}
+	\par Assim como em Erlang, pode-se criar uma hierarquia de supervisão que permite que mensagens indicando que atores
+	criados a partir de um outro ator tiveram sua execução interrompida ou terminada. Todavia, a criação de atores remotos
+	funciona de um modo diferente, já que não é possível a criação de um ator em um nó\footnote{Pelo termo nó, queremos dizer
+	um par formado por um endereço IP e uma porta TCP.} que não seja o local, mas sim, dado
+	um ator, este pode se tornar acessível remotamente através do uso do método \english{alive}, indicando a porta em o
+	ator ficará disponível, e em seguida usar o método \english{register} para associar a instância a um símbolo\footnote{
+	Instância de scala.Symbol.}. Clientes remotos podem usar o método \english{select} para selecionar um ator pelo seu
+	símbolo em um determinado nó. Algo que foi notado como curioso foi o fato de, mesmo sendo possível disponibilizar um 
+	ator após sua criação para acesso remoto, a porta só pode ser especificada na chamada do método \english{alive}, que é
+	um método auxiliar de \code{scala.actors.remote.RemoteActor} e não aceita um ator como argumento, implicando que sua
+	chamada seja dentro da declaração do ator. O método \english{register} por sua vez pode vir a registrar um ator já
+	criado, porém a porta será escolhida aleatoriamente.
+	
+ 	
+\subsection{Atores remotos em Scala com AKKA}
+	\par O projeto AKKA é composto por um conjunto de módulos escritos em Scala, formando uma plataforma voltada para
+	o desenvolvimento de aplicações escaláveis e tolerante a falhas\cite{akka}. As principais características são: uma
+	nova biblioteca de atores locais e remotos, STM, hierarquia de supervisão e uma combinação entre atores e STM proporcionando
+ 	fluxos de mensagens baseadas em eventos transacionais, assíncronos e componíveis.
+
+	\par A biblioteca de atores criadas no projeto AKKA é totalmente independente da que é parte da distribuição de Scala
+	seguindo, entretando as idéias de Erlang. Existem diversas possibilidades para a criação de atores remotos, tais como:
+	o cliente criar o ator e torná-lo remoto, tornando a instância local um \english{proxy}; o servidor criar o ator e 
+	registrá-lo sob um nome para ser localizado pelos clientes remotos; a utilização de objetos ativos, um padrão de projeto
+	que desacopla a execução da invocação do método.
+	
+	\par No que diz respeito à serialização das mensagens, existem algumas opções como JSON, Protobuf, SBinary e serialização
+	Java padrão, além de configurações que permitem a sua compressão \cite{akka-remote-actors}. O transporte das mensagens é feito
+	via portas TCP com o auxílio do JBoss Netty como gerenciador. O uso de portas e \english{hosts} é utilizado para informar
+	em qual servidor deverá estar disponível o ator remoto. Fazendo um comparativo com Erlang, não se dá nomes aos nós,
+	e para se distribuir os atores em vários servidores remotos dentro de uma máquina virtual, utilizamos portas diferentes.
+	
+
 \newpage
-\section{Transações distribuídas em ambientes Web services}
+\section{AMQP para o Transporte de Mensagens entre Atores Remotos}
 \section{O projeto}
 % ----------------------------------------------------------------------
 \newpage
