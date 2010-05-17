@@ -211,12 +211,11 @@ TODO: Colocar a descricao dos capitulos no termino.
 	interessantes em sua estrutura para simplificar o desenvolvimento de sistemas com características concorrentes. 
 	Exemplos destes conceitos são: variáveis de atribuição única, átomos, casamento de padrões e as primitivas \english{spawn} 
 	para criação de processos, \english{send} e \english{!} para o envio de mensagens entre os atores, \english{receive} 
-	para o recebimento de mensagens e \english{link} para a definição de adjacências entre os atores.
+	para o recebimento de mensagens e \english{link} para a definição de adjacências.
 
 	\par A criação de atores por outros atores pode criar uma hierarquia de dependências, podendo 
 	implicar na necessidade de supervisão de modo que atores criadores definam adjacências e tornando-se 
-	supervisores, para serem avisados
-	de eventos nos atores filhos. Estas notificações podem eventualmente forçar  o
+	supervisores, para serem avisados de eventos nos atores filhos. Estas notificações podem eventualmente forçar  o
 	término do ator supervisor.
 	
 	\par A criação de atores remotos é muito semelhante a criação de 
@@ -276,7 +275,101 @@ TODO: Colocar a descricao dos capitulos no termino.
 	
 
 \newpage
-\section{AMQP para o Transporte de Mensagens entre Atores Remotos}
+\section{AMQP e o Tráfego de Mensagens entre Atores Remotos}
+
+	\par Diferentemente do protocolo AMQP e apesar de bem definido, o modelo de atores não é
+	especificado por nenhum orgão ou conjunto de empresas. Apresentaremos a seguir como funciona
+	o tráfego de mensagens entre clientes AMQP, bem como o tráfego de mensagens entre atores remotos. 
+	Para o último, devido à falta de padronização, tomaremos como base a implementação do projeto AKKA.
+	
+\subsection{AMQP}
+
+	\par AMQP é um protocolo aberto que foi criado por um conjunto de empresas (Red Hat, JPMorgan Chase, Cisco Systems, entre outras)
+	cujo objetivo era viabilizar tanto o desenvolvimento quanto a disseminação de um protocolo padrão para mensageria
+	que reduzisse o custo das empresas e de sistemas de integração, provendo a integração de serviços para um público maior.
+ 	É parte do foco também que, através do protocolo, capacidades providas por \english{middlewares} orientados
+	a mensagem possam estar pervasivamente disponíveis e nas redes das empresas, tornando possível o desenvolvimento de novas aplicações
+	\cite{amqp-spec}.%% to do - melhorar referencia?
+	
+	\par O modelo AMQP contempla a definição explícita da semântica do servidor, já que este é um fator chave para interoperabilidade.
+	A seguir a descrição dos principais componentes: 
+	\begin{itemize}
+		\item Servidor: O processo que aceita conexões de clientes e implementa as funções de filas de mensagens e 
+		roteamento, sendo conhecido também como \english{broker}. 
+		
+		\item Filas: São entidades internas do servidor que armazenam as mensagens, tanto em memória quanto em disco,
+		até que elas sejam enviadas em sequência para as aplicações consumidoras. As filas são entidades de armazendamento e
+		distribuição de mensagens sendo totalmente independentes umas das outras. Existem várias propriedades diferentes para
+		a criação de filas: públicas ou privadas, duráveis ou transientes, pemanentes ou temporárias. A combinação destas propriedades
+		viabilizam a criação de filas com as seguintes características: armazena-e-encaminha (\english{store-and-forward}), 
+		onde as mensagens são armazenadas e distribuídas entre os seus assinantes na forma \english{round-robin}; 
+		filas temporárias para resposta, onde as mensagens são armazenadas e encaminhadas para um único assinante; 
+		e filas \english{pub-sub}, onde as mensagens de	várias fontes diferentes são armazenadas e enviadas para um único assinante;
+		
+		\item \english{Exchanges}: São entidades internas do servidor que recebem e roteiam as mensagens das aplicações produtoras
+		para as filas de mensagens, levando em conta critérios pré-definidos (\english{bindings}). \english{Exchanges} inspecionam
+		as mensagens checando, na maioria dos casos pela chave de roteamento, e com o auxílio de uma tabela de \english{bindings}, 
+		decidem como encaminhar as mensagens às respectivas filas, jamais fazendo o armazenamento das mensagens;		
+		
+		\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas que definem o como
+		deverá ser feito o roteamento das mensagens;
+		
+		\item \english{Virtual hosts}: São coleções de \english{exchanges}, filas de mensagens e objetos associados. \english{Virtual hosts}
+		são domínios independentes do servidor que compartilham um ambiente comum para autenticação e segurança. As aplicações
+		clientes escolhem um \english{virtual host} após se autenticarem no servidor.		  		
+	\end{itemize}	
+	
+	\par A figura ~\ref{fig:amqp_overview} ilustra a disponibilidade dos componentes acima descritos. 
+	\vspace{1ex}
+	\begin{figure}[hbtp]
+	\centering
+	\includegraphics{imagens/amqp-overview.eps}
+	\caption{Visão geral do modelo AMQP.}
+	\label{fig:amqp_overview}
+	\end{figure}
+
+	\par Em modelos pré-AMQP, estas tarefas descritas são feitas por blocos monolíticos que implementam tipos específicos de
+	roteamento e armazenamento temporário. Como descrito, nota-se que este modelo faz uma separação das tarefas em basicamente dois
+	papéis: \entry{(i)} receber as mensagens e fazer o roteamento para as filas; \entry{(ii)} armazenar as mensagens e fazer o encaminhamento
+	para as aplicações consumidoras. Vale frisar também que filas, \english{exchanges} e \english{bindings} podem ser criados em tempo de
+	execução e programaticamente.
+	
+	\par A abordagem utilizada pelo modelo AMQP possui semelhanças com sistemas de \english{email}:	
+	\begin{enumerate}
+		\item Uma mensagem AMQP é análoga a uma mensagem de \english{email};
+		\item Uma fila é análoga a uma caixa de mensagens;
+		\item Um consumidor é como um cliente de \english{email} que carrega e apaga as mensagens;
+		\item Uma \english{exchange} é como um agente de transferência de \english{email} (MTA) que inspeciona as mensagens e, 
+			com base nas chaves de roteamento, que no caso de correio eletrônico são os campos de destinatário ou cópias (To:, Cc e Bcc),
+			verifica as tabelas de registro e decide como enviar as mensagens para uma ou mais caixas de correio;
+		\item Um \english{binding} corresponde a uma entrada nas tabelas de roteamento do MTA.
+	\end{enumerate}
+			
+	\par Uma vez que uma mensagem tenha sido criada por uma aplicação produtora, os dados adicionados e eventualmente algumas
+	propriedades tenham sido adicionadas, bem como uma rotulação com informação de roteamento, a mensagem é enviada para 
+	uma determinada \english{exchange} de um determinado \english{virtual host}.Uma vez que a mensagem tenha chegado no servidor
+	AMQP, acontece o roteamento para um conjunto de filas existentes. No caso de não ser possível rotear a mensagem, seja qual for
+	o motivo, algumas alternativas podem ser escolhidas, como rejeitar a mensagem, descartá-la silenciosamente, ou ainda fazer o
+	roteamento para uma \english{exchange} alterativa. A escolha depende do comportamento escolhido pelo produtor. Quando a mensagem
+	é depositada em alguma (ou possivelmente algumas) fila, esta tenta repassar a mensagem imediatamente para a aplicação consumidora e,
+	caso não seja possível, a mantém armazenada para uma tentativa futura. Uma vez que a mensagem tenha sido entregue com sucesso
+	a um assinante, a mesma é removida da fila. O envio e entrega de uma mensagem pode ser vista na figura ~\ref{fig:amqp-message-flow}.
+
+	\vspace{1ex}
+	\begin{figure}[hbtp]
+	\centering
+	\includegraphics{imagens/amqp-message-flow.eps}
+	\caption{Visão geral do fluxo de uma mensagem desde o produtor até o seu consumidor.}
+	\label{fig:amqp-message-flow}
+	\end{figure}
+
+	\par O processo de aceitação ou confirmação de recebimento fica a critério da aplicação consumidora, podendo acontecer
+	imediatamente, após a aplicação consumidora ter processado a mensagem e explicitamente confirmar sua aceitação, ou ainda
+	como parte de transações.
+	
+	
+	
+
 \section{O projeto}
 % ----------------------------------------------------------------------
 \newpage
