@@ -5,10 +5,11 @@
 \usepackage{fancyhdr}
 \usepackage{cite}
 \usepackage{url}
+\usepackage{listings}
 \usepackage{indentfirst}
 \usepackage{graphicx,url}
 \usepackage{epsfig}
-
+\usepackage{float}
 
 \setlength{\topmargin}{0.5in}
 \setlength{\oddsidemargin}{0in}%{0.3in}
@@ -16,6 +17,12 @@
 \setlength{\textwidth}{6.5in}
 \setlength{\textheight}{8in}
 \setlength{\parindent}{0.4in}
+
+\floatstyle{ruled}
+\newfloat{listing}{thp}{}[section]
+\floatname{listing}{Listagem}
+\newcounter{sublisting}
+\newcounter{sublisting@save}
 
 % Ajusta o cabeçalho e o rodapé.
 \pagestyle{fancy}
@@ -51,6 +58,7 @@
 
 \newcommand{\english}[1]
     {\textit{#1}}
+
 
 
 \begin{document}
@@ -214,14 +222,14 @@ TODO: Colocar a descricao dos capitulos no termino.
 	para o recebimento de mensagens e \english{link} para a definição de adjacências.
 
 	\par A criação de atores por outros atores pode criar uma hierarquia de dependências, podendo 
-	implicar na necessidade de supervisão de modo que atores criadores definam adjacências e tornando-se 
+	implicar na necessidade de supervisão de modo que atores criadores definam adjacências tornando-se 
 	supervisores, para serem avisados de eventos nos atores filhos. Estas notificações podem eventualmente forçar  o
 	término do ator supervisor.
 	
 	\par A criação de atores remotos é muito semelhante a criação de 
-	atores locais,sendo feita pela mesma função \english{spawn}, informando adicionalmente o nome do nó\footnote{As instâncias
+	atores locais, sendo feita pela mesma função \english{spawn}, informando adicionalmente o nome do nó\footnote{As instâncias
 	das máquinas virtuais Erlang podem receber opcionalmente nomes.} e do \english{host} que executará o ator. É possível
-	também que atores iniciados remotamente recebam mensagens através da função auxiliar \code{call} do módulo \code{rpc},
+	também que atores iniciados remotamente recebam mensagens através da função auxiliar \english{call} do módulo \english{rpc},
 	onde deve-se informar o nome do nó, o \english{host}, o nome do módulo, a função e opcionalmente argumentos. Veja que neste caso
 	temos um exemplo clássico de chamada remota de procedimento. Em Erlang o tráfego das mensagens é feito através de
 	portas TCP e UDP\cite{prog-erlang}.
@@ -248,7 +256,7 @@ TODO: Colocar a descricao dos capitulos no termino.
 	um ator, este pode se tornar acessível remotamente através do uso do método \english{alive}, indicando a porta em o
 	ator ficará disponível, e em seguida usar o método \english{register} para associar a instância a um símbolo\footnote{
 	Instância de scala.Symbol.}. Clientes remotos podem usar o método \english{select} para selecionar um ator pelo seu
-	símbolo em um determinado nó. Algo que foi notado como curioso foi o fato de, mesmo sendo possível disponibilizar um 
+	símbolo em um determinado nó. Algo que foi notado como curioso foi o fato de que, mesmo sendo possível disponibilizar um 
 	ator após sua criação para acesso remoto, a porta só pode ser especificada na chamada do método \english{alive}, que é
 	um método auxiliar de \code{scala.actors.remote.RemoteActor} e não aceita um ator como argumento, implicando que sua
 	chamada seja dentro da declaração do ator. O método \english{register} por sua vez pode vir a registrar um ator já
@@ -271,11 +279,11 @@ TODO: Colocar a descricao dos capitulos no termino.
 	Java padrão, além de configurações que permitem a sua compressão \cite{akka-remote-actors}. O transporte das mensagens é feito
 	via portas TCP com o auxílio do JBoss Netty como gerenciador. O uso de portas e \english{hosts} é utilizado para informar
 	em qual servidor deverá estar disponível o ator remoto. Fazendo um comparativo com Erlang, não se dá nomes aos nós,
-	e para se distribuir os atores em vários servidores remotos dentro de uma máquina virtual, utilizamos portas diferentes.
+	e para se distribuir os atores em vários servidores remotos dentro de uma máquina virtual, utiliza-se portas diferentes.
 	
 
 \newpage
-\section{AMQP e o Tráfego de Mensagens entre Atores Remotos}
+\section{AMQP e o Tráfego de mensagens entre Atores}
 
 	\par Diferentemente do protocolo AMQP e apesar de bem definido, o modelo de atores não é
 	especificado por nenhum orgão ou conjunto de empresas. Apresentaremos a seguir como funciona
@@ -288,17 +296,17 @@ TODO: Colocar a descricao dos capitulos no termino.
 	cujo objetivo era viabilizar tanto o desenvolvimento quanto a disseminação de um protocolo padrão para mensageria
 	que reduzisse o custo das empresas e de sistemas de integração, provendo a integração de serviços para um público maior.
  	É parte do foco também que, através do protocolo, capacidades providas por \english{middlewares} orientados
-	a mensagem possam estar pervasivamente disponíveis e nas redes das empresas, tornando possível o desenvolvimento de novas aplicações
+	a mensagem possam estar pervasivamente disponíveis nas redes das empresas, tornando possível o desenvolvimento de novas aplicações
 	\cite{amqp-spec}.%% to do - melhorar referencia?
 	
-	\par O modelo AMQP contempla a definição explícita da semântica do servidor, já que este é um fator chave para interoperabilidade.
-	A seguir a descrição dos principais componentes: 
+	\par O modelo AMQP contempla a definição explícita da semântica da aplicação servidora, já que este é um fator chave para interoperabilidade.
+	Os principais componentes são: 
 	\begin{itemize}
 		\item Servidor: O processo que aceita conexões de clientes e implementa as funções de filas de mensagens e 
 		roteamento, sendo conhecido também como \english{broker}. 
 		
 		\item Filas: São entidades internas do servidor que armazenam as mensagens, tanto em memória quanto em disco,
-		até que elas sejam enviadas em sequência para as aplicações consumidoras. As filas são entidades de armazendamento e
+		até que elas sejam enviadas em sequência para as aplicações consumidoras. As filas são entidades para armazenamento e
 		distribuição de mensagens sendo totalmente independentes umas das outras. Existem várias propriedades diferentes para
 		a criação de filas: públicas ou privadas, duráveis ou transientes, pemanentes ou temporárias. A combinação destas propriedades
 		viabilizam a criação de filas com as seguintes características: armazena-e-encaminha (\english{store-and-forward}), 
@@ -307,14 +315,14 @@ TODO: Colocar a descricao dos capitulos no termino.
 		e filas \english{pub-sub}, onde as mensagens de	várias fontes diferentes são armazenadas e enviadas para um único assinante;
 		
 		\item \english{Exchanges}: São entidades internas do servidor que recebem e roteiam as mensagens das aplicações produtoras
-		para as filas de mensagens, levando em conta critérios pré-definidos (\english{bindings}). \english{Exchanges} inspecionam
-		as mensagens checando, na maioria dos casos pela chave de roteamento, e com o auxílio de uma tabela de \english{bindings}, 
-		decidem como encaminhar as mensagens às respectivas filas, jamais fazendo o armazenamento das mensagens;		
+		para as filas, levando em conta critérios pré-definidos (\english{bindings}). \english{Exchanges} inspecionam
+		as mensagens checando, na maioria dos casos, a chave de roteamento e com o auxílio da tabela de \english{bindings}, 
+		decidem como encaminhar as mensagens às respectivas filas, jamais fazendo o seu armazenamento;
 		
 		\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas que definem o como
 		deverá ser feito o roteamento das mensagens;
 		
-		\item \english{Virtual hosts}: São coleções de \english{exchanges}, filas de mensagens e objetos associados. \english{Virtual hosts}
+		\item \english{Virtual hosts}: São coleções de \english{exchanges}, filas e objetos associados. \english{Virtual hosts}
 		são domínios independentes do servidor que compartilham um ambiente comum para autenticação e segurança. As aplicações
 		clientes escolhem um \english{virtual host} após se autenticarem no servidor.		  		
 	\end{itemize}	
@@ -340,17 +348,17 @@ TODO: Colocar a descricao dos capitulos no termino.
 		\item Uma fila é análoga a uma caixa de mensagens;
 		\item Um consumidor é como um cliente de \english{email} que carrega e apaga as mensagens;
 		\item Uma \english{exchange} é como um agente de transferência de \english{email} (MTA) que inspeciona as mensagens e, 
-			com base nas chaves de roteamento, que no caso de correio eletrônico são os campos de destinatário ou cópias (To:, Cc e Bcc),
+			com base nas chaves de roteamento, que no caso de correio eletrônico são os campos de destinatário ou cópias (To, Cc e Bcc),
 			verifica as tabelas de registro e decide como enviar as mensagens para uma ou mais caixas de correio;
 		\item Um \english{binding} corresponde a uma entrada nas tabelas de roteamento do MTA.
 	\end{enumerate}
 			
 	\par Uma vez que uma mensagem tenha sido criada por uma aplicação produtora, os dados adicionados e eventualmente algumas
 	propriedades tenham sido adicionadas, bem como uma rotulação com informação de roteamento, a mensagem é enviada para 
-	uma determinada \english{exchange} de um determinado \english{virtual host}.Uma vez que a mensagem tenha chegado no servidor
+	uma determinada \english{exchange} de um determinado \english{virtual host}. Uma vez que a mensagem tenha sido recebida no servidor
 	AMQP, acontece o roteamento para um conjunto de filas existentes. No caso de não ser possível rotear a mensagem, seja qual for
 	o motivo, algumas alternativas podem ser escolhidas, como rejeitar a mensagem, descartá-la silenciosamente, ou ainda fazer o
-	roteamento para uma \english{exchange} alterativa. A escolha depende do comportamento escolhido pelo produtor. Quando a mensagem
+	roteamento para uma \english{exchange} alterativa. A escolha depende do comportamento definido pelo produtor. Quando a mensagem
 	é depositada em alguma (ou possivelmente algumas) fila, esta tenta repassar a mensagem imediatamente para a aplicação consumidora e,
 	caso não seja possível, a mantém armazenada para uma tentativa futura. Uma vez que a mensagem tenha sido entregue com sucesso
 	a um assinante, a mesma é removida da fila. O envio e entrega de uma mensagem pode ser vista na figura ~\ref{fig:amqp-message-flow}.
@@ -367,8 +375,58 @@ TODO: Colocar a descricao dos capitulos no termino.
 	imediatamente, após a aplicação consumidora ter processado a mensagem e explicitamente confirmar sua aceitação, ou ainda
 	como parte de transações.
 	
-	
-	
+\subsection{Tráfego de mensagens entre Atores}
+	\par Como mencionado, apesar de o modelo de atores ser bem definido, não existe uma padronização para sua implementação. 
+	De acordo com o modelo, o processamento das mensagens deve ser desacomplado do envio. Mostraremos nas próximas duas seções,
+	com base na implementação feita no projeto AKKA, o fluxo de processamento de uma mensagem desde a criação do ator, tanto para
+	atores locais quanto remotos.
+
+\subsubsection{Atores locais}
+	\par A criação de atores locais pode acontecer tanto criando uma sub-classe de \english{Actor}
+	provendo uma implementação para o método \english{receive}, como mostrado na listagem ~\ref{lst:subclass-actor}, 
+	quanto se criando atores anônimos através do método \english{actor} da própria classe, como mostrado na listagem ~\ref{lst:anonym-actor}.
+
+	\begin{listing}
+		\scriptsize
+		\lstset{}
+			\begin{lstlisting}[numbers=left]
+				
+				class MyActor extends Actor {
+					def receive = {
+						case "test" => println("received test")
+						case 	  _ => println("received unknown message")
+					}
+				}
+			
+				val myActor = new MyActor
+				myActor.start
+				myActor ! "test"
+							
+			\end{lstlisting}
+		\caption{Definindo a classe MyActor}
+		\label{lst:subclass-actor}
+	\end{listing}
+
+	\begin{listing}
+		\scriptsize
+		\lstset{}
+			\begin{lstlisting}[numbers=left]
+				
+				import se.scalablesolutions.akka.actor.Actor._
+				
+				val myActor = actor {
+					case "test" => println("received test")
+					case	  _ => println("received unknown message")
+				}
+				
+				myActor ! "test"
+				
+			\end{lstlisting}
+		\caption{Definindo a classe MyActor}
+		\label{lst:anonym-actor}
+	\end{listing}
+
+
 
 \section{O projeto}
 % ----------------------------------------------------------------------
