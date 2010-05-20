@@ -384,48 +384,68 @@ TODO: Colocar a descricao dos capitulos no termino.
 \subsubsection{Atores locais}
 	\par A criação de atores locais pode acontecer tanto criando uma sub-classe de \english{Actor}
 	provendo uma implementação para o método \english{receive}, como mostrado na listagem ~\ref{lst:subclass-actor}, 
-	quanto se criando atores anônimos através do método \english{actor} da própria classe, como mostrado na listagem ~\ref{lst:anonym-actor}.
+	quanto se criando atores anônimos através do método \english{actor} da própria classe, como mostrado na listagem ~\ref{lst:anonym-actor}. 
 
-	\begin{listing}
-		\scriptsize
-		\lstset{}
-			\begin{lstlisting}[numbers=left]
-				
-				class MyActor extends Actor {
-					def receive = {
-						case "test" => println("received test")
-						case 	  _ => println("received unknown message")
-					}
-				}
+\begin{listing}
+\scriptsize
+\lstset{language=Java}
+\begin{lstlisting}[numbers=left]				
+class MyActor extends Actor {
+	def receive = {
+		case "test" => println("received test")
+		case 	  _ => println("received unknown message")
+	}
+}
 			
-				val myActor = new MyActor
-				myActor.start
-				myActor ! "test"
+val myActor = new MyActor
+myActor.start
+myActor ! "test"
 							
-			\end{lstlisting}
-		\caption{Definindo a classe MyActor}
-		\label{lst:subclass-actor}
-	\end{listing}
+\end{lstlisting}
+\caption{Criação e uso da classe MyActor}
+\label{lst:subclass-actor}
+\end{listing}
 
-	\begin{listing}
-		\scriptsize
-		\lstset{}
-			\begin{lstlisting}[numbers=left]
+\begin{listing}
+\scriptsize
+\lstset{language=Java}
+\begin{lstlisting}[numbers=left]
+import se.scalablesolutions.akka.actor.Actor._
 				
-				import se.scalablesolutions.akka.actor.Actor._
+val myActor = actor {
+	case "test" => println("received test")
+	case	  _ => println("received unknown message")
+}
 				
-				val myActor = actor {
-					case "test" => println("received test")
-					case	  _ => println("received unknown message")
-				}
-				
-				myActor ! "test"
-				
-			\end{lstlisting}
-		\caption{Definindo a classe MyActor}
-		\label{lst:anonym-actor}
-	\end{listing}
+myActor ! "test"
+\end{lstlisting}
+\caption{Criação e uso de ator anônimo}
+\label{lst:anonym-actor}
+\end{listing}
 
+	\par Uma vez que uma mensagem tenha sido enviada para um ator, esta é colocada sincronamente
+	na fila de mensagens do ator, levando tempo $O(1)$. As mensagens enfileiradas são despachadas
+	assincronamente para a função parcial definida no bloco \english{receive}, como mostrado na figura
+	~\ref{fig:local-actor-message}. Por padrão, atores são criados com
+	um despachador baseado em eventos, que nada mais é que uma \english{thread}, 
+	podendo usar outros específicos para melhores resultados em casos específicos\cite{akka-dispatchers}.
+
+	\vspace{1ex}
+	\begin{figure}[hbtp]
+	\centering
+	\includegraphics{imagens/local-actor-message.eps}
+	\caption{Envio e despacho de mensagens para atores locais.} 
+	\label{fig:local-actor-message}
+	\end{figure}
+
+\subsubsection{Atores remotos}
+	\par A criação de atores remotos é muito semelhante a de atores locais porém, com algumas diferenças importantes.
+	Primeiramente, atores remotos podem ser criados tanto no cliente e serem migrados para o servidor, tornando-se
+	\english{proxies} locais, quanto serem criados diretamente no servidor. Neste último caso, os clientes podem
+	requisitar referências remotas fazer a troca de mensagens. 
+	
+	\par Alguns componentes importantes são necessários como as classes \english{RemoteNode}
+	
 
 
 \section{O projeto}
