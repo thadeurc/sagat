@@ -158,15 +158,6 @@
 	enviando mensagens para atores conhecidos (incluindo o próprio) ou ainda alterando seu comportamento. Comportamento este que 
 	define como o ator responderá à  próxima mensagem recebida\cite{haller-master}.
 	
-	%Na linguagem Scala, um ator é uma 
-	%entidade como uma \english{thread} que possui uma caixa de correio para o recebimento	de mensagens. O modelo de atores 
-	%criados na Scala\cite{prog-scala} foi baseada no modelo de Erlang\cite{erlang-dev}. Neste modelo, para se enviar uma mensagem 
-	%\english{msg} para um ator \english{a}, usa-se a expressão \english{a ! msg}. O recebimento das mensagens é feito dentro de
-	% um bloco 
-	%\english{receive}, onde estão definidos os padrões a serem casados e as ações associadas. A primeira mensagem que casar com 
-	%qualquer dos padrões $padrao_i$, é removida da caixa de correio e a ação $acao_i$ correspondente é executada. 
-	%Caso não haja casamento de nenhum dos padrões, o ator é suspendido.
-
 	\par A linguagem Scala possui embutida na distribuição uma implementação de atores chamada de \english{Scala Actors}. Esta
 	implementação possui suporte tanto para atores locais, quanto para atores sendo executados em diferentes nós da rede. Existem 
 	ainda algumas implementações alternativas na linguagem do modelo de atores, como por exemplo o projeto AKKA\cite{akka},
@@ -211,7 +202,7 @@
 \label{sec:trabalhos-relacionados}
 	\par Esta seção apresenta os trabalhos relacionados que foram estudados e contribuíram para o desenvolvimento
 	do nosso trabalho. Dividiremos essa seção em três partes, sendo na primeira parte a apresentação da linguagem Erlang
-	e seu modelo de atores; na segunda e na terceira parte apresentaremos a linguagem Scala, e o projeto AKKA com suas 
+	e seu modelo de atores; na segunda e na terceira parte apresentaremos a linguagem Scala e o projeto AKKA, com suas 
 	respectivas implementações do modelo de atores.
 	
 \subsection{Atores em Erlang}
@@ -226,9 +217,9 @@
 
 	\par Em Erlang, atores são processos ultra leves criados dentro de sua máquina virtual. A criação, destruição e troca
 	de mensagens entre atores é extremamente rápida, e como não existe compartilhamento de memória entre eles, a única maneira
-	de haver alguma interação e via troca de mensagens. Um teste feito em um computador com $512MB$ de memória, com um processador
-	de $2.4GHz$  Intel Celeron rodando Ubuntu Linux, mostrou que a criação de $20000$ processos levou em média $3.5\mu s$ por ator de
-	tempo de CPU e $9.2\mu s$ por ator de tempo de relógio\cite{prog-erlang}.
+	de haver alguma interação é através da troca de mensagens. Um teste feito em um computador com $512MB$ de memória, com um
+	 processador de $2.4GHz$  Intel Celeron rodando Ubuntu Linux, mostrou que a criação de $20000$ processos levou em
+	 média $3.5\mu s$ por ator de tempo de CPU e $9.2\mu s$ por ator de tempo de relógio\cite{prog-erlang}.
 
 	\par Com a possibilidade de se criar uma quantidade de atores, o uso de uma hierarquia de supervisão torna-se extremamente
 	importante. Devido as primitivas existentes na linguagem, é possível a criação de $3$ idiomas para o tratamento de erros em
@@ -244,7 +235,7 @@
 	a troca de mensagens remotas acontece de maneira transparente. Neste proceso de envio, as mensagens são trafegadas
 	com o uso de \english{sockets} TCP e UDP.
 	
-\subsection{Actores em Scala}
+\subsection{Atores em Scala}
 	\par Scala é uma linguagem moderna, estaticamente tipada que unifica os paradigmas de programação funcional e 
 	orientado a objetos \cite{scala-overview}, tendo sido desenvolvida a partir de 2001 no laboratório de métodos de 
 	programação na EPFL(\english{Ecolé Polytechnique Fédérale de Lausanne}). O código escrito em Scala é compilado
@@ -253,12 +244,18 @@
 	em Java e nem em C\#. Exemplos destes conceitos são: funções de ordem superior, criação de tipos de dados algébricos
 	 (\english{case classes}), casamento de padrões e funções parciais.
 	
-	\par A implementação de atores em Scala foi inspirada na de Erlang, possuindo basicamente as mesmas funcionalidades descritas
-	na seção anterior. Em Scala, atores são subclasses de \english{scala.actors.Actor} e possuem métodos semelhantes as primitivas de Erlang, como 
-	\english{send}, \english{!}, \english{receive}, além de outros métodos como \english{act} e \english{react}. A implementação
-	dos atores é feita sobre \english{threads} Java, existindo recomendações para se atingir uma boa performance
-	através do uso de \english{react} no lugar de \english{receive} \cite{prog-scala},algo que proporciona o reuso
-	das \english{threads} criadas que e ficam inativas.
+	\par Na linguagem Scala a implementação do modelo de atores\cite{prog-scala} foi baseada no modelo de Erlang\cite{erlang-dev},
+	possuindo basicamente as mesmas funcionalidades descritas na seção anterior. Atores foram projetados como objetos baseados 
+	em \english{threads} Java e possuem como métodos as primitivas \english{send}, \english{!}, \english{receive}, 
+	além de outros métodos como \english{act} e \english{react}. Cada ator possui uma caixa de correio para o recebimento
+	e armazenamento temporário das mensagens. O processamento das mensagens é feito dentro de um bloco \english{receive}, 
+	onde estão definidos os padrões a serem casados e as ações associadas. A primeira mensagem que casar com qualquer dos 
+	padrões $padrao_i$, é removida da caixa de correio e a ação $acao_i$ correspondente é executada. Caso não haja casamento
+	de nenhum dos padrões, o ator é suspendido.
+
+	\par Existem algumas recomendações para se atingir uma boa performance
+	através do uso de \english{react} no lugar de \english{receive}, algo que proporciona o reuso
+	das \english{threads} criadas quando inativas\cite{prog-scala}.
 
 	\par Alguns tipos de envios de mensagens foram adicionados como parte dos métodos dos atores da linguagem para facilitar
 	o tratamento de algumas necessidades específicas, como: \entry{(i)} \english{!!} faz o envio assíncrono de da mensagem
@@ -266,14 +263,18 @@
 	\english{!?} faz envio assíncrono da mensagem ficando bloqueado dentro de um tempo limite, aguardando uma resposta.
 
 	\par O suporte a atores remotos faz parte da implementação, porém com algumas poucas restrições em relação à implementação
-	de Erlang. Não é possível a criação de um ator em um nó que não seja o local, ou seja, \english{remote spawns} não são possíveis.
+	de Erlang. Não é possível a criação de um ator em um nó que não seja o local, ou seja, \english{remote spawns} não são
+	 possíveis.
 	Atores são acessíveis remotamente de modo análogo ao que objetos remotos como EJBs são expostos no serviço de nomes JNDI. As
-	instâncias de atores podem ser localizadas por clientes remotos em nós(que neste contexto significam \english{hosts} e portas TCP)
-	recebendo \english{proxys} para interagir com os atores reais. Esta abordagem, apesar de soar restritiva, evita um problema importante
+	instâncias de atores podem ser localizadas por clientes remotos em nós(que neste contexto significam \english{hosts} e
+	 portas TCP)
+	recebendo \english{proxys} para interagir com os atores reais. Esta abordagem, apesar de soar restritiva, evita um problema
+	 importante
 	que é a necessidade de carregamento remoto da classe do ator (\english{remote class loading}) e torna não necessário o uso de
-	interfaces como as usadas em Java RMI. O trafégo das mensagens é feito via serialização padrão Java através de \english{sockets} TCP.
+	interfaces remotas como em Java RMI. O trafégo das mensagens é feito via serialização padrão Java através de \english{sockets}
+	 TCP.
  	
-\subsection{Atores Scala com AKKA}
+\subsection{Atores em Scala com AKKA}
 	\par O projeto AKKA é composto por um conjunto de módulos escritos em Scala, formando uma plataforma voltada para
 	o desenvolvimento de aplicações escaláveis e tolerante a falhas. As principais características são: uma
 	nova biblioteca de atores locais e remotos, STM, hierarquia de supervisão e uma combinação entre atores e STM proporcionando
@@ -350,9 +351,10 @@
 
 	\par Em modelos pré-AMQP, estas tarefas descritas são feitas por blocos monolíticos que implementam tipos específicos de
 	roteamento e armazenamento temporário. Podemos notar que este modelo faz uma separação das tarefas em basicamente dois
-	papéis: \entry{(i)} receber as mensagens e fazer o roteamento para as filas; \entry{(ii)} armazenar as mensagens e fazer o encaminhamento
-	para as aplicações consumidoras. Vale frisar também que filas, \english{exchanges} e \english{bindings} podem ser criados em tempo de
-	execução e programaticamente.
+	papéis: \entry{(i)} receber as mensagens e fazer o roteamento para as filas; \entry{(ii)} armazenar as mensagens e fazer o
+	 encaminhamento
+	para as aplicações consumidoras. Vale frisar também que filas, \english{exchanges} e \english{bindings} podem ser criados em
+	 tempo de execução e programaticamente.
 	
 	\par A abordagem utilizada pelo modelo AMQP possui semelhanças com sistemas de \english{email}:	
 	\begin{enumerate}
@@ -435,12 +437,13 @@ myActor ! "test"
 \label{lst:anonym-actor}
 \end{listing}
 
-	\par Uma vez que uma mensagem tenha sido enviada para um ator, esta é colocada sincronamente
-	na fila de mensagens do ator, levando tempo $O(1)$. As mensagens enfileiradas são despachadas
-	assincronamente para a função parcial definida no bloco \english{receive}, como mostrado na figura
-	~\ref{fig:local-actor-message}. Por padrão, atores são criados com
-	um despachador baseado em eventos, que nada mais é que uma \english{thread}, 
-	podendo usar outros específicos para melhores resultados em casos específicos\cite{akka-dispatchers}.
+	\par Uma vez que uma mensagem tenha sido enviada para um ator, independente do tipo de envio, 
+	ela é adicionada na transação corrente e em seguinda é colocada sincronamente na fila de mensagens do ator, 
+	levando tempo $O(1)$. 
+	As mensagens enfileiradas são então despachadas assincronamente para a função parcial definida no 
+	bloco \english{receive}, como mostrado na figura~\ref{fig:local-actor-message}. Por padrão, atores 
+	são criados com um despachador baseado em eventos, que nada mais é que uma \english{thread}, 
+	podendo usar outros tipo para melhores resultados em casos específicos\cite{akka-dispatchers}.
 
 	\vspace{1ex}
 	\begin{figure}[hbtp]
@@ -451,14 +454,14 @@ myActor ! "test"
 	\end{figure}
 
 \subsubsection{Atores remotos}
-	\par A criação de atores remotos é muito semelhante a de atores locais porém, com algumas diferenças importantes.
+	\par A criação de atores remotos é muito semelhante a de atores locais porém com algumas diferenças importantes.
 	Primeiramente, atores remotos podem ser criados tanto no cliente e serem migrados para o servidor, tornando-se
 	\english{proxies} locais, quanto serem criados diretamente no servidor. Neste último caso, os clientes podem
 	requisitar referências remotas fazer a troca de mensagens. 
 	
 	\par Alguns componentes importantes são necessários para que seja possível o suporte:
 	\begin{itemize}
-		\item \english{RemoteActor}: Sub-classe de ator que torna mais conveniente a criação de um ator remoto, 
+		\item \english{RemoteActor}: Sub-classe de \english{Actor} que torna conveniente a criação de um ator remoto, 
 		ao invés de se criar explicitamente um ator local e torná-lo remoto;
 		
 		\item \english{RemoteServer}: É um componente usado no lado do servidor que tem como responsabilidade
@@ -475,23 +478,25 @@ myActor ! "test"
 		\item \english{RemoteClient}: É um componente usado pelo cliente que tem como responsabilidade 
 		principal ser uma interface para acesso as referências dos atores remotos, conectando-se com os 
 		\english{RemoteServers} para fazer tanto envio de mensagens quanto a procura e migração de atores remotos.
-		Mantém também um registro dos identificadores dos atores locais que se tornaram remotos.
+		Mantém também um registro dos identificadores dos atores locais que se tornaram remotos. Uma outra responsabilidade
+		desde componente é fazer o envio de resultados futuros de envios de mensagens feitos através dos métodos \english{!!} e
+		\english{!!!}.
 		
-		%% TODO falar de ActorRef?
-		%% TODO nao eh suportado remote class loading. vale a pena falar que isso sera um problem para
-		%% atores remotos anonimos?
 	\end{itemize}
 		
-	\par A criação de atores remotos pelo cliente é análoga a de atores locais, salvo o fato de se informar
-	o \english{host} e porta do \english{RemoteServer} que o ator deverá ser migrado, e onde ocorrerá o processamento. 
+	\par A disposição dos componentes descritos é apresentado na figura ~\ref{fig:remote-actor-diagram}.
+	A criação de atores remotos pelo cliente é análoga a de atores locais, salvo o fato de se informar
+	o \english{host} e porta do \english{RemoteServer} para onde o ator deverá ser migrado para ser executado. 
 	A listagem ~\ref{lst:subclass-actor-remote} mostra a criação através de uma sub-classe de \english{RemoteActor}
-	e a listagem ~\ref{lst:anonym-actor-remote} através do uso de classes anônimas. Por outro lado,
-	a criação de atores remotos pelo servidor é exatamente igual a de atores locais, mostrado na listagens
-	~\ref{lst:subclass-actor} e ~\ref{lst:anonym-actor}. Uma vez que o ator tenha sido localmente criado,
+	e a listagem ~\ref{lst:anonym-actor-remote} através do uso de classes anônimas. A criação de atores anônimos remotos
+	possui uma limitação importante que é a falta de suporte a carregamento remoto de classes, o que implica no fato de atores
+	remotos anônimos obrigatoriamente serem executados na mesma máquina virtual.
+	
+	\par A criação de atores remotos pelo servidor, por sua vez, é exatamente igual a de atores locais, mostrado na listagens
+	~\ref{lst:subclass-actor} e ~\ref{lst:anonym-actor}. Uma vez que o ator tenha sido criado localmente,
 	basta registrá-lo em um \english{RemoteServer} ou \english{RemoteNode} como mostrado na listagem
 	~\ref{lst:registering-actor}. A maneira com a qual o cliente remoto busca pelo ator e envia uma mensagem
-	é mostrada na listagem ~\ref{lst:using-remote-actor}.A disposição dos componentes descritos é apresentado
-	na figura ~\ref{fig:remote-actor-diagram}.
+	é mostrada na listagem ~\ref{lst:using-remote-actor}.
 
 \begin{listing}
 \scriptsize
@@ -546,8 +551,8 @@ RemoteNode.register("my-actor", myActor)
 \scriptsize
 \lstset{language=Java}
 \begin{lstlisting}[numbers=left]
-	val actor = RemoteClient.actorFor("my-actor", "localhost", 10000)
-	actor ! "Hi"
+	val myActor = RemoteClient.actorFor("my-actor", "localhost", 10000)
+	myActor ! "Hi"
 \end{lstlisting}
 \caption{Cliente acessando o ator remoto myActor}
 \label{lst:using-remote-actor}
@@ -562,11 +567,18 @@ RemoteNode.register("my-actor", myActor)
 \end{figure}
 
 \par Uma vez que uma mensagem tenha sido enviada para um ator remoto, o \english{proxy} local a embrulha
-adicionando outras informações necessárias para o correto envio e, através da classe \english{RemoteClient}
-faz o envio para o \english{RemoteServer} relacionado. Este processo de envio, do ponto de vista do cliente,
-leva tempo $O(1)$, já que a serialização da mensagem é feita de modo assincrono. Uma vez que a mensagem é 
-recebida pelo \english{RemoteServer}, ela é despachada para a fila de mensagens do ator sendo consumida como
-se fosse um envio local. O fluxo de envio de uma mensagem para um ator remoto é mostrado na figura ~\ref{fig:remote-actor-message-flow}.
+adicionando outras informações necessárias para o envio correto, e através da classe \english{RemoteClient}
+faz o envio para o \english{RemoteServer} relacionado. Este processo de envio, do ponto de vista do cliente
+leva tempo $O(1)$, já que a serialização da mensagem é feita de modo assíncrono.
+
+\par Na figura~\ref{fig:remote-actor-message-flow} podemos ver o caminho que a mensagem faz saindo da aplicação cliente
+via \english{proxy} e sendo repassada para a classe \english{RemoteClient}, que por sua vez faz a serialização assíncrona
+da mensagem para o \english{RemoteServer} associado. Uma vez que a mensagem tenha sido recebida, o \english{Handler} faz a análise
+e com base nas informações previamente adicionadas, o ator destinatário é localizado no registro dos atores e a mensagem
+é encaminhada à sua caixa de mensagens como se fosse um envio local. O processamento segue como o de um recebimento
+local, como mostrado na figura~\ref{fig:local-actor-message}. Adicionalmente,  mensagens de resposta podem ser enviadas
+para o remetente da mensagem. Em casos como este a mensagem faz o caminho contrário, indo do \english{RemoteServer} para
+o \english{RemoteClient}, onde analogamente o \english{Handler} faz o repasse da resposta para quem a esteja aguardando.
 
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -574,26 +586,49 @@ se fosse um envio local. O fluxo de envio de uma mensagem para um ator remoto é 
 \includegraphics[scale=.9]{imagens/remote-actor-message-flow.eps}
 \caption{Fluxo de envio de mensagens para atores remotos.} 
 \label{fig:remote-actor-message-flow}
-\end{figure}
-
-
-\par A figura ~\ref{fig:remote-actor-diagram} mostra um relacionamento bidirecional entre as classes \english{RemoteClient}
-e \english{RemoteServer}. O motivo de se existir tal relacionamento, deve-se ao fato de que o servidor pode enviar 
-mensagens de resposta de volta ao cliente, como por exemplo, exceções ocorridas durante a entrega ou processamento
-da mensagem, ou ainda mensagens de resposta vindas do próprio ator ou objeto ativo, já que além do envio simples
-de mensagens onde usamos o operador \english{!}, ainda existem outros dois operadores, sendo \english{!!} para se aguardar
-uma eventual resposta (possivelmente com tempo limite) ou ainda \english{!!!}  para se aguardar aguardar assincronamente
-uma mensagem de resposta. 
-	
+\end{figure}	
 
 \section{O projeto}
 \label{sec:projeto}
+\par O objetivo do nosso projeto é substituir o mecanismo de transporte utilizado para o tráfego de mensagens entre
+atores remotos pelo projeto AKKA, baseado em \english{sockets}, para AMQP. O motivo pelo qual fizemos a opção pela
+implementação do projeto AKKA ao invés da padrão existente na distribuição de Scala, deve-se ao fato de, mesmo ainda
+em desenvolvimento, esta implementação se mostra mais ampla e mais robusta, sendo no nosso entendimento passível de 
+se tornar parte da distribuição da linguagem Scala no futuro.
+
+\subsection{Visão geral da implementação}
+\par A implementação da troca do mecanismo de transporte entre as mensagens se dará em duas partes:
+\begin{enumerate}
+	\item Substituição do JBoss Netty pela estrutura AMQP: Iremos retirar todos os componentes relacionados e
+	adicionaremos no seus lugares a estrutura necessária para o trafego das mensagens. Tentaremos presentes
+	as características que tiverem relevância, possivelmente os diversos formatos de mensagens e a compactação;
+	
+	\item Alinhamento do recebimento e envio de mensagens via AMQP nas transações existentes: Iremos adicionar
+	o envio e recebimento de mensagens transacional provido pela específicação AMQP como parte do controle 
+	transactional feito pelo AKKA através de STM.
+\end{enumerate}
+
+\par A implementação será feita utilizando como \english{broker} AMQP o projeto RabbitMQ\cite{rabbitmq}. A criação
+de componentes se dará da seguinte maneira:\entry{(i)} Uma \english{exchange} será criada para cada par 
+\english{RemoteServer/RemoteClient}; \entry{(ii)} Um par de filas será criado por \english{exchange} para 
+armazenar as mensagens \english{RemoteClient-RemoteServer} e uma para armazenar as mensagens 
+\english{RemoteServer-RemoteClient}. A figura~\ref{} apresenta uma visão geral do modelo a ser implementado.
+
+
 % ----------------------------------------------------------------------
 %\newpage
 \section{Próximas etapas}
 \label{sec:cronograma}
 \subsection{Atividades programadas}
+\par Apresentamos a seguir uma lista com as próximas atividades programadas:
+
+\begin{enumerate}
+	\item Desenvolvimento ;
+	\item 
+\end{enumerate}
+
 \subsection{Cronograma}
+\newpage
 \bibliographystyle{plain}
 \bibliography{referencias}
 \end{document}
