@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -42,7 +42,7 @@
      inkscape:window-width="1233"
      inkscape:window-height="758"
      inkscape:zoom="2"
-     inkscape:cx="332.35384"
+     inkscape:cx="382.7567"
      inkscape:cy="930.78586"
      inkscape:window-x="77"
      inkscape:window-y="1"
@@ -245,7 +245,7 @@
      id="rect1335"
      style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3.48976541;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      y="28.993063"
-     x="382.22061"
+     x="382.43216"
      ry="0"
      rx="0"
      height="189.17191"
@@ -280,13 +280,13 @@
      id="text8515"
      style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
      y="15.103197"
-     x="453.85089"><tspan
+     x="455.56055"><tspan
        style="font-family:Bitstream Vera Sans"
        id="tspan8517"
        y="15.103197"
-       x="453.85089">Broker AMQP</tspan><tspan
+       x="455.56055">Broker AMQP</tspan><tspan
        y="27.103197"
-       x="453.85089"
+       x="455.56055"
        id="tspan8519"
        sodipodi:role="line" /></text>
   <text
@@ -299,207 +299,187 @@
        id="tspan1344"
        x="420.66232"
        y="45.017715">Virtual Host</tspan></text>
-  <g
-     id="g4708"
-     transform="translate(41,4)">
-    <rect
-       inkscape:transform-center-y="-13.216768"
-       inkscape:transform-center-x="33.704507"
-       transform="matrix(0,-1,-1,0,0,0)"
-       width="36.151676"
-       height="66.532211"
-       rx="0"
-       ry="0"
-       x="-81.036308"
-       y="-247.33156"
-       style="fill:none;stroke:#000000;stroke-width:0.87680215;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       id="rect7095" />
-    <text
-       inkscape:transform-center-y="-38.932037"
-       inkscape:transform-center-x="33.267991"
-       x="214.47267"
-       y="41.718834"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="text7097"
-       xml:space="preserve"
-       sodipodi:linespacing="100%"><tspan
-         x="214.47267"
-         y="41.718834"
-         id="tspan7099"
-         style="font-family:Bitstream Vera Sans">Cliente</tspan><tspan
-         sodipodi:role="line"
-         id="tspan7101"
-         x="214.47267"
-         y="53.718834" /></text>
-    <rect
-       inkscape:transform-center-y="-10.97369"
-       inkscape:transform-center-x="33.989673"
-       transform="matrix(0,-1,-1,0,0,0)"
-       width="23.682732"
-       height="54.439426"
-       rx="0"
-       ry="0"
-       x="-77.044914"
-       y="-241"
-       style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       id="rect7920" />
-    <text
-       inkscape:transform-center-y="-10.915985"
-       inkscape:transform-center-x="33.979997"
-       sodipodi:linespacing="100%"
-       id="text7922"
-       y="63.144554"
-       x="214.0219"
-       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       xml:space="preserve"><tspan
-         style="font-size:9px"
-         y="63.144554"
-         x="214.0219"
-         id="tspan7924"
-         sodipodi:role="line">Aplicação</tspan><tspan
-         style="font-size:9px"
-         y="72.144554"
-         x="214.0219"
-         id="tspan7926"
-         sodipodi:role="line">Produtora</tspan></text>
-  </g>
-  <g
-     id="g4661"
-     transform="translate(32,0)">
-    <g
-       transform="translate(-32.526912,0)"
-       id="g4035">
-      <rect
-         id="rect3219"
-         width="47.72971"
-         height="25.102291"
-         x="431.33517"
-         y="58.523594"
-         style="opacity:0.98999999;fill:#ffffff;stroke:#000000;stroke-opacity:1" />
-      <text
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-         x="432.62802"
-         y="67.715988"
-         id="text3188"><tspan
-           sodipodi:role="line"
-           id="tspan3190"
-           x="432.62802"
-           y="67.715988"
-           style="font-size:9px">Exchange</tspan></text>
-    </g>
-    <g
-       transform="translate(-51.972348,-8.53732)"
-       id="g4054">
-      <rect
-         style="opacity:0.98999999;fill:#ffffff;stroke:#000000;stroke-opacity:1"
-         id="rect4044"
-         width="48.08326"
-         height="26.162951"
-         x="450.42703"
-         y="155.41451" />
-      <text
-         xml:space="preserve"
-         style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-         x="474.46866"
-         y="164.23607"
-         id="text4046"><tspan
-           sodipodi:role="line"
-           x="474.46866"
-           y="164.23607"
-           id="tspan4050"
-           style="text-align:center;text-anchor:middle">Fila</tspan></text>
-    </g>
-    <path
-       inkscape:connector-type="polyline"
-       id="path4061"
-       d="m 422.52545,83.625879 -0.3827,58.736301"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#marker1523)" />
-    <text
-       transform="matrix(0,1,-1,0,0,0)"
-       id="text4657"
-       y="-425.55688"
-       x="93.839478"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       xml:space="preserve"><tspan
-         style="font-size:9px"
-         y="-425.55688"
-         x="93.839478"
-         id="tspan4659"
-         sodipodi:role="line">Binding</tspan></text>
-  </g>
+  <rect
+     id="rect7095"
+     style="fill:none;stroke:#000000;stroke-width:0.87680215;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     y="-288.33154"
+     x="-85.036308"
+     ry="0"
+     rx="0"
+     height="66.532211"
+     width="36.151676"
+     transform="matrix(0,-1,-1,0,0,0)"
+     inkscape:transform-center-x="33.704507"
+     inkscape:transform-center-y="-13.216768" />
+  <text
+     sodipodi:linespacing="100%"
+     xml:space="preserve"
+     id="text7097"
+     style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     y="45.718834"
+     x="255.03613"
+     inkscape:transform-center-x="33.267991"
+     inkscape:transform-center-y="-38.932037"><tspan
+       style="font-family:Bitstream Vera Sans"
+       id="tspan7099"
+       y="45.718834"
+       x="255.03613">Cliente</tspan><tspan
+       y="57.718834"
+       x="255.03613"
+       id="tspan7101"
+       sodipodi:role="line" /></text>
+  <rect
+     id="rect7920"
+     style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     y="-282.28516"
+     x="-78.801834"
+     ry="0"
+     rx="0"
+     height="54.439426"
+     width="23.682732"
+     transform="matrix(0,-1,-1,0,0,0)"
+     inkscape:transform-center-x="33.989673"
+     inkscape:transform-center-y="-10.97369" />
+  <text
+     xml:space="preserve"
+     style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="255.27419"
+     y="65.892593"
+     id="text7922"
+     sodipodi:linespacing="100%"
+     inkscape:transform-center-x="33.979997"
+     inkscape:transform-center-y="-10.915985"><tspan
+       sodipodi:role="line"
+       id="tspan7924"
+       x="255.27419"
+       y="65.892593"
+       style="font-size:9px">Aplicação</tspan><tspan
+       sodipodi:role="line"
+       id="tspan7926"
+       x="255.27419"
+       y="74.892593"
+       style="font-size:9px">Produtora</tspan></text>
+  <rect
+     id="rect3219"
+     width="47.72971"
+     height="25.102291"
+     x="432.07779"
+     y="58.523594"
+     style="opacity:0.98999999;fill:#ffffff;stroke:#000000;stroke-opacity:1" />
+  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="433.74149"
+     y="73.557648"
+     id="text3188"><tspan
+       sodipodi:role="line"
+       id="tspan3190"
+       x="433.74149"
+       y="73.557648"
+       style="font-size:9px">Exchange</tspan></text>
+  <rect
+     style="opacity:0.98999999;fill:#ffffff;stroke:#000000;stroke-opacity:1"
+     id="rect4044"
+     width="48.08326"
+     height="26.162951"
+     x="431.901"
+     y="146.87718" />
+  <text
+     xml:space="preserve"
+     style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="455.92065"
+     y="163.31389"
+     id="text4046"><tspan
+       sodipodi:role="line"
+       x="455.92065"
+       y="163.31389"
+       id="tspan4050"
+       style="text-align:center;text-anchor:middle">Fila</tspan></text>
   <path
-     style="fill:none;stroke:#000000;stroke-width:0.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.00000001, 1;stroke-dashoffset:0;marker-end:url(#marker1531)"
-     d="m 290,67.362183 133,0"
+     style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:none"
+     d="m 456.30119,83.362177 -0.3827,62.999993"
+     id="path4061"
+     inkscape:connector-type="polyline" />
+  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="97.866409"
+     y="-458.82642"
+     id="text4657"
+     transform="matrix(0,1,-1,0,0,0)"><tspan
+       sodipodi:role="line"
+       id="tspan4659"
+       x="97.866409"
+       y="-458.82642"
+       style="font-size:9px">Binding</tspan></text>
+  <path
+     style="fill:none;stroke:#000000;stroke-width:0.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#marker1531)"
+     d="m 287.99999,67.362183 136.90112,0"
      id="path4753"
      inkscape:connector-type="polyline" />
-  <g
-     id="g4979"
-     transform="translate(6.9408178e-5,-1.9345344)">
-    <rect
-       id="rect4955"
-       style="fill:none;stroke:#000000;stroke-width:0.87680215;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       y="-288.33154"
-       x="-183.03632"
-       ry="0"
-       rx="0"
-       height="66.532211"
-       width="36.151676"
-       transform="matrix(0,-1,-1,0,0,0)"
-       inkscape:transform-center-x="33.704507"
-       inkscape:transform-center-y="-13.216768" />
-    <text
-       sodipodi:linespacing="100%"
-       xml:space="preserve"
-       id="text4957"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       y="143.71884"
-       x="255.47267"
-       inkscape:transform-center-x="33.267991"
-       inkscape:transform-center-y="-38.932037"><tspan
-         style="font-family:Bitstream Vera Sans"
-         id="tspan4959"
-         y="143.71884"
-         x="255.47267">Cliente</tspan><tspan
-         y="155.71884"
-         x="255.47267"
-         id="tspan4961"
-         sodipodi:role="line" /></text>
-    <rect
-       id="rect4963"
-       style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       y="-282"
-       x="-179.04492"
-       ry="0"
-       rx="0"
-       height="54.439426"
-       width="23.682732"
-       transform="matrix(0,-1,-1,0,0,0)"
-       inkscape:transform-center-x="33.989673"
-       inkscape:transform-center-y="-10.97369" />
-    <text
-       xml:space="preserve"
-       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="255.0219"
-       y="165.14456"
-       id="text4965"
-       sodipodi:linespacing="100%"
-       inkscape:transform-center-x="33.979997"
-       inkscape:transform-center-y="-10.915985"><tspan
-         sodipodi:role="line"
-         id="tspan4967"
-         x="255.0219"
-         y="165.14456"
-         style="font-size:8px">Aplicação</tspan><tspan
-         sodipodi:role="line"
-         id="tspan4969"
-         x="255.0219"
-         y="173.14456"
-         style="font-size:8px">Consumidora</tspan></text>
-  </g>
+  <rect
+     inkscape:transform-center-y="-13.216768"
+     inkscape:transform-center-x="33.704507"
+     transform="matrix(0,-1,-1,0,0,0)"
+     width="36.151676"
+     height="66.532211"
+     rx="0"
+     ry="0"
+     x="-181.10178"
+     y="-288.33154"
+     style="fill:none;stroke:#000000;stroke-width:0.87680215;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     id="rect4955" />
+  <text
+     inkscape:transform-center-y="-38.932037"
+     inkscape:transform-center-x="33.267991"
+     x="255.47269"
+     y="141.7843"
+     style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     id="text4957"
+     xml:space="preserve"
+     sodipodi:linespacing="100%"><tspan
+       x="255.47269"
+       y="141.7843"
+       id="tspan4959"
+       style="font-family:Bitstream Vera Sans">Cliente</tspan><tspan
+       sodipodi:role="line"
+       id="tspan4961"
+       x="255.47269"
+       y="153.7843" /></text>
+  <rect
+     inkscape:transform-center-y="-10.97369"
+     inkscape:transform-center-x="33.989673"
+     transform="matrix(0,-1,-1,0,0,0)"
+     width="23.682732"
+     height="54.439426"
+     rx="0"
+     ry="0"
+     x="-174.86731"
+     y="-282.28516"
+     style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     id="rect4963" />
+  <text
+     inkscape:transform-center-y="-10.915985"
+     inkscape:transform-center-x="33.979997"
+     sodipodi:linespacing="100%"
+     id="text4965"
+     y="162.07672"
+     x="255.21388"
+     style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     xml:space="preserve"><tspan
+       style="font-size:8px"
+       y="162.07672"
+       x="255.21388"
+       id="tspan4967"
+       sodipodi:role="line">Aplicação</tspan><tspan
+       style="font-size:8px"
+       y="170.07672"
+       x="255.21388"
+       id="tspan4969"
+       sodipodi:role="line">Consumidora</tspan></text>
   <path
-     style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.99999977, 0.99999995;stroke-dashoffset:0;marker-start:none;marker-end:url(#marker1531)"
-     d="m 430.79746,162.32695 -135.60458,0"
+     style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-start:none;marker-end:url(#marker1531)"
+     d="m 431.7976,162.32695 -135.60458,0"
      id="path4989"
      inkscape:connector-type="polyline" />
 </svg>
