@@ -178,9 +178,10 @@
 		\item A implementação do modelo de atores remotos com o uso de AMQP para o transporte das mensagens: tomaremos 
 		como base a implementação feita pelo projeto AKKA\footnote{O trabalho sera desenvolvido tendo como base a última 
 		versão estável disponível para \english{download} no site do projeto.} de atores remotos e substituiremos o mecanismo
-		existente para o transporte de mensagens, que atualmente é feito pelo JBoss Netty \cite{jboss-netty}. Utilizaremos o 
-		RabbitMQ\cite{rabbitmq}, uma implementação em Erlang da especificação AMQP, como o mecanismo para cuidar do transporte 
-		das mensagens.
+		existente para o transporte de mensagens, que atualmente é feito pelo JBoss Netty \cite{jboss-netty}. 
+		%Utilizaremos o 
+		%RabbitMQ\cite{rabbitmq}, uma implementação em Erlang da especificação AMQP, como o mecanismo para cuidar do transporte 
+		%das mensagens.
 		
 		\item A comparação das duas implementações: será feito um comparativo do resultado de ambas as implementações para 
 		avaliar a robustes e escalabilidade de cada uma, as vantagens proporcionadas em uma possível implantação num ambiente
@@ -573,7 +574,8 @@ leva tempo $O(1)$, já que a serialização da mensagem é feita de modo assíncrono.
 
 \par Na figura~\ref{fig:remote-actor-message-flow} podemos ver o caminho que a mensagem faz saindo da aplicação cliente
 via \english{proxy} e sendo repassada para a classe \english{RemoteClient}, que por sua vez faz a serialização assíncrona
-da mensagem para o \english{RemoteServer} associado. Uma vez que a mensagem tenha sido recebida, o \english{Handler} faz a análise
+da mensagem para o \english{RemoteServer} associado. Uma vez que a mensagem tenha sido recebida pelo \english{Handler} plugado ao Netty,
+ela é encaminhada para análise
 e com base nas informações previamente adicionadas, o ator destinatário é localizado no registro dos atores e a mensagem
 é encaminhada à sua caixa de mensagens como se fosse um envio local. O processamento segue como o de um recebimento
 local, como mostrado na figura~\ref{fig:local-actor-message}. Adicionalmente,  mensagens de resposta podem ser enviadas
@@ -591,29 +593,20 @@ o \english{RemoteClient}, onde analogamente o \english{Handler} faz o repasse da
 \section{O projeto}
 \label{sec:projeto}
 \par O objetivo do nosso projeto é substituir o mecanismo de transporte utilizado para o tráfego de mensagens entre
-atores remotos pelo projeto AKKA, baseado em \english{sockets}, para AMQP. O motivo pelo qual fizemos a opção pela
-implementação do projeto AKKA ao invés da padrão existente na distribuição de Scala, deve-se ao fato de, mesmo ainda
-em desenvolvimento, esta implementação se mostra mais ampla e mais robusta, sendo no nosso entendimento passível de 
-se tornar parte da distribuição da linguagem Scala no futuro.
+atores remotos pelo projeto AKKA baseado em \english{sockets}, por AMQP. Isso implica em todos os componentes
+associados ao JBoss Netty (\english{bootstraps}, \english{handlers} e compactadores) serem removidos.
 
-\subsection{Visão geral da implementação}
-\par A implementação da troca do mecanismo de transporte entre as mensagens se dará em duas partes:
-\begin{enumerate}
-	\item Substituição do JBoss Netty pela estrutura AMQP: Iremos retirar todos os componentes relacionados e
-	adicionaremos no seus lugares a estrutura necessária para o trafego das mensagens. Tentaremos presentes
-	as características que tiverem relevância, possivelmente os diversos formatos de mensagens e a compactação;
-	
-	\item Alinhamento do recebimento e envio de mensagens via AMQP nas transações existentes: Iremos adicionar
-	o envio e recebimento de mensagens transacional provido pela específicação AMQP como parte do controle 
-	transactional feito pelo AKKA através de STM.
-\end{enumerate}
+\par O motivo pelo qual fizemos a opção pela implementação do projeto AKKA ao invés da padrão existente na distribuição de Scala,
+deve-se ao fato de, mesmo ainda em desenvolvimento, esta implementação se mostra mais ampla e mais robusta, sendo no nosso entendimento passível de se tornar parte da distribuição da linguagem Scala no futuro.
 
-\par A implementação será feita utilizando como \english{broker} AMQP o projeto RabbitMQ\cite{rabbitmq}. A criação
-de componentes se dará da seguinte maneira:\entry{(i)} Uma \english{exchange} será criada para cada par 
-\english{RemoteServer/RemoteClient}; \entry{(ii)} Um par de filas será criado por \english{exchange} para 
-armazenar as mensagens \english{RemoteClient-RemoteServer} e uma para armazenar as mensagens 
-\english{RemoteServer-RemoteClient}. A figura~\ref{} apresenta uma visão geral do modelo a ser implementado.
+\par Sobre a escolha do \english{broker} AMQP, observamos como opções RabbitMQ\cite{rabbitmq}, Apache ActiveMQ\cite{activemq} e Apache Qpid\cite{qpid}. Um ponto importante em relação a se destacar é o fato de que, mesmo o protocolo e a semântica
+da aplicação servidora AMQP serem bem especificados, não existe nenhuma especificação sobre as APIs para as
+aplicações clientes, independe da linguagem de programação da aplicação cliente. Por este motivo existe uma grande possibilidade de
+termos que optar por um único \english{broker} para este trabalho.
 
+
+%\par Sobre a escolha do \english{broker} AMQP, observamos como opções RabbitMQ\cite{rabbitmq}, Apache ActiveMQ\cite{activemq} e %Apache Qpid\cite{qpid}. Optamos pelo RabbitMQ pelo fato de ser uma implementação completa da especificação além de ter o 
+%seu código fonte aberto.
 
 % ----------------------------------------------------------------------
 %\newpage
@@ -623,11 +616,39 @@ armazenar as mensagens \english{RemoteClient-RemoteServer} e uma para armazenar 
 \par Apresentamos a seguir uma lista com as próximas atividades programadas:
 
 \begin{enumerate}
-	\item Desenvolvimento ;
-	\item 
+  \item Análise das implementações dos \english{brokers} AMQP para definição do que será usado;
+  \item Desenvolvimento do código e estrutura necessária para o transporte das mensagens entre os atores remotos utilizando
+ 	AMQP;
+  \item Desenvolvimento de testes, refatoração e aprimoramento da implementação;
+  \item Elaboração e execução de testes de desempenho entre a implementação de atores remotos com JBoss Netty e AMQP;
+  \item Redação da dissertação;
+  \item Redação de artigo;
+  \item Defesa.
+
 \end{enumerate}
 
 \subsection{Cronograma}
+O cronograma para as próximas atividades segue abaixo:
+
+\newcommand{\x}{$\bullet$}
+\begin{center}
+
+\textbf{2010/201}
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+  & ago & set & out & nov & dez & jan & fev & mar & abr \\ \hline
+1 & \x  &     &     &     &     &     &     &     &     \\ \hline
+2 & \x  & \x  & \x  &     &     &     &     &     &     \\ \hline
+3 &     &     & \x  & \x  & \x  &     &     &     &     \\ \hline
+4 &     &     &     &     & \x  &     &     &     &     \\ \hline
+5 &     &     &     &     &     & \x  & \x  & \x  &     \\ \hline
+6 &     &     &     &     &     &     &     & \x  &     \\ \hline
+7 &     &     &     &     &     &     &     &     & \x  \\ \hline
+\end{tabular}
+
+\end{center}
+
 \newpage
 \bibliographystyle{plain}
 \bibliography{referencias}
