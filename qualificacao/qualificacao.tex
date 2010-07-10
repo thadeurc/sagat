@@ -90,17 +90,17 @@
 \pagenumbering{roman}
 \begin{abstract}
  	\par Modelar sistemas computacionais especificando tarefas que podem acontecer de maneira independente, 
-	em paralelo, e concorrentemente é algo extremamente comum, especialmente quando se busca performance. 
+	em paralelo, e concorrentemente é algo extremamente comum, especialmente quando se busca desempenho. 
 	O modelo de atores com troca de mensagens foi proposto como uma das possíveis soluções para os problemas 
-	oriundos da programação concorrente, como o uso de travas e blocos sincronizados para a proteção de dados 
+	oriundos da programação concorrente, as dificuldades de se usar travas e blocos sincronizados para a proteção de dados 
 	compartilhados. Atores são entidades baseadas em \english{threads} que possuem uma caixa de correio para o 
 	recebimento e armazenamento das mensagens enviadas por outros atores para processamento assíncrono.
 
 	\par Neste trabalho estudaremos o modelo de atores em um ambiente com instâncias distribuídas entre várias
-	máquinas virtuais Java. Faremos uma implementação em Scala tomando como base a abordagem proposta no projeto AKKA, 
-	substituindo o uso de \english{sockets} escolhido para o tráfego das mensagens, pelo padrão aberto voltado à
+	máquinas virtuais Java. Faremos uma implementação em Scala tomando como base a abordagem proposta no projeto Akka, 
+	substituindo o uso de \english{sockets} para o tráfego das mensagens, pelo padrão aberto de
 	\english{middleware} orientado a mensagens, \english{Advanced Message Queuing Protocol}, ou AMQP. 
-	Além disso, faremos um comparativo entre as duas abordagens.
+	Além disso, faremos também uma avaliação comparativa entre as duas abordagens.
  
 
 \end{abstract}
@@ -117,13 +117,13 @@
 % ----------------------------------------------------------------------
 \newpage
 \section{Introdução}
-	Performance e escalabilidade são necessidades fundamentais e quase sempre obrigatórias para qualquer sistema 
-	computacional. Bons ganhos de performance podem ser obtidos, por exemplo, encontrando soluções alternativas para 
+	Desempenho e escalabilidade são necessidades fundamentais e quase sempre obrigatórias para qualquer sistema 
+	computacional. Bons ganhos de desempenho podem ser obtidos, por exemplo, encontrando soluções alternativas para 
 	se obter o mesmo resultado com uma menor complexidade computacional, algo que nem sempre é possível ou viável do 
 	ponto de vista do desenvolvimento de algoritmos. Escalabilidade pode ser obtida através do uso de computadores com 
 	maior poder de processamento, algo que também nem sempre é viável por questões de custo. Uma alternativa para se alcançar 
-	tanto performance quanto escalabilidade, é o uso de vários computadores com processadores de menor capacidade de 
-	processamento, ou ainda o uso de processadores com múltiplos núcleos. Em ambos os casos estará implícito a necessidade 
+	tanto desempenho quanto escalabilidade, é o uso de vários computadores com processadores de menor capacidade de 
+	processamento, ou ainda o uso de processadores com múltiplos núcleos. Em ambos os casos estará implícita a necessidade 
 	e capacidade de execuções paralelas e concorrentes, de modo a existir uma interação significativa entre as tarefas e 
 	os processos executados\cite{dijkistra-65}.
 
@@ -136,12 +136,13 @@
 	Em linguagens orientadas a objetos como Java e C\#, cada instância possui implicitamente sua própria trava e 
 	travamentos podem acontecer em blocos sincronizados dentro de métodos. Esta abordagem contudo, não permite a componibilidade 
 	de travas de maneira segura, necessária quando se existe mais de uma instância envolvida na ação a ser executada de modo 
-	exclusivo, criando uma situação fatalmente propensa a \english{deadlocks}. Existem ainda outras dificuldades no uso de travas, 
-	como o esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias erradas, 
-	obtenção de travas em ordem errada, manter o sistema consistente na presença de erros, o esquecimento da sinalização 
-	em variáveis de condição ou de se testar novamente uma condição após o despertar de um estado de espera\cite{sj:bc}.
-	Estas dificuldades são exemplos da inviabilidade desta abordagem para uma programação modular, ou seja, criação de grandes programas através 
-	de vários programas menores.
+	exclusivo, criando uma situação propensa a \english{deadlocks}. Existem ainda outras dificuldades no uso de travas, 
+	como o esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias	 
+	erradas, obtenção de travas em ordem errada, manutenção da consistência do sistema na presença de erros, 
+	o esquecimento da sinalização em variáveis de condição ou de se testar novamente uma condição após o despertar
+	de um estado de espera\cite{sj:bc}.
+	Estas dificuldades são exemplos da inviabilidade desta abordagem para uma programação modular, ou seja, criação de 
+	grandes programas através de vários programas menores.
 	
 	\par Duas abordagens para os problemas citados são a memória transacional, uma abstração para compartilhamento 
 	seguro de uma mesma região de memória, e o uso do modelo de atores, baseado na troca de mensagens entre processos. 
@@ -152,7 +153,7 @@
 
 
 	\par Atores são basicamente processos concorrentes que se comunicam através da troca de mensagens de modo 	
-	assíncrono\cite{gul-agha}, possuíndo caixas de correio para o seu armazenamento e, quando combinado
+	assíncrono\cite{gul-agha}, possuindo caixas de correio para o seu armazenamento e, quando combinado
 	com o casamento de padrões mostraram resultados muito efetivos, como por exemplo em Erlang\cite{erlang-survey}. 
 	Atores podem responder mensagens assíncronas seja criando novos atores,
 	enviando mensagens para atores conhecidos (incluindo o próprio) ou ainda alterando seu comportamento. Comportamento este que 
@@ -160,42 +161,45 @@
 	
 	\par A linguagem Scala possui embutida na distribuição uma implementação de atores chamada de \english{Scala Actors}. Esta
 	implementação possui suporte tanto para atores locais, quanto para atores sendo executados em diferentes nós da rede. Existem 
-	ainda algumas implementações alternativas na linguagem do modelo de atores, como por exemplo o projeto AKKA\cite{akka},
+	ainda algumas implementações alternativas na linguagem do modelo de atores, como por exemplo o projeto Akka\cite{akka},
 	originado pelo descontinuado Scala OTP (cujo objetivo era de se portar as idéias de Erlang OTP\cite{prog-erlang} para a linguagem Scala).
-	% citar atores lift?
+
 
 	\par Como mencionado, uma das principais características do modelo de atores é a troca assíncrona de mensagens. 
 	\english{Middlewares} orientados a mensagens, conhecidos como MOMs possuem esta característica e são frequentemente apresentados
-	como uma tecnologia que com pode mudar a maneira com que sistemas distribuídos são construídos\cite{alonso}.	
-	AMQP\cite{amqp-spec} (\english{Advanced Message Queuing Protocol}) é um protocolo de \english{internet} aberto 
-	para mensageria corporativa. Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
-	para \english{middleware} orientado a mensagens, sendo ambos o protocolo de rede como a semântica dos serviços do
-	\english{broker} definidos por ele.
+	como uma tecnologia que pode mudar a maneira com que sistemas distribuídos são construídos. \cite{alonso}.	
+	TODO: Falar mais sobre as características desde tipo de sistema (pagina 59, 60 e 61 do alonso.)
+% a parte abaixo vai ser movida para outra section
+%	AMQP\cite{amqp-spec} (\english{Advanced Message Queuing Protocol}) é um protocolo de \english{internet} aberto 
+%	para mensageria corporativa. Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
+%	para \english{middleware} orientado a mensagens, sendo ambos o protocolo de rede como a semântica dos serviços do
+%	\english{broker} definidos por ele.
 	
 \subsection{Objetivos}
 	\par Os dois principais objetivos deste trabalho são:
 	\begin{enumerate}
 		\item A implementação do modelo de atores remotos com o uso de AMQP para o transporte das mensagens: tomaremos 
-		como base a implementação feita pelo projeto AKKA\footnote{O trabalho sera desenvolvido tendo como base a última 
+		como base a implementação feita pelo projeto Akka\footnote{O trabalho será desenvolvido tendo como base a última 
 		versão estável disponível para \english{download} no site do projeto.} de atores remotos e substituiremos o mecanismo
-		existente para o transporte de mensagens, que atualmente é feito pelo JBoss Netty \cite{jboss-netty}. 
+		existente para o transporte de mensagens, que atualmente é feito com o uso de \english{sockets}.
+		%pelo JBoss Netty \cite{jboss-netty}. 
 		%Utilizaremos o 
 		%RabbitMQ\cite{rabbitmq}, uma implementação em Erlang da especificação AMQP, como o mecanismo para cuidar do transporte 
 		%das mensagens.
 		
-		\item A comparação das duas implementações: será feito um comparativo do resultado de ambas as implementações para 
-		avaliar a robustes e escalabilidade de cada uma, as vantagens proporcionadas em uma possível implantação num ambiente
+		\item A comparação das duas implementações: será feito uma análise comparativa do resultado de ambas as implementações para 
+		avaliar a robustez e escalabilidade de cada uma, as vantagens proporcionadas em uma possível implantação num ambiente
 		real, como segurança e infra-estrutura além de uma análise da sobrecarga imposta pelo uso de AMQP em relação ao uso de
 		portas TCP com o intuito de observar a viabilidade do uso desta implementação.
 		
 	\end{enumerate}	
 	
 \subsection{Organização do texto}
-	\par O restante deste texto é organizado da seguinte forma: A seção~\ref{sec:trabalhos-relacionados} apresenta os trabalhos
-	relacionados, a seção~\ref{sec:amqp-e-atores-mensagens} apresenta uma visão geral sobre o funcionamento de um \english{broker}
-	 AMQP e como funciona a troca de mensagens e o processamento entre atores, sejam eles locais ou remotos, a seção~\ref{sec:projeto}
-	apresenta o projeto a ser desenvolvido, e por fim a seção~\ref{sec:cronograma} apresenta as atividades previstas e o cronograma
-	para a conclusão de tais atividades.
+	\par O restante deste texto é organizado da seguinte forma: A seção~\ref{sec:trabalhos-relacionados} apresenta trabalhos
+	relacionados, a seção~\ref{sec:amqp-e-atores-mensagens} apresenta uma visão geral sobre o funcionamento de um sistema
+	AMQP e o funcionamento da troca de mensagens entre atores e o fluxo de processamento, sejam eles locais ou remotos, a
+	seção~\ref{sec:projeto} apresenta o projeto a ser desenvolvido, e por fim a seção~\ref{sec:cronograma} apresenta as
+	atividades previstas e o cronograma para a conclusão de tais atividades.
 	
 % ----------------------------------------------------------------------------
 \newpage
@@ -203,15 +207,15 @@
 \label{sec:trabalhos-relacionados}
 	\par Esta seção apresenta os trabalhos relacionados que foram estudados e contribuíram para o desenvolvimento
 	do nosso trabalho. Dividiremos essa seção em três partes, sendo na primeira parte a apresentação da linguagem Erlang
-	e seu modelo de atores; na segunda e na terceira parte apresentaremos a linguagem Scala e o projeto AKKA, com suas 
+	e seu modelo de atores; na segunda e na terceira parte apresentaremos a linguagem Scala e o projeto Akka, com suas 
 	respectivas implementações do modelo de atores.
 	
 \subsection{Atores em Erlang}
-	\par Erlang\cite{erlang-dev} é uma linguagem funcional, dinamicamente tipada e interpretada 
-	voltada para o desenvolvimento de sistemas distribuídos de larga escala e tempo real, tendo sido desenvolvida 
-	nos laboratórios da Ericsson no período de 1985 à 1997. A linguagem em si, apesar de bem enxuta, possui conceitos 
-	interessantes em sua estrutura para simplificar o desenvolvimento de sistemas com características concorrentes. 
-	Exemplos destes conceitos são: variáveis de atribuição única, átomos, casamento de padrões e as primitivas \english{spawn} 
+	\par Erlang\cite{erlang-dev} é uma linguagem funcional, com tipagem dinâmica e executada pela uma máquina virtual Erlang. 
+	Voltada para o desenvolvimento de sistemas distribuídos de larga escala e tempo real, foi desenvolvida 
+	nos laboratórios da Ericsson no período de 1985 à 1997. A linguagem em si, embora bem enxuta, possui conceitos 
+	interessantes para simplificar o desenvolvimento de sistemas com características concorrentes. 
+	Exemplos destes conceitos são: variáveis de atribuição única,  casamento de padrões e as primitivas \english{spawn} 
 	para criação de atores, \english{send} e \english{!} para o envio de mensagens, \english{receive} 
 	para o recebimento de mensagens, \english{link} para a definição de adjacências, hierarquia de supervisão entre atores e
 	troca quente de código (\english{hotswap}).
@@ -222,25 +226,25 @@
 	 processador de $2.4GHz$  Intel Celeron rodando Ubuntu Linux, mostrou que a criação de $20000$ processos levou em
 	 média $3.5\mu s$ por ator de tempo de CPU e $9.2\mu s$ por ator de tempo de relógio\cite{prog-erlang}.
 
-	\par Com a possibilidade de se criar uma quantidade de atores, o uso de uma hierarquia de supervisão torna-se extremamente
-	importante. Devido as primitivas existentes na linguagem, é possível a criação de $3$ idiomas para o tratamento de erros em
+	\par Com a possibilidade de se criar uma quantidade considerável de atores, o uso de uma hierarquia de supervisão torna-se extremamente
+	importante. As primitivas existentes na linguagem dão suporte a  $3$ formas de tratamento de erros em
 	atores filhos: \entry{(i)} não se tem interesse em saber se um ator filho foi terminado não normalmente; \entry{(ii)} caso
-	um ator filho tenha sido terminado não normalemente, o ator criador também é terminado; \entry{(iii)} caso um ator filho
+	um ator filho tenha sido terminado não normalmente, o ator criador também é terminado; \entry{(iii)} caso um ator filho
 	tenha sido terminado não normalmente, o ator criador é notificado e pode fazer o controle do erro da maneira que for mais
 	apropriada. 
 
-	\par Em Erlang é possível que sejam criados atores em nós remotos (\english{spawn remote}). Um fator importante e a 
-	necessidade de o código esteja acessível na máquina virtual onde o ator irá ser executado, 
-	já que não é possível seu o carregamento remoto. Uma vez que alguns detalhes de infra-estrutura foram observados\footnote{As 
+	\par Em Erlang é possível criar atores em nós remotos (\english{spawn remote}). Um fator importante é a 
+	necessidade do código estar acessível na máquina virtual onde o ator irá ser executado, 
+	já que não há suporte para carga remota de código. Uma vez que alguns detalhes de infra-estrutura foram observados\footnote{As 
 	máquinas virtuais Erlang necessitam se autenticar umas com as outras.},
-	a troca de mensagens remotas acontece de maneira transparente. Neste proceso de envio, as mensagens são trafegadas
+	a troca de mensagens entre atores remotos acontece de maneira transparente. Neste processo de envio, as mensagens trafegam
 	com o uso de \english{sockets} TCP e UDP.
 	
 \subsection{Atores em Scala}
-	\par Scala é uma linguagem moderna, estaticamente tipada que unifica os paradigmas de programação funcional e 
+	\par Scala é uma linguagem moderna, com tipagem estática e que unifica os paradigmas de programação funcional e 
 	orientado a objetos \cite{scala-overview}, tendo sido desenvolvida a partir de 2001 no laboratório de métodos de 
-	programação na EPFL(\english{Ecolé Polytechnique Fédérale de Lausanne}). O código escrito em Scala é compilado
-	de modo a poder ser executado tanto na JVM (\english{Java Virtual Machine}) quanto na CLR (\english{Common Language Runtime}).
+	programação na EPFL(\english{Ecolé Polytechnique Fédérale de Lausanne}). O código escrito em Scala pode ser compilado
+	para execução tanto na JVM (\english{Java Virtual Machine}) quanto na CLR (\english{Common Language Runtime}).
 	Diferentemente da linguagem Erlang, é uma linguagem consideravelmente extensa, possuindo conceitos não implementados nem
 	em Java e nem em C\#. Exemplos destes conceitos são: funções de ordem superior, criação de tipos de dados algébricos
 	 (\english{case classes}), casamento de padrões e funções parciais.
@@ -251,10 +255,10 @@
 	além de outros métodos como \english{act} e \english{react}. Cada ator possui uma caixa de correio para o recebimento
 	e armazenamento temporário das mensagens. O processamento das mensagens é feito dentro de um bloco \english{receive}, 
 	onde estão definidos os padrões a serem casados e as ações associadas. A primeira mensagem que casar com qualquer dos 
-	padrões $padrao_i$, é removida da caixa de correio e a ação $acao_i$ correspondente é executada. Caso não haja casamento
-	de nenhum dos padrões, o ator é suspendido.
+	padrões, é removida da caixa de correio e a ação correspondente é executada. Caso não haja casamento
+	de nenhum dos padrões, o ator é suspenso.
 
-	\par Existem algumas recomendações para se atingir uma boa performance
+	\par Existem algumas recomendações para se atingir uma boa desempenho
 	através do uso de \english{react} no lugar de \english{receive}, algo que proporciona o reuso
 	das \english{threads} criadas quando inativas\cite{prog-scala}.
 
@@ -272,17 +276,17 @@
 	recebendo \english{proxys} para interagir com os atores reais. Esta abordagem, apesar de soar restritiva, evita um problema
 	 importante
 	que é a necessidade de carregamento remoto da classe do ator (\english{remote class loading}) e torna não necessário o uso de
-	interfaces remotas como em Java RMI. O trafégo das mensagens é feito via serialização padrão Java através de \english{sockets}
+	interfaces remotas como em Java RMI. O trafego das mensagens é feito via serialização padrão Java através de \english{sockets}
 	 TCP.
  	
-\subsection{Atores em Scala com AKKA}
-	\par O projeto AKKA é composto por um conjunto de módulos escritos em Scala, formando uma plataforma voltada para
+\subsection{Atores em Scala com Akka}
+	\par O projeto Akka é composto por um conjunto de módulos escritos em Scala, formando uma plataforma voltada para
 	o desenvolvimento de aplicações escaláveis e tolerante a falhas. As principais características são: uma
 	nova biblioteca de atores locais e remotos, STM, hierarquia de supervisão e uma combinação entre atores e STM proporcionando
  	fluxos de mensagens baseadas em eventos transacionais, assíncronos e componíveis\cite{akka}.
 
-	\par A biblioteca de atores criadas no projeto AKKA é totalmente independente da que é parte da distribuição de Scala
-	seguindo, entretando as idéias de Erlang. Existem diversas possibilidades para a criação de atores remotos, tais como:
+	\par A biblioteca de atores criadas no projeto Akka é totalmente independente da que é parte da distribuição de Scala
+	seguindo, entretanto as idéias de Erlang. Existem diversas possibilidades para a criação de atores remotos, tais como:
 	o cliente criar o ator e torná-lo remoto, tornando a instância local um \english{proxy}; o servidor criar o ator e 
 	registrá-lo sob um nome para ser localizado pelos clientes remotos; a utilização de objetos ativos, um padrão de projeto
 	que desacopla a execução da invocação do método. 
@@ -296,12 +300,12 @@
 	via \english{sockets} TCP com o auxílio do JBoss Netty como gerenciador.
 	
 \newpage
-\section{AMQP e o Tráfego de mensagens entre Atores}
+\section{Background}
 \label{sec:amqp-e-atores-mensagens}
 	\par Apresentaremos a seguir o funcionamento do tráfego de mensagens entre clientes AMQP, 
 	bem como o tráfego de mensagens entre atores locais e remotos. Diferentemente do protocolo AMQP e apesar de 
 	bem definido, o modelo de atores não é especificado por nenhum orgão ou conjunto de empresas, devido a este motivo
-	tomaremos como base a implementação do projeto AKKA, por ter mostrado ser uma implementação com melhor suporte
+	tomaremos como base a implementação do projeto Akka, por ter mostrado ser uma implementação com melhor suporte
 	a atores remotos dentre as estudadas.
 	
 \subsection{AMQP}
@@ -374,7 +378,7 @@
 	AMQP, acontece o roteamento para um conjunto de filas existentes. No caso de não ser possível rotear a mensagem, seja qual for
 	o motivo, algumas alternativas podem ser escolhidas, como rejeitar a mensagem, descartá-la silenciosamente, ou ainda fazer o
 	roteamento para uma \english{exchange} alterativa. A escolha depende do comportamento definido pelo produtor. Quando a mensagem
-	é depositada em alguma (ou possivelmente algumas) fila, esta tenta repassa-la imediatamente para a aplicação consumidora e,
+	é depositada em alguma (ou possivelmente algumas) fila, esta tenta repassá-la imediatamente para a aplicação consumidora e,
 	caso não seja possível, a mantém armazenada para uma tentativa futura. Uma vez que a mensagem tenha sido entregue com sucesso
 	a um assinante, a mesma é removida da fila. O envio e entrega de uma mensagem pode ser vista na figura ~\ref{fig:amqp-message-flow}.
 
@@ -388,12 +392,12 @@
 
 	\par O processo de aceitação ou confirmação de recebimento fica a critério da aplicação consumidora, podendo acontecer
 	imediatamente, após a aplicação consumidora ter processado a mensagem e explicitamente confirmar sua aceitação, ou ainda
-	como parte de um contexto transactional.
+	como parte de um contexto transacional.
 	
 \subsection{Tráfego de mensagens entre Atores}
 	\par Como mencionado, apesar de o modelo de atores ser bem definido, não existe uma padronização para sua implementação. 
-	De acordo com o modelo, o processamento das mensagens deve ser desacomplado do envio. Mostraremos nas próximas duas seções,
-	com base na implementação feita no projeto AKKA, o fluxo de processamento de uma mensagem desde a criação do ator, tanto para
+	De acordo com o modelo, o processamento das mensagens deve ser desacoplado do envio. Mostraremos nas próximas duas seções,
+	com base na implementação feita no projeto Akka, o fluxo de processamento de uma mensagem desde a criação do ator, tanto para
 	atores locais quanto remotos.
 
 \subsubsection{Atores locais}
@@ -593,10 +597,10 @@ o \english{RemoteClient}, onde analogamente o \english{Handler} faz o repasse da
 \section{O projeto}
 \label{sec:projeto}
 \par O objetivo do nosso projeto é substituir o mecanismo de transporte utilizado para o tráfego de mensagens entre
-atores remotos pelo projeto AKKA baseado em \english{sockets}, por AMQP. Isso implica em todos os componentes
+atores remotos pelo projeto Akka baseado em \english{sockets}, por AMQP. Isso implica em todos os componentes
 associados ao JBoss Netty (\english{bootstraps}, \english{handlers} e compactadores) serem removidos.
 
-\par O motivo pelo qual fizemos a opção pela implementação do projeto AKKA ao invés da padrão existente na distribuição de Scala,
+\par O motivo pelo qual fizemos a opção pela implementação do projeto Akka ao invés da padrão existente na distribuição de Scala,
 deve-se ao fato de, mesmo ainda em desenvolvimento, esta implementação se mostra mais ampla e mais robusta, sendo no nosso entendimento passível de se tornar parte da distribuição da linguagem Scala no futuro.
 
 \par Sobre a escolha do \english{broker} AMQP, observamos como opções RabbitMQ\cite{rabbitmq}, Apache ActiveMQ\cite{activemq} e Apache Qpid\cite{qpid}. Um ponto importante em relação a se destacar é o fato de que, mesmo o protocolo e a semântica
@@ -633,11 +637,11 @@ O cronograma para as próximas atividades segue abaixo:
 \newcommand{\x}{$\bullet$}
 \begin{center}
 
-\textbf{2010/201}
+\textbf{2010/2011}
 
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
-  & ago & set & out & nov & dez & jan & fev & mar & abr \\ \hline
+  & out & nov & dez & jan & fev & mar & abr & mai & jun \\ \hline
 1 & \x  &     &     &     &     &     &     &     &     \\ \hline
 2 & \x  & \x  & \x  &     &     &     &     &     &     \\ \hline
 3 &     &     & \x  & \x  & \x  &     &     &     &     \\ \hline

@@ -55,6 +55,7 @@ class AMQPBridge(conf: Config) extends Logging {
       log.info("Starting AMQP Bootstrap")
       log.info("Done!")
       _started = true
+      _
     }
   }
 
