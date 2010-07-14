@@ -91,7 +91,7 @@
 \begin{abstract}
  	\par Modelar sistemas computacionais especificando tarefas que podem acontecer de maneira independente, 
 	em paralelo, e concorrentemente é algo extremamente comum, especialmente quando se busca desempenho. 
-	O modelo de atores com troca de mensagens foi proposto como uma das possíveis soluções para os problemas 
+	O modelo de atores com troca de mensagens foi proposto como uma das possíveis soluções para problemas 
 	oriundos da programação concorrente, as dificuldades de se usar travas e blocos sincronizados para a proteção de dados 
 	compartilhados. Atores são entidades baseadas em \english{threads} que possuem uma caixa de correio para o 
 	recebimento e armazenamento das mensagens enviadas por outros atores para processamento assíncrono.
@@ -120,7 +120,7 @@
 	Desempenho e escalabilidade são necessidades fundamentais e quase sempre obrigatórias para qualquer sistema 
 	computacional. Bons ganhos de desempenho podem ser obtidos, por exemplo, encontrando soluções alternativas para 
 	se obter o mesmo resultado com uma menor complexidade computacional, algo que nem sempre é possível ou viável do 
-	ponto de vista do desenvolvimento de algoritmos. Escalabilidade pode ser obtida através do uso de computadores com 
+	ponto de vista do desenvolvimento de algoritmos. Escalabilidade pode ser obtida com o uso de computadores com 
 	maior poder de processamento, algo que também nem sempre é viável por questões de custo. Uma alternativa para se alcançar 
 	tanto desempenho quanto escalabilidade, é o uso de vários computadores com processadores de menor capacidade de 
 	processamento, ou ainda o uso de processadores com múltiplos núcleos. Em ambos os casos estará implícita a necessidade 
@@ -129,20 +129,20 @@
 
 	\par Ultimamente, problemas relacionados ao desenvolvimento de sistemas com características concorrentes, como 
 	\english{deadlocks} e exclusão mútua\cite{dijkistra-mutual-exclusion}, tem recebido enorme interesse por conta tanto 
-	da popularização de processadores com múltiplos núcleos, como da computação distribuída e de \english{web-services} serem 
+	da popularização de processadores com múltiplos núcleos, como do fato da computação distribuída e de \english{web-services} serem 
 	inerentemente concorrentes. 	
 
-	\par A abordagem convencional no desenvolvimento deste tipo de sistemas é através do uso de travas e variáveis condicionais. 
+	\par A abordagem convencional no desenvolvimento deste tipo de sistemas é pelo uso de travas e variáveis condicionais. 
 	Em linguagens orientadas a objetos como Java e C\#, cada instância possui implicitamente sua própria trava e 
 	travamentos podem acontecer em blocos sincronizados dentro de métodos. Esta abordagem contudo, não permite a componibilidade 
 	de travas de maneira segura, necessária quando se existe mais de uma instância envolvida na ação a ser executada de modo 
 	exclusivo, criando uma situação propensa a \english{deadlocks}. Existem ainda outras dificuldades no uso de travas, 
-	como o esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias	 
+	como esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias	 
 	erradas, obtenção de travas em ordem errada, manutenção da consistência do sistema na presença de erros, 
-	o esquecimento da sinalização em variáveis de condição ou de se testar novamente uma condição após o despertar
+	esquecimento de sinalização em variáveis de condição ou de se testar novamente uma condição após o despertar
 	de um estado de espera\cite{sj:bc}.
 	Estas dificuldades são exemplos da inviabilidade desta abordagem para uma programação modular, ou seja, criação de 
-	grandes programas através de vários programas menores.
+	grandes programas por vários programas menores.
 	
 	\par Duas abordagens para os problemas citados são a memória transacional, uma abstração para compartilhamento 
 	seguro de uma mesma região de memória, e o uso do modelo de atores, baseado na troca de mensagens entre processos. 
@@ -152,28 +152,27 @@
 	a transação é um pedaço de código que executa uma série de operações atômicas de leitura e escrita na memória compartilhada. 
 
 
-	\par Atores são basicamente processos concorrentes que se comunicam através da troca de mensagens de modo 	
+	\par Atores são basicamente processos concorrentes que se comunicam por  troca de mensagens de modo 	
 	assíncrono\cite{gul-agha}, possuindo caixas de correio para o seu armazenamento e, quando combinado
 	com o casamento de padrões mostraram resultados muito efetivos, como por exemplo em Erlang\cite{erlang-survey}. 
 	Atores podem responder mensagens assíncronas seja criando novos atores,
 	enviando mensagens para atores conhecidos (incluindo o próprio) ou ainda alterando seu comportamento. Comportamento este que 
 	define como o ator responderá à  próxima mensagem recebida\cite{haller-master}.
 	
-	\par A linguagem Scala possui embutida na distribuição uma implementação de atores chamada de \english{Scala Actors}. Esta
-	implementação possui suporte tanto para atores locais, quanto para atores sendo executados em diferentes nós da rede. Existem 
+	\par A linguagem Scala possui embutida em sua distribuição uma implementação de atores chamada de \english{Scala Actors}. Esta
+	implementação possui suporte tanto para atores locais, quanto para atores remotos. Existem 
 	ainda algumas implementações alternativas na linguagem do modelo de atores, como por exemplo o projeto Akka\cite{akka},
 	originado pelo descontinuado Scala OTP (cujo objetivo era de se portar as idéias de Erlang OTP\cite{prog-erlang} para a linguagem Scala).
 
 
 	\par Como mencionado, uma das principais características do modelo de atores é a troca assíncrona de mensagens. 
-	\english{Middlewares} orientados a mensagens, conhecidos como MOMs possuem esta característica e são frequentemente apresentados
-	como uma tecnologia que pode mudar a maneira com que sistemas distribuídos são construídos. \cite{alonso}.	
-	TODO: Falar mais sobre as características desde tipo de sistema (pagina 59, 60 e 61 do alonso.)
-% a parte abaixo vai ser movida para outra section
-%	AMQP\cite{amqp-spec} (\english{Advanced Message Queuing Protocol}) é um protocolo de \english{internet} aberto 
-%	para mensageria corporativa. Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
-%	para \english{middleware} orientado a mensagens, sendo ambos o protocolo de rede como a semântica dos serviços do
-%	\english{broker} definidos por ele.
+	\english{Middlewares} orientados a mensagens, conhecidos como MOMs possuem esta característica --
+	as mensagens enviadas são armazenadas em filas, sendo mantidas até que o destinatário esteja pronto para fazer o
+	recebimento e processamento futuro -- e são frequentemente apresentados
+	como uma tecnologia que pode mudar a maneira com que sistemas distribuídos são construídos\cite{alonso}. 
+	% Em sistemas baseados em trocas de mensagens, a interoperabilidade deve-se justamente ao paradigma de interação. 
+
+	
 	
 \subsection{Objetivos}
 	\par Os dois principais objetivos deste trabalho são:
@@ -222,18 +221,18 @@
 
 	\par Em Erlang, atores são processos ultra leves criados dentro de sua máquina virtual. A criação, destruição e troca
 	de mensagens entre atores é extremamente rápida, e como não existe compartilhamento de memória entre eles, a única maneira
-	de haver alguma interação é através da troca de mensagens. Um teste feito em um computador com $512MB$ de memória, com um
+	de haver alguma interação é pela troca de mensagens. Um teste feito em um computador com $512MB$ de memória, com um
 	 processador de $2.4GHz$  Intel Celeron rodando Ubuntu Linux, mostrou que a criação de $20000$ processos levou em
 	 média $3.5\mu s$ por ator de tempo de CPU e $9.2\mu s$ por ator de tempo de relógio\cite{prog-erlang}.
 
 	\par Com a possibilidade de se criar uma quantidade considerável de atores, o uso de uma hierarquia de supervisão torna-se extremamente
 	importante. As primitivas existentes na linguagem dão suporte a  $3$ formas de tratamento de erros em
-	atores filhos: \entry{(i)} não se tem interesse em saber se um ator filho foi terminado não normalmente; \entry{(ii)} caso
-	um ator filho tenha sido terminado não normalmente, o ator criador também é terminado; \entry{(iii)} caso um ator filho
-	tenha sido terminado não normalmente, o ator criador é notificado e pode fazer o controle do erro da maneira que for mais
+	atores filhos: \entry{(i)} não se tem interesse em saber se um ator filho não foi terminado normalmente; \entry{(ii)} caso
+	um ator filho não tenha terminado normalmente, o ator criador também é terminado; \entry{(iii)} caso um ator filho
+	não tenha terminado normalmente, o ator criador é notificado e pode fazer o controle de erros da maneira que julgar mais
 	apropriada. 
 
-	\par Em Erlang é possível criar atores em nós remotos (\english{spawn remote}). Um fator importante é a 
+	\par Em Erlang é possível criar atores em nós remotos (\english{remote spawn}). Um fator importante é a 
 	necessidade do código estar acessível na máquina virtual onde o ator irá ser executado, 
 	já que não há suporte para carga remota de código. Uma vez que alguns detalhes de infra-estrutura foram observados\footnote{As 
 	máquinas virtuais Erlang necessitam se autenticar umas com as outras.},
@@ -258,25 +257,26 @@
 	padrões, é removida da caixa de correio e a ação correspondente é executada. Caso não haja casamento
 	de nenhum dos padrões, o ator é suspenso.
 
-	\par Existem algumas recomendações para se atingir uma boa desempenho
-	através do uso de \english{react} no lugar de \english{receive}, algo que proporciona o reuso
+	\par Existem algumas recomendações para se atingir um bom desempenho
+	fazendo uso de \english{react} no lugar de \english{receive}, algo que proporciona o reuso
 	das \english{threads} criadas quando inativas\cite{prog-scala}.
 
 	\par Alguns tipos de envios de mensagens foram adicionados como parte dos métodos dos atores da linguagem para facilitar
-	o tratamento de algumas necessidades específicas, como: \entry{(i)} \english{!!} faz o envio assíncrono de da mensagem
-	e possui um resultado futuro a ser processado. Neste caso uma função parcial cuida de tal processamento; \entry{(ii)}
+	o tratamento de algumas necessidades específicas, como: \entry{(i)} \english{!!} faz o envio assíncrono da mensagem
+	e recebe um resultado futuro indicando um valor de retorno. Neste caso uma função parcial fica aguardando assincronamente
+	o resultado real para fazer processamento; \entry{(ii)}
 	\english{!?} faz envio assíncrono da mensagem ficando bloqueado dentro de um tempo limite, aguardando uma resposta.
 
-	\par O suporte a atores remotos faz parte da implementação, porém com algumas poucas restrições em relação à implementação
-	de Erlang. Não é possível a criação de um ator em um nó que não seja o local, ou seja, \english{remote spawns} não são
-	 possíveis.
+	\par O suporte a atores remotos faz parte da implementação, porém com algumas restrições em relação à implementação
+	de Erlang, pois não é possível a criação de um ator em um nó que não seja o local, ou seja, \english{remote spawns} não são
+	possíveis.
 	Atores são acessíveis remotamente de modo análogo ao que objetos remotos como EJBs são expostos no serviço de nomes JNDI. As
 	instâncias de atores podem ser localizadas por clientes remotos em nós(que neste contexto significam \english{hosts} e
 	 portas TCP)
 	recebendo \english{proxys} para interagir com os atores reais. Esta abordagem, apesar de soar restritiva, evita um problema
 	 importante
-	que é a necessidade de carregamento remoto da classe do ator (\english{remote class loading}) e torna não necessário o uso de
-	interfaces remotas como em Java RMI. O trafego das mensagens é feito via serialização padrão Java através de \english{sockets}
+	que é a necessidade de carregamento remoto da classe do ator (\english{remote class loading}) e torna desnecessário o uso de
+	interfaces remotas como em Java RMI. O trafégo das mensagens é feito via seriação padrão Java através de \english{sockets}
 	 TCP.
  	
 \subsection{Atores em Scala com Akka}
@@ -285,17 +285,18 @@
 	nova biblioteca de atores locais e remotos, STM, hierarquia de supervisão e uma combinação entre atores e STM proporcionando
  	fluxos de mensagens baseadas em eventos transacionais, assíncronos e componíveis\cite{akka}.
 
-	\par A biblioteca de atores criadas no projeto Akka é totalmente independente da que é parte da distribuição de Scala
-	seguindo, entretanto as idéias de Erlang. Existem diversas possibilidades para a criação de atores remotos, tais como:
+	\par A biblioteca de atores criadas no projeto Akka é totalmente independente da que é parte da distribuição de Scala,
+	apesar de também seguir as idéias de Erlang. Existem diversas possibilidades para a criação de atores remotos, tais como:
 	o cliente criar o ator e torná-lo remoto, tornando a instância local um \english{proxy}; o servidor criar o ator e 
-	registrá-lo sob um nome para ser localizado pelos clientes remotos; a utilização de objetos ativos, um padrão de projeto
-	que desacopla a execução da invocação do método. 
+	registrá-lo sob um nome para ser localizado pelos clientes remotos.
 
 	Assim como na implementação padrão de Scala, outros métodos para diferentes tipos de envio de mensagens também fazem parte
-	desta implementação: \entry{(i)} \english{!!} faz o envio assíncrono e aguarda uma eventual resposta 
-	(possivelmente com tempo limite); \entry{(ii)} \english{!!!}  para se aguardar aguardar assincronamente uma mensagem de resposta.
+	desta implementação: \entry{(i)} \english{!!} semelhante ao método \english{!?} da biblioteca de atores de Scala, onde quem
+	fez o envio da mensagem fica bloqueado aguardando uma resposta durante um tempo limite;
+	\entry{(ii)} \english{!!!}  análogo ao método \english{!!} da biblioteca de atores de Scala, porém não o controle da 
+	resposta, que na outra biblioteca é feito por uma função parcial informada na chamada, fica a critério de quem fez o envio.
 	
-	\par No que diz respeito à serialização das mensagens, existem algumas opções como JSON, Protobuf, SBinary e serialização
+	\par No que diz respeito à seriação das mensagens, existem algumas opções como JSON, Protobuf, SBinary e seriação
 	Java padrão, além de configurações que permitem a sua compressão \cite{akka-remote-actors}. O transporte das mensagens é feito
 	via \english{sockets} TCP com o auxílio do JBoss Netty como gerenciador.
 	
@@ -309,16 +310,19 @@
 	a atores remotos dentre as estudadas.
 	
 \subsection{AMQP}
-
-	\par AMQP é um protocolo aberto que foi criado por um conjunto de empresas (Red Hat, JPMorgan Chase, Cisco Systems, entre outras)
-	cujo objetivo era viabilizar tanto o desenvolvimento quanto a disseminação de um protocolo padrão para mensageria
-	que reduzisse o custo das empresas e de sistemas de integração, provendo a integração de serviços para um público maior.
- 	É parte do foco também que, através do protocolo, capacidades providas por \english{middlewares} orientados
-	a mensagem possam estar pervasivamente disponíveis nas redes das empresas, tornando possível o desenvolvimento de novas aplicações
-	\cite{amqp-spec}.
+	\par AMQP\cite{amqp-spec} (\english{Advanced Message Queuing Protocol}) é um protocolo de \english{internet} aberto 
+	para sistemas de troca de mensagem corporativa. Criado por um conjunto de empresas (Red Hat, JPMorgan Chase, 
+	Cisco Systems, entre outras),
+	com o objetivo de viabilizar tanto o desenvolvimento quanto a disseminação de um protocolo padrão para este tipo de sistema,
+	e que reduzisse o custo das empresas e de sistemas de integração.
+	Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
+	para \english{middleware} orientado a mensagens, sendo ambos o protocolo de rede como a semântica dos serviços do
+	da aplicação servidora definidos por ele. Também é parte do foco  que, capacidades providas por \english{middlewares}
+	 orientados a mensagem possam estar pervasivamente disponíveis nas redes das empresas, tornando possível o desenvolvimento de novas
+	 aplicações\cite{amqp-spec}.
 	
 	\par O modelo AMQP contempla a definição explícita da semântica da aplicação servidora, já que este é um fator chave para interoperabilidade.
-	Os principais componentes são: 
+	Os componentes principais são: 
 	\begin{itemize}
 		\item Servidor: O processo que aceita conexões de clientes e implementa as funções de filas de mensagens e 
 		roteamento, sendo conhecido também como \english{broker}. 
@@ -334,7 +338,7 @@
 		
 		\item \english{Exchanges}: São entidades internas do servidor que recebem e roteiam as mensagens das aplicações produtoras
 		para as filas, levando em conta critérios pré-definidos (\english{bindings}). \english{Exchanges} inspecionam
-		as mensagens checando, na maioria dos casos, a chave de roteamento e com o auxílio da tabela de \english{bindings}, 
+		as mensagens verificando, na maioria dos casos, a chave de roteamento e com o auxílio da tabela de \english{bindings}, 
 		decidem como encaminhar as mensagens às respectivas filas, jamais fazendo o seu armazenamento;
 		
 		\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas que definem o como
@@ -377,9 +381,9 @@
 	uma determinada \english{exchange} de um determinado \english{virtual host}. Uma vez que a mensagem tenha sido recebida no servidor
 	AMQP, acontece o roteamento para um conjunto de filas existentes. No caso de não ser possível rotear a mensagem, seja qual for
 	o motivo, algumas alternativas podem ser escolhidas, como rejeitar a mensagem, descartá-la silenciosamente, ou ainda fazer o
-	roteamento para uma \english{exchange} alterativa. A escolha depende do comportamento definido pelo produtor. Quando a mensagem
+	roteamento para uma \english{exchange} alternativa. A escolha depende do comportamento definido pelo produtor. Quando a mensagem
 	é depositada em alguma (ou possivelmente algumas) fila, esta tenta repassá-la imediatamente para a aplicação consumidora e,
-	caso não seja possível, a mantém armazenada para uma tentativa futura. Uma vez que a mensagem tenha sido entregue com sucesso
+	caso não seja possível, a mantém armazenada para uma tentativa futura. Uma vez que a mensagem foi entregue com sucesso
 	a um assinante, a mesma é removida da fila. O envio e entrega de uma mensagem pode ser vista na figura ~\ref{fig:amqp-message-flow}.
 
 	\vspace{1ex}
@@ -396,14 +400,14 @@
 	
 \subsection{Tráfego de mensagens entre Atores}
 	\par Como mencionado, apesar de o modelo de atores ser bem definido, não existe uma padronização para sua implementação. 
-	De acordo com o modelo, o processamento das mensagens deve ser desacoplado do envio. Mostraremos nas próximas duas seções,
-	com base na implementação feita no projeto Akka, o fluxo de processamento de uma mensagem desde a criação do ator, tanto para
-	atores locais quanto remotos.
+	De acordo com o modelo, o processamento das mensagens deve ser desacoplado do envio. Mostraremos nas próximas duas sub-seções,
+	com base na implementação feita no projeto Akka, o fluxo de envio, tráfego e processamento de uma mensagem desde
+	a criação do ator, para atores locais quanto remotos.
 
 \subsubsection{Atores locais}
 	\par A criação de atores locais pode acontecer tanto criando uma sub-classe de \english{Actor}
 	provendo uma implementação para o método \english{receive}, como mostrado na listagem ~\ref{lst:subclass-actor}, 
-	quanto se criando atores anônimos através do método \english{actor} da própria classe, como mostrado na listagem
+	quanto se criando atores anônimos com o método \english{actor} da própria classe, como mostrado na listagem
 	 ~\ref{lst:anonym-actor}. Note que no segundo exemplo não é necessário inicializar o ator explicitamente.
 
 \begin{listing}
@@ -442,13 +446,14 @@ myActor ! "test"
 \label{lst:anonym-actor}
 \end{listing}
 
-	\par Uma vez que uma mensagem tenha sido enviada para um ator, independente do tipo de envio, 
+	\par Uma vez que uma mensagem foi enviada para um ator, independente do tipo de envio, 
 	ela é adicionada na transação corrente e em seguinda é colocada sincronamente na fila de mensagens do ator, 
 	levando tempo $O(1)$. 
 	As mensagens enfileiradas são então despachadas assincronamente para a função parcial definida no 
 	bloco \english{receive}, como mostrado na figura~\ref{fig:local-actor-message}. Por padrão, atores 
-	são criados com um despachador baseado em eventos, que nada mais é que uma \english{thread}, 
-	podendo usar outros tipo para melhores resultados em casos específicos\cite{akka-dispatchers}.
+	são criados com um despachador baseado em eventos, que nada mais é que uma \english{thread}. É possível a
+	definição e utilização de outros tipos de dispachadores para se obter melhores resultados em casos
+	específicos\cite{akka-dispatchers}.
 
 	\vspace{1ex}
 	\begin{figure}[hbtp]
@@ -470,7 +475,7 @@ myActor ! "test"
 		ao invés de se criar explicitamente um ator local e torná-lo remoto;
 		
 		\item \english{RemoteServer}: É um componente usado no lado do servidor que tem como responsabilidade
-		manter registrados os atores e objetos ativos designados, bem como encaminhar as mensagens recebidas de
+		manter registrados os atores, bem como encaminhar as mensagens recebidas de
 		clientes remotos para eles. Fica associado a um \english{host} e uma porta TCP. Um mesmo nó pode conter
 		diferentes \english{RemoteServers};
 				
@@ -484,7 +489,7 @@ myActor ! "test"
 		principal ser uma interface para acesso as referências dos atores remotos, conectando-se com os 
 		\english{RemoteServers} para fazer tanto envio de mensagens quanto a procura e migração de atores remotos.
 		Mantém também um registro dos identificadores dos atores locais que se tornaram remotos. Uma outra responsabilidade
-		desde componente é fazer o envio de resultados futuros de envios de mensagens feitos através dos métodos \english{!!} e
+		desde componente é fazer o envio de resultados futuros de envios de mensagens feitos com os métodos \english{!!} e
 		\english{!!!}.
 		
 	\end{itemize}
@@ -574,10 +579,10 @@ RemoteNode.register("my-actor", myActor)
 \par Uma vez que uma mensagem tenha sido enviada para um ator remoto, o \english{proxy} local a embrulha
 adicionando outras informações necessárias para o envio correto, e através da classe \english{RemoteClient}
 faz o envio para o \english{RemoteServer} relacionado. Este processo de envio, do ponto de vista do cliente
-leva tempo $O(1)$, já que a serialização da mensagem é feita de modo assíncrono.
+leva tempo $O(1)$, já que a seriação da mensagem é feita de modo assíncrono.
 
 \par Na figura~\ref{fig:remote-actor-message-flow} podemos ver o caminho que a mensagem faz saindo da aplicação cliente
-via \english{proxy} e sendo repassada para a classe \english{RemoteClient}, que por sua vez faz a serialização assíncrona
+via \english{proxy} e sendo repassada para a classe \english{RemoteClient}, que por sua vez faz a seriação assíncrona
 da mensagem para o \english{RemoteServer} associado. Uma vez que a mensagem tenha sido recebida pelo \english{Handler} plugado ao Netty,
 ela é encaminhada para análise
 e com base nas informações previamente adicionadas, o ator destinatário é localizado no registro dos atores e a mensagem
