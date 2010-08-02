@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,9 +41,9 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1233"
      inkscape:window-height="758"
-     inkscape:zoom="0.5"
-     inkscape:cx="217.21771"
-     inkscape:cy="758.43986"
+     inkscape:zoom="1"
+     inkscape:cx="250.4655"
+     inkscape:cy="866.26184"
      inkscape:window-x="61"
      inkscape:window-y="0"
      inkscape:current-layer="svg2"
@@ -500,19 +500,24 @@
      style="fill:#cccccc;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
   <text
      id="text4322"
-     y="222.87097"
-     x="360.75586"
+     y="216.62097"
+     x="360.97559"
      style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
      xml:space="preserve"><tspan
        style="font-size:10px;text-align:center;text-anchor:middle"
-       y="222.87097"
-       x="360.75586"
+       y="216.62097"
+       x="362.56738"
        sodipodi:role="line"
-       id="tspan4372">Mapa de Atores</tspan><tspan
+       id="tspan4372">Mapa de </tspan><tspan
+       id="tspan3336"
+       style="font-size:10px;text-align:center;text-anchor:middle"
+       y="229.12097"
+       x="360.97559"
+       sodipodi:role="line">Atores</tspan><tspan
        id="tspan4634"
        style="font-size:10px;text-align:center;text-anchor:middle"
-       y="235.37097"
-       x="360.75586"
+       y="241.62097"
+       x="360.97559"
        sodipodi:role="line">supervisores</tspan></text>
   <g
      id="g8794">
@@ -1226,4 +1231,36 @@
          id="tspan8850"
          sodipodi:role="line">Thread 2</tspan></text>
   </g>
+  <rect
+     style="fill:#cccccc;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     id="rect3322"
+     width="86"
+     height="64"
+     x="416"
+     y="194.36218" />
+  <text
+     xml:space="preserve"
+     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="458.79248"
+     y="217.59021"
+     id="text3324"><tspan
+       id="tspan3326"
+       sodipodi:role="line"
+       x="460.38428"
+       y="217.59021"
+       style="font-size:10px;text-align:center;text-anchor:middle">Mapa de </tspan><tspan
+       sodipodi:role="line"
+       x="458.79248"
+       y="230.09021"
+       style="font-size:10px;text-align:center;text-anchor:middle"
+       id="tspan3334">resultados</tspan><tspan
+       sodipodi:role="line"
+       x="458.79248"
+       y="242.59021"
+       style="font-size:10px;text-align:center;text-anchor:middle"
+       id="tspan3328">futuros</tspan></text>
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 361.5,178.86218 95,0 0,15"
+     id="path3345" />
 </svg>

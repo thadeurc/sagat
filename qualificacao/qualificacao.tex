@@ -286,15 +286,18 @@
  	fluxos de mensagens baseadas em eventos transacionais, assíncronos e componíveis\cite{akka}.
 
 	\par A biblioteca de atores criadas no projeto Akka é totalmente independente da que é parte da distribuição de Scala,
-	apesar de também seguir as idéias de Erlang. Existem diversas possibilidades para a criação de atores remotos, tais como:
+	apesar de também seguir as idéias de Erlang. O comportamento dos atores Akka no recebimento de mensagens desconhecidas
+	é diferente dos atores de Erlang e Scala, onde o ator é suspenso. Nesta implementação, mensagens que não estão definidas
+	provocam o lancamento de exceções em tempo de execução.
+	
+	\par Existem diversas possibilidades para a criação de atores remotos, tais como:
 	o cliente criar o ator e torná-lo remoto, tornando a instância local um \english{proxy}; o servidor criar o ator e 
 	registrá-lo sob um nome para ser localizado pelos clientes remotos.
-
 	Assim como na implementação padrão de Scala, outros métodos para diferentes tipos de envio de mensagens também fazem parte
 	desta implementação: \entry{(i)} \english{!!} semelhante ao método \english{!?} da biblioteca de atores de Scala, onde quem
 	fez o envio da mensagem fica bloqueado aguardando uma resposta durante um tempo limite;
-	\entry{(ii)} \english{!!!}  análogo ao método \english{!!} da biblioteca de atores de Scala, porém não o controle da 
-	resposta, que na outra biblioteca é feito por uma função parcial informada na chamada, fica a critério de quem fez o envio.
+	\entry{(ii)} \english{!!!}  análogo ao método \english{!!} da biblioteca de atores de Scala, porém o controle da 
+	resposta fica a critério de quem fez o envio, e não de uma função parcial informada na chamada do método.
 	
 	\par No que diz respeito à seriação das mensagens, existem algumas opções como JSON, Protobuf, SBinary e seriação
 	Java padrão, além de configurações que permitem a sua compressão \cite{akka-remote-actors}. O transporte das mensagens é feito
@@ -589,7 +592,7 @@ e com base nas informações previamente adicionadas, o ator destinatário é locali
 é encaminhada à sua caixa de mensagens como se fosse um envio local. O processamento segue como o de um recebimento
 local, como mostrado na figura~\ref{fig:local-actor-message}. Adicionalmente,  mensagens de resposta podem ser enviadas
 para o remetente da mensagem. Em casos como este a mensagem faz o caminho contrário, indo do \english{RemoteServer} para
-o \english{RemoteClient}, onde analogamente o \english{Handler} faz o repasse da resposta para quem a esteja aguardando.
+o \english{RemoteClient}, onde analogamente o \english{Handler} faz o repasse da resposta para quem estiver aguardando-a.
 
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -610,8 +613,8 @@ deve-se ao fato de, mesmo ainda em desenvolvimento, esta implementação se mostra
 
 \par Sobre a escolha do \english{broker} AMQP, observamos como opções RabbitMQ\cite{rabbitmq}, Apache ActiveMQ\cite{activemq} e Apache Qpid\cite{qpid}. Um ponto importante em relação a se destacar é o fato de que, mesmo o protocolo e a semântica
 da aplicação servidora AMQP serem bem especificados, não existe nenhuma especificação sobre as APIs para as
-aplicações clientes, independe da linguagem de programação da aplicação cliente. Por este motivo existe uma grande possibilidade de
-termos que optar por um único \english{broker} para este trabalho.
+aplicações clientes, independe da linguagem de programação da aplicação cliente. Das três opções observadas, as duas últimas
+fazem suas implementações tomando como base a especificação de \english{Java Message Service}. Por este motivo existe uma grande possibilidade de termos que optar por uma abordagem que não cubra todas as opções.
 
 
 %\par Sobre a escolha do \english{broker} AMQP, observamos como opções RabbitMQ\cite{rabbitmq}, Apache ActiveMQ\cite{activemq} e %Apache Qpid\cite{qpid}. Optamos pelo RabbitMQ pelo fato de ser uma implementação completa da especificação além de ter o 
