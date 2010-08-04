@@ -416,7 +416,9 @@
 \begin{listing}
 \scriptsize
 \lstset{language=Java}
-\begin{lstlisting}[numbers=left]				
+\begin{lstlisting}[numbers=left]
+import se.scalablesolutions.akka.actor.Actor._
+				
 class MyActor extends Actor {
 	def receive = {
 		case "test" => println("received test")
@@ -424,8 +426,7 @@ class MyActor extends Actor {
 	}
 }
 			
-val myActor = new MyActor
-myActor.start
+val myActor = actorOf[MyActor].start
 myActor ! "test"
 \end{lstlisting}
 \caption{Criação e uso da classe MyActor}
@@ -499,11 +500,12 @@ myActor ! "test"
 		
 	\par A disposição dos componentes descritos é apresentado na figura ~\ref{fig:remote-actor-diagram}.
 	A criação de atores remotos pelo cliente é análoga a de atores locais, salvo o fato de se informar
-	o \english{host} e porta do \english{RemoteServer} para onde o ator deverá ser migrado para ser executado. 
-	A listagem ~\ref{lst:subclass-actor-remote} mostra a criação através de uma sub-classe de \english{RemoteActor}
-	e a listagem ~\ref{lst:anonym-actor-remote} através do uso de classes anônimas. A criação de atores anônimos remotos
-	possui uma limitação importante que é a falta de suporte a carregamento remoto de classes, o que implica no fato de atores
-	remotos anônimos obrigatoriamente serem executados na mesma máquina virtual.
+	o \english{host} e porta do \english{RemoteServer}, já em execução, para onde o ator deverá ser migrado para ser executado. 
+	A listagem ~\ref{lst:subclass-actor-remote} mostra a criação através de uma sub-classe de \english{RemoteActor}. Um
+	ator local quando ainda não foi iniciado com uma chamada ao método \english{start}, pode se tornar remoto com uma chamada
+	ao método \english{makeRemote(host, port)}, como mostrado na listagem ~\ref{lst:make-remote-of-local-actor}.
+ 	A criação de atores através de classes anônimas possui uma limitação importante que é a falta de suporte a carregamento
+ 	remoto de classes, o que implica no fato de atores remotos anônimos obrigatoriamente serem executados na mesma máquina virtual.
 	
 	\par A criação de atores remotos pelo servidor, por sua vez, é exatamente igual a de atores locais, mostrado na listagens
 	~\ref{lst:subclass-actor} e ~\ref{lst:anonym-actor}. Uma vez que o ator tenha sido criado localmente,
@@ -515,16 +517,18 @@ myActor ! "test"
 \scriptsize
 \lstset{language=Java}
 \begin{lstlisting}[numbers=left]
+import se.scalablesolutions.akka.actor._
 import se.scalablesolutions.akka.actor.Actor._
-				
-class MyRemoteActor extends RemoteActor("localhost",10000) {
+import se.scalablesolutions.akka.remote._
+
+class MyRemoteActor extends RemoteActor("localhost",15092) {
 	def receive = {
 		case   "Hi" => println("hello")
 		case 	  _ => println("received unknown message")
 	}
 }
 
-val myRemoteActor = new MyRemoteActor
+val myRemoteActor = actorOf[MyRemoteActor].start
 myRemoteActor ! "Hi"
 \end{lstlisting}
 \caption{Criação e uso da classe MyRemoteActor}
@@ -536,23 +540,29 @@ myRemoteActor ! "Hi"
 \lstset{language=Java}
 \begin{lstlisting}[numbers=left]
 import se.scalablesolutions.akka.actor.Actor._
-
-val myActor = remoteActor("localhost",10000) {
-	case   "Hi" => println("hello")
-	case 	  _ => println("received unknown message")
+				
+class MyActor extends Actor {
+	def receive = {
+		case "test" => println("received test")
+		case 	  _ => println("received unknown message")
+	}
 }
-
-myActor ! "Hi"
+			
+val myActor = actorOf[MyActor]
+myActor.makeRemote("localhost", 15092)
+myActor.start
+myActor ! "test"
 \end{lstlisting}
-\caption{Criação e uso de ator remoto anônimo}
-\label{lst:anonym-actor-remote}
+\caption{Uso de makeRemote em atores locais}
+\label{lst:make-remote-of-local-actor}
 \end{listing}
+
 
 \begin{listing}
 \scriptsize
 \lstset{language=Java}
 \begin{lstlisting}[numbers=left]
-RemoteNode.start("localhost", 10000)
+RemoteNode.start("localhost", 15092)
 RemoteNode.register("my-actor", myActor)
 \end{lstlisting}
 \caption{Registro de um ator local em um nó}
@@ -564,7 +574,7 @@ RemoteNode.register("my-actor", myActor)
 \scriptsize
 \lstset{language=Java}
 \begin{lstlisting}[numbers=left]
-	val myActor = RemoteClient.actorFor("my-actor", "localhost", 10000)
+	val myActor = RemoteClient.actorFor("my-actor", "localhost", 15092)
 	myActor ! "Hi"
 \end{lstlisting}
 \caption{Cliente acessando o ator remoto myActor}
