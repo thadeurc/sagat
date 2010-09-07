@@ -37,6 +37,7 @@
 % This is now the recommended way for checking for PDFLaTeX:
 \usepackage{ifpdf}
 
+\usepackage{indentfirst}
 %\newif\ifpdf
 %\ifx\pdfoutput\undefined
 %\pdffalse % we are not running PDFLaTeX
@@ -72,12 +73,13 @@
 \end{abstract}
 
 \section{Lei de Gordon Moore}
-	Tudo começa com a lei de Gordon E. Moore, que descreve uma tendência de longo prazo para a quantidade de transistores
+	\par Tudo começa com a lei de Gordon E. Moore, que descreve uma tendência de longo prazo para a quantidade de transistores
 	que podem ser colocados em uma chip. Esta tendência mostra um crescimento exponencial a cada dois anos, e vem desde
 	1965 se confirmando, sem espectativa de mudanças até 2015 \cite{Moore1965} \cite{MooreLaw}. 
 	
 	\subsection{Consequências}
-	O aumento exponencial do número de transistores nos processadores não implica em um aumento também exponencial no poder
+	\par O aumento exponencial do número de transistores nos processadores não implica em um aumento também exponencial
+	no poder
 	de processamento (no texto da Wikipedia, tem um caso onde 45\% de aumento nos transistores do processador mostraram apenas
 	um aumento entre 10\% a 20\% no poder de processamento.\cite{DothanInvestigated}). A velocidade de um sistema não é
 	afetada somente pela velocidade do processador, mas por outros fatores como, por exemplo, largura de banda interna e
@@ -103,10 +105,194 @@
 		\label{fig:cpu_chart}
 		\end{figure}
 		
+		\par O que muda do ponto de vista de \textit{software}? Simples: programas \textit{single-thread} não 
+		conseguirão pegar carona (= ficar mais rápidos) nos processadores com múltiplos núcleos como até então
+		haviam feito durante anos nos processadores com um único núcleo. Isso implica no fato que para que os
+		programas sejam mais rápidos (= tirem vantagem dos múltiplos núcleos), devem ser escritos com múltiplas
+		\textit{threads} ou processos. No texto ele enumera os seguintes pontos (o texto é de 2005):
+		\begin{enumerate}
+			\item Claramente as aplicações deverão ser concorrentes se elas quiserem explorar
+			totalmente os ganhos da nova geração de processadores\footnote{			
+			 The clear primary consequence we’ve already covered is that applications will increasingly need to be
+			 concurrent if they want to fully exploit CPU throughput gains that have now started becoming available and will
+			 continue to materialize over the next several years. For example, Intel is talking about someday producing
+			 100-core chips; a single-threaded application can exploit at most 1/100 of such a chip’s potential throughput.};
+
+			\item Menos óbvio, porém importante, é o fato de que aplicações serão, provavelmente limitadas pelas CPUs
+			\footnote{
+			Perhaps a less obvious consequence is that applications are likely to become increasingly CPU-bound. Of
+			 course, not every application operation will be CPU-bound, and even those that will be affected won’t become
+			 CPU-bound overnight if they aren’t already, but we seem to have reached the end of the “applications are
+			 increasingly I/O-bound or network-bound or database-bound” trend, because performance in those areas is still
+			 improving rapidly (gigabit WiFi, anyone?) while traditional CPU performance-enhancing techniques have maxed
+			 out.};
+			
+			\item Otimização de eficiência e desempenho serão mais importantes
+			\footnote{
+				Efficiency and performance optimization will get more, not less, important. Those languages that already
+			 lend themselves to heavy optimization will find new life; those that don’t will need to find ways to compete and
+			 become more efficient and optimizable. Expect long-term increased demand for performance-oriented languages and
+			 systems.};
+			
+			\item Linguagens de programação e sistemas serão forçados a lidar bem com concorrência
+			\footnote{
+			Programming languages and systems will increasingly be forced to deal well with concurrency. The Java
+			 language has included support for concurrency since its beginning, although mistakes were made that later had to
+			 be corrected over several releases in order to do concurrent programming more correctly and efficiently. The C++
+			 language has long been used to write heavy-duty multithreaded systems well, but it has no standardized support
+			 for concurrency at all.}.
+		\end{enumerate}
 		
+\section{Concorrência em Software}		
+	\par Com a necessidade (obrigação?) de se escrever programas concorrentes, um antigo problema volta à tona: estado
+	compartilhado (no texto ele chama de \textit{sharing unstructured state}). Quando duas tarefas tentam acessar o mesmo
+	objeto, e uma consegue modificar o seu estado, se não coordenarmos as tarefas, teremos uma condição  chamada de
+	\textit{data race}, algo que de longe não é bom já que as tarefas podem estar lendo/escrevendo dados inconsistentes
+	ou corrompidos. Uma das maneiras de se evitar \textit{race conditions}, é através do uso de \textit{locks}.
 	
+	\subsection{Locks e seus problemas}
+
+	\subsubsection{O funcionamento}
+		\par O funcionamento de um \textit{lock} é simples: toda tarefa que deseja executar um conjunto de operações em
+		uma parte de memória compartilhada deve, obrigatoriamente, obter o \textit{lock} relacionado àquela parte, 
+		executar as operações e liberar o \textit{lock} para que outras tarefas também possam executar suas tarefas.
+	
+	\subsubsection{Problemas}
+		\par Os problemas são listados a seguir:
+		\begin{itemize}
+			\item \textbf{Não componibilidade}: Não é possível se obter mais de um \textit{lock}, combiná-los e saber
+			se o resultado ainda está correto. O desenvolvimento de software moderno é depende fortemente da habilidade
+			de se compor bibliotecas formando grandes programas, sendo uma enorme dificuldade não se poder construir
+			sobre bibliotecas baseadas em \textit{locks}, sem analisar suas implementações;
+
+			\item \textbf{Deadlocks}: Consequência da não-componibilidade de \textit{locks}. Ocorre quando duas travas
+			precisam ser adquiridos em order contrária. Suponha que a tarefa T1 tem o \textit{lock} L1 e que T2 tem L2. 
+			T1 precisa adquirir L2 e T2 precisa adquirir L1. A definição usada no texto do Agha é a seguinte: 
+			``Deadlock é a condição onde não há processo capaz de se comunicar com outro". No texto do Simon Jones (e na
+			qualificação), existe uma lista legal que aponta algumas dificuldades como: Esquecimento de travas,
+			obtenção de travas em excesso, obtenção de travas erradas, obtenção de travas na ordem errada, liberação de
+			travas perante a falhas, esquecimento de sinalização ou verificação de variáveis de condição;
+			
+			\item \textbf{LiveLocks}: Caso clássico de \textit{starvation}. O processo não faz progresso algum	
+					
+		\end{itemize}
+	
+		\par Existem outros problemas não diretamente relacionados a \textit{locks}, como divergência (= loop infinito).
+		O texto do Sutter menciona que linguagens imperativas, que usam estruturas de controle com granularidade fina e
+		manipulações de dados de baixo-nível, fazem com que programas nestas linguagens sejam difíceis de se analizar
+		e paralelizar automaticamente.\\
+
+		\par Os grandes pontos fortes das linguagens funcionais, no que diz respeito a concorrência são:
+		\begin{enumerate}
+			\item Manipulam instâncias imutáveis;
+			\item Programas side-effect free;
+			\item O paralelismo exposto fica a nível de chamadas de \textit{procedures};
+			\item Estilo de programação de alto nível (e.g.: map, map-reduce, forall). Operações de alto nível são
+			fontes ricas de concorrência;
+		\end{enumerate}
+		
+		
+	\subsection{STM}
+		-- A parte de STM vai esperar um pouco, preciso focar em atores.
+	\subsection{Modelo de Atores}
+
+		\par Segundo o texto do Agha, um ator é um agente computacional que mapeia cada comunicação recebida em uma
+		3-tupla consistindo de:
+		\begin{enumerate}
+			\item Um conjunto finito de comunicações enviado para outros atores;
+			\item Um novo comportamento, que será usado na resposta da comunicação seguinte;
+			\item Um conjunto finito de novos atores criados.
+		\end{enumerate}
+
+		\par Como observações importantes são destacados que o comportamento de um ator pode ser sensitivo ao histórico,
+		que não há sequencialidade presumida nas ações que o ator executa (cada uma das suas ações é uma função do
+		comportamento do ator e das comunicações recebidas) e que a criação de um ator é parte do modelo. Ele comenta
+		também (depois de uma considerável argumentação) da necessidade de a comunicação ser assíncrona e da necessidade
+		de buffers para tal. Fala sobre o não-determinismo na entrega de mensagens, dizendo que não é possível se prever
+		exatamente quando uma comunicação enviada por um agente vai ser recebida por outro, por vários fatores (basicamente
+		dinamismo e reconfigurações). Sobre a garantia de entrega, ele se baseia na física para dizer que não faz sentido
+		uma determinada comunicação não ser entregue e joga a responsabilidade para quem for construir o sistema, porém não
+		diz que todas as mensagens deve significantemente processadas (aqui tem a diferença dos Erlang Actors e Scala Actors
+		para os Akka Actors). Ele argumenta sobre a justiça (\textit{fairness}), e diz que garantia de entrega não
+		é o bastante, ja que as mensagens não devem ser simplesmente entregues, pois seu processamento pode facilmente
+		gerar um caso de loop infinito. E.g.: Ator recebe uma mensagem \emph{short} e no seu processamento, se auto-envia
+		uma mensagem \emph{short}. Ator recebe uma mensagem \emph{short} e uma \emph{long} concorrentemente. Garantia
+		de entrega nao garante que a mensagem \emph{long} possa vir a ser processada.\\
+		
+		\par Computação em um sistema de atores acontece em resposta a comunicações enviadas para o sistema. Comunicações
+		são contidas em tarefas (ele usa tasks). Uma tarefa é representada como uma 3-tupla:
+		\begin{enumerate}
+			\item Uma Tag para distinguir a task das outras tasks do sistema (um identificador único);
+			\item Um Target que é o endereço da caixa de correio no qual a comunicação será entregue;
+			\item A comunicação que possui a informação que o ator irá processar.			
+		\end{enumerate}		
+
+		\par É importante destacar que o Target deve ser um endereço valido e conhecido antes do envio, que um ator só
+		pode processar tasks cujos targets correspondam ao seu endereço, para qualquer ator, a ordem de chegada das
+		mensagens deve ser linear -- deve haver uma maneira de tratar o caso onde duas comunicações chegam ao mesmo
+		tempo. Um ator pode ser descrito por especificar:
+		\begin{enumerate}
+			\item O endereço da sua caixa de correio;
+			\item Seu comportamento, que é uma função da comunicação aceita.
+		\end{enumerate}
+		
+		\par Quando um ator $X_n$ aceita a $n^{th}$ comunicação em sua caixa de mensagens, ele pode criar tanto outros
+		atores ou tasks, e em seguida criará um novo ator $X_{n+1}$ substituto que irá processar a comunicação
+		$n^{st+1}$ (que pode já estar na caixa de mensagens ou não). Ainda é possível  que $X_n$ ainda esteja no
+		processo de criação mais tasks e outros atores ainda que $X_{n+1}$ esteja fazendo o mesmo (ou seja, eles podem
+		estar processando mensagens em paralelo). Em qualquer um dos casos, note que $X_n$ não receberá futuras 
+		comunicações e nem criará outro substituto.
+		
+		\par As vezes o comportamento de um ator substituto pode depender de comunicações com outros atores (no texto,
+		ele cita o exemplo de um saque que vai depender uma verificação com uma conta poupança). Ele da detalhes
+		de como se implementar isso, porém o que eu entendi é que no meio tempo que não se sabe o comportamento
+		substituto, o ator fica \emph{insensível} (insensitive) e apenas armazena (na verda, encaminha para o buffer)
+		as mensagens, sem processamento. Outro termo que ele usa é o de Atores Primitivos, que basicamente são atores
+		com comportamento estático.
+
+		
+		\par Como o modelo de atores se comporta em alguns dos problemas (clássicos e que fazem sentido quando não
+		estamos trabalhando com locks) de concorrência, listados a seguir.
+		
+		\subsubsection{Divergência}
+		\par Normalmente chamada de loop infinito. Gostariamos de ter um programa com, potencialmente computações
+		infinitas (como um relógio, ou um monitorador), mas que ainda assim pode ser terminado ou reinicialidado de
+		maneira graciosa. Tem um outra definição que chama de \textit{endless chatter} (tagarelagem sem fim). O
+		exemplo é dado com o código de um relógio, onde caso uma mensagem `go' seja recebida, ele dispara a contar
+		incrementando seu valor em $1$. Caso qualquer outra mensagem seja recebida, ele volta a contar a partir de $0$.
+		Neste caso, a garantia de entrega do modelo nos da a certeza que o relógio pode ser reiniciado. O caso
+		da tagarelagem sem fim, mesmo para atores com comportamento não estático, também é resolvido com a garantia
+		de entregua das mensagens.
+		
+		\subsubsection{Deadlock}
+		\par Pela definição do Brookes, em linguagens que usam comunicação síncrona de mensagens, deadlock é definido
+		como sendo uma condição onde não há processo capaz de se comunicar com outro. Uma outra definição diz que
+		um deadlock é uma situação onde não é possível ocorrer uma evolução do sistema. Caso clássico definido
+		por Dijkastra é o problema dos filósofos.
+
+		\par No modelo de atores, este problema é enderaçado de duas maneiras. Primeiro que deadlocks sintáticos 
+		(baixo-nível) não são possíveis no modelo, no sentido de ser impossível a comunicação (como na definição do
+		Brookes). No caso do exemplo dos filósofos, o chopstick, mesmo em uso deve designar um substituto, e este
+		substituto pode `responder' a consulta de um filósofo. Importante: No caso de um filósofo ser programado
+		para ficar simplesmente tentando pegar um chopstick, do ponto de vista \emph{semântico} o sistema estaria
+		em deadlock. Contudo, o chopstick substituto poderia responder quem está usando o chopstick, e o filósofo
+		que deseja pegar o chopstick consultar diretamente quem o está usando (que é por quem se está esperando).
+		A condição que causaria um deadlock seria de o filósofo estar esperando por si próprio. O maior problema
+		em relação a deadlocks é identificá-los. No texto ele diz que atores podem identificar esta situação, 
+		consultando outros atores sobre o estado que estão. Os filósofos, mesmo estando `ocupados' (seja comendo ou 
+		procurando por chopsticks), ainda assim por conta da garantia de entrega do modelo, conseguem receber 
+		comunicações e o sistema consegue evoluir.
+		
+		\subsubsection{Exclusão Mútua}
+		\par Pode-se dizer que exclusão mútua é uma necessidade que surge quando mais de um processo deseja
+		acessar um recurso compartilhado, e na abordagem clássica, é resolvido com um mutex. Um ator representa
+		total encapsulamento e só pode ser `acessado' pelo envio de comunicações e podemos, seguramente dizer que
+		não é um problema para o modelo de atores.
 		
 
+		
+		
+		
 \newpage
 \bibliographystyle{abstract}
 \bibliography{referencias}
