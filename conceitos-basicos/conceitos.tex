@@ -45,6 +45,7 @@
 %\pdfoutput=1 % we are running PDFLaTeX
 %\pdftrue
 %\fi
+\newtheorem{prop}{Proposição}[section]
 
 \ifpdf
 \usepackage[pdftex]{graphicx}
@@ -289,10 +290,52 @@
 		total encapsulamento e só pode ser `acessado' pelo envio de comunicações e podemos, seguramente dizer que
 		não é um problema para o modelo de atores.
 		
-
+		\subsubsection{Atomicidade}
+		\par Atomicidade é possível no modelo de atores com o uso de recepcionistas. Estes que por sua vez
+		limitam a interface do sistema com o mundo exterior. Como exemplo, o Agha usa uma conta bancária que
+		pode ser acessada por diversos clientes. Neste exemplo o conjunto de transações de um determinado cliente
+		deve ser atômico. A solução usa um ator recepcionista chamado \textit{account-receptionist} que, de certo
+		modo, encapsula ou esconde o ator que representa a conta do mundo exterior e cuida para que não haja 
+		intercalação dos eventos vindos dos diferentes usuários. Um ponto importante é que não existe um nível
+		pré-determindado de granularidade para atomicidade no modelo, ficando a cargo do programador definir isso.
 		
+		\subsubsection{Componibilidade}
+		\par No texto o Agha fala sobre o que é dito como sendo componibilidade em CCS. Aparecem termos como
+		\emph{portas},\emph{portas complementares} (portas que podem ser ligadas). Quando a conversa vem para
+		o nível de atores, ele fica fazendo comparações com CSS e o que da para concluir é que atores são vistos
+		como uma comunidade de agentes com \emph{endereço} fixo (a caixa de correio) e podem receber diversas 
+		comunicações e a única sequêncialidade definida é consequência de interações causais.
 		
+		\par Relacionado a componibilidade, volta o assunto de recepcionistas que podem ser usados para encapsular
+		atores do mundo exterior. Vale lembrar que um ator só pode receber comunicações de outros atores que 
+		conheçam de antemão seu endereço de correio. No texto ele levanta 3 pontos que não são complicados de se
+		concluir sobre o uso de recepcionistas para encapsulamento.
+		\begin{enumerate}
+			\item Atores recepcionistas podem ser conhecidos por outros atores do sistema, e comunicações internas
+			não são vistas pelo mundo externo;
+			\item Novos recepcionistas podem ser criados como evolução do sistema. Novos recepcionistas são criados,
+			basicamente informando os endereços de suas caixas de correio para o mundo externo;
+			\item  Recepcionistas não poder ser arbitrariamente restritos. Uma vez que um endereço é conhecido pelo
+			mundo exterior, o ator se torna um recepcionista. Uma vez que o endereço deixa de ser conhecido, o ator
+			deixa de ser um recepcionista.
+		\end{enumerate}
 		
+		\par Componibilidade no modelo de atores é possível através da troca de mensagens. Sistemas independentes são
+		conectados (compostos) por enviar a alguns atores externos de cada módulo uma comunicação para se tornarem
+		atores encaminhadores, que simplesmente enviam o endereço de suas caixas de correio para alguns recepcionistas 
+		do outro módulo. No texto ele define e prova a seguinte proposição:
+		
+		\begin{prop}
+			Se o comportamento de um ator $x$ nunca muda (a.k.a unserialized), e seu comportamento é encaminhar
+			todas as comunicações que ele aceita para um ator $y$, então enviar uma comunicação para $x$ é 
+			equivalente a enviar uma comunicação para $y$.
+		\end{prop}
+		\par Para provar formalmente a proposição, é necessário mostrar que dada uma configuração com um ator 
+		encaminhador, podemos construir uma configuração equivalente sem este ator, fazendo uma substituição
+		do endereço da caixa de correio dele na lista de conhecimento de todos os atores e tarefas na configuração
+		pelo endereço da caixa de correio do ator que ele encaminha as comunicações que ele recebe. Ele menciona
+		e se baseia também nos fatores da garantia de entrega e não-determinisno na ordem de chegada das mensagens.
+		Ele ainda vai fundo nas \textit{contraints} da composição de duas configurações.
 \newpage
 \bibliographystyle{abstract}
 \bibliography{referencias}
