@@ -336,6 +336,11 @@
 		pelo endereço da caixa de correio do ator que ele encaminha as comunicações que ele recebe. Ele menciona
 		e se baseia também nos fatores da garantia de entrega e não-determinisno na ordem de chegada das mensagens.
 		Ele ainda vai fundo nas \textit{contraints} da composição de duas configurações.
+		
+		\subsubsection{Problemas}
+		\par Os principais problemas levantados em relação ao modelo de atores estão ligados a perda de linearidade
+		(chamada de inversão de controle) no código e na dificuldade de se fazer testes unitários por conta da
+		característica assíncrona (aqui vale a pena eu olhar os testes unitários do Akka).
 \newpage
 \bibliographystyle{abstract}
 \bibliography{referencias}
