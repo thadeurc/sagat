@@ -117,20 +117,41 @@
 % ----------------------------------------------------------------------
 \newpage
 \section{Introdução}
-	Desempenho e escalabilidade são necessidades fundamentais e quase sempre obrigatórias para qualquer sistema 
-	computacional. Bons ganhos de desempenho podem ser obtidos, por exemplo, encontrando soluções alternativas para 
-	se obter o mesmo resultado com uma menor complexidade computacional, algo que nem sempre é possível ou viável do 
-	ponto de vista do desenvolvimento de algoritmos. Escalabilidade pode ser obtida com o uso de computadores com 
-	maior poder de processamento, algo que também nem sempre é viável por questões de custo. Uma alternativa para se alcançar 
-	tanto desempenho quanto escalabilidade, é o uso de vários computadores com processadores de menor capacidade de 
-	processamento, ou ainda o uso de processadores com múltiplos núcleos. Em ambos os casos estará implícita a necessidade 
-	e capacidade de execuções paralelas e concorrentes, de modo a existir uma interação significativa entre as tarefas e 
-	os processos executados\cite{dijkistra-65}.
+	%Desempenho e escalabilidade são necessidades fundamentais e quase sempre obrigatórias para qualquer sistema 
+	%computacional. Bons ganhos de desempenho podem ser obtidos, por exemplo, encontrando soluções alternativas para 
+	%se obter o mesmo resultado com uma menor complexidade computacional, algo que nem sempre é possível ou viável do 
+	%ponto de vista do desenvolvimento de algoritmos. Escalabilidade pode ser obtida com o uso de computadores com 
+	%maior poder de processamento, algo que também nem sempre é viável por questões de custo. Uma alternativa para se alcançar 
+	%tanto desempenho quanto escalabilidade, é o uso de vários computadores com processadores de menor capacidade de 
+	%processamento, ou ainda o uso de processadores com múltiplos núcleos. Em ambos os casos estará implícita a necessidade 
+	%e capacidade de execuções paralelas e concorrentes, de modo a existir uma interação significativa entre as tarefas e 
+	%os processos executados\cite{dijkistra-65}.
 
-	\par Ultimamente, problemas relacionados ao desenvolvimento de sistemas com características concorrentes, como 
-	\english{deadlocks} e exclusão mútua\cite{dijkistra-mutual-exclusion}, tem recebido enorme interesse por conta tanto 
-	da popularização de processadores com múltiplos núcleos, como do fato da computação distribuída e de \english{web-services} serem 
-	inerentemente concorrentes. 	
+	%\par Ultimamente, problemas relacionados ao desenvolvimento de sistemas com características concorrentes, como 
+	%\english{deadlocks} e exclusão mútua\cite{dijkistra-mutual-exclusion}, tem recebido enorme interesse por conta tanto 
+	%da popularização de processadores com múltiplos núcleos, como do fato da computação distribuída e de \english{web-services} serem 
+	%inerentemente concorrentes. 	
+	
+	Em 1965, após fazer uma análise da relação da quantidade de componentes de um circuito integrado para os que foram
+	desenvolvidos entre os anos de 1959 e 1964, Gordon Moore tentou prever a uma tendência para este crescimento. Considerando
+	a tendência até 1975, Moore projetou que a quantidade de componentes teria um crescimento exponencial a cada ano. Em 1975,
+	após notados os avanços na produção e desenvolvimento de microprocessadores, e com dados mais atualizados, a razão foi
+	revista e reduzida para um crescimento exponencial a cada dois anos. Esta previsão se confirmou e é conhecida como 
+	lei de Moore e é um dos principios que orienta a indústria de semi-condutores \cite{moore-1965}.
+	
+	\par Durante anos, fabricantes de processadores conseguiram ganhos de desempenho em três áreas principais: \entry{(i)}
+	aumento da velocidade do \english{clock}; \entry{(ii)} otimização de execução; \entry{(iii)} uso de memória auxiliar
+	(\english{cache}). Uma consequência direta aumento de velocidade em qualquer uma destas três áreas é o aumento da velocidade
+	de programas tanto em programas sequenciais como em concorrentes. O aumento da velocidade de \english{clock} passou a
+	não acompanhar o aumento de transitores em processadores por questões físicas, como aquecimento e dissipação,
+	alto consumo de energia e vazamento de corrente elétrica. Por conta destas limitações físicas, as buscas por ganhos
+	de desempenho foram voltadas então para três áreas: \entry{(i)} 
+	\english{Hyperthreading}, onde duas ou mais \english{threads} são executadas ao mesmo tempo em uma CPU;
+	\entry{(ii)} \english{Multicore}, onde um chip contém mais de uma CPU; \entry{(iii)} Aumento de memória auxiliar (\english{cache}). 
+	Do ponto de vista de desenvolvimento de programas, aplicativos deverão ser escritos de forma concorrente caso queiram
+	usufruir dos ganhos de desempenho dos novos processadores \cite{sutter-free-lunch-is-over}.
+	
+	%% Falar de que nem tudo eh paralelizavel e lembrar os problemas, dai mexer um pouco no texto abaixo.
 
 	\par A abordagem convencional no desenvolvimento deste tipo de sistemas é pelo uso de travas e variáveis condicionais. 
 	Em linguagens orientadas a objetos como Java e C\#, cada instância possui implicitamente sua própria trava e 
