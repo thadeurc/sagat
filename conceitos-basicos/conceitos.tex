@@ -151,6 +151,7 @@
 	\textit{data race}, algo que de longe não é bom já que as tarefas podem estar lendo/escrevendo dados inconsistentes
 	ou corrompidos. Uma das maneiras de se evitar \textit{race conditions}, é através do uso de \textit{locks}.
 	
+	
 	\subsection{Locks e seus problemas}
 
 	\subsubsection{O funcionamento}
@@ -174,7 +175,7 @@
 			obtenção de travas em excesso, obtenção de travas erradas, obtenção de travas na ordem errada, liberação de
 			travas perante a falhas, esquecimento de sinalização ou verificação de variáveis de condição;
 			
-			\item \textbf{LiveLocks}: Caso clássico de \textit{starvation}. O processo não faz progresso algum	
+			\item \textbf{LiveLocks}: Caso clássico de \textit{starvation}. O processo não faz progresso algum.
 					
 		\end{itemize}
 	
@@ -190,11 +191,26 @@
 			\item O paralelismo exposto fica a nível de chamadas de \textit{procedures};
 			\item Estilo de programação de alto nível (e.g.: map, map-reduce, forall). Operações de alto nível são
 			fontes ricas de concorrência;
-		\end{enumerate}
-		
+		\end{enumerate}		
 		
 	\subsection{STM}
 		-- A parte de STM vai esperar um pouco, preciso focar em atores.
+	\subsection{Abstrações de alto nível}
+		Três exemplos de abstrações de alto nível que o Sutter menciona no texto dele são asynchronous calls, 
+		futures e active objects (este tem implementação no Akka).
+		\subsubsection{Asynchronous calls}
+			Uma chamada assíncrona é uma chamada de função ou método não bloqueante. O \textit{caller} continua
+			executando e, conceitualmente, uma mensagem é enviada para uma tarefa ou \textit{fork}, para executar
+			a operação de maneira independente.
+		\subsubsection{Futures}
+			Um \textit{future} é um mecanismo  para retorno de resultados de uma chamada assíncrona; ele age como um
+			placeholder para o valor que ainda não foi materializado.
+		\subsubsection{Active Objects}
+			Conceitualmente um \textit{active object} executa em sua própria thread, logo criar $1000$ \textit{active objects}
+			criariam $1000$ potenciais threads de execução. Um \textit{active object} age como um monitor, de modo que
+			apenas um método do objeto é executado em um dado momento, porém não é necessário o \textit{locking} tradicional.
+			Chamadas de métodos externas são enfileiradas e processadas pelo objeto.
+		
 	\subsection{Modelo de Atores}
 
 		\par Segundo o texto do Agha, um ator é um agente computacional que mapeia cada comunicação recebida em uma
@@ -341,6 +357,34 @@
 		\par Os principais problemas levantados em relação ao modelo de atores estão ligados a perda de linearidade
 		(chamada de inversão de controle) no código e na dificuldade de se fazer testes unitários por conta da
 		característica assíncrona (aqui vale a pena eu olhar os testes unitários do Akka).
+	\subsection{MOMs e AMQP}
+		\subsubsection{MOMs}
+			No livro de web services do Alonso, ele comenta que MOMs são frequentemente apontados como uma tecnologia
+			que pode mudar o modo como sistemas  distribuídos são construídos. Um outro ponto importante em relação a MOMs
+			que aparece em uma discussão no \textit{stackoverflow} é que eles costumam fazer o papel de ``ajuntar'' os
+			sistemas, sendo ainda um melhor alternativa para sistemas baseados em RPC.
+
+			\par São mostrados como usos principais: escabilidade, ``descarregamento'' (offloading) de trabalho, integração 
+			(baixo acoplamento),
+			monitoramento, tratamento de eventos, roteamento, mobilidade, armazenamento (buffering), enfileiramento, 
+			compartilhamento de tarefas, alertas, gerenciamento, logging, lotes (batching), entrega de dados,
+			pub-sub, multicast, auditoria e agendamento (acho que valeria ir a fundo nos conceitos e ver como cada um
+			destes itens estão relacionados com messaging - acho legal para colocar na qualificação). Mais um argumento
+			que é interessante é o fato de que muitas ações em sistemas não são inciadas por usuários, mas sim
+			por outros sistemas, como por exemplo ``Diga-me quando o livro xpto estiver disponível no estoque".
+
+			\par Um bom exemplo: escalar requisições para páginas web. Quando um usuário faz uma requisição, o web server
+			a coloca em uma fila para processamento em background. Isso permite que o web server possa se manter trabalhando
+			enquanto a requisição é processada, além de tirar a responsabilidade do web server de saber como a requisição é 
+			processada. Isso torna o sistema como um todo desacoplado, logo manutenções, upgrades e rollbacks se tornam
+			muito mais simples. Os resultados são colocados em uma fila de saída para que o web server os repasse (= consuma)
+			para o usuário.
+
+		\subsubsection{AMQP}
+			AMQP está para sistemas baseados em troca de mensagens, assim como HTTP esta para a web. É uma (promissora)
+			tentativa de se padronizar as coisas. Obs: tem bastante texto escrito na minha qualificação e bem 
+			resumido, logo não acho necessário duplicar as coisas aqui.		
+
 \newpage
 \bibliographystyle{abstract}
 \bibliography{referencias}
