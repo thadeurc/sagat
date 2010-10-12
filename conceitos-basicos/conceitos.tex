@@ -385,6 +385,59 @@
 			tentativa de se padronizar as coisas. Obs: tem bastante texto escrito na minha qualificação e bem 
 			resumido, logo não acho necessário duplicar as coisas aqui.		
 
+		\subsection{Akka actors}
+			Akka actors são definidos estendendo-se a classe Actor e implementando o método receive. Este método
+			define uma função parcial com as mensagens que o ator manipula. Existe um campo de uma trait
+			que é mixed com Actor chamado \textit{log}. Atores por padrão são criados com um ciclo de vida
+			permanente, ou seja, são restartados caso ele morra e seja supervisionado.\\
+
+			Podemos criar atores com ciclo de vida temporário, usando \textit{temporaryActor} ao invés de 
+			\textit{actor}. Algo legal que pode ser criado são \textit{spawns}, que são atores baseados em threads
+			leves que são iniciados, executados, terminados e tornados elegíveis ao coletor de lixo.\\
+			
+			Métodos receive são do tipo PartialFunction[Any, Unit]. Existe um alias chamado Receive para
+			dar uma clareza maior. \\
+			
+			A trait Actor possui alguns métodos para controle de ciclo de vida:
+			\begin{itemize}
+				\item preStart
+				\item postStop
+				\item preRestart
+				\item portRestart
+			\end{itemize}
+			A trait possui um campo chamado self, que é uma referência para a ActorRef do ator. Self possui
+			métodos como reply. (tem muita coisa na pagina de actors-scala. nao vou colocar tudo aqui).
+			
+		\subsection{Akka Dispatchers}
+			Os dispatchers tem um papel importante que permite a configuração da semântica e parâmetros para
+			otima performance, desempenho e escalabilidade, já que diferentes atores podem ter diferentes
+			necessidades.
+			
+			Akka suporta dispatchers tando para a criação de threads leves baseadas em eventos (usado para
+			criação de milhões de atores em uma única máquina, já que cada ator event-based consome ˜600 bytes),
+			como thread-based atores, onde cada dispatcher é relacionado a uma thread do SO. O dispatcher default
+			é o baseado em eventos.\\
+			
+			\subsubsection{Event-based dispatchers}
+			
+			O ExecutorBasedEventDrivenDispatcher associa um conjunto de atores para um pool de threads sustendada
+			por uma BlockingQueue\footnote{Características de BlockingQueues: 1- Não aceitam valores nulos. 2- 
+			É uma fila que suporta operações que esperam a fila não ficar vazia quando se retirando um elemento.
+			3- Aguarda espaço disponível quando adicionando um elemento. 4- Seus métodos são divididos em quatro
+			grupos no sentido de como se comportar, caso suas invocações não possam ser atendidas imediatamente.
+			Alguns lançam exception, outros bloqueiam aguardando, outros retornam algum valor sentinela e 
+			um último grupo que bloqueia com timeout, retornando uma sentinela caso não tenha conseguido
+			executar a ação.}, sendo altamente configurável. \\
+			
+			Dispatchers baseados em eventos devem, obrigatoriamente, ser compartilhados entre muitos atores, sendo
+			uma boa prática deixar cada ator top-level (os supervisores) com seu próprio dispatcher, porém
+			utilizar o mesmo dispatcher para cada ator criado pelo supervisor.
+			
+			
+
+
+
+			 
 \newpage
 \bibliographystyle{abstract}
 \bibliography{referencias}
