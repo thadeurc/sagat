@@ -418,7 +418,7 @@
 			como thread-based atores, onde cada dispatcher é relacionado a uma thread do SO. O dispatcher default
 			é o baseado em eventos.\\
 			
-			\subsubsection{Event-based dispatchers}
+			\subsubsection{ExecutorBasedEventDriverDispatcher}
 			
 			O ExecutorBasedEventDrivenDispatcher associa um conjunto de atores para um pool de threads sustendada
 			por uma BlockingQueue\footnote{Características de BlockingQueues: 1- Não aceitam valores nulos. 2- 
@@ -429,11 +429,56 @@
 			um último grupo que bloqueia com timeout, retornando uma sentinela caso não tenha conseguido
 			executar a ação.}, sendo altamente configurável. \\
 			
-			Dispatchers baseados em eventos devem, obrigatoriamente, ser compartilhados entre muitos atores, sendo
-			uma boa prática deixar cada ator top-level (os supervisores) com seu próprio dispatcher, porém
-			utilizar o mesmo dispatcher para cada ator criado pelo supervisor.
+			Implementações de BlockingQueue que podem ser usadas:
+			\begin{itemize}
+				\item LinkedBlockingQueue com ou sem limitação de tamanho;
+				\item ArrayBlockingQueue com ou sem limitação de tamanho;
+				\item SynchronousQueue.
+			\end{itemize}
+			Dependendo da fila escolhida, o comportamento pode ser diferente (esta informação veio da api de JUC):
+			\begin{itemize}
+				\item Direct handoffs: (SinchronizedQueue) não armazena tarefas na fila, tranferindo-as diretamente para
+				as threads do pool.
+				Caso nao haja nenhuma thread disponível no pool, uma nova é criada. Existem uma relação forte com o valor
+				definido para o maximumPoolSize. Caso este seja limitado, tarefas começam a ser rejeitadas e a política
+				de rejeição entra em ação (jogar as mais velhas fora? jogar esta fora? rodar na thread corrente?).
+
+				\item Unbounded queues: tarefas novas aguardam na fila enquanto as corePoolThreads estão ocupadas. Novas
+				threads não são criadas (logo maximumPoolSize não serve para nada). As filas podem crescer muito caso
+				as threads fiquem muito tempo processando tarefas.
+				
+				\item Bounded queues: ajuda a previnir a exaustão de recursos quando usado com o maximumPoolSize.Filas
+				grandes com pools pequenos reduzem o uso de CPU, recursos do SO e menor quantidade de troca de 
+				contextos (menos threads executando), porém podem levar a um desempanho artificalmente baixo.				
+			\end{itemize}
+						
+			\subsubsection{ExecutorBasedEventDriverWorkStealingDispatcher}
+			É uma variação do dispatcher anterior, porém é compartilhado entre atores do mesmo tipo 
+			(ele normalmente é associado com os atores no companion object). Durante a execução, diferentes atores
+			podem roubar mensagens de outros atores, caso tenham uma carga menor de trabalho. Este dispatcher pode
+			ser usado para melhorar o desempenho sem aumentar muito a latência.\\
+
+			Do ponto de vista de código, a estratégia é a seguinte: 
+			\begin{enumerate}
+				\item Tenta despachar mensagens do próprio ator;
+				\item Não tem o que fazer? (fila vazia ou alguem já despachando) Doa as mensagens para algum outro ator processar;
+				\item As mensagens são retiradas do final da fila no caso de doações.
+			\end{enumerate}
 			
+			\subsubsection{HawtDispatch-based event-driven}
+			Atores que usam este dispatcher são executados em um único sistema com um thread pool de tamanho fixo. O número
+			de threads no pool tem uma relação 1:1 com o número de cores do processador (este modelo foi baseado no Grand Central 
+			Dispatch do Mac OS X da Apple). Este dispatcher agrega várias mensagens de um mesmo ator para entregá-las quando
+			este não estiver mais em execução (isso é reconfigurável). Por exemplo, o ator A envia 10 mensagens para o ator B. 
+			As mensagens só são realmente entregues quando o ator A parar de executar. Este dipatcher é restrito a operações
+			bloqueantes. É possível ainda forçar um ator a ser fixado em uma mesma thread do pool. Na página do Akka tem um exemplo
+			de um server.
 			
+			\subsubsection{ThreadBasedDispatcher}
+			Relação 1:1 de thread com ator, já que não usa thread pool.
+			
+			\subsubsection{Reactor Based}
+			Aguardando leitura de paper para entender o que eles fizeram.
 
 
 
