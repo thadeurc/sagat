@@ -447,7 +447,7 @@
 				threads não são criadas (logo maximumPoolSize não serve para nada). As filas podem crescer muito caso
 				as threads fiquem muito tempo processando tarefas.
 				
-				\item Bounded queues: ajuda a previnir a exaustão de recursos quando usado com o maximumPoolSize.Filas
+				\item Bounded queues: ajuda a previnir a exaustão de recursos quando usado com o maximumPoolSize. Filas
 				grandes com pools pequenos reduzem o uso de CPU, recursos do SO e menor quantidade de troca de 
 				contextos (menos threads executando), porém podem levar a um desempanho artificalmente baixo.				
 			\end{itemize}
@@ -468,20 +468,54 @@
 			\subsubsection{HawtDispatch-based event-driven}
 			Atores que usam este dispatcher são executados em um único sistema com um thread pool de tamanho fixo. O número
 			de threads no pool tem uma relação 1:1 com o número de cores do processador (este modelo foi baseado no Grand Central 
-			Dispatch do Mac OS X da Apple). Este dispatcher agrega várias mensagens de um mesmo ator para entregá-las quando
+			Dispatch do Mac OS X da Apple). 
+			HawtDispath suporta a integração de eventos de IO em sockets não bloqueantes com atores. Cada thread no thread pool
+			é colocara em um laço de eventos de IO quando não está executando atores. Os eventos de IO podem ser configurados para
+			serem entregues para o ator seja no estilo reactor ou proactor.
+			
+			Este dispatcher agrega várias mensagens de um mesmo ator para entregá-las quando
 			este não estiver mais em execução (isso é reconfigurável). Por exemplo, o ator A envia 10 mensagens para o ator B. 
 			As mensagens só são realmente entregues quando o ator A parar de executar. Este dipatcher é restrito a operações
 			bloqueantes. É possível ainda forçar um ator a ser fixado em uma mesma thread do pool. Na página do Akka tem um exemplo
-			de um server.
+			de um echo server.
 			
 			\subsubsection{ThreadBasedDispatcher}
-			Relação 1:1 de thread com ator, já que não usa thread pool.
+			Relação 1:1 de thread com ator, já que não usa thread pool. Pega uma mensagem por vez. O dispatch dele basicamente
+			coloca a mensagem na fila (internamente ele usa uma LinkedBlockingQueue que pode ou não ter capacidade, dependendo
+			da configuração. Lembrar que se a fila fica cheia, quem tenta adicionar algo fica bloqueado.).
 			
 			\subsubsection{Reactor Based}
-			Aguardando leitura de paper para entender o que eles fizeram.
+			Baseado no padrão definido pelo Douglas Schmidt, possui uma estrutura onde recursos com os seguintes componentes:
+			\begin{itemize}
+				\item Initial Dispatcher: Responsável por registrar os handlers específicos a tratar os eventos, bem como
+				mander o loop de \emph{handleEvent} que irá fazer a chamada ao handler específico que processará o evento;
 
+				\item Handle: No texto é colocado como sendo um recurso do SO, como uma socket ou um arquivo;
 
+				\item Event Handler: Define uma interface com método de callback a ser implementado pelos event handlers concretos,
+				que irão realmente fazer o processamento do evento;
+				
+				\item Synchronous Event Demultiplexer: Fica bloqueado aguardando eventos nos handles associados aos event handlers
+				registrados no initial dispatcher. Um exemplo dado é o select, que é uma chamada de sistema para demultiplexação
+				de eventos de IO (disponível em unix e win32).
+			\end{itemize}
+			No Akka, existem dois dispatchers baseados neste padrão: ReactorBasedSingleThreadEventDrivenDispatcher, onde
+			o selector é uma thread só que fica consumindo as mensagens em 'blocos' da ReactiveMessageQueue (esta é a diferença
+			chave entre o ThreadBasedDispatcher, onde lá as mensagens são pegas individualmente.). O outro dispatcher
+			é ReactorBasedThreadPoolEventDrivenDispatcher, que tem o mesmo comportamento porém usa um ThreadPool (semelhante
+			ao event based mostrado no início). Nesta implementação eles tomaram os devidos cuidados com acesso concorrente, e
+			o demultiplexer tem alguns métodos a mais como wakeUp (para mudar a flag de interrompida da fila), e métodos
+			para se lockar e deslockar a fila. Ele faz uma verificação para ver se o ator está disponível para processar a 
+			mensagem antes de remove-la da lista. Da para concluir que ele seleciona mensagens para vários atores e vai despachando 
+			uma a uma.
 
+		\subsubsection{Comentários gerais sobre dispatchers}
+		Os dispatchers de uma maneira geral são bastante parecidos e eu precisei pensar um pouco para entender as características
+		particulares de cada um. Na dúvida é melhor ir direto no código. Aqueles que usam thread pool por baixo, para cada invoção
+		de dispatch basicamente coloca a mensagem na fila do ator (para o reactor-based fica em outra fila) e coloca um Runnable no
+		ThreadPool para fazer o processamento das mensagens daquele ator em particular. No caso do que usa work stealing, o processo
+		é o mesmo, porém caso o ator esteja ocupado (ou seja, ele não consegue pegar o lock), ele tenta doar as mensagens para 
+		outros atores registrados no dispatcher.
 			 
 \newpage
 \bibliographystyle{abstract}
