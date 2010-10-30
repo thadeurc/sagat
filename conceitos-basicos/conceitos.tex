@@ -516,6 +516,19 @@
 		ThreadPool para fazer o processamento das mensagens daquele ator em particular. No caso do que usa work stealing, o processo
 		é o mesmo, porém caso o ator esteja ocupado (ou seja, ele não consegue pegar o lock), ele tenta doar as mensagens para 
 		outros atores registrados no dispatcher.
+
+		\subsection{Atores Remotos}
+		A implementação de atores remotos do Akka permite que atores sejam criados localmente e migrarem para o servidor
+		ou serem diretamente 'lookupeados' em algum server. Não há suporte para classloading remoto. Atores remotos
+		são agrupados em pares host / porta. Do lado do cliente existe um componente chamado RemoteClient que é
+		usado para comunicação com o seu par do lado do servidor (RemoteServer). Estes componentes possuem dados
+		sobre informações relacionadas com supervisor e resultados remotos futuros. A comunicação por baixo por panos
+		é feita com o auxílio do JBoss Netty. O protocolo é definido com a ajuda do protobuf (api do google). 
+		Ele tem uma DSL onde você informa o seu protocolo e ele gera a classe correspondente. 
+		
+		\subsubsection{Serialização da informação}
+		A classe gerada pelo protocolo (que define basicamente toda informação necessária para que a coisa funcione)
+		pode ser serializada de diferentes maneiras (JSON, serialização Java padrão)
 			 
 \newpage
 \bibliographystyle{abstract}
