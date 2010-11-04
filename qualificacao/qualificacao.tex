@@ -93,20 +93,22 @@
 	%em paralelo, e concorrentemente é algo extremamente comum, especialmente quando se busca desempenho. 
 	\par Processadores com múltiplos núcleos se mostraram um alternativa para os limites impostos pela física
 	para a construção de processadores com maior velocidade de \english{clock}. Para que programas possam usufruir
-	dos ganhos de desempenho deste tipo de processador eles devem ser escritos de maneira concorrente, uma tarefa
-	não trivial.
+	dos ganhos de desempenho deste tipo de processador eles devem ser escritos de maneira concorrente, 
+        uma tarefa não trivial.
 	
 	
 	\par O modelo de atores com troca de mensagens foi proposto como uma das possíveis soluções para problemas 
 	oriundos da programação concorrente, as dificuldades de se usar travas e blocos sincronizados para a proteção de dados 
-	compartilhados. Atores são entidades que possuem uma caixa de correio para o 
-	recebimento e armazenamento das mensagens enviadas por outros atores para processamento assíncrono.
+	compartilhados. Atores são entidades computacionais conhecidos por especificar o endereço de sua caixa de correio e 
+        seu comportamento. Mensagens enviadas por outros atores são armazenadas na caixa de correio e processadas de maneira
+        assíncrona.
+ 
 
 	\par Neste trabalho estudaremos o modelo de atores em um ambiente com instâncias distribuídas entre várias
 	máquinas virtuais Java. Faremos uma implementação em Scala tomando como base a abordagem proposta no projeto Akka, 
 	substituindo o uso de \english{sockets} para o tráfego das mensagens, pelo padrão aberto de
 	\english{middleware} orientado a mensagens, \english{Advanced Message Queuing Protocol}, ou AMQP. 
-	Além disso, faremos também uma avaliação comparativa entre as duas abordagens.
+	Além disso, faremos também uma avaliação comparativa entre o uso das duas implementações.
  
 
 \end{abstract}
@@ -169,7 +171,7 @@
 	como esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias	 
 	erradas, obtenção de travas em ordem errada, manutenção da consistência do sistema na presença de erros, 
 	esquecimento de sinalização em variáveis de condição ou de se testar novamente uma condição após o despertar
-	de um estado de espera\cite{sj:bc}.Estas dificuldades são alguns exemplos da inviabilidade desta abordagem para uma programação modular, 
+	de um estado de espera\cite{sj:bc}. Estas dificuldades são alguns exemplos da inviabilidade desta abordagem para uma programação modular, 
         ou seja, criação de grandes programas por vários programas menores.
 	
 	\par Duas abordagens para os problemas citados são a memória transacional, uma abstração para compartilhamento 
@@ -178,51 +180,70 @@
 	\par Conhecida como STM\cite{STM} (\english{Software Transactional Memory}), é um mecanismo de controle de
 	concorrência análogo às transações de bancos de dados para o controle de acesso à memória compartilhada. Neste contexto, 
 	a transação é um pedaço de código que executa uma série de operações atômicas de leitura e escrita na memória compartilhada. 
-
-	\par Atores são basicamente processos concorrentes que se comunicam por  troca de mensagens de modo 	
-	assíncrono, possuindo caixas de correio para o seu armazenamento. Atores podem responder mensagens assíncronas 
-        seja criando novos atores, enviando mensagens para atores onde o endereço da caixa de correio é conhecido (incluindo o próprio) 
-        ou ainda alterando seu comportamento, comportamento este que define como o ator responderá à próxima mensagem recebida\cite{gul-agha}.
-        A implementação de atores junto com o casamento de padrões mostraram resultados muito efetivosna linguagem Erlang\cite{erlang-survey}.
+        
+        \par Atores são definidos\cite{gul-agha} como sendo agentes computacionais que especificam um endereço para sua caixa de
+        correio e seu comportamento.
+        Uma vez que o endereço da caixa de correio de um ator seja conhecido, mensagens podem ser adicionadas na sua fila para processamento
+        assíncrono, o que desacopla o envio do processamento. Mensagens recebidas por atores são mapeadas em uma $3$-tupla consistindo de:
+        \entry{(i)} Um conjunto finito de mensagens enviadas para outros atores onde o endereço é conhecido (incluindo o próprio);
+        \entry{(ii)} Um novo comportamento a ser usado para processar a mensagem seguinte; 
+        \entry{(iii)} Um conjunto finito de novos atores criados. A implementação do modelo de atores com o uso do casamento de padrões,
+        usado na verificação das mensagens a serem aceitas, mostraram resultados muito efetivos na linguagem Erlang\cite{erlang-survey}.
 
 	\par A linguagem Scala possui embutida em sua distribuição uma implementação de atores chamada de \english{Scala Actors}. Esta
 	implementação possui suporte tanto para atores locais, quanto para atores remotos. Existem 
 	ainda algumas implementações alternativas na linguagem do modelo de atores, como por exemplo o projeto Akka\cite{akka},
-	originado pelo descontinuado Scala OTP (cujo objetivo era de se portar as idéias de Erlang OTP\cite{prog-erlang} para a linguagem Scala).
+	originado pelo descontinuado Scala OTP, cujo objetivo era de se portar as idéias de Erlang OTP\cite{prog-erlang} para a linguagem Scala.
 
 
 	\par Uma das principais características do modelo de atores é a troca assíncrona de mensagens. 
-	\english{Middlewares} orientados a mensagens, conhecidos como MOMs possuem esta característica --
+	\english{Middlewares} orientados a mensagem, conhecidos como MOMs possuem esta característica --
 	as mensagens enviadas são armazenadas em filas, sendo mantidas até que o destinatário esteja pronto para fazer o
-	recebimento e processamento. Este tipo de interação permite que haja interoperabilidade entre sistemas, uma vez
-        que o conjunto das mensagens seja conhecido pelos produtores e consumidores. Os termos produtor e consumidor, podem
-        ser tanto entendidos como cliente e servidor ou o contrário, já que da perspectiva do MOM, não existe o conceito de 
-        cliente e servidor do mesmo modo que em sistemas baseados em \english{Remote Procedure Call} (RPC). A diferença entre clientes
-        e servidores é concentual e pode somente ser definida por humanos que conhecem a semântica da troca das mensagens.
-        MOMs são frequentemente apresentados como uma tecnologia que pode mudar a maneira com que sistemas distribuídos 
-        são construídos\cite{alonso}. Servidores de aplicação que seguem a especificação Java EE possuem MOMs como parte de sua distribuição, como
-        por exemplo o JBoss\cite{jboss-app-server}. A lista de MOMs bem conhecidos inclui IBM Websphere MQ\cite{ibm-mqseries}
-        (mais conhecido como MQ Series) e  Apache Active MQ\cite{apache-activemq}. 
+	recebimento e processamento.      
+        Os termos produtor e consumidor podem ser entendidos tanto como cliente e servidor ou o contrário, já que da perspectiva
+        do MOM não existe o conceito de cliente e servidor como em sistemas baseados em \english{Remote Procedure Call} (RPC). 
+        A diferença entre cliente e servidor é concentual e pode somente ser definida por humanos que conhecem a semântica da 
+        troca das mensagens. Apesar de quando comparados com formas de interações distribuídas baseadas em RPC, MOMs não apresentarem benefícios
+        particulares, eles formam a base para simplificar o desenvolvimento de sistemas permitindo não somente interoperabilidade, 
+        como também suporte para gerenciamento de erros no caso de falhas,
+        sendo frequentemente apresentados como uma tecnologia que pode mudar a maneira com que sistemas distribuídos 
+        são construídos. A garantia da entrega de mensagens é uma das características mais importantes de MOMs, estando relacionada 
+        com a robustes diante de erros e falhas.
+
+        As filas transacionais são uma abstração usada para garantir que, uma vez que uma mensagem tenha sido recebida pelo MOM, 
+        está possa ser salva em algum mecanismo de persistência, sendo removida somente após a confirmação da entrega. 
+        Caso o sistema falhe, uma vez que ele seja reiniciado, as mensagens
+        que não foram confirmadas como entregues e foram salvas no momento do seu recebimento podem ser entregues aos seus respectivos 
+        destinatários. A retirada de mensagens de filas transacionais podem ser feitas também de maneira atômica. Neste caso, as mensagens
+        só serão removidas efetivamente da fila caso todas tenham sido retiradas com sucesso \cite{alonso}.
+
+        \par \english{Middlewares} orientados a mensagem possuem a capacidade de criar ligações ponto a ponto entre sistemas,
+        sendo um tanto quanto inflexíveis no que diz respeito ao roteamento e filtro de mensagens. \english{Message brokers} 
+        são descendentes diretos dos MOMs e endereçam estas limitações pois agem como intermediários, provendo maior 
+        flexibilidade para roteamento, filtro de mensagens, abilidade de se adicionar lógica de negócios para o processamento
+        das mensagens no nível do próprio \english{middleware}. 
+
+        \par A especificação de Java \english{Messaging Service}(JMS), define uma biblioteca padrão para interação de programas
+        Java possam interagir com \english{message brokers}, já que assim como acontece com bancos de dados, os protocolos
+        variam de fabricante para fabricante. Várias implementações de \english{message brokers} são compatíveis
+        com o padrão JMS. Dentre os mais conhecidos, podemos destacar JBoss Messaging\cite{jboss-messaging}, 
+        IBM Websphere MQ\cite{ibm-mqseries} (mais conhecido como MQ Series) e Apache Active MQ\cite{apache-activemq}. 
         
 	
 	
 \subsection{Objetivos}
 	\par Os dois principais objetivos deste trabalho são:
 	\begin{enumerate}
-		\item A implementação do modelo de atores remotos com o uso de AMQP para o transporte das mensagens: tomaremos 
-		como base a implementação feita pelo projeto Akka\footnote{O trabalho será desenvolvido tendo como base a última 
-		versão estável disponível para \english{download} no site do projeto.} de atores remotos e substituiremos o mecanismo
-		existente para o transporte de mensagens, que atualmente é feito com o uso de \english{sockets}.
-		%pelo JBoss Netty \cite{jboss-netty}. 
-		%Utilizaremos o 
-		%RabbitMQ\cite{rabbitmq}, uma implementação em Erlang da especificação AMQP, como o mecanismo para cuidar do transporte 
-		%das mensagens.
-		
-		\item A comparação das duas implementações: será feito uma análise comparativa do resultado de ambas as implementações para 
-		avaliar a robustez e escalabilidade de cada uma, as vantagens proporcionadas em uma possível implantação num ambiente
-		real, como segurança e infra-estrutura além de uma análise da sobrecarga imposta pelo uso de AMQP em relação ao uso de
-		portas TCP com o intuito de observar a viabilidade do uso desta implementação.
-		
+        \item Estudar a implementação de atores feita pelo projeto Akka.
+	\item Implementação do modelo de atores remotos com o uso de AMQP para o transporte das mensagens: tomaremos 
+	  como base a implementação feita pelo projeto Akka\footnote{O trabalho será desenvolvido tendo como base a última 
+            versão estável disponível para \english{download} no site do projeto.} de atores remotos e substituiremos o mecanismo
+	  existente para o transporte de mensagens, que atualmente é feito com o uso de \english{sockets}.
+	  
+	\item A comparação das duas implementações: será feito uma análise comparativa do resultado de ambas as implementações para 
+	  avaliar a robustez e escalabilidade de cada uma, as vantagens e desvantagens proporcionadas com o intuito de observar a
+          viabilidade do uso desta implementação.
+	  
 	\end{enumerate}	
 	
 \subsection{Organização do texto}
@@ -308,15 +329,18 @@
 	TCP.
  	
 \subsection{Atores em Scala com Akka}
-	\par O projeto Akka é composto por um conjunto de módulos escritos em Scala, formando uma plataforma voltada para
+	\par O projeto Akka é composto por um conjunto de módulos escritos em Scala\footnote{O projeto disponibiliza também uma 
+          implementação da biblioteca em Java.}, 
+        formando uma plataforma voltada para
 	o desenvolvimento de aplicações escaláveis e tolerante a falhas. As principais características são: uma
 	nova biblioteca de atores locais e remotos, STM, hierarquia de supervisão e uma combinação entre atores e STM proporcionando
- 	fluxos de mensagens baseadas em eventos transacionais, assíncronos e componíveis\cite{akka}.
+ 	fluxos de mensagens baseadas em eventos transacionais, assíncronos e componíveis, além de uma série de módulos
+        adicionais para integração com outras tecnologias\cite{akka}.
 
 	\par A biblioteca de atores criadas no projeto Akka é totalmente independente da que é parte da distribuição de Scala,
 	apesar de também seguir as idéias de Erlang. O comportamento dos atores Akka no recebimento de mensagens desconhecidas
 	é diferente dos atores de Erlang e Scala, onde o ator é suspenso. Nesta implementação, mensagens que não estão definidas
-	provocam o lancamento de exceções em tempo de execução.
+	provocam o lançamento de exceções em tempo de execução.
 	
 	\par Existem diversas possibilidades para a criação de atores remotos, tais como:
 	o cliente criar o ator e torná-lo remoto, tornando a instância local um \english{proxy}; o servidor criar o ator e 
@@ -341,9 +365,9 @@
 	a atores remotos dentre as estudadas.
 	
 \subsection{AMQP}
-	\par AMQP\cite{amqp-spec} (\english{Advanced Message Queuing Protocol}) é um protocolo de \english{internet} aberto 
+	\par AMQP (\english{Advanced Message Queuing Protocol}) é um protocolo de \english{internet} aberto 
 	para sistemas de troca de mensagem corporativa. Criado por um conjunto de empresas (Red Hat, JPMorgan Chase, 
-	Cisco Systems, entre outras),com o objetivo de viabilizar tanto o desenvolvimento quanto a disseminação de um protocolo 
+	Cisco Systems, entre outras), com o objetivo de viabilizar tanto o desenvolvimento quanto a disseminação de um protocolo 
         padrão para este tipo de sistema, e que reduzisse o custo das empresas e de sistemas de integração.
 	Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
 	para \english{middleware} orientado a mensagens, sendo ambos o protocolo de rede como a semântica dos serviços do
@@ -384,11 +408,11 @@
 	\begin{figure}[hbtp]
 	  \centering
 	  \includegraphics{imagens/amqp-overview.eps}
-	  \caption{Visão geral do modelo AMQP.}
+	  \caption{Visão geral dos componentes do modelo AMQP.}
 	  \label{fig:amqp_overview}
 	\end{figure}
         
-	\par Em modelos pré-AMQP, estas tarefas descritas são feitas por blocos monolíticos que implementam tipos específicos de
+	\par Em modelos pré-AMQP,  as tarefas descritas são feitas por blocos monolíticos que implementam tipos específicos de
 	roteamento e armazenamento temporário. Podemos notar que este modelo faz uma separação das tarefas em basicamente dois
 	papéis: \entry{(i)} receber as mensagens e fazer o roteamento para as filas; \entry{(ii)} armazenar as mensagens e fazer o
 	encaminhamento
@@ -468,7 +492,7 @@
 	    
             val myActor = actor {
 	      case "test" => println("received test")
-	      case	  _ => println("received unknown message")
+	      case	 _ => println("received unknown message")
             }
 	    
             myActor ! "test"
@@ -481,9 +505,9 @@
 	levando tempo $O(1)$. 
 	As mensagens enfileiradas são então despachadas assincronamente para a função parcial definida no 
 	bloco \english{receive}, como mostrado na figura~\ref{fig:local-actor-message}. Por padrão, atores 
-	são criados com um despachador baseado em eventos que utiliza \english{thread pool} para dispachar
+	são criados com um despachador baseado em eventos que utiliza \english{thread pool} para despachar
         as mensagens. Cada vez que uma mensagem é adicionada na fila de um ator, uma tarefa de despachamento é criada e colocada
-        na fila de processamento do \english{thread pool}. É possível a definição e utilização de outros tipos de dispachadores para se 
+        na fila de processamento do \english{thread pool}. É possível a definição e utilização de outros tipos de despachadores para se 
         obter melhores resultados em casos específicos\cite{akka-dispatchers}.
         
 	\vspace{1ex}

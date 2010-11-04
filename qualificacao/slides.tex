@@ -2,7 +2,8 @@
 \usepackage{beamerthemeshadow}
 \usepackage[latin1]{inputenc}
 \usepackage[brazil]{babel}
-
+\usepackage{graphicx}
+\usepackage{listings}
 \title[AMQP para transportar Mensagens entre Atores Remotos]{Troca de Mensagens entre Atores Remotos} 
 \author{Thadeu de Russo e Carmo \\ \texttt{thadeurc@ime.usp.br}} 
 \institute{Orientador: Prof. Dr. Francisco da Rocha Reverbel\\ Instituto de Matem\'atica e Estat\'istica \\ Universidade de S\~ao Paulo}
@@ -67,7 +68,7 @@
 		\item Estudar o modelo de atores e a implementa\c{c}\~ao feita no projeto Akka
 		\item Fazer uma implementa\c{c}\~ao em Scala com base na implementa\c{c}\~ao feita pelo projeto Akka, 
 		substituindo o uso de \textit{sockets} para o tr\'afego de mensagens pelo padr\~ao aberto de \textit{middleware}
-		orientado a mensagem \textit{Advanced Message Queue Protocol} (AMQP)
+		orientado a mensagem \textit{Advanced Message Queuing Protocol} (AMQP)
 		\item Uma an\'alise comparativa entre as duas abordagens
 	\end{itemize}
 }
@@ -118,9 +119,9 @@
 		para o resultado que ainda n\~ao foi materializado.
 	}	
 }
-\section{Advanced Message Queue Protocol}
+\section{Advanced Message Queuing Protocol}
 \frame{
-\frametitle{Advanced Message Queue Protocol}
+\frametitle{Advanced Message Queuing Protocol}
 	\only<1>{
 		\begin{itemize}
 			\item Protocolo aberto desenvolvido por um conjunto de empresas com o objetivo de padroniza\c{c}\~ao
@@ -143,6 +144,30 @@
 		e encaminhamento. Em sistemas pr\'e-AMQP, estas tarefas s\~ao feitas por blocos monol\'iticos.
 	}
 	\only<3>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.85]{imagens/amqp-overview.pdf}
+		  	\caption{Vis\~ao geral dos componentes do modelo AMQP}
+		\end{figure}
+	}
+	\only<4>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.90]{imagens/amqp-message-flow1.pdf}
+		  	\caption{Envio da mensagem}
+		\end{figure}
+	}
+	\only<5>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.90]{imagens/amqp-message-flow2.pdf}
+		  	\caption{Recebimento e an\'alise dos dados do cabe\c{c}alho}
+		\end{figure}
+	}
+	\only<6>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.90]{imagens/amqp-message-flow3.pdf}
+		  	\caption{Encaminhamento para a fila}
+		\end{figure}
+	}
+	\only<7>{
 		\begin{beamerboxesrounded}{Analogia com sistemas de correio eletr\^onico}
 			\begin{itemize}
 				\item Mensagens AMQP s\~ao an\'alogas a mensagens de correio eletr\^onico
@@ -158,11 +183,78 @@
 
 \section{Atores Akka}
 \frame{
-\frametitle{Envio Local de Mensagens}
+\frametitle{O projeto}
+	\only<1>{
+		Composto por um conjunto de m\'odulos que juntos formam uma plataforma voltada para o desenvolvimento
+		de aplica\c{c}\~oes escal\'aveis e tolerante a falhas.
+		\begin{beamerboxesrounded}{Principais m\'odulos}
+			\begin{itemize}
+				\item Atores locais
+				\item Atores remotos
+				\item STM
+				\item Hierarquia de supervis\~ao
+				\item \textit{Transactors} (combina\c{c}\~ao de atores com STM)
+			\end{itemize}
+		\end{beamerboxesrounded}
+		Al\'em de m\'odulos adicionais para integra\c{c}\~ao com outras tecnologias.
+	}
+	\only<2>{
+		A implementa\c{c}\~ao da biblioteca \'e totalmente independente da biblioteca padr\~ao de atores Scala,
+	 	tamb\'em sendo baseada na implementa\c{c}\~ao feita em Erlang.
+	}
+	\only<3>{
+		\begin{beamerboxesrounded}{Principais caracter\'isticas}
+			\begin{itemize}
+				\item Tipos adicionais de envio (!! e !!!), semelhantes a !? e !!
+				\item Diferentes tipos de despachadores de mensagem
+				\item \textit{Remote spawns}, mas sem carregamento remoto de classes
+				\item Transporte de mensagens via \textit{sockets} TCP
+				\item Direfentes protocolos para seria\c{c}\~ao de mensagens remotas 
+				(Protobuf, JSON, seria\c{c}\~ao Java padr\~ao, SBinary)
+				\item Compacta\c{c}\~ao das mensagens enviadas para atores remotos
+			\end{itemize}
+		\end{beamerboxesrounded}
+	}
+}
+\subsection{Atores locais}
+\begin{frame}[fragile]
+\begin{verbatim}
+import se.scalablesolutions.akka.actor.Actor._
+
+class MyActor extends Actor {
+  def receive = {
+    case "test" => println("received test")
+    case      _   => println("received unknown message")
+  }
+}
+	    
+val myActor = actorOf[MyActor].start
+myActor ! "test"
+\end{verbatim}
+\end{frame}
+\frame{
+	\only<1>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.9]{imagens/local-actor-message1.pdf}
+		\end{figure}
+	}
+	\only<2>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.9]{imagens/local-actor-message2.pdf}
+		\end{figure}
+	}
+	\only<3>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.9]{imagens/local-actor-message3.pdf}
+		\end{figure}
+	}
+
 
 }
+
+\subsection{Atores remotos}
 \frame{
-\frametitle{Envio Remoto de Mensagens}
+\frametitle{Envio remoto de mensagens}
 
 }
 \section{Proposta} 
