@@ -196,9 +196,9 @@
 	originado pelo descontinuado Scala OTP, cujo objetivo era de se portar as idéias de Erlang OTP\cite{prog-erlang} para a linguagem Scala.
 
 
-	\par Uma das principais características do modelo de atores é a troca assíncrona de mensagens. 
-	\english{Middlewares} orientados a mensagem, conhecidos como MOMs possuem esta característica --
-	as mensagens enviadas são armazenadas em filas, sendo mantidas até que o destinatário esteja pronto para fazer o
+	\par Podemos observar uma sinergia entre o modelo de atores e \english{middlewares} orientados a mensagens. Conhecidos como MOMs,
+        trabalham, assim como o modelo de atores, com a troca ass\'incrona de mensagens.
+	Mensagens enviadas são armazenadas em filas, sendo mantidas até que o destinatário esteja pronto para fazer o
 	recebimento e processamento.      
         Os termos produtor e consumidor podem ser entendidos tanto como cliente e servidor ou o contrário, já que da perspectiva
         do MOM não existe o conceito de cliente e servidor como em sistemas baseados em \english{Remote Procedure Call} (RPC). 

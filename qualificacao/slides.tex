@@ -4,7 +4,7 @@
 \usepackage[brazil]{babel}
 \usepackage{graphicx}
 \usepackage{listings}
-\title[AMQP para transportar Mensagens entre Atores Remotos]{Troca de Mensagens entre Atores Remotos} 
+\title[AMQP para transportar Mensagens entre Atores Remotos]{AMQP para o Transporte de Mensagens entre Atores Remotos} 
 \author{Thadeu de Russo e Carmo \\ \texttt{thadeurc@ime.usp.br}} 
 \institute{Orientador: Prof. Dr. Francisco da Rocha Reverbel\\ Instituto de Matem\'atica e Estat\'istica \\ Universidade de S\~ao Paulo}
 \date{Novembro, 2010}
@@ -18,10 +18,10 @@
 		Necessidade de programas escritos de maneira concorrente:
 		\begin{itemize}
 			\item Fim da lei de Moore -- programas precisam ser escritos de maneira concorrente para poder
-			usufruir dos ganhos de desempenho dos processadores com m\'ultiplos n\'ucleos
+			usufruir dos ganhos de desempenho dos processadores com m\'ultiplos n\'ucleos \cite{Sutter2005}
 			
 			\item Abordagem convencional com o uso de travas al\'em de complexa, possui
-			limita\c{c}\~oes em rela\c{c}\~ao a componibilidade
+			limita\c{c}\~oes em rela\c{c}\~ao a componibilidade \cite{Jones2007}
 		\end{itemize}
 	}
 	\only<2>{
@@ -29,11 +29,11 @@
 		\begin{itemize}
 			\item \textit{Software Transactional Memory}(STM) -- mecanismo de controle an\'alogo
 			as transa\c{c}\~oes de SGBDs	
-			\item Atores -- troca de mensagem ass\'incrona entre processos
+			\item Atores -- troca de mensagem ass\'incrona entre processos 
 		\end{itemize}
 	}
 	\only<3>{
-		\begin{beamerboxesrounded}{Defini\c{c}\~ao de um Ator}
+		\begin{beamerboxesrounded}{Defini\c{c}\~ao de um Ator \cite{Agha1986}}
 			Agentes computacionais que especificam um endere\c{c}o para sua caixa de correio e seu comportamento,
 			fazendo o processamento ass\'icrono das mensagens que recebe em sua caixa de correio. Mensagens recebidas
 			s\~ao mapeadas em uma $3$-tupla consistindo de: 
@@ -52,7 +52,7 @@
 			\item Formam base para simplificar o desenvolvimento de sistemas
 			\item Possuem suporte e mecanismos para gerenciamento de erros e garantia de entrega de mensagens	
 			\item S\~ao frequentemente apresentados como tecnologia que pode mudar a maneira como sistemas distribu\'idos
-			s\~ao constru\'idos
+			s\~ao constru\'idos \cite{Alonso2004}
 		\end{itemize}
 	}
 	\only<5>{
@@ -146,25 +146,21 @@
 	\only<3>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.85]{imagens/amqp-overview.pdf}
-		  	\caption{Vis\~ao geral dos componentes do modelo AMQP}
 		\end{figure}
 	}
 	\only<4>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.90]{imagens/amqp-message-flow1.pdf}
-		  	\caption{Envio da mensagem}
 		\end{figure}
 	}
 	\only<5>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.90]{imagens/amqp-message-flow2.pdf}
-		  	\caption{Recebimento e an\'alise dos dados do cabe\c{c}alho}
 		\end{figure}
 	}
 	\only<6>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.90]{imagens/amqp-message-flow3.pdf}
-		  	\caption{Encaminhamento para a fila}
 		\end{figure}
 	}
 	\only<7>{
@@ -274,7 +270,6 @@ myActor ! "test"
 	\only<2>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.6]{imagens/remote-actor-diagram.pdf}
-		  	\caption{Disposi\c{c}\~ao dos componentes}
 		\end{figure}
 	}
 }
@@ -386,13 +381,35 @@ myActor ! "test"
 			    7 &     &     &     &     &     &     &     &     & \x  \\ \hline
 		  	\end{tabular}  
 		\end{center}	
+		\begin{center}
+			\vspace{.5cm}
 			Data limite: Fevereiro de 2012.
+		\end{center}
 	}
 }
 \subsection{Refer\^encias}
 \frame{
-\frametitle{Ref\^encias}
-colocar referencias
+\frametitle{Refer\^encias}
+\begin{thebibliography}{10} 
+	\only<1>{
+		\bibitem[Agha, 1986]{Agha1986} Gul Agha, 1986 
+		\newblock {\em Actors: a model of concurrent computation in distributed system}
+		\newblock MIT Press, Cambridge, MA, USA
+	
+		\bibitem[Sutter, 2005]{Sutter2005} Herb Sutter, 2005 
+		\newblock {\em The Free Lunch Is Over: A Fundamental Turn Toward Concurrency in Software}
+		\newblock http://www.gotw.ca/publications/concurrency-ddj.htm
+	
+		\bibitem[Jones, 2007]{Jones2007} Simon P. Jones, 2007
+		\newblock {\em Beautiful Concurrency}
+		\newblock http://research.microsoft.com/Users/simonpj/papers/stm/index.htm
+	}
+	\only<2>{
+		\beamertemplatebookbibitems
+		\bibitem[Alonso, et al. 2004]{Alonso2004} Gustavo Alonso and Fabio Casati and Harumi Kuno and Vijay Machiraju, 2004
+		\newblock {\em Web Services: Concepts, Architecture and Applications}
+	}
+\end{thebibliography}
 }
 
 \end{document}
