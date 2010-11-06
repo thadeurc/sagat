@@ -218,6 +218,7 @@
 }
 \subsection{Atores locais}
 \begin{frame}[fragile]
+\frametitle{Envio local de mensagens}
 \begin{verbatim}
 import se.scalablesolutions.akka.actor.Actor._
 
@@ -248,25 +249,150 @@ myActor ! "test"
 			\includegraphics[scale=.9]{imagens/local-actor-message3.pdf}
 		\end{figure}
 	}
-
+	\only<4>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.9]{imagens/local-actor-message4.pdf}
+		\end{figure}
+	}
 
 }
 
 \subsection{Atores remotos}
 \frame{
+\frametitle{Principais componentes}
+	\only<1>{
+		\begin{beamerboxesrounded}{Principais componentes}
+			\begin{itemize}
+				\item \textit{RemoteActor}
+				\item \textit{RemoteServer}
+				\item \textit{RemoteNode}
+				\item \textit{Cluster}
+				\item \textit{RemoteClient}
+			\end{itemize}
+		\end{beamerboxesrounded}
+	}
+	\only<2>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.6]{imagens/remote-actor-diagram.pdf}
+		  	\caption{Disposi\c{c}\~ao dos componentes}
+		\end{figure}
+	}
+}
+\begin{frame}[fragile]
 \frametitle{Envio remoto de mensagens}
+	\begin{itemize}
+		\item Cria\c{c}\~ao de ator remoto pelo cliente:
+	\end{itemize}
+	\begin{verbatim}
+	   val myActor = actorOf[MyActor]
+	   myActor.makeRemote("localhost", 15092)
+	   myActor.start
+	   myActor ! "test"
+	\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Envio remoto de mensagens}
+	\begin{itemize}
+		\item Registro de um ator local para receber mensagens de atores remotos:
+	\begin{verbatim}
+		RemoteNode.start("localhost", 15092)
+		RemoteNode.register("my-actor", myActor)
+	\end{verbatim}
+	\item Cliente enviando mensagem para o ator remoto:
+	\begin{verbatim}
+		val myActor = RemoteClient.actorFor("my-actor", 
+                                 "localhost", 15092)
+		myActor ! "Hi"
+	\end{verbatim}
+	\end{itemize}
+\end{frame}
 
+\frame{
+	\only<1>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.6]{imagens/remote-actor-message-flow1.pdf}
+		\end{figure}
+	}
+	\only<2>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.6]{imagens/remote-actor-message-flow2.pdf}
+		\end{figure}
+	}
+	\only<3>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.6]{imagens/remote-actor-message-flow3.pdf}
+		\end{figure}
+	}
+	\only<4>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.6]{imagens/remote-actor-message-flow4.pdf}
+		\end{figure}
+	}
+	\only<5>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.6]{imagens/remote-actor-message-flow5.pdf}
+		\end{figure}
+	}
+	\only<6>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.6]{imagens/remote-actor-message-flow6.pdf}
+		\end{figure}
+	}
+	\only<7>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.6]{imagens/remote-actor-message-flow7.pdf}
+		\end{figure}
+	}
 }
 \section{Proposta} 
 \frame{
 \frametitle{Proposta}
-alalaa
+	\begin{itemize}
+		\item Substituir o mecanismo de transporte para troca de mensagens de atores
+		remotos do projeto Akka por um baseado em AMQP
+		\item Fazer uma an\'alise comparativa entre o uso das duas implementa\c{c}\~oes
+	\end{itemize}
 }
-
 \subsection{Atividades}
 \frame{
 \frametitle{Cronograma}
-crono
+	\only<1>{
+		\begin{enumerate}
+			\item An\'alise das implementa\c{c}\~oes dos \textit{brokers} AMQP para 
+			defini\c{c}\~ao do que ser\'a usado
+			\item Desenvolvimento do c\'odigo e estrutura necess\'aria para o transporte
+			 das mensagens entre os atores remotos utilizando AMQP
+			\item Desenvolvimento de testes, refatora\c{c}\~ao e aprimoramento da implementa\c{c}\~ao
+			\item Elabora\c{c}\~ao e execu\c{c}\~ao de testes de desempenho entre a implementa\c{c}\~ao
+			 de atores remotos com JBoss Netty e AMQP
+			\item Reda\c{c}\~ao da disserta\c{c}\~ao
+			\item Reda\c{c}\~ao de artigo
+			\item Defesa
+		\end{enumerate}
+	}
+	\only<2>{
+		\begin{center}	
+		\newcommand{\x}{$\bullet$}
+			\textbf{2010/2011}		  
+			\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+			 \hline
+			    & nov & dez & jan & fev & mar & abr & mai & jun & jul \\ \hline
+			    1 & \x  &     &     &     &     &     &     &     &     \\ \hline
+			    2 & \x  & \x  & \x  &     &     &     &     &     &     \\ \hline
+			    3 &     &     & \x  & \x  & \x  &     &     &     &     \\ \hline
+			    4 &     &     &     &     & \x  &     &     &     &     \\ \hline
+			    5 &     &     &     &     &     & \x  & \x  & \x  &     \\ \hline
+			    6 &     &     &     &     &     &     &     & \x  &     \\ \hline
+			    7 &     &     &     &     &     &     &     &     & \x  \\ \hline
+		  	\end{tabular}  
+		\end{center}	
+			Data limite: Fevereiro de 2012.
+	}
+}
+\subsection{Refer\^encias}
+\frame{
+\frametitle{Ref\^encias}
+colocar referencias
 }
 
 \end{document}

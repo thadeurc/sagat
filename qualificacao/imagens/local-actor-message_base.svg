@@ -17,7 +17,7 @@
    version="1.0"
    sodipodi:version="0.32"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="local-actor-message_base.svg">
+   sodipodi:docname="local-actor-message.svg">
   <metadata
      id="metadata1379">
     <rdf:RDF>
@@ -370,14 +370,119 @@
    id="tspan3088"
    style="font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Oblique">n</tspan> =&gt; ...</tspan></text>
   </g>
-  <rect
-     style="fill:#ffffff;stroke:#000000;stroke-width:0.87701124;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-     id="rect4044"
-     width="90.002274"
-     height="26.162951"
-     x="412.01059"
-     y="121.60656"
-     transform="matrix(0.99997439,0.00715653,0,1,0,0)" />
+  <g
+     id="g2977">
+    <rect
+       transform="matrix(0.99997439,0.00715653,0,1,0,0)"
+       y="121.60656"
+       x="412.01059"
+       height="26.162951"
+       width="90.002274"
+       id="rect4044"
+       style="opacity:1;fill:#ffffff;stroke:#000000;stroke-width:0.87701123000000003;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+    <g
+       id="g3165">
+      <rect
+         style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:0.87699986;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="rect3134"
+         width="20"
+         height="10"
+         x="415"
+         y="132.36218" />
+      <g
+         id="g3149">
+        <g
+           id="g3144">
+          <g
+             id="g3140">
+            <text
+               id="text3136"
+               y="138.86218"
+               x="416.5"
+               style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+               xml:space="preserve"><tspan
+                 y="138.86218"
+                 x="416.5"
+                 id="tspan3138"
+                 sodipodi:role="line">msg<tspan
+   id="tspan3111"
+   style="font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Oblique">1</tspan></tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g3233">
+      <rect
+         y="132.36218"
+         x="439"
+         height="10"
+         width="20"
+         id="rect3175"
+         style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:0.87699986;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <g
+         id="g3177"
+         transform="translate(24,0)">
+        <g
+           id="g3179">
+          <g
+             id="g3181">
+            <text
+               xml:space="preserve"
+               style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+               x="416.5"
+               y="138.86218"
+               id="text3183"><tspan
+                 sodipodi:role="line"
+                 id="tspan3185"
+                 x="416.5"
+                 y="138.86218">msg<tspan
+   id="tspan3113"
+   style="font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Oblique">2</tspan></tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g5094">
+      <rect
+         style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:0.87699986;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="rect3189"
+         width="20"
+         height="10"
+         x="479"
+         y="132.36218" />
+      <g
+         id="g3193"
+         transform="translate(64,0)">
+        <g
+           id="g3195">
+          <text
+             xml:space="preserve"
+             style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+             x="416.5"
+             y="138.86218"
+             id="text3197"><tspan
+               sodipodi:role="line"
+               id="tspan3199"
+               x="416.5"
+               y="138.86218">msg<tspan
+   id="tspan3115"
+   style="font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Oblique">x</tspan></tspan></text>
+        </g>
+      </g>
+    </g>
+    <text
+       id="text3248"
+       y="138.86218"
+       x="464"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="138.86218"
+         x="464"
+         id="tspan3250"
+         sodipodi:role="line">...</tspan></text>
+  </g>
   <g
      id="g5112">
     <rect
@@ -459,6 +564,100 @@
        x="598"
        y="94.362183"
        style="font-size:8px">ator ! mensagem</tspan></text>
+  <path
+     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.00000002, 2.00000001;stroke-dashoffset:0.09999999;marker-end:url(#marker1523)"
+     d="M 599.44557,107.36218 505,142.36219"
+     id="path3308"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <text
+     xml:space="preserve"
+     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="451.74417"
+     y="312.9523"
+     id="text4328"
+     transform="matrix(0.93365314,-0.35817848,0.35817848,0.93365314,0,0)"><tspan
+       sodipodi:role="line"
+       id="tspan4330"
+       x="451.74417"
+       y="312.9523"
+       style="font-size:8px">adiciona na fila</tspan></text>
+  <path
+     style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart)"
+     d="m 295,107.36218 0,29.706"
+     id="path4334"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 294.5,137.36218 116.99985,0"
+     id="path4336"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:0.99999988px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1523)"
+     d="m 345.066,98.36218 68.8934,0"
+     id="path4342"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <text
+     xml:space="preserve"
+     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="380"
+     y="176.36218"
+     id="text5027"><tspan
+       sodipodi:role="line"
+       id="tspan5029"
+       x="380"
+       y="176.36218"
+       style="font-size:11px">Legenda:</tspan></text>
+  <rect
+     style="opacity:1;fill:#ffffff;stroke:#000000;stroke-width:0.877;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     y="167.36218"
+     x="435"
+     height="29.999994"
+     width="95"
+     id="rect5025" />
+  <text
+     xml:space="preserve"
+     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="473"
+     y="181.36218"
+     id="text5031"><tspan
+       sodipodi:role="line"
+       id="tspan5033"
+       x="473"
+       y="181.36218"
+       style="font-size:9px">Thread 1</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="473"
+     y="193.36218"
+     id="text5035"><tspan
+       sodipodi:role="line"
+       id="tspan5037"
+       x="473"
+       y="193.36218"
+       style="font-size:9px">Thread 2</tspan></text>
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 441,191.36218 20,0"
+     id="path5039"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     inkscape:connector-type="polyline"
+     id="path5041"
+     d="m 441,179.36218 20,0"
+     style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 2;stroke-dashoffset:0"
+     inkscape:connector-curvature="0" />
+  <path
+     inkscape:connector-type="polyline"
+     id="path5059"
+     d="m 418.29999,80.342966 -69.0629,0"
+     style="fill:none;stroke:#000000;stroke-width:0.99999982px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1523)"
+     inkscape:connector-curvature="0" />
   <rect
      style="fill:none;stroke:none"
      id="rect4468"

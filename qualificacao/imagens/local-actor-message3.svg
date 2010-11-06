@@ -17,7 +17,7 @@
    version="1.0"
    sodipodi:version="0.32"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="local-actor-message3.svg">
+   sodipodi:docname="local-actor-message_base.svg">
   <metadata
      id="metadata1379">
     <rdf:RDF>
@@ -44,7 +44,7 @@
      inkscape:zoom="2"
      inkscape:cx="469.57985"
      inkscape:cy="925.12197"
-     inkscape:window-x="61"
+     inkscape:window-x="27"
      inkscape:window-y="0"
      inkscape:current-layer="svg2"
      showgrid="true"
@@ -443,6 +443,35 @@
          id="tspan3260"
          sodipodi:role="line" /></text>
   </g>
+  <rect
+     id="rect7920"
+     style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+     y="-675"
+     x="-107.36218"
+     ry="0"
+     rx="0"
+     height="82.43943"
+     width="40.000008"
+     transform="matrix(0,-1,-1,0,0,0)"
+     inkscape:transform-center-x="51.471695"
+     inkscape:transform-center-y="-18.534494" />
+  <text
+     sodipodi:linespacing="100%"
+     xml:space="preserve"
+     id="text7097"
+     style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     y="91.835815"
+     x="633.7627"
+     inkscape:transform-center-x="33.267991"
+     inkscape:transform-center-y="-38.932037"><tspan
+       style="font-family:Bitstream Vera Sans"
+       id="tspan7099"
+       y="91.835815"
+       x="633.7627">Cliente</tspan><tspan
+       y="103.83582"
+       x="633.7627"
+       id="tspan7101"
+       sodipodi:role="line" /></text>
   <path
      style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart)"
      d="m 295,107.36218 0,29.706"
@@ -455,4 +484,11 @@
      id="path4336"
      inkscape:connector-type="polyline"
      inkscape:connector-curvature="0" />
+  <rect
+     style="fill:none;stroke:none"
+     id="rect4468"
+     width="460"
+     height="220"
+     x="235"
+     y="2.3621826" />
 </svg>

@@ -42,7 +42,7 @@
      inkscape:window-width="1233"
      inkscape:window-height="758"
      inkscape:zoom="2"
-     inkscape:cx="469.57985"
+     inkscape:cx="406.82985"
      inkscape:cy="925.12197"
      inkscape:window-x="61"
      inkscape:window-y="0"
@@ -379,6 +379,38 @@
      y="121.60656"
      transform="matrix(0.99997439,0.00715653,0,1,0,0)" />
   <g
+     id="g3165"
+     transform="translate(-42,-52)">
+    <rect
+       y="132.36218"
+       x="415"
+       height="10"
+       width="20"
+       id="rect3134"
+       style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:0.87699986;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <g
+       id="g3149">
+      <g
+         id="g3144">
+        <g
+           id="g3140">
+          <text
+             xml:space="preserve"
+             style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+             x="416.5"
+             y="138.86218"
+             id="text3136"><tspan
+               sodipodi:role="line"
+               id="tspan3138"
+               x="416.5"
+               y="138.86218">msg<tspan
+   style="font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Oblique"
+   id="tspan3111">1</tspan></tspan></text>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g
      id="g5112">
     <rect
        id="rect3262"
@@ -429,36 +461,24 @@
      xml:space="preserve"
      id="text7097"
      style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     y="78.362183"
-     x="630.04688"
+     y="91.835815"
+     x="633.7627"
      inkscape:transform-center-x="33.267991"
      inkscape:transform-center-y="-38.932037"><tspan
        style="font-family:Bitstream Vera Sans"
        id="tspan7099"
-       y="78.362183"
-       x="630.04688">Cliente</tspan><tspan
-       y="90.362183"
-       x="630.04688"
+       y="91.835815"
+       x="633.7627">Cliente</tspan><tspan
+       y="103.83582"
+       x="633.7627"
        id="tspan7101"
        sodipodi:role="line" /></text>
-  <rect
-     style="opacity:1;fill:#ffffff;stroke:#000000;stroke-width:0.87700000000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-     y="82.362183"
-     x="597"
-     height="19.999996"
-     width="73.000008"
-     id="rect3293" />
-  <text
-     xml:space="preserve"
-     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="598"
-     y="94.362183"
-     id="text3295"><tspan
-       sodipodi:role="line"
-       id="tspan3297"
-       x="598"
-       y="94.362183"
-       style="font-size:8px">ator ! mensagem</tspan></text>
+  <path
+     style="fill:none;stroke:#000000;stroke-width:0.99999988px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1523)"
+     d="m 345.066,94.36218 68.8934,0"
+     id="path4342"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <rect
      style="fill:none;stroke:none"
      id="rect4468"
