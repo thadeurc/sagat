@@ -197,7 +197,7 @@
 
 
 	\par Podemos observar uma sinergia entre o modelo de atores e \english{middlewares} orientados a mensagens. Conhecidos como MOMs,
-        trabalham, assim como o modelo de atores, com a troca ass\'incrona de mensagens.
+        trabalham, assim como o modelo de atores, com a troca assíncrona de mensagens.
 	Mensagens enviadas são armazenadas em filas, sendo mantidas até que o destinatário esteja pronto para fazer o
 	recebimento e processamento.      
         Os termos produtor e consumidor podem ser entendidos tanto como cliente e servidor ou o contrário, já que da perspectiva
@@ -292,7 +292,7 @@
 	a troca de mensagens entre atores remotos acontece de maneira transparente. Neste processo de envio, as mensagens trafegam
 	com o uso de \english{sockets} TCP e UDP.
 	
-\subsection{Atores em Scala}
+\subsection{A biblioteca de atores de Scala}
 	\par Scala é uma linguagem moderna, com tipagem estática e que unifica os paradigmas de programação funcional e 
 	orientado a objetos \cite{scala-overview}, tendo sido desenvolvida a partir de 2001 no laboratório de métodos de 
 	programação na EPFL(\english{Ecolé Polytechnique Fédérale de Lausanne}). O código escrito em Scala pode ser compilado
@@ -328,7 +328,7 @@
 	interfaces remotas como em Java RMI. O trafégo das mensagens é feito via seriação padrão Java através de \english{sockets}
 	TCP.
  	
-\subsection{Atores em Scala com Akka}
+\subsection{O projeto Akka}
 	\par O projeto Akka é composto por um conjunto de módulos escritos em Scala\footnote{O projeto disponibiliza também uma 
           implementação da biblioteca em Java.}, 
         formando uma plataforma voltada para
@@ -365,45 +365,46 @@
 	a atores remotos dentre as estudadas.
 	
 \subsection{AMQP}
-	\par AMQP (\english{Advanced Message Queuing Protocol}) é um protocolo de \english{internet} aberto 
-	para sistemas de troca de mensagem corporativa. Criado por um conjunto de empresas (Red Hat, JPMorgan Chase, 
+	\par AMQP (\english{Advanced Message Queuing Protocol}) é um protocolo aberto 
+	para sistemas corporativos de troca de mensagens. Foi criado por um conjunto de empresas (Red Hat, JPMorgan Chase, 
 	Cisco Systems, entre outras), com o objetivo de viabilizar tanto o desenvolvimento quanto a disseminação de um protocolo 
-        padrão para este tipo de sistema, e que reduzisse o custo das empresas e de sistemas de integração.
-	Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
-	para \english{middleware} orientado a mensagens, sendo ambos o protocolo de rede como a semântica dos serviços do
-	da aplicação servidora definidos por ele. Também é parte do foco  que, capacidades providas por \english{middlewares}
-	orientados a mensagem possam estar pervasivamente disponíveis nas redes das empresas, tornando possível o desenvolvimento de novas
-	aplicações\cite{amqp-spec}.
+        padrão para este tipo de sistema. Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
+	para \english{middleware} orientado a mensagens. A especificação define não somente o protocolo de rede, mas também a semântica dos serviços do
+	da aplicação servidora. Também é parte do foco que capacidades providas por sistemas de \english{middleware}
+	orientados a mensagem possam estar pervasivamente disponíveis nas redes das empresas, incentivando o desenvolvimento de
+	aplicações interoperáveis baseadas em troca de mensgens\cite{amqp-spec}.
 	
-	\par O modelo AMQP contempla a definição explícita da semântica da aplicação servidora, já que este é um fator chave para interoperabilidade.
-	Os componentes principais são: 
+	\par Os componentes principais do modelo AMQP são: 
 	\begin{itemize}
-	\item Servidor: O processo que aceita conexões de clientes e implementa as funções de filas de mensagens e 
-	  roteamento, sendo conhecido também como \english{broker}. 
+	\item Servidor: É o processo,  conhecido também como \english{broker}, que aceita conexões de clientes e implementa as funções de
+          filas de mensagens e roteamento.
 	  
 	\item Filas: São entidades internas do servidor que armazenam as mensagens, tanto em memória quanto em disco,
-	  até que elas sejam enviadas em sequência para as aplicações consumidoras. As filas são entidades para armazenamento e
-	  distribuição de mensagens sendo totalmente independentes umas das outras. Existem várias propriedades diferentes para
-	  a criação de filas: públicas ou privadas, duráveis ou transientes, permanentes ou temporárias. A combinação destas propriedades
-	  viabilizam a criação de filas com as seguintes características: armazena-e-encaminha (\english{store-and-forward}), 
-	  onde as mensagens são armazenadas e distribuídas entre os seus assinantes na forma \english{round-robin}; 
-	  filas temporárias para resposta, onde as mensagens são armazenadas e encaminhadas para um único assinante; 
-	  e filas \english{pub-sub}, onde as mensagens de	várias fontes diferentes são armazenadas e enviadas para um único assinante;
+	  até que elas sejam enviadas em sequência para as aplicações consumidoras. As filas são totalmente independentes umas das outras. 
+          Na criação de uma fila, várias propriedades podem ser especificadas:
+	  a fila de ser pública ou privada, armazenar mensagens de modo durável ou transiente, e ter existência permanente ou temporária 
+          (e.g.: a existência da fila é vinculada ao ciclo de vida de uma aplicação consumidora). 
+          A combinação de propriedades como essas viabiliza a criação de diversos tipos de fila, como por exemplo: 
+          fila armazena-e-encaminha (\english{store-and-forward}), 
+	  que armazena as mensagens e as distribui para vários consumidores na forma \english{round-robin}, 
+	  fila temporária para resposta, que armazena as mensagens e as encaminha para um  único consumidor; 
+	  e fila \english{pub-sub}, que armazena mensagens provenientes de vários produtores e as envia para um único consumidor.
 	  
 	\item \english{Exchanges}: São entidades internas do servidor que recebem e roteiam as mensagens das aplicações produtoras
-	  para as filas, levando em conta critérios pré-definidos (\english{bindings}). \english{Exchanges} inspecionam
-	  as mensagens verificando, na maioria dos casos, a chave de roteamento e com o auxílio da tabela de \english{bindings}, 
-	  decidem como encaminhar as mensagens às respectivas filas, jamais fazendo o seu armazenamento;
+	  para as filas, levando em conta critérios pré-definidos (\english{bindings}). Essas entidades inspecionam
+	  as mensagens, verificando, na maioria dos casos, a chave de roteamento presente no cabeçalho de cada mensagem. 
+          Com o auxílio da tabela de \english{bindings}, uma \english{exchange} decide como encaminhar as mensagens às respectivas filas,
+          jamais armazenado mensagens.
 	  
-	\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas que definem o como
-	  deverá ser feito o roteamento das mensagens;
+	\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas. Esses relacionamentos definem como
+	  deverá ser feito o roteamento das mensagens.
 	  
 	\item \english{Virtual hosts}: São coleções de \english{exchanges}, filas e objetos associados. \english{Virtual hosts}
-	  são domínios independentes do servidor que compartilham um ambiente comum para autenticação e segurança. As aplicações
+	  são domínios independentes no servidor e compartilham um ambiente comum para autenticação e segurança. As aplicações
 	  clientes escolhem um \english{virtual host} após se autenticarem no servidor.		  		
 	\end{itemize}	
 	
-	\par A figura ~\ref{fig:amqp_overview} ilustra a disponibilidade dos componentes acima descritos. 
+	\par A figura~\ref{fig:amqp_overview} mostra os componentes acima descritos e os relacionamentos entre esses componentes. 
 	\vspace{1ex}
 	\begin{figure}[hbtp]
 	  \centering
@@ -412,33 +413,35 @@
 	  \label{fig:amqp_overview}
 	\end{figure}
         
-	\par Em modelos pré-AMQP,  as tarefas descritas são feitas por blocos monolíticos que implementam tipos específicos de
-	roteamento e armazenamento temporário. Podemos notar que este modelo faz uma separação das tarefas em basicamente dois
+	\par Em modelos pré-AMQP,  as tarefas das \english{exchanges} e das filas eram feitas por blocos
+        monolíticos que implementavam tipos específicos de
+	roteamento e armazenamento. O modelo AMQP separa essas tarefas e as atribui a entidades distintas (\english{exchanges} e filas), que têm os seguintes
 	papéis: \entry{(i)} receber as mensagens e fazer o roteamento para as filas; \entry{(ii)} armazenar as mensagens e fazer o
-	encaminhamento
-	para as aplicações consumidoras. Vale frisar também que filas, \english{exchanges} e \english{bindings} podem ser criados em
-	tempo de execução e programaticamente.
+	encaminhamento para as aplicações consumidoras. Vale frisar que filas, \english{exchanges} e \english{bindings} podem ser criados tanto
+	de modo programático como por meio de ferramentas administrativas.
 	
-	\par A abordagem utilizada pelo modelo AMQP possui semelhanças com sistemas de \english{email}:	
+	\par Há uma analogia entre o modelo AMQP e sistemas de email:
 	\begin{enumerate}
-	\item Uma mensagem AMQP é análoga a uma mensagem de \english{email};
-	\item Uma fila é análoga a uma caixa de mensagens;
-	\item Um consumidor é como um cliente de \english{email} que carrega e apaga as mensagens;
-	\item Uma \english{exchange} é como um agente de transferência de \english{email} (MTA) que inspeciona as mensagens e, 
-	  com base nas chaves de roteamento, que no caso de correio eletrônico são os campos de destinatário ou cópias (To, Cc e Bcc),
-	  verifica as tabelas de registro e decide como enviar as mensagens para uma ou mais caixas de correio;
+	\item Uma mensagem AMQP é análoga a uma mensagem de \english{email}.
+	\item Uma fila é análoga a uma caixa de mensagens.
+	\item Um consumidor corresponde a um cliente de \english{email} que carrega e apaga as mensagens.
+	\item Uma \english{exchange} corresponde a um \english{mail transfer agent} (MTA) que inspeciona as mensagens e, 
+	  com base nas chaves de roteamento, 
+	  verifica as tabelas de registro e decide como enviar as mensagens para uma ou mais caixas de mensagens. 
+          No caso do correio eletrônico as chaves de roteamento são os campos de destinatário e cópias (To, Cc e Bcc).
 	\item Um \english{binding} corresponde a uma entrada nas tabelas de roteamento do MTA.
 	\end{enumerate}
-	
-	\par Uma vez que uma mensagem tenha sido criada por uma aplicação produtora, os dados adicionados e eventualmente algumas
-	propriedades tenham sido adicionadas, bem como uma rotulação com informação de roteamento, a mensagem é enviada para 
-	uma determinada \english{exchange} de um determinado \english{virtual host}. Uma vez que a mensagem tenha sido recebida no servidor
-	AMQP, acontece o roteamento para um conjunto de filas existentes. No caso de não ser possível rotear a mensagem, seja qual for
-	o motivo, algumas alternativas podem ser escolhidas, como rejeitar a mensagem, descartá-la silenciosamente, ou ainda fazer o
+        
+        \par Para enviar uma mensagem, uma aplicação produtora especifica uma determinada \english{exchange} de um determinado
+        \english{virtual host}, uma rotulação com informação de roteamento e eventualmente algumas propriedades adicionais, bem
+        como os dados do corpo da mensagem. Uma vez que a mensagem tenha sido recebida no servidor
+	AMQP, ocorre o roteamento para uma ou mais filas do conjunto de filas do \english{virtual host} especificado. 
+        No caso de não ser possível rotear a mensagem, seja qual for
+	o motivo, as opções  são: rejeitar a mensagem, descartá-la silenciosamente, ou ainda fazer o
 	roteamento para uma \english{exchange} alternativa. A escolha depende do comportamento definido pelo produtor. Quando a mensagem
-	é depositada em alguma (ou possivelmente algumas) fila, esta tenta repassá-la imediatamente para a aplicação consumidora e,
-	caso não seja possível, a mantém armazenada para uma tentativa futura. Uma vez que a mensagem foi entregue com sucesso
-	a um assinante, a mesma é removida da fila. O envio e entrega de uma mensagem pode ser vista na figura ~\ref{fig:amqp-message-flow}.
+	é depositada em alguma fila (ou possivelmente em algumas filas), a fila tenta repassá-la imediatamente para a aplicação consumidora.
+	Caso isso não seja possível, a fila mantém a mensagem armazenada para uma futura tentativa de entrega. Uma vez que a mensagem foi entregue com sucesso
+	a um consumidor, ela é removida da fila. A figura~\ref{fig:amqp-message-flow} mostra o envio e recebimento de uma mensagem.
         
 	\vspace{1ex}
 	\begin{figure}[hbtp]
@@ -448,21 +451,29 @@
 	  \label{fig:amqp-message-flow}
 	\end{figure}
         
-	\par O processo de aceitação ou confirmação de recebimento fica a critério da aplicação consumidora, podendo acontecer
-	imediatamente, após a aplicação consumidora ter processado a mensagem e explicitamente confirmar sua aceitação, ou ainda
-	como parte de um contexto transacional.
+	\par A aceitação ou confirmação de recebimento de uma mensagem fica a critério da aplicação consumidora, podendo acontecer
+	imediatamente depois da retirada da mensagem da fila ou após a aplicação consumidora ter processado a mensagem.
+        %% ou na efetivação da transação que retirou a mensagem da fila.
 	
-        \subsection{Tráfego de mensagens entre Atores}
-	\par Como mencionado, apesar de o modelo de atores ser bem definido, não existe uma padronização para sua implementação. 
-	De acordo com o modelo, o processamento das mensagens deve ser desacoplado do envio. Mostraremos nas próximas duas sub-seções,
-	com base na implementação feita no projeto Akka, o fluxo de envio, tráfego e processamento de uma mensagem desde
-	a criação do ator, para atores locais quanto remotos.
+        \subsection{Atores no projeto Akka}
+	\par Apesar do modelo de atores ser bem definido, não existe uma padronização para a sua implementação. 
+	De acordo com o modelo, o processamento das mensagens deve ser desacoplado do envio. 
+
+        \par Os atores do Akka podem ser locais ou remotos. O termo ``ator local'' é usado para denotar um ator que pode receber mensagens apenas de atores
+        residentes na mesma máquina virtual. Por outro lado, um ator remoto pode receber mensagens de quaisquer outros atores, inclusive daqueles 
+        residentes em outras máquinas virtuais. Em outras palavras, o termo ``ator remoto'' é um sinônimo de ``ator remotamente acessível''.
+
+        \par Nas próximas duas sub-seções examinaremos a implementação de atores do projeto Akka. 
+        Mostraremos a criação e o uso de atores locais ou remotos, bem como o fluxo de uma mensagem (envio,
+        tráfego e processamento da mensagem) tanto no caso local como no remoto.
+
         
         \subsubsection{Atores locais}
-	\par A criação de atores locais pode acontecer tanto criando uma sub-classe de \english{Actor}
-	provendo uma implementação para o método \english{receive}, como mostrado na listagem ~\ref{lst:subclass-actor}, 
-	quanto se criando atores anônimos com o método \english{actor} da própria classe, como mostrado na listagem
-	~\ref{lst:anonym-actor}. Note que no segundo exemplo não é necessário inicializar o ator explicitamente.
+	\par A criação de atores locais pode acontecer tanto por meio uma sub-classe de \texttt{Actor}
+	provendo uma implementação para o método \texttt{receive}, como mostrado na listagem~\ref{lst:subclass-actor}, 
+	quanto via chamadas ao método \texttt{actor} da própria classe \texttt{Actor}, 
+        como mostrado na listagem~\ref{lst:anonym-actor}. Note que no segundo caso o ator criado é uma instância de uma classe anônima, e que 
+        não é necessário chamar explicitamente o método \texttt{start} para inicializá-lo.
         
         \begin{listing}
           \scriptsize
@@ -480,7 +491,7 @@
             val myActor = actorOf[MyActor].start
             myActor ! "test"
           \end{lstlisting}
-          \caption{Criação e uso da classe MyActor}
+          \caption{Criação e uso da classe \texttt{MyActor}.}
           \label{lst:subclass-actor}
         \end{listing}
         
@@ -492,21 +503,20 @@
 	    
             val myActor = actor {
 	      case "test" => println("received test")
-	      case	 _ => println("received unknown message")
+	      case	_ => println("received unknown message")
             }
 	    
             myActor ! "test"
           \end{lstlisting}
-          \caption{Criação e uso de ator anônimo}
+          \caption{Criação e uso de ator anônimo.}
           \label{lst:anonym-actor}
         \end{listing}
         
-	\par Uma vez que uma mensagem foi enviada para um ator, esta é colocada sincronamente na fila de mensagens do ator, 
-	levando tempo $O(1)$. 
+	\par Uma vez que uma mensagem foi enviada para um ator, ela é colocada sincronamente na fila de mensagens do ator, 
+	em tempo $O(1)$. 
 	As mensagens enfileiradas são então despachadas assincronamente para a função parcial definida no 
-	bloco \english{receive}, como mostrado na figura~\ref{fig:local-actor-message}. 
-        Por padrão, atores 
-	são criados com um despachador baseado em eventos que utiliza \english{thread pool} para despachar
+	bloco \texttt{receive}, como mostrado na figura~\ref{fig:local-actor-message}. 
+        Por padrão, atores são criados com um despachador que é impulsionado por eventos e que utiliza um \english{thread pool} para despachar
         as mensagens. Cada vez que uma mensagem é adicionada na fila de um ator, uma tarefa de despachamento é criada e colocada
         na fila de processamento do \english{thread pool}. É possível a definição e utilização de outros tipos de despachadores para se 
         obter melhores resultados em casos específicos\cite{akka-dispatchers}.
@@ -520,50 +530,47 @@
 	\end{figure}
         
         \subsubsection{Atores remotos}
-	\par A criação de atores remotos é muito semelhante a de atores locais porém com algumas diferenças importantes.
-	Primeiramente, atores remotos podem ser criados tanto no cliente e serem migrados para o servidor, tornando-se
-	\english{proxies} locais, quanto serem criados diretamente no servidor. Neste último caso, os clientes podem
-	requisitar referências remotas fazer a troca de mensagens. 
-	
+        %% explicar um pouco o que significa servidor e cliente no contexto abaixo
+        % ideia: os termos servidor vai se referir a quem recebe a mensagem - cliente envia e servidor recebe. vale frisar que os
+        % papeis se 'invertem'
 	\par Alguns componentes importantes são necessários para que seja possível o suporte:
 	\begin{itemize}
-	\item \english{RemoteActor}: Sub-classe de \english{Actor} que torna conveniente a criação de um ator remoto, 
-	  ao invés de se criar explicitamente um ator local e torná-lo remoto;
+	\item \texttt{RemoteActor}: Sub-classe de \texttt{Actor} que torna conveniente a criação de um ator remoto, 
+	  ao invés de se criar explicitamente um ator local e torná-lo remoto.
 	  
-	\item \english{RemoteServer}: É um componente usado no lado do servidor que tem como responsabilidade
-	  manter registrados os atores, bem como encaminhar as mensagens recebidas de
-	  clientes remotos para eles. Fica associado a um \english{host} e uma porta TCP. Um mesmo nó pode conter
-	  diferentes \english{RemoteServers};
+	\item \texttt{RemoteServer}: É um componente usado no lado do servidor. Tem como responsabilidade
+	  manter registrados os atores, bem como encaminhar a eles as mensagens recebidas de
+	  clientes remotos. Cada \texttt{RemoteServer} é associado a um \english{host} e a uma porta TCP. Um mesma máquina virtual 
+          pode conter múltiplos \texttt{RemoteServer}s.
 	  
-	\item \english{RemoteNode}: Sub-classe de \english{RemoteServer}, não possui nenhum comportamento adicional e
-	  é usado quando se deseja ter uma única instância de \english{RemoteServer} no nó em uso;
+	\item \texttt{RemoteNode}: Objeto \english{singleton} que é instância de \texttt{RemoteServer}. Não possui nenhum comportamento adicional e
+	  é usado quando se deseja ter um único \texttt{RemoteServer} numa dada máquina virtual.
 	  
-	\item \english{Cluster}: Abstração para se agrupar \english{RemoteServers} e possibilitar interação com vários
-	  servidores, como por exemplo \english{broadcasts} de mensagens;
+	\item \texttt{Cluster}: Abstração para se agrupar instâncias de \texttt{RemoteServer}. Permite que um cliente
+          interaja com múltiplos \texttt{RemoteServer}s, por exemplo via \english{broadcasts} de mensagens;
 	  
-	\item \english{RemoteClient}: É um componente usado pelo cliente que tem como responsabilidade 
-	  principal ser uma interface para acesso as referências dos atores remotos, conectando-se com os 
-	  \english{RemoteServers} para fazer tanto envio de mensagens quanto a procura e migração de atores remotos.
-	  Mantém também um registro dos identificadores dos atores locais que se tornaram remotos. Uma outra responsabilidade
-	  desde componente é fazer o envio de resultados futuros de envios de mensagens feitos com os métodos \english{!!} e
-	  \english{!!!}.
-	  
+	\item \texttt{RemoteClient}: É um componente usado pelo cliente. Tem como responsabilidade 
+	  visível oferecer uma interface para obtenção de referências a atores remotos. 
+          Oferece também suporte em tempo de execução para a infra-estrutura de atores do lado do cliente, provendo uma série de
+          serviços não vísiveis para o usuário, tais como: \entry{(i)} seriação de mensagens; \entry{(ii)} envio de mensagens para atores remotos; 
+          \entry{(iii)} conversão de ator local em ator remoto; \entry{(iv)} intermediação de mensagens de resposta vindas do \texttt{RemoteServer}, 
+          no caso envios via \texttt{!!} ou \texttt{!!!}.
 	\end{itemize}
 	
-	\par A disposição dos componentes descritos é apresentado na figura ~\ref{fig:remote-actor-diagram}.
+	\par A disposição dos componentes descritos é apresentado na figura~\ref{fig:remote-actor-diagram}.
 	A criação de atores remotos pelo cliente é análoga a de atores locais, salvo o fato de se informar
-	o \english{host} e porta do \english{RemoteServer}, já em execução, para onde o ator deverá ser migrado para ser executado. 
-	A listagem ~\ref{lst:subclass-actor-remote} mostra a criação através de uma sub-classe de \english{RemoteActor}. Um
-	ator local quando ainda não foi iniciado com uma chamada ao método \english{start}, pode se tornar remoto com uma chamada
-	ao método \english{makeRemote(host, port)}, como mostrado na listagem ~\ref{lst:make-remote-of-local-actor}.
+	o \english{host} e porta do \texttt{RemoteServer}, já em execução, para onde o ator deverá ser migrado para ser executado. 
+	A listagem ~\ref{lst:subclass-actor-remote} mostra a criação através de uma sub-classe de \texttt{RemoteActor}. Um
+	ator local quando ainda não foi iniciado com uma chamada ao método \texttt{start}, pode se tornar remoto com uma chamada
+	ao método \texttt{makeRemote(host, port)}, como mostrado na listagem~\ref{lst:make-remote-of-local-actor}.
  	A criação de atores através de classes anônimas possui uma limitação importante que é a falta de suporte a carregamento
  	remoto de classes, o que implica no fato de atores remotos anônimos obrigatoriamente serem executados na mesma máquina virtual.
 	
-	\par A criação de atores remotos pelo servidor, por sua vez, é exatamente igual a de atores locais, mostrado na listagens
-	~\ref{lst:subclass-actor} e ~\ref{lst:anonym-actor}. Uma vez que o ator tenha sido criado localmente,
-	basta registrá-lo em um \english{RemoteServer} ou \english{RemoteNode} como mostrado na listagem
-	~\ref{lst:registering-actor}. A maneira com a qual o cliente remoto busca pelo ator e envia uma mensagem
-	é mostrada na listagem ~\ref{lst:using-remote-actor}.
+	\par A criação de atores remotos pelo servidor, por sua vez, é exatamente igual a de atores locais, mostrado na 
+        listagens~\ref{lst:subclass-actor} e~\ref{lst:anonym-actor}. Uma vez que o ator tenha sido criado localmente,
+	basta registrá-lo em um \texttt{RemoteServer} ou \texttt{RemoteNode} como mostrado na listagem~\ref{lst:registering-actor}. 
+        A maneira com a qual o cliente remoto busca pelo ator e envia uma mensagem
+	é mostrada na listagem~\ref{lst:using-remote-actor}.
         
         \begin{listing}
           \scriptsize
@@ -583,7 +590,7 @@
             val myRemoteActor = actorOf[MyRemoteActor].start
             myRemoteActor ! "Hi"
           \end{lstlisting}
-          \caption{Criação e uso da classe MyRemoteActor}
+          \caption{Criação e uso da classe \texttt{MyRemoteActor}.}
           \label{lst:subclass-actor-remote}
         \end{listing}
         
@@ -605,7 +612,7 @@
             myActor.start
             myActor ! "test"
           \end{lstlisting}
-          \caption{Uso de makeRemote em atores locais}
+          \caption{Uso de \texttt{makeRemote} em atores locais.}
           \label{lst:make-remote-of-local-actor}
         \end{listing}
         
@@ -617,7 +624,7 @@
             RemoteNode.start("localhost", 15092)
             RemoteNode.register("my-actor", myActor)
           \end{lstlisting}
-          \caption{Registro de um ator local em um nó}
+          \caption{Registro de um ator local em um nó.}
           \label{lst:registering-actor}
         \end{listing}
         
@@ -629,7 +636,7 @@
 	    val myActor = RemoteClient.actorFor("my-actor", "localhost", 15092)
 	    myActor ! "Hi"
           \end{lstlisting}
-          \caption{Cliente acessando o ator remoto myActor}
+          \caption{Cliente acessando o ator remoto \texttt{myActor}.}
           \label{lst:using-remote-actor}
         \end{listing}
         
@@ -683,8 +690,6 @@
         de termos que optar por uma abordagem que não cubra todas as opções.
         
         
-%\par Sobre a escolha do \english{broker} AMQP, observamos como opções RabbitMQ\cite{rabbitmq}, Apache ActiveMQ\cite{activemq} e %Apache Qpid\cite{qpid}. Optamos pelo RabbitMQ pelo fato de ser uma implementação completa da especificação além de ter o 
-%seu código fonte aberto.
 
 % ----------------------------------------------------------------------
 %\newpage

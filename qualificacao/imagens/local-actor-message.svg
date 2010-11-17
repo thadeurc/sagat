@@ -16,7 +16,7 @@
    x="0.0000000"
    version="1.0"
    sodipodi:version="0.32"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.0 r9654"
    sodipodi:docname="local-actor-message.svg">
   <metadata
      id="metadata1379">
@@ -39,12 +39,12 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1233"
-     inkscape:window-height="758"
+     inkscape:window-width="1260"
+     inkscape:window-height="674"
      inkscape:zoom="2"
-     inkscape:cx="469.57985"
-     inkscape:cy="925.12197"
-     inkscape:window-x="61"
+     inkscape:cx="406.22095"
+     inkscape:cy="926.44738"
+     inkscape:window-x="18"
      inkscape:window-y="0"
      inkscape:current-layer="svg2"
      showgrid="true"
@@ -568,7 +568,8 @@
      style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.00000002, 2.00000001;stroke-dashoffset:0.09999999;marker-end:url(#marker1523)"
      d="M 599.44557,107.36218 505,142.36219"
      id="path3308"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <text
      xml:space="preserve"
      style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -582,20 +583,17 @@
        y="312.9523"
        style="font-size:8px">adiciona na fila</tspan></text>
   <path
-     style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart)"
-     d="m 295,107.36218 0,29.706"
-     id="path4334"
-     inkscape:connector-type="polyline" />
-  <path
-     style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 294.5,137.36218 116.99985,0"
+     style="fill:none;stroke:#000000;stroke-width:0.97753215;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#marker1523)"
+     d="m 299.48876,137.36224 111.26616,0"
      id="path4336"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <path
      style="fill:none;stroke:#000000;stroke-width:0.99999988px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1523)"
-     d="m 345.066,98.36218 68.8934,0"
+     d="m 345.066,89.213149 68.8934,0"
      id="path4342"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <text
      xml:space="preserve"
      style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -640,15 +638,18 @@
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m 441,191.36218 20,0"
      id="path5039"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <path
      inkscape:connector-type="polyline"
      id="path5041"
      d="m 441,179.36218 20,0"
-     style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 2;stroke-dashoffset:0" />
+     style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 2;stroke-dashoffset:0"
+     inkscape:connector-curvature="0" />
   <path
+     style="fill:none;stroke:#000000;stroke-width:1.02099907px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 300,100.85542 0,36.48536"
+     id="path5617"
      inkscape:connector-type="polyline"
-     id="path5059"
-     d="m 418.29999,80.342966 -69.0629,0"
-     style="fill:none;stroke:#000000;stroke-width:0.99999982px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1523)" />
+     inkscape:connector-curvature="3" />
 </svg>
