@@ -75,7 +75,7 @@
     \textbf{\textsf{\LARGE AMQP para o Transporte de Mensagens entre Atores Remotos}}
     \\[10mm]
     \textbf{\Large Exame de Qualificação de Mestrado} \\[20mm]
-    {\large São Paulo, XX de XXXXX de 2010}\\[10mm]
+    {\large São Paulo, Novembro de 2010}\\[10mm]
     \rule{\textwidth}{1pt}\\[7mm]
 
     \textsf{\Large Thadeu de Russo e Carmo}\\[10mm]
@@ -91,22 +91,27 @@
 \begin{abstract}
  	%\par Modelar sistemas computacionais especificando tarefas que podem acontecer de maneira independente, 
 	%em paralelo, e concorrentemente é algo extremamente comum, especialmente quando se busca desempenho. 
-	\par Processadores com múltiplos núcleos se mostraram um alternativa para os limites impostos pela física
-	para a construção de processadores com maior velocidade de \english{clock}. Para que programas possam usufruir
-	dos ganhos de desempenho deste tipo de processador eles devem ser escritos de maneira concorrente, 
-        uma tarefa não trivial.	
-	
-	\par O modelo de atores com troca de mensagens foi proposto como uma das possíveis soluções para problemas 
-	oriundos da programação concorrente, as dificuldades no uso de travas e blocos sincronizados para a proteção de dados 
-	compartilhados. Atores são entidades computacionais conhecidos por especificar o endereço de sua caixa de correio e 
-        seu comportamento. Mensagens enviadas por outros atores são armazenadas na caixa de correio e processadas de maneira
-        assíncrona.
+	%\par Processadores com múltiplos núcleos se mostraram um alternativa para os limites impostos pela física
+	%para a construção de processadores com maior capacidade de processamento. Para que programas possam usufruir
+	%dos ganhos de desempenho deste tipo de processador eles devem ser escritos de maneira concorrente\cite{sutter-concurrent-revolution}, 
+        %uma tarefa não trivial.	
 
-	\par Neste trabalho estudaremos o modelo de atores em um ambiente com instâncias distribuídas entre várias
+        \par A proposta deste trabalho é explorar a potencial sinergia entre duas classes de sistemas de \english{software} baseados em 
+        troca de mensagens. A primeira classe, usada em ambientes corporativos, compreende os sistemas de \english{middleware} 
+        orientados a mensagens (MOMs) e os \english{message brokers}. A segunda, voltada para a criação de programas concorrentes,
+        é composta pelas implementações do modelo de atores.
+	
+%	\par O modelo de atores\cite{gul-agha} com troca de mensagens foi proposto como uma das possíveis soluções para problemas 
+%	oriundos da programação concorrente, as dificuldades no uso de travas e blocos sincronizados para a proteção de dados 
+%	compartilhados. Atores são entidades computacionais conhecidos por especificar o endereço de sua caixa de correio e 
+%        seu comportamento. Mensagens enviadas por outros atores são armazenadas na caixa de correio e processadas de maneira
+%        assíncrona.
+
+	\par Neste trabalho estudaremos a potencial sinergia entre o modelo de atores em um ambiente com instâncias distribuídas entre várias
 	máquinas virtuais Java. Faremos uma implementação em Scala tomando como base a abordagem proposta no projeto Akka, 
-	substituindo o uso de \english{sockets} para o tráfego das mensagens, pelo padrão aberto de
+	substituindo o uso de \english{sockets} para o transporte das mensagens pelo padrão aberto de
 	\english{middleware} orientado a mensagens, \english{Advanced Message Queuing Protocol}, ou AMQP. 
-	Além disso, faremos também uma avaliação comparativa entre o uso das duas implementações.
+
  
 
 \end{abstract}
@@ -123,110 +128,120 @@
 % ----------------------------------------------------------------------
 \newpage
 \section{Introdução}	
-	Em $1965$, após fazer uma análise da relação da quantidade de componentes de circuito integrado
-	desenvolvidos entre os anos de $1959$ e $1964$, Gordon Moore tentou prever uma tendência para o crescimento observado. 
-        Considerando os dados observados até $1975$, Moore fez uma projeção onde a quantidade de componentes teria um crescimento exponencial
-        a cada ano. 
-        Em $1975$, após notados os avanços na produção e desenvolvimento de microprocessadores, e com dados mais atualizados, a razão foi
-	revista e reduzida a um crescimento exponencial a cada dois anos. Essa previsão se confirmou e ficou conhecida como a
-	Lei de Moore, sendo um dos princípios que ajuda a indústria de semi-condutores\cite{moore-1965}.
+	%Em $1965$, após fazer uma análise da relação da quantidade de componentes de circuito integrado
+	%desenvolvidos entre os anos de $1959$ e $1964$, Gordon Moore tentou prever uma tendência para o crescimento observado. 
+        %Considerando os dados observados até $1975$, Moore fez uma projeção onde a quantidade de componentes cresce exponencialmente. 
+        %Em $1975$, após notados os avanços na produção e desenvolvimento de microprocessadores, e com dados mais atualizados, a razão foi
+	%revista e reduzida a um crescimento exponencial a cada dois anos. Essa previsão se confirmou e ficou conhecida como a
+	%Lei de Moore, sendo um dos princípios que ajuda a indústria de semi-condutores\cite{moore-1965}.
+      
+        A proposta deste trabalho é explorar a potencial sinergia entre duas classes de sistemas de \english{software} baseados em 
+        troca de mensagens. A primeira classe, usada em ambientes corporativos, compreende os sistemas de \english{middleware} 
+        orientados a mensagens (MOMs) e os \english{message brokers}. A segunda, voltada para a criação de programas concorrentes,
+        é composta pelas implementações do modelo de atores.
+        
+        \subsection{Troca de mensagens em ambientes corporativos}
+        \par MOMs trabalham com troca assíncrona de mensagens. As mensagens enviadas são armazenadas e mantidas em filas 
+        até que o destinatário esteja pronto para fazer o recebimento e processamento.      
+        Em todo envio de mensagem há uma entidade que desempenha o papel de produtor (remetente) e outra que desempenha o papel de
+        consumidor (destinatário) da mensagem. Não existe vínculo entre esses papéis e os papéis de cliente (usuário de um serviço) 
+        e servidor (provedor de um serviço), tradicionalmente usados em sistemas baseados em \english{remote procedure call} (RPC). 
+        A diferença entre cliente e servidor é conceitual e somente pode ser definida por humanos que conhecem a semântica da 
+        das trocas de mensagens. 
+
+        \par Sistemas de \english{middleware} orientados a mensagens
+        formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite interoperabilidade com baixo acoplamento 
+        e provê suporte para o tratamento robusto de erros em caso de falhas. MOMs são frequentemente apresentados como uma tecnologia que pode 
+        mudar a maneira com que sistemas distribuídos são construídos\cite{alonso}. 
+        
+        \par A garantia da entrega de mensagens é uma das características mais importantes dos MOMs.
+        Filas transacionais são uma abstração usada para garantir que 
+        toda mensagem recebida pelo MOM seja salva, de modo persistente, e que a remoção da mensagem ocorra somente após a confirmação do 
+        recebimento pelo destinatário. Em caso de queda do sistema, quando ele for reiniciado, ocorrerá a entrega
+        das mensagens que foram salvas de modo persistente e cujo recebimento não foi confirmado. A retirada de uma mensagem de uma fila 
+        transacional ocorre como parte de uma transação atômica que pode inclui também outras
+        operações, como envios de mensagens e atualizações em bancos de dados, bem como outras retiradas de mensagens.
+        
+        \par MOMs tradicionalmente estabelecem ligações ponto-a-ponto entre sistemas,
+        sendo um tanto inflexíveis no que diz respeito ao roteamento e filtragem de mensagens. \english{Message brokers} 
+        são descendentes diretos de MOMs que endereçam essas limitações. Eles agem como intermediários e provem maior 
+        flexibilidade para roteamento e filtragem, além de permitirem que se adicionem lógica de negócios para o processamento
+        de mensagens no nível do próprio \english{middleware}. 
+
+        \par Os protocolos usados por \english{message brokers} variam de produto para produto.
+        A especificação de Java \english{Messaging Service} (JMS) define uma API padrão para que programas
+        Java possam interagir com \english{message brokers}.
+        Boa parte dos \english{message brokers} têm implementações do padrão JMS. Dentre os mais conhecidos, podemos 
+        destacar JBoss Messaging\cite{jboss-messaging}, 
+        IBM Websphere MQ\cite{ibm-mqseries} (mais conhecido como MQ Series) e Apache Active MQ\cite{apache-activemq}. 
+
+        \subsection{Modelos não convencionais de programação concorrente}
+
+        % \par Durante anos, fabricantes de processadores conseguiram ganhos de desempenho em três áreas principais: \entry{(i)}
+        % aumento da velocidade do \english{clock}; \entry{(ii)} otimização de execução; \entry{(iii)} uso de memória auxiliar
+        % (\english{cache}). Uma consequência direta do aumento de velocidade em qualquer uma destas três áreas é o aumento da velocidade
+        % de execução de programas, tanto sequenciais quanto concorrentes. 
+        
+        \par O aumento da velocidade de \english{clock} passou a
+	não acompanhar mais o aumento de transitores em processadores por questões físicas. A exemplo, aquecimento e dissipação,
+	alto consumo de energia e vazamento de corrente elétrica. Por conta dessas e outras limitações, as buscas por ganhos
+        de capacidade de processamento levaram a construção de processadores com múltiplos núcleos (\english{multicore}).
 	
-	\par Durante anos, fabricantes de processadores conseguiram ganhos de desempenho em três áreas principais: \entry{(i)}
-	aumento da velocidade do \english{clock}; \entry{(ii)} otimização de execução; \entry{(iii)} uso de memória auxiliar
-	(\english{cache}). Uma consequência direta aumento de velocidade em qualquer uma destas três áreas é o aumento da velocidade
-	de execução de programas, tanto sequenciais como concorrentes. O aumento da velocidade de \english{clock} passou a
-	não acompanhar mais o aumento de transitores em processadores por questões físicas, como  aquecimento e dissipação,
-	alto consumo de energia e vazamento de corrente elétrica. Por conta das limitações físicas, as buscas por ganhos
-	de velocidade de processamento se voltaram para três áreas: \entry{(i)} 
-	\english{Hyperthreading}, onde duas ou mais \english{threads} são executadas ao mesmo tempo em uma CPU;
-	\entry{(ii)} \english{Multicore}, onde um chip contém mais de uma CPU; \entry{(iii)} Aumento de memória auxiliar (\english{cache}). 
+        % de capacidade de processamento se voltaram para três áreas: \entry{(i)} 
+	%\english{Hyperthreading}, onde duas ou mais \english{threads} são executadas ao mesmo tempo em uma CPU;
+	%\entry{(ii)} \english{Multicore}, onde um chip contém mais de uma CPU; \entry{(iii)} Aumento de memória auxiliar (\english{cache}). 
 	
-        \par Um dos principais impactos das novas buscas no desenvolvimento de programas está diretamente relacionado a forma em que 
-        os programas são escritos. Para usufruir dos ganhos de desempenho dos novos processadores, programas precisam ser escritos de forma 
+        \par Um dos principais impactos que processadores \english{multicore} causam no desenvolvimento de programas 
+        está relacionado com o modo que eles são escritos. Para usufruir dos ganhos de desempenho desses processadores, 
+        programas precisam ser escritos de forma 
         concorrente\cite{sutter-free-lunch-is-over}, algo que não é uma tarefa simples, dado que muitas das linguagens de programação não são
 	adequadas para transformar programas sequênciais em concorrentes\cite{sutter-concurrent-revolution}.
 	
-
-	\par A abordagem convencional no desenvolvimento deste tipo de programa é via uso de travas e variáveis condicionais. 
+	\par A abordagem convencional no desenvolvimento de programas concorrentes é via uso de travas e variáveis condicionais. 
 	Em linguagens orientadas a objetos como Java e C\#, cada instância possui implicitamente sua própria trava e 
-	travamentos podem acontecer em blocos sincronizados dentro de métodos. Essa abordagem, contudo, não permite a componibilidade 
-	de travas de maneira segura criando uma situação propensa a \english{deadlocks}. 
+	travamentos podem acontecer em blocos sincronizados dentro de métodos. Essa abordagem não permite a componibilidade 
+	de travas de maneira segura criando situações propensas a bloqueios e impasses (\english{deadlocks}). 
         A componibilidade de travas é necessária quando existe mais de uma instância envolvida na ação a ser executada de modo exclusivo. 
         Existem ainda outras dificuldades no uso de travas, 
 	como esquecimento de se obter a trava de alguma instância, obtenção excessiva de travas, obtenção de travas de instâncias	 
 	erradas, obtenção de travas em ordem errada, manutenção da consistência do sistema na presença de erros, 
 	esquecimento de sinalização em variáveis de condição ou de se testar novamente uma condição após o despertar
-	de um estado de espera\cite{sj:bc}. Estas dificuldades são alguns exemplos da inviabilidade desta abordagem para uma programação modular, 
-        ou seja, criação de grandes programas por vários programas menores.
+	de um estado de espera\cite{sj:bc}. Essas dificuldades são alguns exemplos da inviabilidade desta abordagem para uma programação modular, 
+        ou seja, criação de grandes programas por meio da criação de programas menores.
 	
 	\par Duas abordagens para os problemas citados são a memória transacional, uma abstração para compartilhamento 
 	seguro de uma mesma região de memória, e o uso do modelo de atores, baseado na troca assíncrona de mensagens entre processos. 
 	
-	\par Conhecida como STM\cite{STM} (\english{Software Transactional Memory}), é um mecanismo de controle de
+	\par Conhecida como STM\cite{STM} (\english{software transactional memory}), é um mecanismo de controle de
 	concorrência análogo às transações de bancos de dados para o controle de acesso à memória compartilhada. Neste contexto, 
 	a transação é um pedaço de código que executa uma série de operações atômicas de leitura e escrita na memória compartilhada. 
         
-        \par Atores são definidos\cite{gul-agha} como sendo agentes computacionais que especificam um endereço para sua caixa de
+        \par Atores\cite{gul-agha} são definidos como  agentes computacionais que especificam um endereço para sua caixa de
         correio e seu comportamento.
-        Uma vez que o endereço da caixa de correio de um ator seja conhecido, mensagens podem ser adicionadas na sua fila para processamento
-        assíncrono, o que desacopla o envio do processamento. Mensagens recebidas por atores são mapeadas em uma $3$-tupla consistindo de:
-        \entry{(i)} Um conjunto finito de mensagens enviadas para outros atores onde o endereço é conhecido (incluindo o próprio);
+        Uma vez que o endereço da caixa de correio de um ator é conhecido, mensagens podem ser adicionadas na sua caixa para processamento
+        assíncrono, fazendo com que o envio seja desacoplado do processamento. Mensagens recebidas por atores são mapeadas em uma $3$-tupla consistindo de:
+        \entry{(i)} Um conjunto finito de mensagens enviadas para outros atores cujos endereços de suas caixas de correio sejam conhecidos (incluindo o próprio);
         \entry{(ii)} Um novo comportamento a ser usado para processar a mensagem seguinte; 
         \entry{(iii)} Um conjunto finito de novos atores criados. A implementação do modelo de atores com o uso do casamento de padrões,
         usado na verificação das mensagens a serem aceitas, mostraram resultados muito efetivos na linguagem Erlang\cite{erlang-survey}.
 
-	\par A linguagem Scala possui embutida em sua distribuição uma implementação de atores chamada de \english{Scala Actors}. Esta
+	\par A linguagem Scala possui embutida em sua distribuição uma implementação de atores chamada de \english{Scala Actors}. Essa
 	implementação possui suporte tanto para atores locais, quanto para atores remotos. Existem 
 	ainda algumas implementações alternativas na linguagem do modelo de atores, como por exemplo o projeto Akka\cite{akka},
 	originado pelo descontinuado Scala OTP, cujo objetivo era de se portar as idéias de Erlang OTP\cite{prog-erlang} para a linguagem Scala.
-
-
-	\par Pode-se notar uma sinergia entre o modelo de atores e \english{middlewares} orientados a mensagens. Conhecidos como MOMs,
-        trabalham com a troca assíncrona de mensagens, assim como o modelo de atores.
-	As mensagens enviadas são armazenadas em filas, sendo mantidas até que o destinatário esteja pronto para fazer o
-	recebimento e processamento.      
-        Os termos produtor e consumidor podem ser entendidos tanto como cliente e servidor ou o contrário, já que da perspectiva
-        do MOM não existe o conceito de cliente e servidor como em sistemas baseados em \english{Remote Procedure Call} (RPC). 
-        A diferença entre cliente e servidor é conceitual e pode, somente ser definida, por humanos que conhecem a semântica da 
-        troca das mensagens. Apesar de quando comparado com formas de interações distribuídas baseadas em RPC, MOMs não apresentarem benefícios
-        particulares, MOMs formam a base para simplificar o desenvolvimento de sistemas, permitindo interoperabilidade, 
-        e suporte para gerenciamento de erros no caso de falhas. MOMs são frequentemente apresentados como uma tecnologia que pode 
-        mudar a maneira com que sistemas distribuídos são construídos\cite{alonso}. 
-        
-        \par A garantia da entrega de mensagens é uma das características mais importantes de MOMs, estando relacionada 
-        com a robustez diante de erros e falhas. Filas transacionais são uma abstração usada para garantir que, 
-        uma vez que uma mensagem tenha sido recebida pelo MOM, 
-        está possa ser salva em algum mecanismo de persistência, sendo removida somente após a confirmação da entrega. 
-        Caso o sistema falhe, uma vez que ele seja reiniciado, as mensagens
-        que não foram confirmadas como entregues e foram salvas no momento do seu recebimento podem ser entregues aos seus respectivos 
-        destinatários. As retiradas de mensagens de filas transacionais podem ser feitas também de maneira atômica, onde as mensagens
-        só serão removidas efetivamente da fila caso todas tenham sido retiradas com sucesso.
-        
-        \par \english{Middlewares} orientados a mensagem possuem a capacidade de criar ligações ponto-a-ponto entre sistemas,
-        sendo um tanto quanto inflexíveis no que diz respeito ao roteamento e filtro de mensagens. \english{Message brokers} 
-        são descendentes diretos dos MOMs e endereçam essas limitações pois agem como intermediários, provendo maior 
-        flexibilidade para roteamento, filtro e abilidade de se adicionar lógica de negócios para o processamento
-        de mensagens no nível do próprio \english{middleware}. 
-
-        \par A especificação de Java \english{Messaging Service} (JMS) define uma biblioteca padrão para que programas
-        Java possam interagir com \english{message brokers}, já que assim como  bancos de dados, os protocolos
-        variam entre fabricantes. Várias implementações de \english{message brokers} são compatíveis
-        com o padrão JMS. Dentre os mais conhecidos, podemos destacar JBoss Messaging\cite{jboss-messaging}, 
-        IBM Websphere MQ\cite{ibm-mqseries} (mais conhecido como MQ Series) e Apache Active MQ\cite{apache-activemq}. 
-        
 	
 	
-\subsection{Objetivos}
+        \subsection{Objetivos}
 	\par Os dois principais objetivos deste trabalho são:
 	\begin{enumerate}
-        \item Estudar a implementação de atores feita pelo projeto Akka.
 	\item Implementação do modelo de atores remotos com o uso de AMQP para o transporte das mensagens: tomaremos 
 	  como base a implementação feita pelo projeto Akka\footnote{O trabalho será desenvolvido tendo como base a última 
             versão estável disponível para \english{download} no site do projeto.} de atores remotos e substituiremos o mecanismo
-	  existente para o transporte de mensagens, que atualmente é feito com o uso de \english{sockets}.
-	  
-	\item A comparação das duas implementações: será feito uma análise comparativa do resultado de ambas as implementações.
-	  
+	  existente para o transporte das mensagens, que atualmente é feito com o uso de \english{sockets}.
+          
+	%\item A comparação das duas implementações: será feito uma análise comparativa entre as implementações.
+	  \item Investigação da sinergia entre o modelo de atores e \english{message brokers}: faremos uma análise comparativa
+            entre a implementação existente de atores remotos do projeto Akka e a que será desenvolvida.
 	\end{enumerate}	
 	
 \subsection{Organização do texto}
@@ -337,8 +352,8 @@
 	\entry{(ii)} \english{!!!} semelhante ao método \english{!!} da biblioteca de atores de Scala, que devolve um resultado
         futuro ao remetente.
 
-	% colocar referencias para protocolos
-	\par No que diz respeito à seriação das mensagens para um ator remoto, o Akka oferece as seguintes opções: JSON, Protobuf, SBinary e seriação
+	\par No que diz respeito à seriação das mensagens para um ator remoto, o Akka oferece as seguintes opções: JSON\cite{json}, Protobuf\cite{protobuf}, 
+        SBinary\cite{sbinary} e seriação
 	Java padrão. O transporte das mensagens é feito via TCP/IP,
 	com o auxílio do JBoss Netty\cite{jboss-netty}, um arcabouço para comunicação assíncrona dirigido a eventos e baseado em 
         \english{sockets}. Este arcabouço oferece facilidades para compressão de mensagens, que são utilizados pelo Akka.
@@ -550,8 +565,8 @@
 	A criação de atores remotos pelo cliente é análoga a de atores locais, salvo o fato de se informar
 	o \english{host} e porta de um \texttt{RemoteServer} já em execução. A listagem ~\ref{lst:subclass-actor-remote} mostra a criação por meio de 
         uma sub-classe de \texttt{RemoteActor}. Vale destacar que, nesta listagem, o valor de \texttt{myRemoteActor} (linha $12$) é um \english{proxy} local para
-        %% conferir se tem acento ^ em converte-lo
-        o ator remoto. Outra possibilidade é criar um ator local e posteriormente converte-lo em remoto, por meio de uma chamada ao 
+      
+        o ator remoto. Outra possibilidade é criar um ator local e posteriormente convertê-lo em remoto, por meio de uma chamada ao 
         método \texttt{makeRemote(host, port)} (listagem~\ref{lst:make-remote-of-local-actor}). Tal chamada deve ocorrer anteriormente
         à ativação do ator via chamada ao método \texttt{start}.
         	
