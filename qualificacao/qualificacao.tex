@@ -72,7 +72,7 @@
     \textbf{\Large Departamento de Ciência da Computação} \\[3mm]
     \rule{\textwidth}{1pt} \\[30mm]
     
-    \textbf{\textsf{\LARGE AMQP para o Transporte de Mensagens entre Atores Remotos}}
+    \textbf{\textsf{\LARGE Uso de AMQP para Transporte de Mensagens entre Atores Remotos}}
     \\[10mm]
     \textbf{\Large Exame de Qualificação de Mestrado} \\[20mm]
     {\large São Paulo, Novembro de 2010}\\[10mm]
@@ -90,24 +90,20 @@
 \pagenumbering{roman}
 \begin{abstract}
 
-	\par O modelo de atores~\cite{gul-agha} com troca de mensagens foi proposto como uma das possíveis soluções para problemas 
-	oriundos da programação concorrente, como dificuldades no uso de travas e blocos sincronizados para a proteção de dados 
-	compartilhados. Atores são agentes computacionais computacionais que possuem uma caixa de correio e um comportamento.
-        Mensagens enviadas por outros atores são armazenadas na caixa de correio e processadas de maneira
-        assíncrona.	
+	\par O modelo de atores tem sido visto como uma abordagem alternativa à programação concorrente convencional, baseada em travas e variáveis de condição. 
+	Atores são agentes computacionais que se comunicam por troca de mensagens e que possuem uma caixa de correio e um comportamento. 
+	As mensagens destinadas a um ator são armazenadas na caixa de correio do ator e processadas de maneira assíncrona.
+		
+	\par Sistemas de \english{middleware} orientados a mensagens trabalham com troca assíncrona de mensagens e formam uma base que simplifica o 
+        desenvolvimento de aplicações distribuídas. 
+	Tais sistemas permitem interoperabilidade com baixo acoplamento e provêm suporte para o tratamento robusto de erros em caso de falhas. 
+	\english{Message brokers} são frequentemente apresentados como uma tecnologia que pode mudar a maneira com que sistemas distribuídos são construídos.
+	A especificação AMQP é uma proposta recente de padronização de um protocolo para \english{message brokers}.
 	
-	\par Sistemas de \english{middleware} orientados a mensagens (MOMs) trabalham com troca assíncrona de mensagens e
-        formam uma base que simplifica o desenvolvimento de aplicações distribuídas. MOMs permitem interoperabilidade com baixo acoplamento 
-        e provém suporte para o tratamento robusto de erros em caso de falhas, além de serem frequentemente apresentados como uma tecnologia que pode 
-        mudar a maneira com que sistemas distribuídos são construídos~\cite{alonso}. 
-	
-        \par Neste trabalho iremos investigar  a potencial sinergia entre duas classes de sistemas de \english{software} baseados em 
-        troca de mensagens. A primeira classe, usada em ambientes corporativos, compreende os sistemas de \english{middleware} 
-        orientados a mensagens (MOMs) e os \english{message brokers}. A segunda, voltada para a criação de programas concorrentes,
-        é composta pelas implementações do modelo de atores. Criaremos uma versão modificada do projeto Akka~\cite{akka}, na qual o 
-        envio de mensagens para atores remotos seja feito via AMQP~\cite{amqp-spec}. O mecanismo de transporte atualmente utlizado pela
-        implementação de atores remotos do Akka é o JBoss Netty~\cite{jboss-netty}, baseado em \english{sockets}.
-
+	\par Este trabalho pretende explorar a potencial sinergia entre um \english{message broker} e uma implementação do modelo de atores. 
+	Criaremos uma versão modificada da implementação do modelo de atores do projeto Akka que utilize um \english{message broker} AMQP 
+	como mecanismo de transporte de mensagens para atores remotos.
+        
 \end{abstract}
 
 \tableofcontents
@@ -131,11 +127,11 @@
       
         A proposta deste trabalho é explorar a potencial sinergia entre duas classes de sistemas de \english{software} baseados em 
         troca de mensagens. A primeira classe, usada em ambientes corporativos, compreende os sistemas de \english{middleware} 
-        orientados a mensagens (MOMs) e os \english{message brokers}. A segunda, voltada para a criação de programas concorrentes,
+        orientados a mensagens e os \english{message brokers}. A segunda, voltada para a criação de programas concorrentes,
         é composta pelas implementações do modelo de atores.
         
         \subsection{Troca de mensagens em ambientes corporativos}
-        \par MOMs trabalham com troca assíncrona de mensagens. As mensagens enviadas são armazenadas e mantidas em filas 
+        \par Sistemas de \english{middleware} orientados a mensagem (MOMs) trabalham com troca assíncrona de mensagens. As mensagens enviadas são armazenadas e mantidas em filas 
         até que o destinatário esteja pronto para fazer o recebimento e processamento.      
         Em todo envio de mensagem há uma entidade que desempenha o papel de produtor (remetente) e outra que desempenha o papel de
         consumidor (destinatário) da mensagem. Não existe vínculo entre esses papéis e os papéis de cliente (usuário de um serviço) 
@@ -143,9 +139,8 @@
         A diferença entre cliente e servidor é conceitual e somente pode ser definida por humanos que conheçam a semântica das 
         trocas de mensagens. 
 
-        \par Sistemas de \english{middleware} orientados a mensagens
-        formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite interoperabilidade com baixo acoplamento 
-        e provê suporte para o tratamento robusto de erros em caso de falhas. MOMs são frequentemente apresentados como uma tecnologia que pode 
+        \par MOMs formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite interoperabilidade com baixo acoplamento 
+        e provê suporte para o tratamento robusto de erros em caso de falhas. Eles são frequentemente apresentados como uma tecnologia que pode 
         mudar a maneira com que sistemas distribuídos são construídos~\cite{alonso}. 
         
         \par A garantia da entrega de mensagens é uma das características mais importantes dos MOMs.
@@ -158,7 +153,7 @@
         
         \par MOMs tradicionalmente estabelecem ligações ponto-a-ponto entre sistemas,
         sendo um tanto inflexíveis no que diz respeito ao roteamento e filtragem de mensagens. \english{Message brokers} 
-        são descendentes diretos de MOMs que endereçam essas limitações. Eles agem como intermediários e provém maior 
+        são descendentes diretos de MOMs que endereçam essas limitações. Eles agem como intermediários e provêm maior 
         flexibilidade para roteamento e filtragem, além de permitirem que se adicione lógica de negócios para o processamento
         de mensagens no nível do próprio \english{middleware}. 
         
@@ -168,6 +163,10 @@
         Boa parte dos \english{message brokers} têm implementações do padrão JMS. Dentre os mais conhecidos, podemos 
         destacar JBoss Messaging~\cite{jboss-messaging}, 
         IBM Websphere MQ~\cite{ibm-mqseries} (mais conhecido como MQ Series) e Apache Active MQ~\cite{apache-activemq}. 
+		
+		\par A especificação AMQP (\english{Advanced Message Queuing Protocol}) é uma proposta recente de padronização de um protocolo para \english{message brokers}.
+		Foi criada por um conjunto de empresas (Red Hat, JPMorgan Chase, Cisco Systems, entre outras), com o objetivo de viabilizar tanto o desenvolvimento quanto a 
+		disseminação de um protocolo padrão para esse tipo de sistema.
         
         \subsection{Modelos não convencionais de programação concorrente}
 
@@ -215,11 +214,11 @@
         correio e um comportamento.
 	Uma vez que o endereço da caixa de correio de um ator é conhecido, mensagens podem ser adicionadas à caixa para processamento
         assíncrono, ou seja, o envio de uma mensagem é desacoplado do processamento da mensagem pelo ator.
-        Cada mensagens recebida por um ator é mapeada em uma $3$-tupla que consiste de:
+        Cada mensagem recebida por um ator é mapeada em uma $3$-tupla que consiste de:
 	\begin{itemize}
 	\item um conjunto finito de envios de mensagens para atores cujas caixas de correio têm endereços conhecidos 
-	  (um desses atores pode ser o próprio ator destinatário da mensagem que está sendo processada).
-	\item um novo comportamento, que será usado para processar a próxima mensagem recebida.
+	  (um desses atores pode ser o próprio ator destinatário da mensagem que está sendo processada);
+	\item um novo comportamento, que será usado para processar a próxima mensagem recebida;
 	\item um conjunto finito de criações de novos atores.
 	\end{itemize}	
 	A implementação do modelo de atores da linguagem Erlang usa casamento de padrões para especificar o tratamento a ser dado aos diferentes tipos de mensagem. 
@@ -231,24 +230,24 @@
 	%originado pelo descontinuado Scala OTP, cujo objetivo era de se portar as idéias de Erlang OTP\cite{prog-erlang} para a linguagem Scala.
 	
 	
-        \subsection{Objetivos}
-	\par Os dois principais objetivos deste trabalho são:
-	\begin{enumerate}
-	\item Implementação do modelo de atores remotos com o uso de AMQP para o transporte das mensagens: tomaremos 
-	  como base a implementação feita pelo projeto Akka\footnote{O trabalho será desenvolvido tendo como base a última 
-	    versão estável disponível para \english{download} no site do projeto.} de atores remotos e substituiremos o mecanismo
-	  existente para o transporte das mensagens, que atualmente é feito com o uso de \english{sockets}.
-	  
-	\item Investigação da sinergia entre o modelo de atores e \english{message brokers}: faremos uma análise comparativa
-	  entre a implementação existente de atores remotos do projeto Akka e a que será desenvolvida.
-	\end{enumerate}	
+        \subsection{Objetivo}
+		\par O objetivo principal deste trabalho é criar uma implementação do modelo de atores que use AMQP para o transporte de mensagens entre atores remotos. 
+		Geraremos um protótipo baseado na implementação do modelo de atores do projeto Akka\footnote{O trabalho será desenvolvido tendo como base a última 
+	    versão estável disponível para \english{download} no site do projeto.}. 
+		A idéia é substituir o mecanismo atualmente usado pelo Akka  por um \english{message broker} AMQP. 
+		Tencionamos também fazer uma análise comparativa da implementação de atores remotos do Akka e o nossa, baseada em AMQP.
+		
 	
         \subsection{Organização do texto}
-	\par O restante deste texto é organizado da seguinte forma: na seção~\ref{sec:trabalhos-relacionados} apresentamos os trabalhos
-	relacionados que foram estudados; na seção~\ref{sec:amqp-e-atores-mensagens} apresentamos 
-        o tráfego de mensagens entre clientes AMQP, bem como os atores Akka e o tráfego de mensagens entre os atores;
-        na seção~\ref{sec:projeto} apresentamos o projeto a ser desenvolvido e, por fim, na seção~\ref{sec:cronograma} apresentamos as
-	atividades previstas e o cronograma para a conclusão de tais atividades.
+		%\par O restante deste texto é organizado da seguinte forma: na seção~\ref{sec:trabalhos-relacionados} apresentamos os trabalhos
+		%relacionados que foram estudados; na seção~\ref{sec:amqp-e-atores-mensagens} apresentamos 
+        %o tráfego de mensagens entre clientes AMQP, bem como os atores Akka e o tráfego das mensagens entre os atores;
+        %na seção~\ref{sec:projeto} apresentamos o projeto a ser desenvolvido e por fim, na seção~\ref{sec:cronograma} apresentamos as
+		%atividades previstas e o cronograma para a conclusão de tais atividades.		
+		\par O restante deste texto é organizado da seguinte forma: a seção~\ref{sec:trabalhos-relacionados} discute trabalhos
+		relacionados, a seção~\ref{sec:amqp-e-atores-mensagens} apresenta tópicos que são pré-requisitos para o trabalho aqui proposto, 
+        a seção~\ref{sec:projeto} apresenta o projeto que desenvolveremos e, por fim, a seção~\ref{sec:cronograma} enumera as
+		atividades previstas e traz um cronograma para a conclusão de tais atividades.
 	
 % ----------------------------------------------------------------------------
 \newpage
@@ -358,18 +357,17 @@
         \english{sockets}. Este arcabouço oferece facilidades para compressão de mensagens, que são utilizados pelo Akka.
 \newpage
 \section{Background}
-\label{sec:amqp-e-atores-mensagens}
-	\par Apresentaremos a seguir o funcionamento do tráfego de mensagens entre clientes AMQP, 
-	bem como o tráfego de mensagens entre atores locais e remotos. Diferentemente do protocolo AMQP e apesar de 
-	bem definido, o modelo de atores não é especificado por nenhum orgão ou conjunto de empresas, devido a este motivo
-	tomaremos como base a implementação do projeto Akka, por ter mostrado ser uma implementação com melhor suporte
-	a atores remotos dentre as estudadas.
+\label{sec:amqp-e-atores-mensagens}	
+	%\par Apresentaremos a seguir o funcionamento do tráfego de mensagens entre clientes AMQP, 
+	%bem como o tráfego de mensagens entre atores locais e remotos. Diferentemente do protocolo AMQP e apesar de 
+	%bem definido, o modelo de atores não é especificado por nenhum orgão ou conjunto de empresas, devido a este motivo
+	%tomaremos como base a implementação do projeto Akka, por ter mostrado ser uma implementação com melhor suporte
+	%a atores remotos dentre as estudadas.
+	\par As duas subseções a seguir abordam tópicos que são pré-requisitos para nosso trabalho: AMQP e a implementação do modelo de atores do projeto Akka.
 	
 \subsection{AMQP}
 	\par AMQP (\english{Advanced Message Queuing Protocol}) é um protocolo aberto 
-	para sistemas corporativos de troca de mensagens. Foi criado por um conjunto de empresas (Red Hat, JPMorgan Chase, 
-	Cisco Systems, entre outras), com o objetivo de viabilizar tanto o desenvolvimento quanto a disseminação de um protocolo 
-        padrão para este tipo de sistema. Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
+	para sistemas corporativos de troca de mensagens. Especificado pelo AMQP \english{Working Group}, o protocolo permite completa interoperabilidade 
 	para \english{middleware} orientado a mensagens. A especificação define não somente o protocolo de rede, mas também a semântica dos serviços do
 	da aplicação servidora. Também é parte do foco que capacidades providas por sistemas de \english{middleware}
 	orientados a mensagem possam estar pervasivamente disponíveis nas redes das empresas, incentivando o desenvolvimento de
