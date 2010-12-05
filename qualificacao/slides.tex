@@ -23,7 +23,7 @@
 	}
 }
 \frame{
-\frametitle{Motiva\c{c}\~ao}
+\frametitle{Motiva\c{c}\~ao -- Sistemas corporativos}
 	\only<1>{
 		\begin{itemize}
 			\item \textit{Middlewares} orientados a mensagem (MOMs) trabalham com troca ass\'incrona de mensagens
@@ -34,27 +34,25 @@
 		\end{itemize}
 	}
 	\only<2>{
-                 \begin{itemize}
-			\item MOMs s\~ao um tanto quanto inflex\'iveis em rela\c{c}\~ao a filtragem e roteamento de mensagens
-		\end{itemize}
+         	MOMs s\~ao um tanto quanto inflex\'iveis em rela\c{c}\~ao a filtragem e roteamento de mensagens.		
 	}
 	\only<3>{
-                 \begin{itemize}
-			\item MOMs s\~ao um tanto quanto inflex\'iveis em rela\c{c}\~ao a filtragem e roteamento de mensagens
-			\item\textit{Message brokers} s\~ao descendentes diretos diretos de MOMs que endere\c{c}\~ao essas limita\c{c}\~oes
-		\end{itemize}
+ 		\textit{Message brokers} s\~ao descendentes diretos diretos de MOMs que endere\c{c}\~ao essas limita\c{c}\~oes.		
 	}
 	\only<4>{
+ 		Os protocolos usados por \textit{message brokers} variam de produto para produto. Algumas abordagens existentes:
  		\begin{itemize}
- 			\item Os protocolos usados por \textit{message brokers} variam de produto para produto
  			\item A especifica\c{c}\~ao Java \textit{Message Service} (JMS) define uma API padr\~ao para que programas Java possam
 			interagir com \textit{message brokers}
  			\item A especifica\c{c}\~ao \textit{Advanced Message Queuing Protocol}(AMQP) \'e uma proposta
  			recente de padroniza\c{c}\~ao de um protocolo para \textit{message brokers}
  		\end{itemize}
 	}
+}
+\frame{
+\frametitle{Motiva\c{c}\~ao -- Programas concorrentes}
 
-	\only<5>{
+	\only<1>{
 		Processadores \textit{multicore} impactam a maneira que programas s\~ao escritos:
 		\begin{itemize}
 			\item  Programas precisam ser escritos de maneira concorrente para poder
@@ -64,10 +62,10 @@
 			limita\c{c}\~oes em rela\c{c}\~ao a componibilidade \cite{Jones2007}
 
 			\item A maioria das linguagems de programa\c{c}\~ao n\~ao s\~ao adequadas para a cria\c{c}\~ao de tais
-			programas\cite{SutterEtAll2005}
+			programas \cite{SutterEtAll2005}
 		\end{itemize}
 	}
-	\only<6>{
+	\only<2>{
 		Modelos n\~ao convencionais de programa\c{c}\~ao concorrente:
 		\begin{itemize}
 			\item \textit{Software Transactional Memory} (STM) -- mecanismo de controle an\'alogo
@@ -75,21 +73,24 @@
 			\item Atores -- troca de mensagem ass\'incrona entre processos 
 		\end{itemize}
 	}
-	\only<7>{
+	\only<3>{
 		\begin{beamerboxesrounded}{Defini\c{c}\~ao de um Ator \cite{Agha1986}}
-			Agentes computacionais que possuem uma caixa de correio e um comportamento.
-			Atores processam assicrononamente as mensagens que recebe em sua caixa de correio. Mensagens recebidas
-			s\~ao mapeadas em uma $3$-tupla consistindo de: 
+			\'E um agente computacional que possui uma caixa de correio e um comportamento.
+			Atores processam assicronamente as mensagens recebidas em suas respectivas caixas de correios. 
+			As mensagens recebidas s\~ao mapeadas em uma $3$-tupla consistindo de: 
 			\begin{itemize}
 				\item Um conjunto finito de mensagens enviadas para outros atores onde o endere\c{c}o \'e conhecido
 				(incluindo o pr\'oprio ator que est\'a processando a mensagem)
-				\item Um novo comportamento, que ser\'a usado para processar a mensagem seguinte
+				\item Um novo comportamento a ser usado no processamento a mensagem seguinte
 				\item Um conjunto finito de cria\c{c}\~ao de novos atores
 			\end{itemize}
 		\end{beamerboxesrounded}
 	}
-	\only<8>{
-		Explorar a potencial sinergia entre duas classes de sistemas de \textit{software}:
+}
+\frame{
+\frametitle{Motiva\c{c}\~ao}
+	\only<1>{
+		Potencial sinergia em as duas classes:
 		\begin{itemize}
 			\item Atores em diferentes n\'os podem trocar mensagens entre si
 			\item \textit{Message brokers} prov\^em robustes para a troca de mensagens entre entidades em diferentes n\'os de um sistema
@@ -401,10 +402,13 @@ myActor ! "test"
 \section{O projeto} 
 \frame{
 \frametitle{O projeto}
-	\begin{itemize}
-		\item Criar uma vers\~ao modificada do Akka, na qual o envio de mensagens para atores remotos
-		seja feito via AMQP		
-	\end{itemize}
+	\only<1>{
+ 		A implementa\c{c}\~ao do modelo de atores do projeto Akka \'e mais abrangente e robusta do que a implenta\'c{c}\~ao
+		presente na distribui\c{c}\~ao da linguagem Scala, em particular para atores remotos.
+	}
+	\only<2>{
+		Criar uma vers\~ao modificada do Akka, na qual o envio de mensagens para atores remotos seja feito via AMQP.
+	}
 }
 \subsection{Atividades programadas}
 \frame{
@@ -475,5 +479,13 @@ myActor ! "test"
 	}
 \end{thebibliography}
 }
+\subsection{Perguntas}
+\frame{
+\frametitle{Perguntas}
+	\begin{figure}[hbtp]
+		\includegraphics[scale=0.5]{imagens/question.pdf}
+	\end{figure}
+}
+
 
 \end{document}
