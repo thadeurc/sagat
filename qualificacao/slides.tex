@@ -4,73 +4,101 @@
 \usepackage[brazil]{babel}
 \usepackage{graphicx}
 \usepackage{listings}
-\title[AMQP para transportar Mensagens entre Atores Remotos]{AMQP para o Transporte de Mensagens entre Atores Remotos} 
+\title[]{Uso de AMQP para Transporte de Mensagens entre Atores Remotos} 
 \author{Thadeu de Russo e Carmo \\ \texttt{thadeurc@ime.usp.br}} 
 \institute{Orientador: Prof. Dr. Francisco da Rocha Reverbel\\ Instituto de Matem\'atica e Estat\'istica \\ Universidade de S\~ao Paulo}
-\date{Novembro, 2010}
+\date{Dezembro, 2010}
 
 \begin{document}
 \frame{\titlepage}
 \section{Introdu\c{c}\~ao} 
+\frame{\frametitle{Proposta}
+    	\only<1>{
+     		Explorar a potencial sinergia entre duas classes de sistemas de \textit{software}:
+ 		\begin{enumerate}
+ 			\item Sistemas corporativos: composta de sistemas de \textit{middleware} orientados a mensagens e 
+				\textit{message brokers}
+			\item Programas concorrentes: composta pelas implementa\c{c}\~oes do modelo de atores
+ 		\end{enumerate}
+	}
+}
 \frame{
 \frametitle{Motiva\c{c}\~ao}
 	\only<1>{
-		Necessidade de programas escritos de maneira concorrente:
 		\begin{itemize}
-			\item Fim da lei de Moore -- programas precisam ser escritos de maneira concorrente para poder
-			usufruir dos ganhos de desempenho dos processadores com m\'ultiplos n\'ucleos \cite{Sutter2005}
-			
-			\item Abordagem convencional com o uso de travas al\'em de complexa, possui
-			limita\c{c}\~oes em rela\c{c}\~ao a componibilidade \cite{Jones2007}
-		\end{itemize}
-	}
-	\only<2>{
-		Alternativas ao uso de travas:
-		\begin{itemize}
-			\item \textit{Software Transactional Memory}(STM) -- mecanismo de controle an\'alogo
-			as transa\c{c}\~oes de SGBDs	
-			\item Atores -- troca de mensagem ass\'incrona entre processos 
-		\end{itemize}
-	}
-	\only<3>{
-		\begin{beamerboxesrounded}{Defini\c{c}\~ao de um Ator \cite{Agha1986}}
-			Agentes computacionais que especificam um endere\c{c}o para sua caixa de correio e seu comportamento,
-			fazendo o processamento ass\'icrono das mensagens que recebe em sua caixa de correio. Mensagens recebidas
-			s\~ao mapeadas em uma $3$-tupla consistindo de: 
-			\begin{itemize}
-				\item Um conjunto finito de mensagens enviadas para outros atores onde o endere\c{c}o \'e conhecido
-				(incluindo o pr\'oprio ator)
-				\item Um novo comportamento a ser usado para processar a mensagem seguinte
-				\item Um conjunto finito de novos atores
-			\end{itemize}
-		\end{beamerboxesrounded}
-	}
-	\only<4>{
-		\textit{Middlewares} orientados a mensagem (MOMs) possuem como uma de suas caracter\'isticas a troca 
-		ass\'incrona de mensagens:
-		\begin{itemize}
+			\item \textit{Middlewares} orientados a mensagem (MOMs) trabalham com troca ass\'incrona de mensagens
 			\item Formam base para simplificar o desenvolvimento de sistemas
-			\item Possuem suporte e mecanismos para gerenciamento de erros e garantia de entrega de mensagens	
+			\item Possuem suporte e mecanismos para gerenciamento robusto de erros e garantia de entrega de mensagens	
 			\item S\~ao frequentemente apresentados como tecnologia que pode mudar a maneira como sistemas distribu\'idos
 			s\~ao constru\'idos \cite{Alonso2004}
 		\end{itemize}
 	}
+	\only<2>{
+                 \begin{itemize}
+			\item MOMs s\~ao um tanto quanto inflex\'iveis em rela\c{c}\~ao a filtragem e roteamento de mensagens
+		\end{itemize}
+	}
+	\only<3>{
+                 \begin{itemize}
+			\item MOMs s\~ao um tanto quanto inflex\'iveis em rela\c{c}\~ao a filtragem e roteamento de mensagens
+			\item\textit{Message brokers} s\~ao descendentes diretos diretos de MOMs que endere\c{c}\~ao essas limita\c{c}\~oes
+		\end{itemize}
+	}
+	\only<4>{
+ 		\begin{itemize}
+ 			\item Os protocolos usados por \textit{message brokers} variam de produto para produto
+ 			\item A especifica\c{c}\~ao Java \textit{Message Service} (JMS) define uma API padr\~ao para que programas Java possam
+			interagir com \textit{message brokers}
+ 			\item A especifica\c{c}\~ao \textit{Advanced Message Queuing Protocol}(AMQP) \'e uma proposta
+ 			recente de padroniza\c{c}\~ao de um protocolo para \textit{message brokers}
+ 		\end{itemize}
+	}
+
 	\only<5>{
-		Sinergia entre o Modelo de Atores e MOMs:
+		Processadores \textit{multicore} impactam a maneira que programas s\~ao escritos:
+		\begin{itemize}
+			\item  Programas precisam ser escritos de maneira concorrente para poder
+			usufruir dos ganhos de desempenho dos processadores com m\'ultiplos n\'ucleos \cite{Sutter2005}
+			
+			\item Abordagem convencional com o uso de travas al\'em de complexa, possui
+			limita\c{c}\~oes em rela\c{c}\~ao a componibilidade \cite{Jones2007}
+
+			\item A maioria das linguagems de programa\c{c}\~ao n\~ao s\~ao adequadas para a cria\c{c}\~ao de tais
+			programas\cite{SutterEtAll2005}
+		\end{itemize}
+	}
+	\only<6>{
+		Modelos n\~ao convencionais de programa\c{c}\~ao concorrente:
+		\begin{itemize}
+			\item \textit{Software Transactional Memory} (STM) -- mecanismo de controle an\'alogo
+			\`as transa\c{c}\~oes de bancos de dados
+			\item Atores -- troca de mensagem ass\'incrona entre processos 
+		\end{itemize}
+	}
+	\only<7>{
+		\begin{beamerboxesrounded}{Defini\c{c}\~ao de um Ator \cite{Agha1986}}
+			Agentes computacionais que possuem uma caixa de correio e um comportamento.
+			Atores processam assicrononamente as mensagens que recebe em sua caixa de correio. Mensagens recebidas
+			s\~ao mapeadas em uma $3$-tupla consistindo de: 
+			\begin{itemize}
+				\item Um conjunto finito de mensagens enviadas para outros atores onde o endere\c{c}o \'e conhecido
+				(incluindo o pr\'oprio ator que est\'a processando a mensagem)
+				\item Um novo comportamento, que ser\'a usado para processar a mensagem seguinte
+				\item Um conjunto finito de cria\c{c}\~ao de novos atores
+			\end{itemize}
+		\end{beamerboxesrounded}
+	}
+	\only<8>{
+		Explorar a potencial sinergia entre duas classes de sistemas de \textit{software}:
 		\begin{itemize}
 			\item Atores em diferentes n\'os podem trocar mensagens entre si
-			\item MOMs prov\^em robustes para a troca de mensagens entre entidades em diferentes n\'os de um sistema
+			\item \textit{Message brokers} prov\^em robustes para a troca de mensagens entre entidades em diferentes n\'os de um sistema
 		\end{itemize}
 	}
 }
 \frame{\frametitle{Objetivos}
-	\begin{itemize}
-		\item Estudar o modelo de atores e a implementa\c{c}\~ao feita no projeto Akka
-		\item Fazer uma implementa\c{c}\~ao em Scala com base na implementa\c{c}\~ao feita pelo projeto Akka, 
-		substituindo o uso de \textit{sockets} para o tr\'afego de mensagens pelo padr\~ao aberto de \textit{middleware}
-		orientado a mensagem \textit{Advanced Message Queuing Protocol} (AMQP)
-		\item Uma an\'alise comparativa entre as duas abordagens
-	\end{itemize}
+	O principal objetivo deste trabalho \'e gerar um prot\'otipo baseado na implementa\c{c}\~ao de atores do projeto 
+	Akka, que utilize um \textit{message broker} AMQP para o transporte das mensagens entre atores remotos.
 }
 
 \section{Trabalhos Relacionados}
@@ -83,7 +111,7 @@
 			\item Primitivas para cria\c{c}\~ao de novos atores (\textit{spawn}), envio de mensagens (!), 
 			recebimento (\textit{receive}) e cria\c{c}\~ao de hieraquia de supervis\~ao (\textit{link}) est\~ao
 			embutidos na linguagem
-			\item \textit{Spawns} remotos s\~ao poss\'iveis e o envio das mensagens \'e feito com o uso
+			\item \textit{Spawns} remotos s\~ao poss\'iveis e o transporte das mensagens \'e feito com o uso
 			de \textit{sockets} TCP e UDP
 			\item Mensagens que n\~ao est\~ao definidas no comportamento do ator s\~ao recolocadas na 
 			caixa de correio do ator para tentativa de processamento futuro
@@ -92,7 +120,7 @@
 }
 \subsection{Atores em Scala}
 \frame{
-\frametitle{Atores em Scala}
+\frametitle{A biblioteca de atores de Scala}
 	\only<1>{A implementa\c{c}\~ao da biblioteca padr\~ao de Scala foi baseada na implementa\c{c}\~ao feita em Erlang, possuindo
 	basicamente as mesmas funcionalidades j\'a descritas.
 	}
@@ -102,8 +130,6 @@
 				\item Atores s\~ao baseados em \textit{threads} Java
 				\item Possui m\'etodos como \textit{act} e \textit{react} a serem usados como alternativa ao \textit{receive}, 
 				que permitem um reuso de \textit{threads} inativas
-				\item Cria\c{c}\~ao de atores remotos (\textit{spawn remotes}) n\~ao s\~ao poss\'iveis
-				\item Atores s\~ao acess\'iveis remotamente de modo an\'alogo ao uso de JNDI
 			\end{itemize}
 		\end{beamerboxesrounded}
 	}
@@ -118,6 +144,37 @@
 		\textit{Future} \'e um mecanismo usado para  retornar valores de chamadas ass\'incronas, e age como um substituto
 		para o resultado que ainda n\~ao foi materializado.
 	}	
+	\only<4>{
+		\begin{beamerboxesrounded}{Atores Remotos}
+			\begin{itemize}
+				\item Cria\c{c}\~ao de atores remotos (\textit{spawn remotes}) n\~ao \'e poss\'ivel
+				\item Atores s\~ao acess\'iveis remotamente via \textit{proxies}
+				\item Clientes obt\'em refer\^encias para atores remotos s\~ao fazendo buscas em um determinado n\'o 
+				(JVM com \textit{host} e porta) utilizando como chave o nome sob o qual o ator foi registrado
+				\item O transporte das mensagens \'e feito via seria\c{c}\~ao padr\~ao Java atrav\'es de \textit{sockets} TCP
+			\end{itemize}
+		\end{beamerboxesrounded}
+	}
+}
+\subsection{O projeto Akka}
+\frame{
+\frametitle{O projeto Akka}
+		\only<1>{
+			\'E composto por um conjunto de m\'odulos que juntos formam uma plataforma voltada para o desenvolvimento
+			de aplica\c{c}\~oes escal\'aveis e tolerante a falhas.
+		}
+		\only<2>{
+			\begin{beamerboxesrounded}{Principais m\'odulos}
+				\begin{itemize}
+					\item Atores locais
+					\item Atores remotos
+					\item STM
+					\item Hierarquia de supervis\~ao
+					\item \textit{Transactors} (combina\c{c}\~ao de atores com STM)
+				\end{itemize}
+			\end{beamerboxesrounded}
+			Al\'em de m\'odulos adicionais para integra\c{c}\~ao com outras tecnologias.
+		}
 }
 \section{Advanced Message Queuing Protocol}
 \frame{
@@ -177,38 +234,35 @@
 	}
 }
 
-\section{Atores Akka}
+\section{Atores no projeto Akka}
 \frame{
-\frametitle{O projeto}
+\frametitle{Atores no projeto Akka}
 	\only<1>{
-		Composto por um conjunto de m\'odulos que juntos formam uma plataforma voltada para o desenvolvimento
-		de aplica\c{c}\~oes escal\'aveis e tolerante a falhas.
-		\begin{beamerboxesrounded}{Principais m\'odulos}
-			\begin{itemize}
-				\item Atores locais
-				\item Atores remotos
-				\item STM
-				\item Hierarquia de supervis\~ao
-				\item \textit{Transactors} (combina\c{c}\~ao de atores com STM)
-			\end{itemize}
-		\end{beamerboxesrounded}
-		Al\'em de m\'odulos adicionais para integra\c{c}\~ao com outras tecnologias.
-	}
-	\only<2>{
 		A implementa\c{c}\~ao da biblioteca \'e totalmente independente da biblioteca padr\~ao de atores Scala,
 	 	tamb\'em sendo baseada na implementa\c{c}\~ao feita em Erlang.
 	}
-	\only<3>{
+	\only<2>{
 		\begin{beamerboxesrounded}{Principais caracter\'isticas}
 			\begin{itemize}
 				\item Tipos adicionais de envio (!! e !!!), semelhantes a !? e !!
 				\item Diferentes tipos de despachadores de mensagem
 				\item \textit{Remote spawns}, mas sem carregamento remoto de classes
-				\item Transporte de mensagens via \textit{sockets} TCP
-				\item Direfentes protocolos para seria\c{c}\~ao de mensagens remotas 
+				\item Transporte de mensagens via \textit{sockets} TCP com aux\'ilio do JBoss Netty
+				\item Direfentes protocolos para seria\c{c}\~ao de mensagens em envios para atores remotos
 				(Protobuf, JSON, seria\c{c}\~ao Java padr\~ao, SBinary)
-				\item Compacta\c{c}\~ao das mensagens enviadas para atores remotos
+				\item Compacta\c{c}\~ao das mensagens enviadas para atores remotos (JBoss Netty)
 			\end{itemize}
+		\end{beamerboxesrounded}
+	}
+	\only<3>{
+ 		\begin{beamerboxesrounded}{Ator Local e Ator Remoto}
+			\begin{itemize}
+				\item Ator local: \'e um ator que pode receber mensagens apenas de atores residentes na mesma m\'aquina
+				virtual
+				\item Ator remoto (ou ator remotamente acess\'ivel): \'e um ator que pode receber mensagens de quaisquer outros atores, inclusive os
+				residentes em outras m\'aquinas virtuais 
+			\end{itemize}
+			
 		\end{beamerboxesrounded}
 	}
 }
@@ -221,7 +275,7 @@ import se.scalablesolutions.akka.actor.Actor._
 class MyActor extends Actor {
   def receive = {
     case "test" => println("received test")
-    case      _   => println("received unknown message")
+    case      _ => println("received unknown message")
   }
 }
 	    
@@ -246,6 +300,11 @@ myActor ! "test"
 		\end{figure}
 	}
 	\only<4>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.9]{imagens/local-actor-message3_1.pdf}
+		\end{figure}
+	}
+	\only<5>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.9]{imagens/local-actor-message4.pdf}
 		\end{figure}
@@ -339,27 +398,26 @@ myActor ! "test"
 		\end{figure}
 	}
 }
-\section{Proposta} 
+\section{O projeto} 
 \frame{
-\frametitle{Proposta}
+\frametitle{O projeto}
 	\begin{itemize}
-		\item Substituir o mecanismo de transporte para troca de mensagens de atores
-		remotos do projeto Akka por um baseado em AMQP
-		\item Fazer uma an\'alise comparativa entre o uso das duas implementa\c{c}\~oes
+		\item Criar uma vers\~ao modificada do Akka, na qual o envio de mensagens para atores remotos
+		seja feito via AMQP		
 	\end{itemize}
 }
-\subsection{Atividades}
+\subsection{Atividades programadas}
 \frame{
 \frametitle{Cronograma}
 	\only<1>{
 		\begin{enumerate}
 			\item An\'alise das implementa\c{c}\~oes dos \textit{brokers} AMQP para 
 			defini\c{c}\~ao do que ser\'a usado
-			\item Desenvolvimento do c\'odigo e estrutura necess\'aria para o transporte
+			\item An\'alise e desenvolvimento do c\'odigo e estrutura necess\'aria para o transporte
 			 das mensagens entre os atores remotos utilizando AMQP
 			\item Desenvolvimento de testes, refatora\c{c}\~ao e aprimoramento da implementa\c{c}\~ao
-			\item Elabora\c{c}\~ao e execu\c{c}\~ao de testes de desempenho entre a implementa\c{c}\~ao
-			 de atores remotos com JBoss Netty e AMQP
+			\item Elabora\c{c}\~ao e execu\c{c}\~ao cen\'arios de experimento para compara\c{c}\~ao entre a vers\~ao
+			original do Akka e a vers\~ao a ser desenvolvida
 			\item Reda\c{c}\~ao da disserta\c{c}\~ao
 			\item Reda\c{c}\~ao de artigo
 			\item Defesa
@@ -371,13 +429,13 @@ myActor ! "test"
 			\textbf{2010/2011}		  
 			\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 			 \hline
-			    & nov & dez & jan & fev & mar & abr & mai & jun & jul \\ \hline
+			 & nov & dez & jan & fev & mar & abr & mai & jun & jul \\ \hline
 			    1 & \x  &     &     &     &     &     &     &     &     \\ \hline
-			    2 & \x  & \x  & \x  &     &     &     &     &     &     \\ \hline
+			    2 &     & \x  & \x  & \x  &     &     &     &     &     \\ \hline
 			    3 &     &     & \x  & \x  & \x  &     &     &     &     \\ \hline
-			    4 &     &     &     &     & \x  &     &     &     &     \\ \hline
-			    5 &     &     &     &     &     & \x  & \x  & \x  &     \\ \hline
-			    6 &     &     &     &     &     &     &     & \x  &     \\ \hline
+			    4 &     &     &     &     & \x  & \x  &     &     &     \\ \hline
+			    5 &     &     &     &     & \x  & \x  & \x  & \x  &     \\ \hline
+			    6 &     &     &     &     &     &     &     & \x  & \x    \\ \hline
 			    7 &     &     &     &     &     &     &     &     & \x  \\ \hline
 		  	\end{tabular}  
 		\end{center}	
@@ -392,19 +450,25 @@ myActor ! "test"
 \frametitle{Refer\^encias}
 \begin{thebibliography}{10} 
 	\only<1>{
-		\bibitem[Agha, 1986]{Agha1986} Gul Agha, 1986 
-		\newblock {\em Actors: a model of concurrent computation in distributed system}
-		\newblock MIT Press, Cambridge, MA, USA
-	
 		\bibitem[Sutter, 2005]{Sutter2005} Herb Sutter, 2005 
 		\newblock {\em The Free Lunch Is Over: A Fundamental Turn Toward Concurrency in Software}
 		\newblock http://www.gotw.ca/publications/concurrency-ddj.htm
 	
+		\bibitem[Sutter, Larus. 2005]{SutterEtAll2005} Herb Sutter and James Larus. 2005
+		\newblock {\em Software and the Concurrency Revolution}
+		\newblock ACM Queue 3(7): 54 -62
+	}
+	\only<2>{
+		\bibitem[Agha, 1986]{Agha1986} Gul Agha, 1986 
+		\newblock {\em Actors: a model of concurrent computation in distributed system}
+		\newblock MIT Press, Cambridge, MA, USA
+	
 		\bibitem[Jones, 2007]{Jones2007} Simon P. Jones, 2007
 		\newblock {\em Beautiful Concurrency}
 		\newblock http://research.microsoft.com/Users/simonpj/papers/stm/index.htm
+ 	
 	}
-	\only<2>{
+	\only<3>{
 		\beamertemplatebookbibitems
 		\bibitem[Alonso, et al. 2004]{Alonso2004} Gustavo Alonso and Fabio Casati and Harumi Kuno and Vijay Machiraju, 2004
 		\newblock {\em Web Services: Concepts, Architecture and Applications}

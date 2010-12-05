@@ -562,7 +562,6 @@
 	A criação de atores remotos pelo cliente é análoga a de atores locais, salvo o fato de se informar
 	o \english{host} e porta de um \texttt{RemoteServer} já em execução. A listagem ~\ref{lst:subclass-actor-remote} mostra a criação por meio de 
         uma sub-classe de \texttt{RemoteActor}. Vale destacar que, nesta listagem, o valor de \texttt{myRemoteActor} (linha $12$) é um \english{proxy} local para
-      
         o ator remoto. Outra possibilidade é criar um ator local e posteriormente convertê-lo em remoto, por meio de uma chamada ao 
         método \texttt{makeRemote(host, port)} (listagem~\ref{lst:make-remote-of-local-actor}). Tal chamada deve ocorrer anteriormente
         à ativação do ator via chamada ao método \texttt{start}.
