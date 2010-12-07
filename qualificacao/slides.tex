@@ -37,14 +37,14 @@
          	MOMs s\~ao um tanto quanto inflex\'iveis em rela\c{c}\~ao a filtragem e roteamento de mensagens.		
 	}
 	\only<3>{
- 		\textit{Message brokers} s\~ao descendentes diretos diretos de MOMs que endere\c{c}\~ao essas limita\c{c}\~oes.		
+ 		\textit{Message brokers} s\~ao descendentes diretos dos MOMs e endere\c{c}am essas limita\c{c}\~oes.		
 	}
 	\only<4>{
  		Os protocolos usados por \textit{message brokers} variam de produto para produto. Algumas abordagens existentes:
  		\begin{itemize}
  			\item A especifica\c{c}\~ao Java \textit{Message Service} (JMS) define uma API padr\~ao para que programas Java possam
 			interagir com \textit{message brokers}
- 			\item A especifica\c{c}\~ao \textit{Advanced Message Queuing Protocol}(AMQP) \'e uma proposta
+ 			\item A especifica\c{c}\~ao \textit{Advanced Message Queuing Protocol} (AMQP) \'e uma proposta
  			recente de padroniza\c{c}\~ao de um protocolo para \textit{message brokers}
  		\end{itemize}
 	}
@@ -56,7 +56,7 @@
 		Processadores \textit{multicore} impactam a maneira que programas s\~ao escritos:
 		\begin{itemize}
 			\item  Programas precisam ser escritos de maneira concorrente para poder
-			usufruir dos ganhos de desempenho dos processadores com m\'ultiplos n\'ucleos \cite{Sutter2005}
+			usufruir dos ganhos de desempenho dos processadores \textit{m\'ulticore} \cite{Sutter2005}
 			
 			\item Abordagem convencional com o uso de travas al\'em de complexa, possui
 			limita\c{c}\~oes em rela\c{c}\~ao a componibilidade \cite{Jones2007}
@@ -90,10 +90,10 @@
 \frame{
 \frametitle{Motiva\c{c}\~ao}
 	\only<1>{
-		Potencial sinergia em as duas classes:
+		Potencial sinergia entre as duas classes:
 		\begin{itemize}
 			\item Atores em diferentes n\'os podem trocar mensagens entre si
-			\item \textit{Message brokers} prov\^em robustes para a troca de mensagens entre entidades em diferentes n\'os de um sistema
+			\item \textit{Message brokers} prov\^em robustez para a troca de mensagens entre entidades em diferentes n\'os de um sistema
 		\end{itemize}
 	}
 }
