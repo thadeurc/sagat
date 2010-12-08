@@ -122,15 +122,15 @@
 \subsection{Atores em Scala}
 \frame{
 \frametitle{A biblioteca de atores de Scala}
-	\only<1>{A implementa\c{c}\~ao da biblioteca padr\~ao de Scala foi baseada na implementa\c{c}\~ao feita em Erlang, possuindo
+	\only<1>{A implementa\c{c}\~ao da biblioteca que \'e parte da distribu\'i\c{c}\~ao de 
+	da linguagem Scala foi baseada na implementa\c{c}\~ao feita em Erlang, possuindo
 	basicamente as mesmas funcionalidades j\'a descritas.
 	}
 	\only<2>{
 		\begin{beamerboxesrounded}{Caracter\'isticas adicionais}
 			\begin{itemize}
 				\item Atores s\~ao baseados em \textit{threads} Java
-				\item Possui m\'etodos como \textit{act} e \textit{react} a serem usados como alternativa ao \textit{receive}, 
-				que permitem um reuso de \textit{threads} inativas
+				\item Possui m\'etodos como \textit{act} (inicializar o ator) e \textit{react} (\textit{receive} n\~ao bloqueante e baseado em eventos)
 			\end{itemize}
 		\end{beamerboxesrounded}
 	}
@@ -138,7 +138,7 @@
 		\begin{beamerboxesrounded}{Outros tipos de envio}
 			\begin{itemize}
 				\item !? : faz o envio da mensagem e fica bloqueado dentro de um tempo limite aguardando a resposta
-				\item !! : faz o envio da mensagem e recebe um resultado substitudo (\textit{Future}). Uma fun\c{c}\~ao parcial
+				\item !! : faz o envio da mensagem e recebe um resultado substituto (\textit{Future}). Uma fun\c{c}\~ao parcial
 				fica aguardando o resultado real
 			\end{itemize}
 		\end{beamerboxesrounded}
@@ -149,9 +149,9 @@
 		\begin{beamerboxesrounded}{Atores Remotos}
 			\begin{itemize}
 				\item Cria\c{c}\~ao de atores remotos (\textit{spawn remotes}) n\~ao \'e poss\'ivel
-				\item Atores s\~ao acess\'iveis remotamente via \textit{proxies}
-				\item Clientes obt\'em refer\^encias para atores remotos s\~ao fazendo buscas em um determinado n\'o 
-				(JVM com \textit{host} e porta) utilizando como chave o nome sob o qual o ator foi registrado
+				\item Atores s\~ao  remotamente acess\'iveis via \textit{proxies}
+				%\item Clientes obt\'em refer\^encias para atores remotos s\~ao fazendo buscas em um determinado n\'o 
+				%(JVM com \textit{host} e porta) utilizando como chave o nome sob o qual o ator foi registrado
 				\item O transporte das mensagens \'e feito via seria\c{c}\~ao padr\~ao Java atrav\'es de \textit{sockets} TCP
 			\end{itemize}
 		\end{beamerboxesrounded}
@@ -198,30 +198,30 @@
 				\item \textit{Virtual hosts}
 			\end{itemize}
 		\end{beamerboxesrounded}
-		Sistemas AMQP o recebimendo e roteamento das mensagens s\~ ao separados do seu armazemento
+		Em sistemas AMQP o recebimendo e roteamento das mensagens s\~ ao separados do seu armazemento
 		e encaminhamento. Em sistemas pr\'e-AMQP, estas tarefas s\~ao feitas por blocos monol\'iticos.
 	}
+%	\only<3>{
+%		\begin{figure}[hbtp]
+%			\includegraphics[scale=.85]{imagens/amqp-overview.pdf}
+%		\end{figure}
+%	}
 	\only<3>{
-		\begin{figure}[hbtp]
-			\includegraphics[scale=.85]{imagens/amqp-overview.pdf}
-		\end{figure}
-	}
-	\only<4>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.90]{imagens/amqp-message-flow1.pdf}
 		\end{figure}
 	}
-	\only<5>{
+	\only<4>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.90]{imagens/amqp-message-flow2.pdf}
 		\end{figure}
 	}
-	\only<6>{
+	\only<5>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.90]{imagens/amqp-message-flow3.pdf}
 		\end{figure}
 	}
-	\only<7>{
+	\only<6>{
 		\begin{beamerboxesrounded}{Analogia com sistemas de correio eletr\^onico}
 			\begin{itemize}
 				\item Mensagens AMQP s\~ao an\'alogas a mensagens de correio eletr\^onico
@@ -315,7 +315,7 @@ myActor ! "test"
 
 \subsection{Atores remotos}
 \frame{
-\frametitle{Principais componentes}
+\frametitle{Atores remotos}
 	\only<1>{
 		\begin{beamerboxesrounded}{Principais componentes}
 			\begin{itemize}
