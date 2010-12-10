@@ -127,15 +127,15 @@
 	basicamente as mesmas funcionalidades j\'a descritas.
 	}
 	\only<2>{
-		\begin{beamerboxesrounded}{Caracter\'isticas adicionais}
+		\begin{beamerboxesrounded}{Diferen\c{c}as de Erlang}
 			\begin{itemize}
 				\item Atores s\~ao baseados em \textit{threads} Java
-				\item Possui m\'etodos como \textit{act} (inicializar o ator) e \textit{react} (\textit{receive} n\~ao bloqueante e baseado em eventos)
+				\item Possuem m\'etodos como \textit{act} (inicializar o ator) e \textit{react} (\textit{receive} n\~ao bloqueante e baseado em eventos)
 			\end{itemize}
 		\end{beamerboxesrounded}
 	}
 	\only<3>{
-		\begin{beamerboxesrounded}{Outros tipos de envio}
+		\begin{beamerboxesrounded}{Tipos adicionais de envio}
 			\begin{itemize}
 				\item !? : faz o envio da mensagem e fica bloqueado dentro de um tempo limite aguardando a resposta
 				\item !! : faz o envio da mensagem e recebe um resultado substituto (\textit{Future}). Uma fun\c{c}\~ao parcial
@@ -188,24 +188,24 @@
 			\item Objetiva que as capacidades de MOMs estejam dispon\'iveis pervasivamente nas empresas
 		\end{itemize}
 	}
-	\only<2>{
-		\begin{beamerboxesrounded}{Principais componentes}
-			\begin{itemize}
-				\item Servidor, tamb\'em conhecido como \textit{broker}
-				\item Filas
-				\item \textit{Exchanges}
-				\item \textit{Bindings}
-				\item \textit{Virtual hosts}
-			\end{itemize}
-		\end{beamerboxesrounded}
-		Em sistemas AMQP o recebimendo e roteamento das mensagens s\~ ao separados do seu armazemento
-		e encaminhamento. Em sistemas pr\'e-AMQP, estas tarefas s\~ao feitas por blocos monol\'iticos.
-	}
-%	\only<3>{
-%		\begin{figure}[hbtp]
-%			\includegraphics[scale=.85]{imagens/amqp-overview.pdf}
-%		\end{figure}
+%	\only<2>{
+%		\begin{beamerboxesrounded}{Principais componentes}
+%			\begin{itemize}
+%				\item Servidor, tamb\'em conhecido como \textit{broker}
+%				\item Filas
+%				\item \textit{Exchanges}
+%				\item \textit{Bindings}
+%				\item \textit{Virtual hosts}
+%			\end{itemize}
+%		\end{beamerboxesrounded}
+%		Em sistemas AMQP o recebimendo e roteamento das mensagens s\~ ao separados do seu armazemento
+%		e encaminhamento. Em sistemas pr\'e-AMQP, estas tarefas s\~ao feitas por blocos monol\'iticos.
 %	}
+	\only<2>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.85]{imagens/amqp-overview.pdf}
+		\end{figure}
+	}
 	\only<3>{
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.90]{imagens/amqp-message-flow1.pdf}
@@ -316,22 +316,24 @@ myActor ! "test"
 \subsection{Atores remotos}
 \frame{
 \frametitle{Atores remotos}
-	\only<1>{
-		\begin{beamerboxesrounded}{Principais componentes}
-			\begin{itemize}
-				\item \textit{RemoteActor}
-				\item \textit{RemoteServer}
-				\item \textit{RemoteNode}
-				\item \textit{Cluster}
-				\item \textit{RemoteClient}
-			\end{itemize}
-		\end{beamerboxesrounded}
-	}
-	\only<2>{
+	%\only<1>{
+%		\begin{beamerboxesrounded}{Principais componentes}
+%			\begin{itemize}
+%				\item \textit{RemoteActor}
+%				\item \textit{RemoteServer}
+%				\item \textit{RemoteNode}
+%				\item \textit{Cluster}
+%				\item \textit{RemoteClient}
+%			\end{itemize}
+%		\end{beamerboxesrounded}
+%	}
+%	\only<2>{
+		\begin{beamerboxesrounded}{Componentes}
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.6]{imagens/remote-actor-diagram.pdf}
 		\end{figure}
-	}
+		\end{beamerboxesrounded}
+%	}
 }
 \begin{frame}[fragile]
 \frametitle{Envio remoto de mensagens}
