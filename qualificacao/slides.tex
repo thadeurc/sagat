@@ -8,10 +8,10 @@
 \author{Thadeu de Russo e Carmo \\ \texttt{thadeurc@ime.usp.br}} 
 \institute{Orientador: Prof. Dr. Francisco da Rocha Reverbel\\ Instituto de Matem\'atica e Estat\'istica \\ Universidade de S\~ao Paulo}
 \date{Dezembro, 2010}
-
 \begin{document}
 \frame{\titlepage}
 \section{Introdu\c{c}\~ao} 
+\setbeamertemplate{footline}[page number]
 \frame{\frametitle{Proposta}
     	\only<1>{
      		Explorar a potencial sinergia entre duas classes de sistemas de \textit{software}:
@@ -22,6 +22,7 @@
  		\end{enumerate}
 	}
 }
+
 \frame{
 \frametitle{Motiva\c{c}\~ao -- Sistemas corporativos}
 	\only<1>{
@@ -58,7 +59,7 @@
 			\item  Programas precisam ser escritos de maneira concorrente para poder
 			usufruir dos ganhos de desempenho dos processadores \textit{m\'ulticore} \cite{Sutter2005}
 			
-			\item Abordagem convencional com o uso de travas al\'em de complexa, possui
+			\item Abordagem convencional com o uso de travas, al\'em de complexa, possui
 			limita\c{c}\~oes em rela\c{c}\~ao a componibilidade \cite{Jones2007}
 
 			\item A maioria das linguagems de programa\c{c}\~ao n\~ao s\~ao adequadas para a cria\c{c}\~ao de tais
@@ -80,9 +81,9 @@
 			As mensagens recebidas s\~ao mapeadas em uma $3$-tupla consistindo de: 
 			\begin{itemize}
 				\item Um conjunto finito de mensagens enviadas para outros atores onde o endere\c{c}o \'e conhecido
-				(incluindo o pr\'oprio ator que est\'a processando a mensagem)
-				\item Um novo comportamento a ser usado no processamento a mensagem seguinte
-				\item Um conjunto finito de cria\c{c}\~ao de novos atores
+				(um deles pode ser o pr\'oprio ator que est\'a processando a mensagem)
+				\item Um novo comportamento a ser usado no processamento da mensagem seguinte
+				\item Um conjunto finito de cria\c{c}\~oes de novos atores
 			\end{itemize}
 		\end{beamerboxesrounded}
 	}
@@ -150,7 +151,7 @@
 			\begin{itemize}
 				\item Cria\c{c}\~ao de atores remotos (\textit{spawn remotes}) n\~ao \'e poss\'ivel
 				\item Atores s\~ao  remotamente acess\'iveis via \textit{proxies}
-				%\item Clientes obt\'em refer\^encias para atores remotos s\~ao fazendo buscas em um determinado n\'o 
+				%\item Clientes obt\'em refer\^encias para atores remotos  fazendo buscas em um determinado n\'o 
 				%(JVM com \textit{host} e porta) utilizando como chave o nome sob o qual o ator foi registrado
 				\item O transporte das mensagens \'e feito via seria\c{c}\~ao padr\~ao Java atrav\'es de \textit{sockets} TCP
 			\end{itemize}
@@ -162,7 +163,7 @@
 \frametitle{O projeto Akka}
 		\only<1>{
 			\'E composto por um conjunto de m\'odulos que juntos formam uma plataforma voltada para o desenvolvimento
-			de aplica\c{c}\~oes escal\'aveis e tolerante a falhas.
+			de aplica\c{c}\~oes escal\'aveis e tolerantes a falhas.
 		}
 		\only<2>{
 			\begin{beamerboxesrounded}{Principais m\'odulos}
@@ -174,7 +175,7 @@
 					\item \textit{Transactors} (combina\c{c}\~ao de atores com STM)
 				\end{itemize}
 			\end{beamerboxesrounded}
-			Al\'em de m\'odulos adicionais para integra\c{c}\~ao com outras tecnologias.
+			H\'a outros m\'odulos adicionais para integra\c{c}\~ao com outras tecnologias.
 		}
 }
 \section{Advanced Message Queuing Protocol}
@@ -184,7 +185,7 @@
 		\begin{itemize}
 			\item Protocolo aberto desenvolvido por um conjunto de empresas com o objetivo de padroniza\c{c}\~ao
 			e redu\c{c}\~ao de custos na integra\c{c}\~ao de sistemas
-			\item Al\'em da defini\c{c}\~ao do protocolo, define tamb\'em a sem\^antica dos servidos da aplica\c{c}\~ao servidora 
+			\item Al\'em da defini\c{c}\~ao do protocolo, define tamb\'em a sem\^antica dos servi\c{c}os de trocas de mensagens 
 			\item Objetiva que as capacidades de MOMs estejam dispon\'iveis pervasivamente nas empresas
 		\end{itemize}
 	}
@@ -226,9 +227,9 @@
 			\begin{itemize}
 				\item Mensagens AMQP s\~ao an\'alogas a mensagens de correio eletr\^onico
 				\item Filas s\~ao an\'alogas a caixas de correio
-				\item \textit{Exchanges} s\~ao an\'alogas a agentes de transfer\^encia de mensagens (MTA), e
-				com base nas chaves de roteamento (To, Cc e Bcc no caso de correio eletr\^onico), verifica
-				as tabelas de registro e decide como enviar as mensagens para uma ou mais caixas de correio
+				\item \textit{Exchanges} s\~ao an\'alogas a agentes de transfer\^encia de mensagens (MTA).
+				 Com base nas chaves de roteamento (To, Cc e Bcc no caso de correio eletr\^onico), eles verificam
+				as tabelas de registro e decidem como enviar as mensagens para uma ou mais caixas de correio
 				\item \textit{Bindings} correspondem a entradas nas tabelas de roteamento do MTA		
 			\end{itemize}
 		\end{beamerboxesrounded}
@@ -249,7 +250,7 @@
 				\item Diferentes tipos de despachadores de mensagem
 				\item \textit{Remote spawns}, mas sem carregamento remoto de classes
 				\item Transporte de mensagens via \textit{sockets} TCP com aux\'ilio do JBoss Netty
-				\item Direfentes protocolos para seria\c{c}\~ao de mensagens em envios para atores remotos
+				\item Diferentes mecanismos para seria\c{c}\~ao de mensagens em envios para atores remotos
 				(Protobuf, JSON, seria\c{c}\~ao Java padr\~ao, SBinary)
 				\item Compacta\c{c}\~ao das mensagens enviadas para atores remotos (JBoss Netty)
 			\end{itemize}
@@ -406,7 +407,7 @@ myActor ! "test"
 \frametitle{O projeto}
 	\only<1>{
  		A implementa\c{c}\~ao do modelo de atores do projeto Akka \'e mais abrangente e robusta do que a implenta\c{c}\~ao
-		presente na distribui\c{c}\~ao da linguagem Scala, em particular para atores remotos.
+		presente na distribui\c{c}\~ao da linguagem Scala.
 	}
 	\only<2>{
 		Criar uma vers\~ao modificada do Akka, na qual o envio de mensagens para atores remotos seja feito via AMQP.
@@ -422,7 +423,7 @@ myActor ! "test"
 			\item An\'alise e desenvolvimento do c\'odigo e estrutura necess\'aria para o transporte
 			 das mensagens entre os atores remotos utilizando AMQP
 			\item Desenvolvimento de testes, refatora\c{c}\~ao e aprimoramento da implementa\c{c}\~ao
-			\item Elabora\c{c}\~ao e execu\c{c}\~ao cen\'arios de experimento para compara\c{c}\~ao entre a vers\~ao
+			\item Elabora\c{c}\~ao e execu\c{c}\~ao experimentos para compara\c{c}\~ao entre a vers\~ao
 			original do Akka e a vers\~ao a ser desenvolvida
 			\item Reda\c{c}\~ao da disserta\c{c}\~ao
 			\item Reda\c{c}\~ao de artigo
