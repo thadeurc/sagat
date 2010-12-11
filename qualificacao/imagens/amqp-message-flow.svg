@@ -16,7 +16,7 @@
    x="0.0000000"
    version="1.0"
    sodipodi:version="0.32"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.0 r9654"
    sodipodi:docname="amqp-message-flow.svg">
   <metadata
      id="metadata1379">
@@ -363,7 +363,8 @@
      style="fill:none;stroke:#000000;stroke-width:0.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#marker1531)"
      d="m 288.00003,76.70081 182.51207,0"
      id="path4753"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <text
      inkscape:transform-center-y="-38.932037"
      inkscape:transform-center-x="33.267991"
@@ -428,7 +429,8 @@
      style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-start:none;marker-end:url(#marker1531)"
      d="m 422.00001,166.21053 -124.80712,0"
      id="path4989"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <rect
      id="rect3219"
      width="47.72971"
@@ -469,7 +471,8 @@
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:none"
      d="m 503.82329,89.234338 -0.3827,58.736302"
      id="path4061"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <text
      xml:space="preserve"
      style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -522,22 +525,26 @@
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m 505.29784,112.97064 -60,0"
      id="path7215"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <path
      style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:none"
      d="m 445.29784,112.40551 0,35.56513"
      id="path7219"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <path
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
      d="m 503.31023,112.97064 61.49167,0"
      id="path7226"
-     inkscape:connector-type="polyline" />
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
   <path
      inkscape:connector-type="polyline"
      id="path7428"
      d="m 565.29784,112.40551 0,35.56513"
-     style="fill:none;stroke:#000000;stroke-width:0.99999988px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:none" />
+     style="fill:none;stroke:#000000;stroke-width:0.99999988px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:none"
+     inkscape:connector-curvature="0" />
   <text
      transform="matrix(0,1,-1,0,0,0)"
      id="text7830"

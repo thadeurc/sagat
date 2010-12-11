@@ -17,7 +17,7 @@
    version="1.0"
    sodipodi:version="0.32"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="amqp-message-flow.svg">
+   sodipodi:docname="amqp-message-flow3.svg">
   <metadata
      id="metadata1379">
     <rdf:RDF>
@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -359,12 +359,6 @@
        x="255.27419"
        y="84.615326"
        style="font-size:9px">Produtora</tspan></text>
-  <path
-     style="fill:none;stroke:#000000;stroke-width:0.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#marker1531)"
-     d="m 288.00003,76.70081 182.51207,0"
-     id="path4753"
-     inkscape:connector-type="polyline"
-     inkscape:connector-curvature="0" />
   <text
      inkscape:transform-center-y="-38.932037"
      inkscape:transform-center-x="33.267991"
