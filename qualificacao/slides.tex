@@ -3,16 +3,19 @@
 \usepackage[latin1]{inputenc}
 \usepackage[brazil]{babel}
 \usepackage{graphicx}
+\usepackage{pgfpages}
 \usepackage{listings}
 \title[]{Uso de AMQP para Transporte de Mensagens entre Atores Remotos} 
-\author{Thadeu de Russo e Carmo \\ \texttt{thadeurc@ime.usp.br}} 
+\author{Thadeu de Russo e Carmo \\ \texttt{thadeurc@ime.usp.br}}
 \institute{Orientador: Prof. Dr. Francisco da Rocha Reverbel\\ Instituto de Matem\'atica e Estat\'istica \\ Universidade de S\~ao Paulo}
 \date{Dezembro, 2010}
+\setbeameroption{show notes on second screen=left} 
 \begin{document}
 \frame{\titlepage}
 \section{Introdu\c{c}\~ao} 
 \setbeamertemplate{footline}[page number]
 \frame{\frametitle{Proposta}
+	\note{Apenas comentar o que esta no slide.}
     	\only<1>{
      		Explorar a potencial sinergia entre duas classes de sistemas de \textit{software}:
  		\begin{enumerate}
@@ -26,6 +29,15 @@
 \frame{
 \frametitle{Motiva\c{c}\~ao -- Sistemas corporativos}
 	\only<1>{
+ 		\note{
+ 			\begin{itemize}
+ 			\item Comentar sobre o nao vinculo de produtor e consumidor com cliente (usuario de um servico)
+ 			e servidor (provedor de um servico) -- cliente/servidor eh baseado na semantica das
+			mensagens
+			\item Baixo acoplamento e interoperabilidade
+			\item filas transacionais (abstracao -- persistente) provem a garantia de entrega
+ 			\end{itemize}
+		}
 		\begin{itemize}
 			\item \textit{Middlewares} orientados a mensagem (MOMs) trabalham com troca ass\'incrona de mensagens
 			\item Formam base para simplificar o desenvolvimento de sistemas
@@ -38,9 +50,22 @@
          	MOMs s\~ao um tanto quanto inflex\'iveis em rela\c{c}\~ao a filtragem e roteamento de mensagens.		
 	}
 	\only<3>{
+ 		\note{ 
+ 			\begin{itemize}
+ 				\item o que era no nivel da aplicacao foi para o nivel de configuracao (e.g.: MDB
+				declara no seu registro as mensagens que vao filtrar)
+				\item regras de negocio para roteamento -- WSMB 6.1
+			\end{itemize}
+		}
  		\textit{Message brokers} s\~ao descendentes diretos dos MOMs e endere\c{c}am essas limita\c{c}\~oes.		
 	}
 	\only<4>{
+ 		\note{
+ 			\begin{itemize}
+	 			\item Lembrar dos altos custos altos -- MQSeries
+			\end{itemize}
+		}
+
  		Os protocolos usados por \textit{message brokers} variam de produto para produto. Algumas abordagens existentes:
  		\begin{itemize}
  			\item A especifica\c{c}\~ao Java \textit{Message Service} (JMS) define uma API padr\~ao para que programas Java possam
@@ -52,8 +77,14 @@
 }
 \frame{
 \frametitle{Motiva\c{c}\~ao -- Programas concorrentes}
-
 	\only<1>{
+		\note{
+ 			\begin{itemize}
+	 			\item The free lunch is over -- limites fisicos
+				\item locks -- componibilidade de bibliotecas nao rola 			
+			\end{itemize}
+		}
+
 		Processadores \textit{multicore} impactam a maneira que programas s\~ao escritos:
 		\begin{itemize}
 			\item  Programas precisam ser escritos de maneira concorrente para poder
@@ -67,6 +98,14 @@
 		\end{itemize}
 	}
 	\only<2>{
+ 		\note{
+ 			\begin{itemize}
+	 			\item STM compartilha tudo, eh componivel -- programas lineares, mas nao eh bom
+				para o caso distribuido
+				\item Atores -- nao compartilha nada -- programas nao lineares, mas
+				distribui bem - falar da ordem parcial de tempo
+			\end{itemize}
+		}
 		Modelos n\~ao convencionais de programa\c{c}\~ao concorrente:
 		\begin{itemize}
 			\item \textit{Software Transactional Memory} (STM) -- mecanismo de controle an\'alogo
@@ -75,6 +114,14 @@
 		\end{itemize}
 	}
 	\only<3>{
+ 		\note{
+ 			\begin{itemize}
+	 			\item So resumir o slide - comentar do Hewitt e falar que tbm cliente/servidor
+				varia de acordo com os a semantica das mensagens.
+				\item Falar da garantia de entrega
+			\end{itemize}			
+		}
+
 		\begin{beamerboxesrounded}{Defini\c{c}\~ao de um Ator \cite{Agha1986}}
 			\'E um agente computacional que possui uma caixa de correio e um comportamento.
 			Atores processam assicronamente as mensagens recebidas em suas respectivas caixas de correios. 
@@ -91,6 +138,14 @@
 \frame{
 \frametitle{Motiva\c{c}\~ao}
 	\only<1>{
+ 		\note{
+ 			\begin{itemize}
+	 			\item nao ha cliente servidor
+				\item troca assincrona
+				\item garantia de entrega de mensagens
+			\end{itemize}
+		}
+
 		Potencial sinergia entre as duas classes:
 		\begin{itemize}
 			\item Atores em diferentes n\'os podem trocar mensagens entre si
@@ -99,6 +154,9 @@
 	}
 }
 \frame{\frametitle{Objetivos}
+	\note{
+ 		Atores poder ser acessiveis remotamente; garantia de entrega de mensagens.
+ 	}
 	O principal objetivo deste trabalho \'e gerar um prot\'otipo baseado na implementa\c{c}\~ao de atores do projeto 
 	Akka, que utilize um \textit{message broker} AMQP para o transporte das mensagens entre atores remotos.
 }
@@ -108,6 +166,13 @@
 \frame{
 \frametitle{Atores em Erlang}
 	\begin{beamerboxesrounded}{Principais caracter\'isticas}
+		\note{
+ 			\begin{itemize}
+	 			\item sistemas de larga escala e tempo real
+				\item digamos que ajudou a popularizar o modelo de atores
+				\item tentar destacar hierarquia de supervisao: ignora; trata; mata o pai
+ 			\end{itemize}
+		}
 		\begin{itemize}
 			\item Atores s\~ao processos ultra leves criados dentro da m\'aquina virtual Erlang
 			\item Primitivas para cria\c{c}\~ao de novos atores (\textit{spawn}), envio de mensagens (!), 
@@ -123,11 +188,22 @@
 \subsection{Atores em Scala}
 \frame{
 \frametitle{A biblioteca de atores de Scala}
-	\only<1>{A implementa\c{c}\~ao da biblioteca que \'e parte da distribu\'i\c{c}\~ao de 
-	da linguagem Scala foi baseada na implementa\c{c}\~ao feita em Erlang, possuindo
-	basicamente as mesmas funcionalidades j\'a descritas.
+	\only<1>{
+	         A implementa\c{c}\~ao da biblioteca que \'e parte da distribu\'i\c{c}\~ao de 
+		da linguagem Scala foi baseada na implementa\c{c}\~ao feita em Erlang, possuindo
+		basicamente as mesmas funcionalidades j\'a descritas.
 	}
 	\only<2>{
+ 		\note{
+ 			\begin{itemize}
+	 			\item sender implicito
+				\item estruturas de controle (loop)
+ 				\item canais para diferentes tipos de mensagens
+ 				\item receive eh bloqueante e retorna valor -- consome uma thread
+ 				\item react eh event based
+ 				\item hierarquia de supervisao
+			\end{itemize}
+		}
 		\begin{beamerboxesrounded}{Diferen\c{c}as de Erlang}
 			\begin{itemize}
 				\item Atores s\~ao baseados em \textit{threads} Java
@@ -147,12 +223,16 @@
 		para o resultado que ainda n\~ao foi materializado.
 	}	
 	\only<4>{
+ 		\note{
+ 			\begin{itemize}
+				\item nao tem spawn remoto, entao nao tem link com processos remotos.
+				\item lembrar do alive dentro do act e do select(node(host, porta), chave)
+			\end{itemize}
+		}
 		\begin{beamerboxesrounded}{Atores Remotos}
 			\begin{itemize}
 				\item Cria\c{c}\~ao de atores remotos (\textit{spawn remotes}) n\~ao \'e poss\'ivel
 				\item Atores s\~ao  remotamente acess\'iveis via \textit{proxies}
-				%\item Clientes obt\'em refer\^encias para atores remotos  fazendo buscas em um determinado n\'o 
-				%(JVM com \textit{host} e porta) utilizando como chave o nome sob o qual o ator foi registrado
 				\item O transporte das mensagens \'e feito via seria\c{c}\~ao padr\~ao Java atrav\'es de \textit{sockets} TCP
 			\end{itemize}
 		\end{beamerboxesrounded}
@@ -189,20 +269,15 @@
 			\item Objetiva que as capacidades de MOMs estejam dispon\'iveis pervasivamente nas empresas
 		\end{itemize}
 	}
-%	\only<2>{
-%		\begin{beamerboxesrounded}{Principais componentes}
-%			\begin{itemize}
-%				\item Servidor, tamb\'em conhecido como \textit{broker}
-%				\item Filas
-%				\item \textit{Exchanges}
-%				\item \textit{Bindings}
-%				\item \textit{Virtual hosts}
-%			\end{itemize}
-%		\end{beamerboxesrounded}
-%		Em sistemas AMQP o recebimendo e roteamento das mensagens s\~ ao separados do seu armazemento
-%		e encaminhamento. Em sistemas pr\'e-AMQP, estas tarefas s\~ao feitas por blocos monol\'iticos.
-%	}
 	\only<2>{
+ 		\note{
+ 			\begin{itemize}
+				\item Filas fazem armazenamento e possuem propriedades -- podem ser criadas programaticamente ou via
+				ferramentas administrativas
+				\item Exchanges fazem o roteamento com base nos bindings
+				\item bindings associam as exchanges as filas
+			\end{itemize}
+		}
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.85]{imagens/amqp-overview.pdf}
 		\end{figure}
@@ -244,7 +319,14 @@
 	 	e tamb\'em foi baseada na implementa\c{c}\~ao feita em Erlang.
 	}
 	\only<2>{
-		\begin{beamerboxesrounded}{Principais caracter\'isticas}
+		\note{
+ 			\begin{itemize}
+				\item Protobuf protocolo do Google -- analogo a xml (preserva a estrutura), so que mais eficiente e compacto
+				\item JSON -- javascript Object NOtation
+				\item Sbinary -- protocolo que faz um mapeamento dos tipos de Scala para binario
+			\end{itemize}
+		}
+		\begin{beamerboxesrounded}{Principais caracter\'isticas}			
 			\begin{itemize}
 				\item Tipos adicionais de envio (!! e !!!), semelhantes a !? e !!
 				\item Diferentes tipos de despachadores de mensagem
@@ -317,24 +399,23 @@ myActor ! "test"
 \subsection{Atores remotos}
 \frame{
 \frametitle{Atores remotos}
-	%\only<1>{
-%		\begin{beamerboxesrounded}{Principais componentes}
-%			\begin{itemize}
-%				\item \textit{RemoteActor}
-%				\item \textit{RemoteServer}
-%				\item \textit{RemoteNode}
-%				\item \textit{Cluster}
-%				\item \textit{RemoteClient}
-%			\end{itemize}
-%		\end{beamerboxesrounded}
-%	}
-%	\only<2>{
+		\note{
+ 			\begin{itemize}
+				\item RemoteServer mantem o registros dos atores acessaveis remotamente. Cuida tbm de enviar resultados
+				futuros ou mensagens relacionadas a hierarquia de supervisao
+				\item RemoteClient eh a interface usada pelos clientes para conseguir referencias remotas
+				\item RemoteClient faz a seriacao das mensagens p atores remotos
+				\item RemoteClient recebe resultados futuros e mensagens de atores supervisionados
+				\item Cluster - agrupamento de remote servers (JGroup)
+				\item deixar para falar de RemoteActor e RemoteNode no codigo -- usar o termo classes de conveniencia
+			\end{itemize}
+		}
+
 		\begin{beamerboxesrounded}{Componentes}
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.6]{imagens/remote-actor-diagram.pdf}
 		\end{figure}
 		\end{beamerboxesrounded}
-%	}
 }
 \begin{frame}[fragile]
 \frametitle{Envio remoto de mensagens}
@@ -488,6 +569,35 @@ myActor ! "test"
 	\begin{figure}[hbtp]
 		\includegraphics[scale=0.5]{imagens/question.pdf}
 	\end{figure}
+}
+\frame{
+\frametitle{Backup}	
+	\only<1>{
+		\note{
+	 		\begin{itemize}
+				\item filas temporarias (normalmente privadas) sao removidas uma vez que nao hajam mais consumidores
+			\end{itemize}
+		}
+		\begin{beamerboxesrounded}{Propriedades das Filas AMQP}
+			\begin{itemize}
+				\item P\'ublica para v\'arios consumidores ou privadas a um \'unico consumidor
+				\item Persistente ou transientes
+				\item Permantentes ou tempor\'arias
+			\end{itemize}
+		\end{beamerboxesrounded}
+	}
+	\only<2>{
+ 		\note{vale comentar de fanout -- uma mensagem eh enviada para todas as filas da exchange. Outro ponto importante
+		eh que a especificacao nao diz se a mensagem deve ser clonada ou apenas referenciada.}
+		\begin{beamerboxesrounded}{Propriedades das \textit{Exchanges} AMQP}
+			\begin{itemize}
+				\item \textit{Direct}: a chave de roteamento no cabe\c{c}alho da mensagem deve
+				ser exatamente igual ao valor de \textit{binding} usado na associa\c{c}\~ao com a fila
+				\item \textit{Topic}: \'E usado o casamento de padr\~oes para identificar para quais filas a mensagem
+				ser\'a roteada
+			\end{itemize}
+		\end{beamerboxesrounded}
+	}
 }
 
 
