@@ -1,0 +1,14 @@
+#External Dependencies
+#Tue Dec 21 02:08:26 BRST 2010
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/target/scala_2.8.1/classes/br/ime/usp/sagat/amqp/AMQPBridge.class=src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/target/scala_2.8.1/classes/br/ime/usp/sagat/amqp/ExchangeConfig$.class=src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/target/scala_2.8.1/classes/br/ime/usp/sagat/amqp/AMQPBridgeClient.class=src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/lib_managed/scala_2.8.1/compile/junit-4.8.2.jar=src/test/scala/br/ime/usp/sagat/test/AMQPTestSuite.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/target/scala_2.8.1/classes/br/ime/usp/sagat/amqp/AMQPBridgeServer.class=src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/target/scala_2.8.1/classes/br/ime/usp/sagat/amqp/StorageMode$.class=src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/target/scala_2.8.1/classes/br/ime/usp/sagat/amqp/AMQPBridge$.class=src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/lib_managed/scala_2.8.1/compile/scalatest-1.2.jar=src/test/scala/br/ime/usp/sagat/test/AMQPTestSuite.scala\:src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/project/boot/scala-2.8.1/lib/scala-library.jar=src/test/scala/br/ime/usp/sagat/test/AMQPTestSuite.scala\:src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/target/scala_2.8.1/classes/br/ime/usp/sagat/amqp/QueueConfig$.class=src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/lib_managed/scala_2.8.1/compile/amqp-client-2.2.0.jar=src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
+/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar=src/test/scala/br/ime/usp/sagat/test/AMQPTestSuite.scala\:src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala

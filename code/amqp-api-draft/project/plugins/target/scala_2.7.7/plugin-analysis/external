@@ -1,0 +1,6 @@
+#External Dependencies
+#Fri Dec 17 01:14:08 BRST 2010
+/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar=src_managed/sbt-idea-plugin-0.1-SNAPSHOT/IdeaProject.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/project/boot/scala-2.7.7/org.scala-tools.sbt/sbt/0.7.4/sbt_2.7.7-0.7.4.jar=src_managed/sbt-idea-plugin-0.1-SNAPSHOT/IdeaProject.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/project/plugins/lib_managed/scala_2.7.7/sbt-idea-core_2.7.7-0.1-SNAPSHOT.jar=src_managed/sbt-idea-plugin-0.1-SNAPSHOT/IdeaProject.scala
+/Users/thadeu/Documents/IME-USP/sagat/code/amqp-api-draft/project/boot/scala-2.7.7/lib/scala-library.jar=src_managed/sbt-idea-plugin-0.1-SNAPSHOT/IdeaProject.scala

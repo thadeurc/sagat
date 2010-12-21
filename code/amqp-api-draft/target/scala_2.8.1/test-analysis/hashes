@@ -1,0 +1,4 @@
+#Source Hashes
+#Tue Dec 21 02:08:26 BRST 2010
+src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala=c502a72dca0d1498a7a8e394d8fc7a63ea3df41d
+src/test/scala/br/ime/usp/sagat/test/AMQPTestSuite.scala=7118da2bd2c844e46883647ac869f51658a03cb0
