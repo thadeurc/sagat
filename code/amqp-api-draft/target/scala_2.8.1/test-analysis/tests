@@ -1,4 +1,0 @@
-#Tests
-#Wed Dec 22 00:06:06 BRST 2010
-src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala=br.ime.usp.sagat.test.AMQPSpec<<org.scalatest.Suite
-src/test/scala/br/ime/usp/sagat/test/AMQPTestSuite.scala=br.ime.usp.sagat.test.AMQPTestSuite<<org.scalatest.Suite

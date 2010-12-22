@@ -1,7 +1,0 @@
-#Source Hashes
-#Wed Dec 22 00:06:06 BRST 2010
-src/main/scala/br/ime/usp/sagat/amqp/AMQPBridge.scala=073caadb74f0de25c87c036cdad72d22e31e761c
-src/main/scala/br/ime/usp/sagat/amqp/AMQP.scala=deac12e67492c7f43e8a8182d9d27072a0e652ee
-src/main/scala/br/ime/usp/sagat/amqp/util/Util.scala=9f311015e08ef724788415ec6c2c3c787b63d399
-src/main/scala/br/ime/usp/sagat/mock/RemoteClientMock.scala=40a44c81a8410ce2edd7007008b281293eeefa01
-src/main/scala/br/ime/usp/sagat/mock/RemoteServerMock.scala=5be56b9d8268922c79cacd33ba55062f7085cf61

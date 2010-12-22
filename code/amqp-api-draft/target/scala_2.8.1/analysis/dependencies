@@ -1,7 +1,0 @@
-#Source Dependencies
-#Wed Dec 22 00:06:06 BRST 2010
-src/main/scala/br/ime/usp/sagat/amqp/AMQPBridge.scala=src/main/scala/br/ime/usp/sagat/mock/RemoteServerMock.scala
-src/main/scala/br/ime/usp/sagat/amqp/AMQP.scala=src/main/scala/br/ime/usp/sagat/amqp/AMQPBridge.scala
-src/main/scala/br/ime/usp/sagat/amqp/util/Util.scala=src/main/scala/br/ime/usp/sagat/amqp/AMQPBridge.scala
-src/main/scala/br/ime/usp/sagat/mock/RemoteClientMock.scala=
-src/main/scala/br/ime/usp/sagat/mock/RemoteServerMock.scala=
