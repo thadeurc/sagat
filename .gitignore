@@ -1,0 +1,20 @@
+# ignore all compiled files
+
+*.class
+*.jar
+*.aux
+*.mtc0
+*.mtc
+.DS_Store
+*.log
+*.bak
+*.dvi
+*.blg
+*.bbl
+*.toc
+*qualificacao.pdf
+*slides.pdf
+*.snm
+*.nav
+*.vrb
+*.*~
