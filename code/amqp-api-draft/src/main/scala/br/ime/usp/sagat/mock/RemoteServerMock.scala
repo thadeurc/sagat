@@ -2,8 +2,10 @@ package br.ime.usp.sagat.mock
 
 
 import java.util.concurrent.ConcurrentHashMap
-import br.ime.usp.sagat.amqp.AMQPBridge
-
+import br.ime.usp.sagat.amqp.{StorageMode, AMQPBridge}
+import java.lang.String
+import com.rabbitmq.client.AMQP.BasicProperties
+import com.rabbitmq.client.{Envelope, ShutdownSignalException, Consumer}
 
 class RemoteServerMock{
   import RemoteServerMock._
@@ -24,6 +26,7 @@ class RemoteServerMock{
 
     if(!isRunning){
       register(host, port, this)
+      amqpBridge = AMQPBridge.newServerAMQPBridge(host + ":" + port, new MessageConsumer, StorageMode.TRANSIENT)
       isRunning = true
       println(".... done")
     }else {
@@ -36,6 +39,20 @@ class RemoteServerMock{
   }
 
   def send(message: String): Unit = {}
+}
+
+class MessageConsumer extends Consumer {
+  def handleDelivery(p1: String, p2: Envelope, p3: BasicProperties, message: Array[Byte]) = {
+    println(new String(message))
+  }
+
+  def handleRecoverOk = {}
+
+  def handleShutdownSignal(p1: String, p2: ShutdownSignalException) = {}
+
+  def handleCancelOk(p1: String) = {}
+
+  def handleConsumeOk(p1: String) = {}
 }
 
 object RemoteServerMock{

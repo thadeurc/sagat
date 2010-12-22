@@ -1,15 +1,11 @@
 package br.ime.usp.sagat.test
 
 import org.scalatest.Spec
-import com.rabbitmq.client.DefaultConsumer
 import org.scalatest.matchers.{ShouldMatchers}
 import br.ime.usp.sagat.amqp._
 
-object Helper {
-  lazy val defaultFakeConsumer = new DefaultConsumer(null)
-}
 
-class AMQPSpec extends Spec with ShouldMatchers {
+class AMQPSpec extends Spec with ShouldMatchers with DataHelper{
   import AMQPBridge._
 
 

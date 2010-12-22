@@ -1,4 +1,5 @@
 #Source Dependencies
-#Tue Dec 21 02:08:26 BRST 2010
+#Wed Dec 22 00:06:06 BRST 2010
 src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala=
+src/test/scala/br/ime/usp/sagat/test/DataHelper.scala=src/test/scala/br/ime/usp/sagat/test/AMQPTestSuite.scala\:src/test/scala/br/ime/usp/sagat/test/AMQPSpec.scala
 src/test/scala/br/ime/usp/sagat/test/AMQPTestSuite.scala=
