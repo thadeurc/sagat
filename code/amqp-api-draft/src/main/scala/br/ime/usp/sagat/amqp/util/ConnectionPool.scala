@@ -27,7 +27,7 @@ object ConnectionSharePolicy extends Enumeration {
 import ConnectionSharePolicy._
 
 class EnhancedConnection(val readConnection: Connection, val writeConnection: Connection)
-    extends ReadAndWriteConnections with ReadAndWriteChannels {
+    extends ReadAndWriteConnections with ReadAndWriteChannels with ControlStructures {
 
   require(readConnection != null && writeConnection != null)
   require(readConnection.isOpen && writeConnection.isOpen)
@@ -43,7 +43,8 @@ class EnhancedConnection(val readConnection: Connection, val writeConnection: Co
 
 
   def close = {
-    // TODO fechar conexoes
+    silentClose(readConnection)
+    silentClose(writeConnection)
   }
 }
 

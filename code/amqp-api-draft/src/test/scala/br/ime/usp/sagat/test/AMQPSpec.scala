@@ -3,7 +3,7 @@ package br.ime.usp.sagat.test
 import org.scalatest.Spec
 import org.scalatest.matchers.{ShouldMatchers}
 import br.ime.usp.sagat.amqp._
-import util.ConnectionSharePolicy
+
 
 
 class AMQPSpec extends Spec with ShouldMatchers with DataHelper{
