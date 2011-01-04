@@ -26,7 +26,7 @@ class RemoteServerMock{
 
     if(!isRunning){
       register(host, port, this)
-      amqpBridge = AMQPBridge.newServerAMQPBridge(host + ":" + port, new MessageConsumer, StorageMode.TRANSIENT)
+      amqpBridge = AMQPBridge.newServerBridge(host + ":" + port, new ServerMessageConsumer, StorageMode.TRANSIENT)
       isRunning = true
       println(".... done")
     }else {
@@ -41,7 +41,7 @@ class RemoteServerMock{
   def send(message: String): Unit = {}
 }
 
-class MessageConsumer extends Consumer {
+class ServerMessageConsumer extends Consumer {
   def handleDelivery(p1: String, p2: Envelope, p3: BasicProperties, message: Array[Byte]) = {
     println(new String(message))
   }

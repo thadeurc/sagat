@@ -2,7 +2,8 @@ package br.ime.usp.sagat.mock
 
 import java.util.concurrent.ConcurrentHashMap
 import br.ime.usp.sagat.amqp.AMQPBridge
-import com.rabbitmq.client.{ShutdownSignalException, Consumer, Envelope, BasicProperties}
+import com.rabbitmq.client.AMQP.BasicProperties
+import com.rabbitmq.client.{ShutdownSignalException, Consumer, Envelope}
 
 class RemoteClientMock(val host: String, val port: Int) {
   require(host != null)
@@ -11,7 +12,7 @@ class RemoteClientMock(val host: String, val port: Int) {
   private var amqpClientBridge: AMQPBridge = null
 
   def connect{
-    amqpClientBridge = AMQPBridge.newClientAMQPBridge(host + ":" + port, new MessageConsumer)
+    amqpClientBridge = AMQPBridge.newClientBridge(host + ":" + port, new ClientMessageConsumer)
   }
 
   def shutdown{
@@ -24,7 +25,7 @@ class RemoteClientMock(val host: String, val port: Int) {
 }
 
 
-class MessageConsumer extends Consumer {
+class ClientMessageConsumer extends Consumer {
   def handleDelivery(p1: String, p2: Envelope, p3: BasicProperties, message: Array[Byte]) = {
     println(new String(message))
   }

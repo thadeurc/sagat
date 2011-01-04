@@ -2,7 +2,7 @@ package br.ime.usp.sagat.amqp
 
 import java.util.{Map => JMap}
 
-private[sagat] object ExchangeConfig extends Enumeration {
+object ExchangeConfig extends Enumeration {
   type ExchangeConfig = ExchangeParameters
   case class ExchangeParameters(typeConfig: String,
                                 durable: Boolean,
@@ -17,7 +17,7 @@ private[sagat] object ExchangeConfig extends Enumeration {
   val exchangeNotDurableAutoDelete = ExchangeParameters(typeConfig = "direct", durable = false, autoDelete = true, arguments = null, 4)
 }
 
-private[sagat] object QueueConfig extends Enumeration {
+object QueueConfig extends Enumeration {
  type QueueConfig = QueueParameters
 
   case class QueueParameters(exclusive: Boolean,
@@ -51,3 +51,4 @@ object StorageMode extends Enumeration {
   val TRANSIENT_AUTODELETE = MessageStoreModeParams(exchangeNotDurableAutoDelete, queueNotDurableAutoDelete, 3)
 
 }
+

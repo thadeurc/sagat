@@ -3,102 +3,10 @@ package br.ime.usp.sagat.test
 import org.scalatest.Spec
 import org.scalatest.matchers.{ShouldMatchers}
 import br.ime.usp.sagat.amqp._
+import util.ConnectionSharePolicy
 
 
 class AMQPSpec extends Spec with ShouldMatchers with DataHelper{
-  import AMQPBridge._
-
-
-  describe("An AMQP server bridge"){
-    it("must share the same connection for 2 instances"){
-       val connection1 = getRemoteServerConnection
-       val connection2 = getRemoteServerConnection
-      (connection1 == connection2) should equal (true)
-    }
-
-    it("must share the same connection for 3 instances"){
-      val connection1 = getRemoteServerConnection
-      val connection2 = getRemoteServerConnection
-      val connection3 = getRemoteServerConnection
-      (connection1 == connection2) should equal (true)
-      (connection3 == connection2) should equal (true)
-    }
-
-    it("must create the channels in the same connection"){
-      val connection1 = getRemoteServerConnection
-      val channel1 = connection1.createChannel
-      val channel2 = connection1.createChannel
-
-      val connection2 = getRemoteServerConnection
-      val channel3 = connection2.createChannel
-      val channel4 = connection2.createChannel
-      (channel4.getChannelNumber - channel3.getChannelNumber) should be (1)
-      (channel3.getChannelNumber - channel2.getChannelNumber) should be (1)
-      (channel2.getChannelNumber - channel1.getChannelNumber) should be (1)
-    }
-
-    it("must allow neither null names nor null channels"){
-      intercept[IllegalArgumentException](
-        new AMQPBridgeServer(null, getRemoteServerConnection.createChannel)
-      )
-      intercept[IllegalArgumentException](
-        new AMQPBridgeServer("dummy", null)
-      )
-    }
-
-    it("must share the same connection in amqp bridge servers"){
-      val server1 = new AMQPBridgeServer("dummy", getRemoteServerConnection.createChannel)
-      val server2 = new AMQPBridgeServer("dummy2", getRemoteServerConnection.createChannel)
-      (server1.channel.getConnection == server2.channel.getConnection) should equal (true)
-    }
-
-  }
-
-  describe("An AMQP client bridge"){
-    it("must share the same connection for 2 instances"){
-       val connection1 = getRemoteClientConnection
-       val connection2 = getRemoteClientConnection
-      (connection1 == connection2) should equal (true)
-    }
-
-    it("must share the same connection for 3 instances"){
-      val connection1 = getRemoteClientConnection
-      val connection2 = getRemoteClientConnection
-      val connection3 = getRemoteClientConnection
-      (connection1 == connection2) should equal (true)
-      (connection3 == connection2) should equal (true)
-    }
-
-    it("must create the channels in the same connection"){
-      val connection1 = getRemoteClientConnection
-      val channel1 = connection1.createChannel
-      val channel2 = connection1.createChannel
-
-      val connection2 = getRemoteClientConnection
-      val channel3 = connection2.createChannel
-      val channel4 = connection2.createChannel
-
-      (channel4.getChannelNumber - channel3.getChannelNumber) should be (1)
-      (channel3.getChannelNumber - channel2.getChannelNumber) should be (1)
-      (channel2.getChannelNumber - channel1.getChannelNumber) should be (1)
-    }
-
-    it("must not allow neither null names nor null channels"){
-      intercept[IllegalArgumentException](
-        new AMQPBridgeClient(null, getRemoteClientConnection.createChannel)
-      )
-      intercept[IllegalArgumentException](
-        new AMQPBridgeClient("dummy", null)
-      )
-    }
-
-    it("must share the same connection in amqp bridge clients"){
-      val client1 = new AMQPBridgeClient("dummy", getRemoteClientConnection.createChannel)
-      val client2 = new AMQPBridgeClient("dummy2", getRemoteClientConnection.createChannel)
-      (client1.channel.getConnection == client2.channel.getConnection) should equal (true)
-    }
-
-  }
 
   describe("An exchange configuration"){
     import ExchangeConfig._
@@ -196,5 +104,4 @@ class AMQPSpec extends Spec with ShouldMatchers with DataHelper{
       transientAutoclean.id should be (3)
     }
   }
-
 }

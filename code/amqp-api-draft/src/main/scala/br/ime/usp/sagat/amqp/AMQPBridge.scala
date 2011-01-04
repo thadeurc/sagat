@@ -2,7 +2,9 @@ package br.ime.usp.sagat.amqp
 
 import StorageMode._
 import com.rabbitmq.client._
-import util.{ControlStructures, Logging}
+import util.{EnhancedConnection, ControlStructures, Logging}
+import util.ConnectionSharePolicy._
+import util.ConnectionPool._
 
 /* TODO:
          3- tratamento de erros
@@ -14,70 +16,49 @@ import util.{ControlStructures, Logging}
 
 object AMQPBridge extends Logging {
 
-  private[sagat] val lock = new AnyRef
-
-  private lazy val connFactory = {
-    // TODO estudar as vantagens de se usar outras propriedades
-    // TODO isso deve ser lido de um property. tlvz colocar no akka.conf
-    val cf = new ConnectionFactory
-    cf.setHost("localhost")
-    cf.setUsername("actor_admin")
-    cf.setPassword("actor_admin")
-    cf.setVirtualHost("/actor_host")
-    cf
+  def newServerBridge(name: String, consumerListener: Consumer): AMQPBridge = {
+    newServerBridge(name, consumerListener, TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE)
   }
 
-  private var remoteServersConnection: Connection = null
-
-  private var remoteClientConnection: Connection = null
-
-  private[sagat] def getRemoteServerConnection: Connection = lock.synchronized {
-    if(remoteServersConnection == null || !remoteServersConnection.isOpen){
-      log.debug("Creating connection for RemoteServer")
-      remoteServersConnection = connFactory.newConnection
-    }
-    log.debug("Getting connection to RemoteServer")
-    remoteServersConnection
-  }
-
-  private[sagat] def getRemoteClientConnection: Connection = lock.synchronized{
-    if(remoteClientConnection == null || !remoteServersConnection.isOpen){
-      log.debug("Creating connection for RemoteClient")
-      remoteClientConnection = connFactory.newConnection
-    }
-    log.debug("Getting connection to RemoteClient")
-    remoteClientConnection
-  }
-
-
-  def newServerAMQPBridge(name: String, consumerListener: Consumer,
+  def newServerBridge(name: String, consumerListener: Consumer,
                           messageStoreMode: MessageStoreModeParams): AMQPBridge = {
-    new AMQPBridgeServer(name, getRemoteServerConnection.createChannel)
+    newServerBridge(name, consumerListener, messageStoreMode, ONE_CONN_PER_NODE)
+  }
+
+  def newServerBridge(name: String, consumerListener: Consumer, policy: ConnectionSharePolicy): AMQPBridge = {
+    newServerBridge(name, consumerListener, TRANSIENT_AUTODELETE, policy)
+  }
+
+
+  def newServerBridge(name: String, consumerListener: Consumer,
+                          messageStoreMode: MessageStoreModeParams, policy: ConnectionSharePolicy): AMQPBridge = {
+    new ServerAMQPBridge(name, getConnectionForServerBridge(name, policy))
                          .createExchange(messageStoreMode.exchangeParams)
                          .createAndBindQueues(messageStoreMode.queueParams)
                          .bindConsumerToQueue(consumerListener)
   }
 
-  def newClientAMQPBridge(name: String, consumerListener: Consumer): AMQPBridge = {
-    new AMQPBridgeClient(name, getRemoteClientConnection.createChannel).bindConsumerToQueue(consumerListener)
+
+  def newClientBridge(name: String, consumerListener: Consumer): AMQPBridge = {
+    newClientBridge(name, consumerListener, ONE_CONN_PER_NODE)
+  }
+
+  def newClientBridge(name: String, consumerListener: Consumer, policy: ConnectionSharePolicy): AMQPBridge = {
+    new ClientAMQPBridge(name, getConnectionForClientBridge(name, policy)).bindConsumerToQueue(consumerListener)
   }
 
 }
 
+abstract class AMQPBridge(private[sagat] val nodeName: String, private[sagat] val conn: EnhancedConnection) extends Logging with ControlStructures {
+  require(nodeName != null)
 
-abstract class AMQPBridge(private[sagat] val name: String, private[sagat] val channel: Channel)
-                          extends Logging with ControlStructures {
-  require(name != null)
+  require(conn != null)
 
-  require(channel != null)
+  private[sagat] lazy val exchangeName = "actor.exchange." + nodeName
 
-  require(channel.isOpen)
+  private[sagat] lazy val inboundQueueName = "actor.queue.in." + nodeName
 
-  private[sagat] lazy val exchangeName = "actor.exchange." + name
-
-  private[sagat] lazy val inboundQueueName = "actor.queue.in." + name
-
-  private[sagat] lazy val outboundQueueName = "actor.queue.out." + name
+  private[sagat] lazy val outboundQueueName = "actor.queue.out." + nodeName
 
   private[sagat] lazy val routingKey_in = "default_in"
 
@@ -88,48 +69,50 @@ abstract class AMQPBridge(private[sagat] val name: String, private[sagat] val ch
   def sendMessage(message: Array[Byte]): Unit
 
   def disconnect = {
-    withOpenChannel(channel) {
-      channel.close
+ /*   withOpenChannelOrException(connection.readChannel) {
+      connection.readChannel.close
     }
+    withOpenChannelOrException(connection.writeChannel) {
+      connection.writeChannel.close
+    }*/
   }
-
 }
 
-private[sagat] class AMQPBridgeClient(name: String, channel: Channel) extends AMQPBridge(name,channel){
+private[sagat] class ClientAMQPBridge(name: String, connection: EnhancedConnection) extends AMQPBridge(name,connection){
 
-  private[sagat] def bindConsumerToQueue(consumerListener: Consumer): AMQPBridgeClient = {
+  private[sagat] def bindConsumerToQueue(consumerListener: Consumer): ClientAMQPBridge = {
     require(consumerListener != null)
-    withOpenChannel(channel){
+    withOpenChannelOrException(connection.readChannel){
       log.debug("Binding consumer to {}", inboundQueueName)
-      channel.basicConsume(inboundQueueName, true, consumerListener)
+      connection.readChannel.basicConsume(inboundQueueName, true, consumerListener)
     }
     this
   }
 
   def sendMessage(message: Array[Byte]): Unit = {
-    withOpenChannel(channel){
-      val result = channel.basicPublish(exchangeName, routingKey_out, true, true, null, message)
+    withOpenChannelOrException(connection.writeChannel){
+      val result = connection.writeChannel.basicPublish(exchangeName, routingKey_out, true, true, null, message)
       // TODO fazer algo com o resultado
     }
 
   }
 }
 
-private[sagat] class AMQPBridgeServer(name: String, channel: Channel) extends AMQPBridge(name, channel){
+private[sagat] class ServerAMQPBridge(name: String, connection: EnhancedConnection) extends AMQPBridge(name, connection){
 
-  private[sagat] def bindConsumerToQueue(consumerListener: Consumer): AMQPBridgeServer = {
+  private[sagat] def bindConsumerToQueue(consumerListener: Consumer): ServerAMQPBridge = {
     require(consumerListener != null)
-    withOpenChannel(channel){
+    withOpenChannelOrException(connection.readChannel){
       log.debug("Binding consumer to {}", outboundQueueName)
-      channel.basicConsume(outboundQueueName, true, consumerListener)
+      connection.readChannel.basicConsume(outboundQueueName, true, consumerListener)
     }
     this
   }
 
-  private[sagat] def createExchange(params: ExchangeConfig.ExchangeParameters): AMQPBridgeServer = {
-    withOpenChannel(channel){
+  private[sagat] def createExchange(params: ExchangeConfig.ExchangeParameters): ServerAMQPBridge = {
+    withOpenChannelOrException(connection.writeChannel){
       log.debug("Creating Exchange {} ", Array(exchangeName, params))
-      channel.exchangeDeclare(exchangeName,
+      connection.writeChannel.exchangeDeclare(exchangeName,
                               params.typeConfig,
                               params.durable,
                               params.autoDelete,
@@ -138,45 +121,43 @@ private[sagat] class AMQPBridgeServer(name: String, channel: Channel) extends AM
     this
   }
 
-  private[sagat] def createAndBindInboundQueue(params: QueueConfig.QueueParameters): AMQPBridgeServer = {
-    withOpenChannel(channel){
+  private[sagat] def createAndBindInboundQueue(params: QueueConfig.QueueParameters): ServerAMQPBridge = {
+    withOpenChannelOrException(connection.writeChannel){
       log.debug("Creating inbound queue {}", Array(inboundQueueName, params))
-      channel.queueDeclare(inboundQueueName,
+      connection.writeChannel.queueDeclare(inboundQueueName,
                            params.durable,
                            params.exclusive,
                            params.autoDelete,
                            params.arguments)
       log.debug("Binging inbound queue {}", Array(inboundQueueName, exchangeName, routingKey_in))
-      channel.queueBind(inboundQueueName, exchangeName, routingKey_in)
+      connection.writeChannel.queueBind(inboundQueueName, exchangeName, routingKey_in)
     }
     this
   }
 
-  private[sagat] def createAndBindOutboundQueue(params: QueueConfig.QueueParameters): AMQPBridgeServer = {
-    withOpenChannel(channel){
+  private[sagat] def createAndBindOutboundQueue(params: QueueConfig.QueueParameters): ServerAMQPBridge = {
+    withOpenChannelOrException(connection.writeChannel){
       log.debug("Creating outbound queue {}", Array(outboundQueueName, params))
-      channel.queueDeclare(outboundQueueName,
+      connection.writeChannel.queueDeclare(outboundQueueName,
                            params.durable,
                            params.exclusive,
                            params.autoDelete,
                            params.arguments)
       log.debug("Binding outbound queue {} ", Array(outboundQueueName, exchangeName, routingKey_out))
-      channel.queueBind(outboundQueueName, exchangeName, routingKey_out)
+      connection.writeChannel.queueBind(outboundQueueName, exchangeName, routingKey_out)
     }
     this
   }
 
-
-
-  private[sagat] def createAndBindQueues(params: QueueConfig.QueueParameters):AMQPBridgeServer = {
+  private[sagat] def createAndBindQueues(params: QueueConfig.QueueParameters): ServerAMQPBridge = {
     createAndBindInboundQueue(params)
     createAndBindOutboundQueue(params)
     this
   }
 
   def sendMessage(message: Array[Byte]): Unit = {
-    withOpenChannel(channel){
-      val result = channel.basicPublish(exchangeName, routingKey_in, true, true, null, message)
+    withOpenChannelOrException(connection.writeChannel){
+      val result = connection.writeChannel.basicPublish(exchangeName, routingKey_in, true, true, null, message)
         // TODO fazer algo com o resultado
     }
   }
