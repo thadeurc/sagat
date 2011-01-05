@@ -2,7 +2,7 @@ package br.ime.usp.sagat.mock
 
 
 import java.util.concurrent.ConcurrentHashMap
-import br.ime.usp.sagat.amqp.{StorageMode, AMQPBridge}
+import br.ime.usp.sagat.amqp.{StoragePolicy, AMQPBridge}
 import java.lang.String
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client.{Envelope, ShutdownSignalException, Consumer}
@@ -26,7 +26,7 @@ class RemoteServerMock{
 
     if(!isRunning){
       register(host, port, this)
-      amqpBridge = AMQPBridge.newServerBridge(host + ":" + port, new ServerMessageConsumer, StorageMode.TRANSIENT)
+      amqpBridge = AMQPBridge.newServerBridge(host + ":" + port, new ServerMessageConsumer, StoragePolicy.TRANSIENT)
       isRunning = true
       println(".... done")
     }else {

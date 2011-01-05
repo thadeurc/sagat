@@ -34,21 +34,21 @@ object QueueConfig extends Enumeration {
   val queueNotDurableAutoDelete = QueueParameters(exclusive = false, durable = false, autoDelete = true, arguments = null, 4)
 }
 
-object StorageMode extends Enumeration {
+object StoragePolicy extends Enumeration {
   import ExchangeConfig._
   import QueueConfig._
 
-  type MessageStoreMode = MessageStoreModeParams
+  type MessageStorePolicy = MessageStorePolicyParams
 
-  case class MessageStoreModeParams(exchangeParams: ExchangeParameters,
+  case class MessageStorePolicyParams(exchangeParams: ExchangeParameters,
                                     queueParams: QueueParameters,
                                     enumId: Int) extends Value{
     override def id = this.enumId
   }
 
-  val TRANSIENT  = MessageStoreModeParams(exchangeNotDurable, queueNotDurable, 1)
-  val PERSISTENT = MessageStoreModeParams(exchangeDurable, queueDurable      , 2)
-  val TRANSIENT_AUTODELETE = MessageStoreModeParams(exchangeNotDurableAutoDelete, queueNotDurableAutoDelete, 3)
+  val TRANSIENT  = MessageStorePolicyParams(exchangeNotDurable, queueNotDurable, 1)
+  val PERSISTENT = MessageStorePolicyParams(exchangeDurable, queueDurable      , 2)
+  val TRANSIENT_AUTODELETE = MessageStorePolicyParams(exchangeNotDurableAutoDelete, queueNotDurableAutoDelete, 3)
 
 }
 

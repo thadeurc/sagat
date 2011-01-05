@@ -78,8 +78,8 @@ class AMQPSpec extends Spec with ShouldMatchers with DataHelper{
     }
   }
 
-  describe("A Storage Mode"){
-    import StorageMode._
+  describe("A Storage Policy"){
+    import StoragePolicy._
     import ExchangeConfig._
     import QueueConfig._
 

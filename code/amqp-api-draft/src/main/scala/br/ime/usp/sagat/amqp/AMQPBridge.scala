@@ -1,6 +1,6 @@
 package br.ime.usp.sagat.amqp
 
-import StorageMode._
+import StoragePolicy._
 import com.rabbitmq.client._
 import util.{EnhancedConnection, ControlStructures, Logging}
 import util.ConnectionSharePolicy._
@@ -21,7 +21,7 @@ object AMQPBridge extends Logging {
   }
 
   def newServerBridge(name: String, consumerListener: Consumer,
-                          messageStoreMode: MessageStoreModeParams): AMQPBridge = {
+                          messageStoreMode: MessageStorePolicyParams): AMQPBridge = {
     newServerBridge(name, consumerListener, messageStoreMode, ONE_CONN_PER_NODE)
   }
 
@@ -31,7 +31,7 @@ object AMQPBridge extends Logging {
 
 
   def newServerBridge(name: String, consumerListener: Consumer,
-                          messageStoreMode: MessageStoreModeParams, policy: ConnectionSharePolicy): AMQPBridge = {
+                          messageStoreMode: MessageStorePolicyParams, policy: ConnectionSharePolicy): AMQPBridge = {
     new ServerAMQPBridge(name, getConnectionForServerBridge(name, policy))
                          .createExchange(messageStoreMode.exchangeParams)
                          .createAndBindQueues(messageStoreMode.queueParams)
