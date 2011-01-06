@@ -9,47 +9,47 @@ import util.ConnectionPool._
 /* TODO:
          3- tratamento de erros
          6- usar atores para controle de conexao aberta e como listeners?
-         7- pensar no que fazer na confirmacao de recebimento das mensagens
          8- pensar em processo de shutdown (deixar configuravel o clean up?)
 */
 
+trait MessageHandler {
+  def process(message: Array[Byte]): (Boolean, Boolean)
+}
 
 object AMQPBridge extends Logging {
 
-  def newServerBridge(name: String, consumerListener: Consumer): AMQPBridge = {
-    newServerBridge(name, consumerListener, TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE)
+  def newServerBridge(name: String, handler: MessageHandler): AMQPBridge = {
+    newServerBridge(name, handler,  TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE)
   }
 
-  def newServerBridge(name: String, consumerListener: Consumer,
-                          messageStoreMode: MessageStorePolicyParams): AMQPBridge = {
-    newServerBridge(name, consumerListener, messageStoreMode, ONE_CONN_PER_NODE)
+  def newServerBridge(name: String, handler: MessageHandler, messageStoreMode: MessageStorePolicyParams): AMQPBridge = {
+    newServerBridge(name, handler, messageStoreMode, ONE_CONN_PER_NODE)
   }
 
-  def newServerBridge(name: String, consumerListener: Consumer, policy: ConnectionSharePolicy): AMQPBridge = {
-    newServerBridge(name, consumerListener, TRANSIENT_AUTODELETE, policy)
+  def newServerBridge(name: String, handler: MessageHandler, policy: ConnectionSharePolicy): AMQPBridge = {
+    newServerBridge(name, handler, TRANSIENT_AUTODELETE, policy)
   }
 
-
-  def newServerBridge(name: String, consumerListener: Consumer,
-                          messageStoreMode: MessageStorePolicyParams, policy: ConnectionSharePolicy): AMQPBridge = {
+  def newServerBridge(name: String, handler: MessageHandler, messageStoreMode: MessageStorePolicyParams, policy: ConnectionSharePolicy): AMQPBridge = {
     new ServerAMQPBridge(name, getConnectionForServerBridge(name, policy))
                          .createExchange(messageStoreMode.exchangeParams)
                          .createAndBindQueues(messageStoreMode.queueParams)
-                         .bindConsumerToQueue(consumerListener)
+                         .bindConsumerToQueue(handler)
   }
 
-
-  def newClientBridge(name: String, consumerListener: Consumer): AMQPBridge = {
-    newClientBridge(name, consumerListener, ONE_CONN_PER_NODE)
+  def newClientBridge(name: String, handler: MessageHandler): AMQPBridge = {
+    newClientBridge(name, handler, ONE_CONN_PER_NODE)
   }
 
-  def newClientBridge(name: String, consumerListener: Consumer, policy: ConnectionSharePolicy): AMQPBridge = {
-    new ClientAMQPBridge(name, getConnectionForClientBridge(name, policy)).bindConsumerToQueue(consumerListener)
+  def newClientBridge(name: String, handler: MessageHandler, policy: ConnectionSharePolicy): AMQPBridge = {
+    new ClientAMQPBridge(name, getConnectionForClientBridge(name, policy)).bindConsumerToQueue(handler)
   }
 
 }
 
-abstract class AMQPBridge(private[sagat] val nodeName: String, private[sagat] val conn: EnhancedConnection) extends Logging with ControlStructures {
+abstract class AMQPBridge(private[sagat] val nodeName: String,
+                          private[sagat] val conn: EnhancedConnection) extends Logging
+            with ControlStructures {
   require(nodeName != null)
 
   require(conn != null)
@@ -64,7 +64,7 @@ abstract class AMQPBridge(private[sagat] val nodeName: String, private[sagat] va
 
   private[sagat] lazy val routingKey_out = "default_out"
 
-  private[sagat] def bindConsumerToQueue(consumerListener: Consumer): AMQPBridge
+  private[sagat] def bindConsumerToQueue(handler: MessageHandler): AMQPBridge
 
   def sendMessage(message: Array[Byte]): Unit
 
@@ -80,11 +80,10 @@ abstract class AMQPBridge(private[sagat] val nodeName: String, private[sagat] va
 
 private[sagat] class ClientAMQPBridge(name: String, connection: EnhancedConnection) extends AMQPBridge(name,connection){
 
-  private[sagat] def bindConsumerToQueue(consumerListener: Consumer): ClientAMQPBridge = {
-    require(consumerListener != null)
+  private[sagat] def bindConsumerToQueue(handler: MessageHandler): ClientAMQPBridge = {
     withOpenChannelOrException(connection.readChannel){
       log.debug("Binding consumer to {}", inboundQueueName)
-      connection.readChannel.basicConsume(inboundQueueName, true, consumerListener)
+      connection.readChannel.basicConsume(inboundQueueName, false, new BridgeConsumer(connection.readChannel, handler))
     }
     this
   }
@@ -100,11 +99,10 @@ private[sagat] class ClientAMQPBridge(name: String, connection: EnhancedConnecti
 
 private[sagat] class ServerAMQPBridge(name: String, connection: EnhancedConnection) extends AMQPBridge(name, connection){
 
-  private[sagat] def bindConsumerToQueue(consumerListener: Consumer): ServerAMQPBridge = {
-    require(consumerListener != null)
+  private[sagat] def bindConsumerToQueue(handler: MessageHandler): ServerAMQPBridge = {
     withOpenChannelOrException(connection.readChannel){
       log.debug("Binding consumer to {}", outboundQueueName)
-      connection.readChannel.basicConsume(outboundQueueName, true, consumerListener)
+      connection.readChannel.basicConsume(outboundQueueName, false, new BridgeConsumer(connection.readChannel, handler))
     }
     this
   }
@@ -160,6 +158,23 @@ private[sagat] class ServerAMQPBridge(name: String, connection: EnhancedConnecti
       val result = connection.writeChannel.basicPublish(exchangeName, routingKey_in, true, true, null, message)
         // TODO fazer algo com o resultado
     }
+  }
+
+}
+
+class BridgeConsumer(channel: Channel, handler: MessageHandler) extends DefaultConsumer(channel) {
+  override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, message: Array[Byte])  =
+    handler.process(message) match {
+      case (true,_)         => getChannel.basicAck(envelope.getDeliveryTag, false)
+      case (false, requeue) => getChannel.basicReject(envelope.getDeliveryTag, requeue)
+    }
+
+  override def handleConsumeOk(consumerTag: String) = {
+    /* Called when the consumer is first registered by a call to Channel.basicConsume(java.lang.String, com.rabbitmq.client.Consumer). */
+  }
+
+  override def handleShutdownSignal(consumerTag: String, signal: ShutdownSignalException){
+    /*  Called to the consumer that either the channel or the undelying connection has been shut down.*/
   }
 
 }
