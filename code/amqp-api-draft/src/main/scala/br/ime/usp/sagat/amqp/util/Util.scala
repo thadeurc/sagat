@@ -7,8 +7,8 @@ trait Logging {
 }
 
 trait ControlStructures extends Logging {
-  def withOpenChannelOrException(channel: Channel)(action: => Unit){
-    if(channel.isOpen){
+  def withOpenChannelsOrException(channels: Channel*)(action: => Unit){
+    if(channels.forall(c => c.isOpen)){
       action
     }
     else throw new IllegalStateException("Channel is closed")
@@ -24,7 +24,7 @@ trait ControlStructures extends Logging {
         case e: Throwable => log.warn("Exception closing connection ref {}", connection, e)
       }
     }else{
-      log.warn("Connection ref {} already closed", connection, new RuntimeException)
+      log.warn("Connection ref {} already closed", connection)
     }
   }
 }

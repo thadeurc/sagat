@@ -5,12 +5,8 @@ import com.rabbitmq.client._
 import util.{EnhancedConnection, ControlStructures, Logging}
 import util.ConnectionSharePolicy._
 import util.ConnectionPool._
-
-/* TODO:
-         3- tratamento de erros
-         6- usar atores para controle de conexao aberta e como listeners?
-         8- pensar em processo de shutdown (deixar configuravel o clean up?)
-*/
+import com.rabbitmq.client.AMQP.BasicProperties
+import java.lang.String
 
 trait MessageHandler {
   def process(message: Array[Byte]): (Boolean, Boolean)
@@ -64,32 +60,31 @@ abstract class AMQPBridge(private[sagat] val nodeName: String,
 
   private[sagat] lazy val routingKey_out = "default_out"
 
+
   private[sagat] def bindConsumerToQueue(handler: MessageHandler): AMQPBridge
 
   def sendMessage(message: Array[Byte]): Unit
 
-  def disconnect = {
- /*   withOpenChannelOrException(connection.readChannel) {
-      connection.readChannel.close
-    }
-    withOpenChannelOrException(connection.writeChannel) {
-      connection.writeChannel.close
-    }*/
+  def shutdown = {
+    log.info("Shutting down AMQPBridge for {}", nodeName)
+    conn.close
   }
 }
 
 private[sagat] class ClientAMQPBridge(name: String, connection: EnhancedConnection) extends AMQPBridge(name,connection){
 
   private[sagat] def bindConsumerToQueue(handler: MessageHandler): ClientAMQPBridge = {
-    withOpenChannelOrException(connection.readChannel){
+    withOpenChannelsOrException(connection.readChannel, connection.writeChannel){
       log.debug("Binding consumer to {}", inboundQueueName)
-      connection.readChannel.basicConsume(inboundQueueName, false, new BridgeConsumer(connection.readChannel, handler))
+      val consumer = new BridgeConsumer(this, handler)
+      connection.readChannel.basicConsume(inboundQueueName, false, consumer)
+      connection.writeChannel.setReturnListener(consumer)
     }
     this
   }
 
   def sendMessage(message: Array[Byte]): Unit = {
-    withOpenChannelOrException(connection.writeChannel){
+    withOpenChannelsOrException(connection.writeChannel){
       val result = connection.writeChannel.basicPublish(exchangeName, routingKey_out, true, true, null, message)
       // TODO fazer algo com o resultado
     }
@@ -99,29 +94,10 @@ private[sagat] class ClientAMQPBridge(name: String, connection: EnhancedConnecti
 
 private[sagat] class ServerAMQPBridge(name: String, connection: EnhancedConnection) extends AMQPBridge(name, connection){
 
-  private[sagat] def bindConsumerToQueue(handler: MessageHandler): ServerAMQPBridge = {
-    withOpenChannelOrException(connection.readChannel){
-      log.debug("Binding consumer to {}", outboundQueueName)
-      connection.readChannel.basicConsume(outboundQueueName, false, new BridgeConsumer(connection.readChannel, handler))
-    }
-    this
-  }
-
-  private[sagat] def createExchange(params: ExchangeConfig.ExchangeParameters): ServerAMQPBridge = {
-    withOpenChannelOrException(connection.writeChannel){
-      log.debug("Creating Exchange {} ", Array(exchangeName, params))
-      connection.writeChannel.exchangeDeclare(exchangeName,
-                              params.typeConfig,
-                              params.durable,
-                              params.autoDelete,
-                              params.arguments)
-    }
-    this
-  }
-
   private[sagat] def createAndBindInboundQueue(params: QueueConfig.QueueParameters): ServerAMQPBridge = {
-    withOpenChannelOrException(connection.writeChannel){
+    withOpenChannelsOrException(connection.writeChannel){
       log.debug("Creating inbound queue {}", Array(inboundQueueName, params))
+      connection.writeChannel.queueDelete(inboundQueueName)
       connection.writeChannel.queueDeclare(inboundQueueName,
                            params.durable,
                            params.exclusive,
@@ -133,9 +109,35 @@ private[sagat] class ServerAMQPBridge(name: String, connection: EnhancedConnecti
     this
   }
 
+  private[sagat] def bindConsumerToQueue(handler: MessageHandler): ServerAMQPBridge = {
+    withOpenChannelsOrException(connection.readChannel, connection.writeChannel){
+      log.debug("Binding consumer to {}", outboundQueueName)
+      val consumer = new BridgeConsumer(this, handler)
+      connection.readChannel.basicConsume(outboundQueueName, false, consumer)
+      connection.writeChannel.setReturnListener(consumer)
+    }
+    this
+  }
+
+  private[sagat] def createExchange(params: ExchangeConfig.ExchangeParameters): ServerAMQPBridge = {
+    withOpenChannelsOrException(connection.writeChannel){
+      log.debug("Creating Exchange {} ", Array(exchangeName, params))
+      connection.writeChannel.exchangeDelete(exchangeName)
+      connection.writeChannel.exchangeDeclare(exchangeName,
+                              params.typeConfig,
+                              params.durable,
+                              params.autoDelete,
+                              params.arguments)
+    }
+    this
+  }
+
+
+
   private[sagat] def createAndBindOutboundQueue(params: QueueConfig.QueueParameters): ServerAMQPBridge = {
-    withOpenChannelOrException(connection.writeChannel){
+    withOpenChannelsOrException(connection.writeChannel){
       log.debug("Creating outbound queue {}", Array(outboundQueueName, params))
+      connection.writeChannel.queueDelete(outboundQueueName)
       connection.writeChannel.queueDeclare(outboundQueueName,
                            params.durable,
                            params.exclusive,
@@ -154,7 +156,7 @@ private[sagat] class ServerAMQPBridge(name: String, connection: EnhancedConnecti
   }
 
   def sendMessage(message: Array[Byte]): Unit = {
-    withOpenChannelOrException(connection.writeChannel){
+    withOpenChannelsOrException(connection.writeChannel){
       val result = connection.writeChannel.basicPublish(exchangeName, routingKey_in, true, true, null, message)
         // TODO fazer algo com o resultado
     }
@@ -162,7 +164,10 @@ private[sagat] class ServerAMQPBridge(name: String, connection: EnhancedConnecti
 
 }
 
-class BridgeConsumer(channel: Channel, handler: MessageHandler) extends DefaultConsumer(channel) {
+class BridgeConsumer(bridge: AMQPBridge, handler: MessageHandler) extends DefaultConsumer(bridge.conn.readChannel)
+                                                                                      with Logging with ReturnListener{
+  require(bridge != null)
+  require(handler != null)
   override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, message: Array[Byte])  =
     handler.process(message) match {
       case (true,_)         => getChannel.basicAck(envelope.getDeliveryTag, false)
@@ -170,11 +175,31 @@ class BridgeConsumer(channel: Channel, handler: MessageHandler) extends DefaultC
     }
 
   override def handleConsumeOk(consumerTag: String) = {
-    /* Called when the consumer is first registered by a call to Channel.basicConsume(java.lang.String, com.rabbitmq.client.Consumer). */
+    log.debug("Registered consumer handler with tag {}", Array(handler.getClass.getName, consumerTag))
+  }
+
+  def handleBasicReturn(rejectCode: Int, replyText: String, exchange: String, routingKey: String, properties: BasicProperties, message: Array[Byte]) = {
+    println("mensagem rejeitada")
+    println("%d %s %s %s %s".format(rejectCode, replyText, exchange, routingKey, new String(message)))
   }
 
   override def handleShutdownSignal(consumerTag: String, signal: ShutdownSignalException){
-    /*  Called to the consumer that either the channel or the undelying connection has been shut down.*/
-  }
+    if(signal.isHardError){
+      /* connection error */
+      if(signal.isInitiatedByApplication){
+        log.info("Application shutdown of {}",Array(bridge.nodeName,signal))
+      }
+      else{
+        log.error("Forced shutdown of {}",Array(bridge.nodeName, signal))
+        /* at least one connection was dropped - force the bridge to shutdown */
+        bridge.shutdown
+      }
+    }else{
+      /* channel error */
+      /* for now, just drop everything */
+      log.error("Shutdown forced by channel dropped {}",Array(bridge.nodeName, signal.toString))
+      bridge.shutdown
 
+    }
+  }
 }

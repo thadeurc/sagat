@@ -57,6 +57,7 @@ abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolic
     cf.setPassword("actor_admin")
     cf.setVirtualHost("/actor_host")
     cf.setRequestedChannelMax(policy.channels)
+    cf.setRequestedHeartbeat(30) /* to confirm the network is ok - value in seconds */
     cf
   }
   def newConnection: Connection = factory.newConnection
@@ -101,7 +102,7 @@ trait ConnectionPoolDefinition {
   }
 
   def getConnectionForClientBridge(nodeName: String, connPolicy: ConnectionSharePolicy): EnhancedConnection = {
-      var conn: EnhancedConnection = null
+    var conn: EnhancedConnection = null
     if(clientConnections.containsKey(nodeName)) {
       conn = clientConnections.get(nodeName)
     }else{

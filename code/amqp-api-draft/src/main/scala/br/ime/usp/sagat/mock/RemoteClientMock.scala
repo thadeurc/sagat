@@ -14,7 +14,7 @@ class RemoteClientMock(val host: String, val port: Int) {
   }
 
   def shutdown{
-
+    amqpClientBridge.shutdown
   }
 
   def send(message: String){
@@ -24,7 +24,10 @@ class RemoteClientMock(val host: String, val port: Int) {
 
 
 class ClientMessageConsumer extends MessageHandler {
-  def process(message: Array[Byte]): (Boolean, Boolean) = (true, false)
+  def process(message: Array[Byte]): (Boolean, Boolean) = {
+    println("Client recebeu: " + new String(message))
+    (true, false)
+  }
 }
 
 object RemoteClientMock {

@@ -22,27 +22,30 @@ class RemoteServerMock{
     this.host = host
     this.port = port
 
-    print("log: Attempt to start RemoteServerMock on %s:%s", host, port)
+    print("log: Attempt to start RemoteServerMock on %s:%s".format(host, port))
 
     if(!isRunning){
       register(host, port, this)
       amqpBridge = AMQPBridge.newServerBridge(host + ":" + port, new ServerMessageConsumer, StoragePolicy.TRANSIENT)
       isRunning = true
-      println(".... done")
-    }else {
-      println("....*failed*")
     }
   }
 
   def shutdown = {
+    amqpBridge.shutdown
     unregister(host, port)
   }
 
-  def send(message: String): Unit = {}
+  def send(message: String): Unit = {
+     amqpBridge.sendMessage(message.getBytes)
+  }
 }
 
 class ServerMessageConsumer extends MessageHandler {
-  def process(message: Array[Byte]): (Boolean, Boolean) = (true, false)
+  def process(message: Array[Byte]): (Boolean, Boolean) = {
+    println("Server recebeu:"+new String(message))
+    (true, false)
+  }
 }
 
 object RemoteServerMock{
@@ -51,15 +54,20 @@ object RemoteServerMock{
 
   private def register(host: String, port: Int, server: RemoteServerMock) = remoteServers.put(host + port, server)
 
-  private def serverFor(host: String, port: Int): Option[RemoteServerMock] = {
+  def serverFor(host: String, port: Int): RemoteServerMock = {
     val key = host + port
-    val server = remoteServers.get(key)
-    if(server eq null) None
-    else Some(server)
+    var server = remoteServers.get(key)
+    if(server eq null){
+      server = new RemoteServerMock
+      server.start(host, port)
+      register(host, port, server)
+    }
+    server
   }
 
   private def unregister(host: String, port: Int) = {
     remoteServers.remove(host + port)
+
   }
 
 
