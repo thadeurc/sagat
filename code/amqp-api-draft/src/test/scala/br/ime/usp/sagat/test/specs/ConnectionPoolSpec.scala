@@ -1,4 +1,4 @@
-package br.ime.usp.sagat.test
+package br.ime.usp.sagat.test.specs
 
 import org.easymock.EasyMock
 import com.rabbitmq.client.Connection

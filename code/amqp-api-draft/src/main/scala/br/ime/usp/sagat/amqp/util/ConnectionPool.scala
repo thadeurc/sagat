@@ -57,7 +57,7 @@ abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolic
     cf.setPassword("actor_admin")
     cf.setVirtualHost("/actor_host")
     cf.setRequestedChannelMax(policy.channels)
-    cf.setRequestedHeartbeat(30) /* to confirm the network is ok - value in seconds */
+    cf.setRequestedHeartbeat(15) /* to confirm the network is ok - value in seconds */
     cf
   }
   def newConnection: Connection = factory.newConnection
@@ -110,6 +110,13 @@ trait ConnectionPoolDefinition {
       clientConnections.put(nodeName, conn)
     }
     ensureConnSharePolicy(conn, connPolicy)
+  }
+
+  def forceDisconnectAll = {
+    clientConnections.values.toArray[EnhancedConnection](Array[EnhancedConnection]()).foreach(enh => enh.close)
+    serverConnections.values.toArray[EnhancedConnection](Array[EnhancedConnection]()).foreach(enh => enh.close)
+    clientConnections.clear
+    serverConnections.clear
   }
 }
 

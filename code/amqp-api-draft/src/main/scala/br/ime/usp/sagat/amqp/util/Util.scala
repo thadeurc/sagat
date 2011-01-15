@@ -14,6 +14,15 @@ trait ControlStructures extends Logging {
     else throw new IllegalStateException("Channel is closed")
   }
 
+  def executeAMQPWithSafeCleanUp(body: => Unit) {
+    try{
+      body
+    }
+    finally{
+      ConnectionPool.forceDisconnectAll
+    }
+  }
+
   def silentClose(connection: Connection){
     require(connection != null)
     if(connection.isOpen){
@@ -23,8 +32,6 @@ trait ControlStructures extends Logging {
       }catch{
         case e: Throwable => log.warn("Exception closing connection ref {}", connection, e)
       }
-    }else{
-      log.warn("Connection ref {} already closed", connection)
     }
   }
 }
