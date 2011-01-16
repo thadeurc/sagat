@@ -78,7 +78,7 @@ trait ConnectionPoolDefinition {
     conn
   }
 
-  def getConnectionForServerBridge(nodeName: String, policy: ConnectionSharePolicy): EnhancedConnection = {
+  def getConnectionForServerBridge(nodeName: String, policy: ConnectionSharePolicy): EnhancedConnection =  {
     var conn: EnhancedConnection = null
     if(serverConnections.containsKey(nodeName)) {
       conn = serverConnections.get(nodeName)
@@ -89,7 +89,7 @@ trait ConnectionPoolDefinition {
     ensureConnSharePolicy(conn, policy)
   }
 
-  private[sagat] def newConnection(policy: ConnectionSharePolicy): EnhancedConnection = {
+  private[sagat] def newConnection(policy: ConnectionSharePolicy): EnhancedConnection = lock.synchronized{
     policy match {
       case ONE_CONN_PER_NODE => {
         val single = readAndWriteConnFactory.newConnection

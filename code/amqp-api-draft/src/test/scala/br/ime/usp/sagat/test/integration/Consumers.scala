@@ -1,14 +1,17 @@
 package br.ime.usp.sagat.test.mock
 
 import br.ime.usp.sagat.amqp.{MessageHandler}
-import java.util.concurrent.CountDownLatch
+import java.util.concurrent.{CountDownLatch}
 
+class AutoAckMessageConsumer(prefix: String, echo:Boolean = false, latch: CountDownLatch, replyToSender: Boolean = false) extends MessageHandler {
 
-class AutoAckMessageConsumer(prefix: String, echo:Boolean = false, latch: CountDownLatch) extends MessageHandler {
-
-  def process(message: Array[Byte]): (Boolean, Boolean) = {
+  def process(message: Array[Byte], replyAction: Array[Byte] => Unit): (Boolean, Boolean) = {
     latch.countDown
-    if(echo) println("%s - Consumer received message [%s]" format(prefix, new String(message)))
+    val text = new String(message)
+    if(echo) println("%s - Consumer received message [%s]" format(prefix, text))
+    if(replyToSender){
+      replyAction("Resposta da mensagem [%s]".format(text).getBytes)
+    }
     (true, false)
   }
 }

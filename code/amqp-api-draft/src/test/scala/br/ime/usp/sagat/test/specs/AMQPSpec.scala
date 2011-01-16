@@ -144,7 +144,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
     }
   }
 
-  describe("A Storage Policy"){
+  describe("A Storage And Consumption Policy"){
     import StorageAndConsumptionPolicy._
     import ExchangeConfig._
     import QueueConfig._
@@ -170,23 +170,44 @@ class AMQPSpec extends Spec with ShouldMatchers {
       transientAutoclean.id should be (3)
     }
 
-     it("must provide a reliable EXCLUSIVE TRANSIENT configuration"){
-      val transient = EXCLUSIVE_TRANSIENT
+     it("must provide a reliable EXCLUSIVE FANOUT TRANSIENT configuration"){
+      val transient = EXCLUSIVE_FANOUT_TRANSIENT
       (transient.exchangeParams == fanoutExchangeNotDurable) should equal (true)
+      (transient.queueParams == exclusiveQueueNotDurable) should equal (true)
+      transient.id should be (7)
+    }
+
+    it("must provide a reliable EXCLUSIVE FANOUT PERSISTENT configuration"){
+      val persistent = EXCLUSIVE_FANOUT_PERSISTENT
+      (persistent.exchangeParams == fanoutExchangeDurable) should equal (true)
+      (persistent.queueParams == exclusiveQueueDurable) should equal (true)
+      persistent.id should be (8)
+    }
+
+    it("must provide a reliable EXCLUSIVE FANOUT TRANSIENT_AUTODELETE configuration"){
+      val transientAutoclean = EXCLUSIVE_FANOUT_TRANSIENT_AUTODELETE
+      (transientAutoclean.exchangeParams == fanoutExchangeNotDurableAutoDelete) should equal (true)
+      (transientAutoclean.queueParams == exclusiveQueueNotDurableAutoDelete) should equal (true)
+      transientAutoclean.id should be (9)
+    }
+
+    it("must provide a reliable EXCLUSIVE TRANSIENT configuration"){
+      val transient = EXCLUSIVE_TRANSIENT
+      (transient.exchangeParams == exchangeNotDurable) should equal (true)
       (transient.queueParams == exclusiveQueueNotDurable) should equal (true)
       transient.id should be (4)
     }
 
     it("must provide a reliable EXCLUSIVE PERSISTENT configuration"){
       val persistent = EXCLUSIVE_PERSISTENT
-      (persistent.exchangeParams == fanoutExchangeDurable) should equal (true)
+      (persistent.exchangeParams == exchangeDurable) should equal (true)
       (persistent.queueParams == exclusiveQueueDurable) should equal (true)
       persistent.id should be (5)
     }
 
     it("must provide a reliable EXCLUSIVE TRANSIENT_AUTODELETE configuration"){
       val transientAutoclean = EXCLUSIVE_TRANSIENT_AUTODELETE
-      (transientAutoclean.exchangeParams == fanoutExchangeNotDurableAutoDelete) should equal (true)
+      (transientAutoclean.exchangeParams == exchangeNotDurableAutoDelete) should equal (true)
       (transientAutoclean.queueParams == exclusiveQueueNotDurableAutoDelete) should equal (true)
       transientAutoclean.id should be (6)
     }

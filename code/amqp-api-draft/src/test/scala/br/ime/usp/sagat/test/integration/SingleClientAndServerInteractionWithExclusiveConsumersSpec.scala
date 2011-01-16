@@ -6,26 +6,26 @@ import org.scalatest.junit.JUnitSuite
 import org.scalatest.matchers.ShouldMatchers
 import br.ime.usp.sagat.amqp.util.ConnectionSharePolicy
 
-class ClientAndServerInteractionWithExclusiveConsumersSpec extends JUnitSuite with ShouldMatchers with DefaultTestTemplate {
+class SingleClientAndServerInteractionWithExclusiveConsumersSpec extends JUnitSuite with ShouldMatchers with DefaultTestTemplate {
   import StorageAndConsumptionPolicy._
   import ConnectionSharePolicy._
 
 
   @Test
   def clientWithExclusiveConsumerAndTransientMessagesWithSharedConnectionSending =
-    defaultSendTest("node1", 500000, false, EXCLUSIVE_TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE, true) should equal (0)
+    defaultClientSendTest("node1", 50, false, EXCLUSIVE_FANOUT_TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE) should equal (0)
 
 
   @Test
   def serverWithExclusiveConsumerAndTransientMessagesWithSharedConnectionSending =
-    defaultSendTest("node2", 500000, false, EXCLUSIVE_TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE, false) should equal (0)
+    defaultServerFanoutSendTest("node2", 50, false, EXCLUSIVE_FANOUT_TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE) should equal (0)
 
   @Test
   def clientWithExclusiveConsumerAndTransientMessagesWithExclusiveConnectionSending =
-    defaultSendTest("node3", 500000, false, EXCLUSIVE_TRANSIENT_AUTODELETE, ONE_CONN_PER_CHANNEL, true) should equal (0)
+    defaultClientSendTest("node3", 50, false, EXCLUSIVE_FANOUT_TRANSIENT_AUTODELETE, ONE_CONN_PER_CHANNEL) should equal (0)
 
   @Test
   def serverWithExclusiveConsumerAndTransientMessagesWithExclusiveConnectionSending =
-    defaultSendTest("node4", 500000, false, EXCLUSIVE_TRANSIENT_AUTODELETE, ONE_CONN_PER_CHANNEL, false) should equal (0)
+    defaultServerFanoutSendTest("node4", 50, false, EXCLUSIVE_FANOUT_TRANSIENT_AUTODELETE, ONE_CONN_PER_CHANNEL) should equal (0)
 
 }

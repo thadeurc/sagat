@@ -54,14 +54,19 @@ object StorageAndConsumptionPolicy extends Enumeration {
                                                       queueParams: QueueParameters,
                                                       enumId: Int) extends Value{
     override def id = this.enumId
+    def fanout: Boolean = exchangeParams.fanout
   }
 
   val TRANSIENT  = MessageStorageAndConsumptionPolicyParams(exchangeNotDurable, queueNotDurable, 1)
   val PERSISTENT = MessageStorageAndConsumptionPolicyParams(exchangeDurable, queueDurable      , 2)
   val TRANSIENT_AUTODELETE = MessageStorageAndConsumptionPolicyParams(exchangeNotDurableAutoDelete, queueNotDurableAutoDelete, 3)
-  val EXCLUSIVE_TRANSIENT  = MessageStorageAndConsumptionPolicyParams(fanoutExchangeNotDurable, exclusiveQueueNotDurable, 4)
-  val EXCLUSIVE_PERSISTENT = MessageStorageAndConsumptionPolicyParams(fanoutExchangeDurable, exclusiveQueueDurable      , 5)
-  val EXCLUSIVE_TRANSIENT_AUTODELETE = MessageStorageAndConsumptionPolicyParams(fanoutExchangeNotDurableAutoDelete, exclusiveQueueNotDurableAutoDelete, 6)
+  val EXCLUSIVE_TRANSIENT  = MessageStorageAndConsumptionPolicyParams(exchangeNotDurable, exclusiveQueueNotDurable, 4)
+  val EXCLUSIVE_PERSISTENT = MessageStorageAndConsumptionPolicyParams(exchangeDurable, exclusiveQueueDurable      , 5)
+  val EXCLUSIVE_TRANSIENT_AUTODELETE = MessageStorageAndConsumptionPolicyParams(exchangeNotDurableAutoDelete, exclusiveQueueNotDurableAutoDelete, 6)
+  val EXCLUSIVE_FANOUT_TRANSIENT  = MessageStorageAndConsumptionPolicyParams(fanoutExchangeNotDurable, exclusiveQueueNotDurable, 7)
+  val EXCLUSIVE_FANOUT_PERSISTENT = MessageStorageAndConsumptionPolicyParams(fanoutExchangeDurable, exclusiveQueueDurable      , 8)
+  val EXCLUSIVE_FANOUT_TRANSIENT_AUTODELETE = MessageStorageAndConsumptionPolicyParams(fanoutExchangeNotDurableAutoDelete, exclusiveQueueNotDurableAutoDelete, 9)
+
 
 
 }

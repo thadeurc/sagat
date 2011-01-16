@@ -7,24 +7,24 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 
 
-class ClientAndServerInteractionWithNonExclusiveConsumersSpec extends JUnitSuite with ShouldMatchers with DefaultTestTemplate {
+class SingleClientAndServerInteractionWithNonExclusiveConsumersSpec extends JUnitSuite with ShouldMatchers with DefaultTestTemplate {
   import StorageAndConsumptionPolicy._
   import ConnectionSharePolicy._
 
   @Test
   def clientWithConsumerAndTransientMessagesWithExclusiveConnectionSending =
-    defaultSendTest("node5", 20, false, TRANSIENT_AUTODELETE, ONE_CONN_PER_CHANNEL, true) should equal (0)
+    defaultClientSendTest("node5", 20, false, TRANSIENT_AUTODELETE, ONE_CONN_PER_CHANNEL) should equal (0)
 
 
   @Test
   def serverWithConsumerAndTransientMessagesWithExclusiveConnectionSending =
-    defaultSendTest("node6", 20, false, TRANSIENT_AUTODELETE, ONE_CONN_PER_CHANNEL, false) should equal (0)
+    defaultServerSendTest("node6", 20, false, TRANSIENT_AUTODELETE, ONE_CONN_PER_CHANNEL) should equal (0)
 
   @Test
   def clientWithConsumerAndTransientMessagesWithSharedConnectionSending =
-    defaultSendTest("node7", 20, false, TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE, true) should equal (0)
+    defaultClientSendTest("node7", 20, false, TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE) should equal (0)
 
   @Test
   def serverWithConsumerAndTransientMessagesWithSharedConnectionSending =
-    defaultSendTest("node8", 20, false, TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE, false) should equal (0)
+    defaultServerSendTest("node8", 20, false, TRANSIENT_AUTODELETE, ONE_CONN_PER_NODE) should equal (0)
 }
