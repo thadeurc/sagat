@@ -7,7 +7,6 @@ import util.ConnectionSharePolicy._
 import util.ConnectionPool._
 import com.rabbitmq.client.AMQP.BasicProperties
 import java.lang.String
-import scala.util.matching.Regex
 
 trait MessageHandler {
   def process(message: Array[Byte], reply: Array[Byte] => Unit): (Boolean, Boolean)
@@ -53,7 +52,9 @@ object AMQPBridge extends Logging {
 abstract class AMQPBridge(private[sagat] val nodeName: String,
                           private[sagat] val conn: EnhancedConnection) extends Logging
             with ControlStructures {
+
   require(nodeName != null)
+
   require(conn != null)
 
   private[sagat] val id: String
@@ -176,7 +177,6 @@ private[sagat] class ServerAMQPBridge(name: String, connection: EnhancedConnecti
     }
     this
   }
-
 
   def sendMessageTo(message: Array[Byte], to: Option[String]): Unit = {
     withOpenChannelsOrException(connection.writeChannel){

@@ -84,10 +84,10 @@
         <option value="$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/AMQP.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/br/ime/usp/sagat/amqp/AMQP.scala" />
         <option value="$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/DefaultTestTemplate.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/br/ime/usp/sagat/amqp/AMQPBridge.scala" />
         <option value="$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/Consumers.scala" />
         <option value="$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/MultipleClientsWithASIngleServerTransient.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/br/ime/usp/sagat/amqp/util/ConnectionPool.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/br/ime/usp/sagat/amqp/AMQPBridge.scala" />
       </list>
     </option>
   </component>
@@ -129,164 +129,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="AMQPBridge.scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="AMQP.scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="amqp-api-draft" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Favorites" />
       <pane id="Scope" />
+      <pane id="Favorites" />
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -644,7 +490,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5689935" sideWeight="0.8924559" order="0" side_tool="false" content_ui="tabs" x="82" y="129" width="307" height="595" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.5689935" sideWeight="0.8924559" order="0" side_tool="false" content_ui="tabs" x="82" y="129" width="307" height="595" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -698,93 +544,72 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/specs/AMQPSpec.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="179" column="104" selection-start="6805" selection-end="6805" vertical-scroll-proportion="3.768421">
-          <folding />
-        </state>
+        <state line="179" column="104" selection-start="6805" selection-end="6805" vertical-scroll-proportion="3.768421" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/project/boot/scala-2.8.1/lib/scala-library.jar!/scala/util/Random.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="6" selection-start="863" selection-end="863" vertical-scroll-proportion="0.30981067">
-          <folding />
-        </state>
+        <state line="15" column="6" selection-start="863" selection-end="863" vertical-scroll-proportion="0.30981067" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/AMQP.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="20" selection-start="78" selection-end="78" vertical-scroll-proportion="0.08080808">
-          <folding />
-        </state>
+        <state line="4" column="20" selection-start="78" selection-end="78" vertical-scroll-proportion="0.08080808" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/project/boot/scala-2.8.1/lib/scala-library.jar!/scala/package.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="7" selection-start="1399" selection-end="1399" vertical-scroll-proportion="0.3321859">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/br/ime/usp/sagat/amqp/AMQP.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="47" selection-start="3473" selection-end="3473" vertical-scroll-proportion="0.81986535">
-          <folding />
-        </state>
+        <state line="23" column="7" selection-start="1399" selection-end="1399" vertical-scroll-proportion="0.3321859" />
       </provider>
     </entry>
     <entry file="jar:///System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar!/java/lang/String.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="152" column="30" selection-start="6096" selection-end="6096" vertical-scroll-proportion="0.33333334">
-          <folding />
-        </state>
+        <state line="152" column="30" selection-start="6096" selection-end="6096" vertical-scroll-proportion="0.33333334" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/SingleClientAndServerInteractionWithNonExclusiveConsumersSpec.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="12" selection-start="761" selection-end="761" vertical-scroll-proportion="0.41811848">
-          <folding />
-        </state>
+        <state line="20" column="12" selection-start="761" selection-end="761" vertical-scroll-proportion="0.41811848" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/SingleClientAndServerInteractionWithExclusiveConsumersSpec.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="155" selection-start="101" selection-end="101" vertical-scroll-proportion="0.04040404">
-          <folding />
-        </state>
+        <state line="2" column="155" selection-start="101" selection-end="101" vertical-scroll-proportion="0.04040404" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/DefaultTestTemplate.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="6" selection-start="3178" selection-end="3178" vertical-scroll-proportion="-0.21212122">
-          <folding />
-        </state>
+        <state line="52" column="6" selection-start="3178" selection-end="3178" vertical-scroll-proportion="-0.21212122" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/Consumers.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="29" selection-start="111" selection-end="111" vertical-scroll-proportion="0.060606062">
-          <folding />
-        </state>
+        <state line="3" column="29" selection-start="111" selection-end="111" vertical-scroll-proportion="0.060606062" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/MultipleClientsWithASIngleServerTransient.scala">
+    <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/specs/ConnectionPoolSpec.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="65" selection-start="753" selection-end="753" vertical-scroll-proportion="0.4040404">
-          <folding />
-        </state>
+        <state line="156" column="86" selection-start="7794" selection-end="7794" vertical-scroll-proportion="0.959596" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/br/ime/usp/sagat/amqp/util/ConnectionPool.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="52" selection-start="575" selection-end="575" vertical-scroll-proportion="0.3838384">
-          <folding />
-        </state>
+        <state line="116" column="69" selection-start="4215" selection-end="4215" vertical-scroll-proportion="0.7171717" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/br/ime/usp/sagat/test/integration/MultipleClientsWithASIngleServerTransient.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="65" selection-start="753" selection-end="753" vertical-scroll-proportion="0.4040404" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/br/ime/usp/sagat/amqp/AMQP.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="2" selection-start="1955" selection-end="1955" vertical-scroll-proportion="0.11111111" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/br/ime/usp/sagat/amqp/AMQPBridge.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="118" column="67" selection-start="5167" selection-end="5167" vertical-scroll-proportion="0.32323232">
-          <folding />
-        </state>
+        <state line="201" column="60" selection-start="8893" selection-end="8893" vertical-scroll-proportion="0.9586919" />
       </provider>
     </entry>
   </component>

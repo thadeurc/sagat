@@ -13,15 +13,13 @@ trait ReadAndWriteConnections {
   val writeConnection: Connection
 }
 
+
 object ConnectionSharePolicy extends Enumeration {
-  type ConnectionSharePolicy = ConnectionSharePolicyParams
+    val ONE_CONN_PER_CHANNEL = Value("ONE_CONN_PER_CHANNEL", channels = 1)
+    val ONE_CONN_PER_NODE   =  Value("ONE_CONN_PER_NODE"   , channels = 2)
 
-  case class ConnectionSharePolicyParams(val channels: Int, enumId: Int) extends Value {
-    override def id = this.enumId
-  }
-  val ONE_CONN_PER_CHANNEL = ConnectionSharePolicyParams(channels = 1, enumId = 1)
-
-  val ONE_CONN_PER_NODE = ConnectionSharePolicyParams(channels = 2, enumId = 2)
+    class ConnectionSharePolicyParams(name: String, val channels: Int) extends Val(nextId, name)
+    protected final def Value(name: String, channels: Int): ConnectionSharePolicyParams = new ConnectionSharePolicyParams(name, channels)
 }
 
 import ConnectionSharePolicy._
@@ -33,9 +31,9 @@ class EnhancedConnection(val readConnection: Connection, val writeConnection: Co
 
   require(readConnection.isOpen && writeConnection.isOpen)
 
-  private lazy val readChannel = readConnection.createChannel
+  lazy val readChannel = readConnection.createChannel
 
-  private lazy val writeChannel = writeConnection.createChannel
+  lazy val writeChannel = writeConnection.createChannel
 
   def isReadOpen = readConnection.isOpen
 
@@ -48,7 +46,7 @@ class EnhancedConnection(val readConnection: Connection, val writeConnection: Co
 }
 
 
-abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolicy) {
+/*abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolicyParams) {
   require(policy != null)
   lazy val factory: ConnectionFactory = {
     val cf = new ConnectionFactory
@@ -71,13 +69,13 @@ trait ConnectionPoolDefinition {
   private[sagat] val readOrWriteConnFactory: ReadOrWriteConnectionFactory
   private[sagat] val readAndWriteConnFactory: ReadAndWriteConnectionFactory
 
-  private[sagat] def ensureConnSharePolicy(conn: EnhancedConnection, policy: ConnectionSharePolicy): EnhancedConnection = {
+  private[sagat] def ensureConnSharePolicy(conn: EnhancedConnection, policy: ConnectionSharePolicyParams): EnhancedConnection = {
     require(conn.readConnection.getChannelMax == policy.channels)
     require(conn.writeConnection.getChannelMax == policy.channels)
     conn
   }
 
-  def getConnectionForServerBridge(nodeName: String, policy: ConnectionSharePolicy): EnhancedConnection ={
+  def getConnectionForServerBridge(nodeName: String, policy: ConnectionSharePolicyParams): EnhancedConnection ={
     var conn: EnhancedConnection = null
     if(serverConnections.containsKey(nodeName)) {
       conn = serverConnections.get(nodeName)
@@ -88,7 +86,7 @@ trait ConnectionPoolDefinition {
     ensureConnSharePolicy(conn, policy)
   }
 
-  private[sagat] def newConnection(policy: ConnectionSharePolicy): EnhancedConnection = {
+  private[sagat] def newConnection(policy: ConnectionSharePolicyParams): EnhancedConnection = {
     policy match {
       case ONE_CONN_PER_NODE => {
         val single = readAndWriteConnFactory.newConnection
@@ -100,7 +98,7 @@ trait ConnectionPoolDefinition {
     }
   }
 
-  def getConnectionForClientBridge(nodeName: String, connPolicy: ConnectionSharePolicy): EnhancedConnection = {
+  def getConnectionForClientBridge(nodeName: String, connPolicy: ConnectionSharePolicyParams): EnhancedConnection = {
     var conn: EnhancedConnection = null
     if(clientConnections.containsKey(nodeName)) {
       conn = clientConnections.get(nodeName)
@@ -122,4 +120,4 @@ trait ConnectionPoolDefinition {
 object ConnectionPool extends ConnectionPoolDefinition {
   lazy val readOrWriteConnFactory  =  new ReadOrWriteConnectionFactory
   lazy val readAndWriteConnFactory =  new ReadAndWriteConnectionFactory
-}
+}*/
