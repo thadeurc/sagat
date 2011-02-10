@@ -50,8 +50,7 @@ object AMQPBridge extends Logging {
 }
 
 abstract class AMQPBridge(val nodeName: String,
-                          val connection: FaultTolerantConnection) extends Logging
-            with ControlStructures {
+                          val connection: FaultTolerantConnection) extends Logging {
 
   require(nodeName != null)
   require(connection != null)

@@ -15,7 +15,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       ("direct".equals(durable.typeConfig)) should equal (true)
       durable.autoDelete should equal (false)
       durable.durable should equal (true)
-      durable.id should be (1)
+      durable.id should be (0)
     }
 
     it("must provide a reliable AUTODELETE configuration "){
@@ -23,7 +23,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       ("direct".equals(autoDelete.typeConfig)) should equal (true)
       autoDelete.autoDelete should equal (true)
       autoDelete.durable should equal (false)
-      autoDelete.id should be (2)
+      autoDelete.id should be (1)
     }
 
     it("must provide a reliable NOTDURABLE configuration "){
@@ -31,7 +31,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       ("direct".equals(notDurable.typeConfig)) should equal (true)
       notDurable.autoDelete should equal (false)
       notDurable.durable should equal (false)
-      notDurable.id should be (3)
+      notDurable.id should be (2)
     }
 
     it("must provide a reliable NOTDURABLEAUTODELETE configuration "){
@@ -39,7 +39,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       ("direct".equals(notDurableAutoDelete.typeConfig)) should equal (true)
       notDurableAutoDelete.autoDelete should equal (true)
       notDurableAutoDelete.durable should equal (false)
-      notDurableAutoDelete.id should be (4)
+      notDurableAutoDelete.id should be (3)
     }
 
     it("must provide a reliable FANOUT DURABLE configuration "){
@@ -47,7 +47,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       ("fanout".equals(durable.typeConfig)) should equal (true)
       durable.autoDelete should equal (false)
       durable.durable should equal (true)
-      durable.id should be (5)
+      durable.id should be (4)
     }
 
     it("must provide a reliable FANOUT AUTODELETE configuration "){
@@ -55,7 +55,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       ("fanout".equals(autoDelete.typeConfig)) should equal (true)
       autoDelete.autoDelete should equal (true)
       autoDelete.durable should equal (false)
-      autoDelete.id should be (6)
+      autoDelete.id should be (5)
     }
 
     it("must provide a reliable FANOUT NOTDURABLE configuration "){
@@ -63,7 +63,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       ("fanout".equals(notDurable.typeConfig)) should equal (true)
       notDurable.autoDelete should equal (false)
       notDurable.durable should equal (false)
-      notDurable.id should be (7)
+      notDurable.id should be (6)
     }
 
     it("must provide a reliable FANOUT NOTDURABLEAUTODELETE configuration "){
@@ -71,7 +71,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       ("fanout".equals(notDurableAutoDelete.typeConfig)) should equal (true)
       notDurableAutoDelete.autoDelete should equal (true)
       notDurableAutoDelete.durable should equal (false)
-      notDurableAutoDelete.id should be (8)
+      notDurableAutoDelete.id should be (7)
     }
 
 
@@ -84,7 +84,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       durable.exclusive should equal (false)
       durable.autoDelete should equal (false)
       durable.durable should equal (true)
-      durable.id should be (1)
+      durable.id should be (0)
     }
 
     it("must provide a reliable AUTODELETE configuration "){
@@ -92,7 +92,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       autoDelete.exclusive should equal (false)
       autoDelete.autoDelete should equal (true)
       autoDelete.durable should equal (false)
-      autoDelete.id should be (2)
+      autoDelete.id should be (1)
     }
 
     it("must provide a reliable NOTDURABLE configuration "){
@@ -100,7 +100,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       notDurable.exclusive should equal (false)
       notDurable.autoDelete should equal (false)
       notDurable.durable should equal (false)
-      notDurable.id should be (3)
+      notDurable.id should be (2)
     }
 
     it("must provide a reliable NOTDURABLEAUTODELETE configuration "){
@@ -108,7 +108,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       notDurableAutoDelete.exclusive should equal (false)
       notDurableAutoDelete.autoDelete should equal (true)
       notDurableAutoDelete.durable should equal (false)
-      notDurableAutoDelete.id should be (4)
+      notDurableAutoDelete.id should be (3)
     }
 
     it("must provide a reliable EXCLUSIVE DURABLE configuration "){
@@ -116,7 +116,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       durable.exclusive should equal (true)
       durable.autoDelete should equal (false)
       durable.durable should equal (true)
-      durable.id should be (5)
+      durable.id should be (4)
     }
 
     it("must provide a reliable EXCLUSIVE AUTODELETE configuration "){
@@ -124,7 +124,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       autoDelete.exclusive should equal (true)
       autoDelete.autoDelete should equal (true)
       autoDelete.durable should equal (false)
-      autoDelete.id should be (6)
+      autoDelete.id should be (5)
     }
 
     it("must provide a reliable EXCLUSIVE NOTDURABLE configuration "){
@@ -132,7 +132,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       notDurable.exclusive should equal (true)
       notDurable.autoDelete should equal (false)
       notDurable.durable should equal (false)
-      notDurable.id should be (7)
+      notDurable.id should be (6)
     }
 
     it("must provide a reliable EXCLUSIVE NOTDURABLEAUTODELETE configuration "){
@@ -140,7 +140,7 @@ class AMQPSpec extends Spec with ShouldMatchers {
       notDurableAutoDelete.exclusive should equal (true)
       notDurableAutoDelete.autoDelete should equal (true)
       notDurableAutoDelete.durable should equal (false)
-      notDurableAutoDelete.id should be (8)
+      notDurableAutoDelete.id should be (7)
     }
   }
 
@@ -153,63 +153,63 @@ class AMQPSpec extends Spec with ShouldMatchers {
       val transient = TRANSIENT
       (transient.exchangeParams == exchangeNotDurable) should equal (true)
       (transient.queueParams == queueNotDurable) should equal (true)
-      transient.id should be (1)
+      transient.id should be (0)
     }
 
     it("must provide a reliable PERSISTENT configuration"){
       val persistent = PERSISTENT
       (persistent.exchangeParams == exchangeDurable) should equal (true)
       (persistent.queueParams == queueDurable) should equal (true)
-      persistent.id should be (2)
+      persistent.id should be (1)
     }
 
     it("must provide a reliable TRANSIENT_AUTODELETE configuration"){
       val transientAutoclean = TRANSIENT_AUTODELETE
       (transientAutoclean.exchangeParams == exchangeNotDurableAutoDelete) should equal (true)
       (transientAutoclean.queueParams == queueNotDurableAutoDelete) should equal (true)
-      transientAutoclean.id should be (3)
+      transientAutoclean.id should be (2)
     }
 
      it("must provide a reliable EXCLUSIVE FANOUT TRANSIENT configuration"){
       val transient = EXCLUSIVE_FANOUT_TRANSIENT
       (transient.exchangeParams == fanoutExchangeNotDurable) should equal (true)
       (transient.queueParams == exclusiveQueueNotDurable) should equal (true)
-      transient.id should be (7)
+      transient.id should be (6)
     }
 
     it("must provide a reliable EXCLUSIVE FANOUT PERSISTENT configuration"){
       val persistent = EXCLUSIVE_FANOUT_PERSISTENT
       (persistent.exchangeParams == fanoutExchangeDurable) should equal (true)
       (persistent.queueParams == exclusiveQueueDurable) should equal (true)
-      persistent.id should be (8)
+      persistent.id should be (7)
     }
 
     it("must provide a reliable EXCLUSIVE FANOUT TRANSIENT_AUTODELETE configuration"){
       val transientAutoclean = EXCLUSIVE_FANOUT_TRANSIENT_AUTODELETE
       (transientAutoclean.exchangeParams == fanoutExchangeNotDurableAutoDelete) should equal (true)
       (transientAutoclean.queueParams == exclusiveQueueNotDurableAutoDelete) should equal (true)
-      transientAutoclean.id should be (9)
+      transientAutoclean.id should be (8)
     }
 
     it("must provide a reliable EXCLUSIVE TRANSIENT configuration"){
       val transient = EXCLUSIVE_TRANSIENT
       (transient.exchangeParams == exchangeNotDurable) should equal (true)
       (transient.queueParams == exclusiveQueueNotDurable) should equal (true)
-      transient.id should be (4)
+      transient.id should be (3)
     }
 
     it("must provide a reliable EXCLUSIVE PERSISTENT configuration"){
       val persistent = EXCLUSIVE_PERSISTENT
       (persistent.exchangeParams == exchangeDurable) should equal (true)
       (persistent.queueParams == exclusiveQueueDurable) should equal (true)
-      persistent.id should be (5)
+      persistent.id should be (4)
     }
 
     it("must provide a reliable EXCLUSIVE TRANSIENT_AUTODELETE configuration"){
       val transientAutoclean = EXCLUSIVE_TRANSIENT_AUTODELETE
       (transientAutoclean.exchangeParams == exchangeNotDurableAutoDelete) should equal (true)
       (transientAutoclean.queueParams == exclusiveQueueNotDurableAutoDelete) should equal (true)
-      transientAutoclean.id should be (6)
+      transientAutoclean.id should be (5)
     }
   }
 }

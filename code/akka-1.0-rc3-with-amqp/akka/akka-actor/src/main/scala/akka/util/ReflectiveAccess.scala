@@ -34,7 +34,8 @@ object ReflectiveAccess extends Logging {
    * @author <a href="http://jonasboner.com">Jonas Bon&#233;r</a>
    */
   object Remote {
-    val TRANSPORT = Config.config.getString("akka.remote.layer","akka.remote.netty.NettyRemoteSupport")
+    //val TRANSPORT = Config.config.getString("akka.remote.layer","akka.remote.netty.NettyRemoteSupport")
+    val TRANSPORT = Config.config.getString("akka.remote.layer","akka.remote.amqp.AMQPRemoteSupport")
 
     private[akka] val configDefaultAddress =
       new InetSocketAddress(Config.config.getString("akka.remote.server.hostname", "localhost"),

@@ -1,11 +1,21 @@
 package br.ime.usp.sagat.amqp.util
 
-import br.ime.usp.sagat.amqp.util.ConnectionSharePolicy._
+
 import com.rabbitmq.client._
-import java.io.IOException
 import akka.actor.{ActorRef, Exit, Actor}
 import akka.config.Supervision.{Permanent, OneForOneStrategy }
 import br.ime.usp.sagat.amqp.{ExchangeConfig, QueueConfig, MessageHandler}
+import java.io.IOException
+
+object ConnectionSharePolicy extends Enumeration {
+    val ONE_CONN_PER_CHANNEL = Value("ONE_CONN_PER_CHANNEL", channels = 1)
+    val ONE_CONN_PER_NODE   =  Value("ONE_CONN_PER_NODE"   , channels = 2)
+
+    class ConnectionSharePolicyParams(name: String, val channels: Int) extends Val(nextId, name)
+    protected final def Value(name: String, channels: Int): ConnectionSharePolicyParams = new ConnectionSharePolicyParams(name, channels)
+}
+
+import ConnectionSharePolicy._
 
 abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolicyParams) {
   require(policy != null)
@@ -24,15 +34,15 @@ abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolic
 class ReadAndWriteConnectionFactory extends ConnectionFactoryWithLimitedChannels(ONE_CONN_PER_NODE)
 class ReadOrWriteConnectionFactory extends ConnectionFactoryWithLimitedChannels(ONE_CONN_PER_CHANNEL)
 
-private case object Connect
-private case class ConnectionShutdown(cause: ShutdownSignalException)
-private case object WriteChannelRequest
-private case object ReadChannelRequest
-private case object StartWriteChannel
-private case object StartReadChannel
-private case object NeedToRequestNewChannel
-private case object ReconnectRemoteClientSetup
-private case object ReconnectRemoteServerSetup
+private[amqp] case object Connect
+private[amqp] case class ConnectionShutdown(cause: ShutdownSignalException)
+private[amqp] case object WriteChannelRequest
+private[amqp] case object ReadChannelRequest
+private[amqp] case object StartWriteChannel
+private[amqp] case object StartReadChannel
+private[amqp] case object NeedToRequestNewChannel
+private[amqp] case object ReconnectRemoteClientSetup
+private[amqp] case object ReconnectRemoteServerSetup
 case class RemoteClientSetup(handler: MessageHandler, config: ClientSetupInfo){
   require(handler != null)
   require(config  != null)
@@ -70,6 +80,10 @@ trait AMQPSupervisor {
   private val supervisor = actorOf(new AMQPConnectionFactory).start
   private[util] val readOrWriteConnFactory  =  new ReadOrWriteConnectionFactory
   private[util] val readAndWriteConnFactory =  new ReadAndWriteConnectionFactory
+
+  def linkedCount: Int = {
+    supervisor.linkedActors.size
+  }
 
   def shutdownAll = {
     supervisor.shutdownLinkedActors
@@ -110,9 +124,6 @@ class AMQPConnectionFactory extends Actor {
   self.id = "amqp.supervisor"
   self.lifeCycle = Permanent
   self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 2000)
-  def shutdownAll = {
-    self.shutdownLinkedActors
-  }
 
   def receive = {
     case _ => {}
@@ -130,11 +141,13 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
 
   private def disconnect = {
     try {
+      log.info("Disconnecting connection(s) of actor [%s]", self.id)
       readConn.foreach(_.close)
       policy match {
         case ONE_CONN_PER_CHANNEL => {
           writeConn.foreach(_.close)
         }
+        case _ => // does nothing
       }
     } catch {
       case e: IOException => log.error("Could not close AMQP connection [%s]", self.id)
@@ -201,8 +214,9 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
   }
 
   private def requestReadChannel: Unit = {
+    log.debug("Connection received a read channel request")
     readConn match {
-      case Some(conn) => self.reply(Some(conn.createChannel))
+      case Some(conn) => self.reply(conn.createChannel)
       case _ =>
         log.warning("Unable to create new read channel - no read connection")
         self.reply(None)
@@ -210,8 +224,9 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
   }
 
   private def requestWriteChannel: Unit = {
+    log.debug("Connection received a write channel request")
     writeConn match {
-      case Some(conn) => self.reply(Some(conn.createChannel))
+      case Some(conn) => self.reply(conn.createChannel)
       case _ =>
         log.warning("Unable to create new write channel - no write connection")
         self.reply(None)
@@ -234,6 +249,7 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
     case ConnectionShutdown(cause) => shutdownReceived(cause)
     case ReadChannelRequest  => requestReadChannel
     case WriteChannelRequest => requestWriteChannel
+    case unknown => log.warn("ConnectionActor [%s] received unknown message %s", unknown)
   }
 
   override def postStop = {
@@ -261,11 +277,20 @@ class WriteChannelActor extends ChannelActor {
 
   def receive = {
     case StartWriteChannel => {
+      log.debug("Starting write channel for actor %s", self.id)
       if(!channel.isDefined || !channel.get.isOpen){
         self.supervisor.foreach {
           sup =>
-            channel = (sup !! WriteChannelRequest).asInstanceOf[Option[Channel]]
-          }
+            val result = (sup !! WriteChannelRequest).asInstanceOf[Option[Channel]]
+            result match {
+              case Some(value: Channel) => channel = result
+              case _ => {
+                log.warn("Write channel not received")
+                throw new IllegalArgumentException("Write channel did not receive a channel.")
+              }
+            }
+
+        }
       }
     }
     case NeedToRequestNewChannel => {
@@ -277,6 +302,7 @@ class WriteChannelActor extends ChannelActor {
       }
     }
     case RemoteClientSetup(handler, _) => {
+      log.debug("Remote client setup received for WriteChannelActor")
       if(!myReturnHandler.isDefined){
         myReturnHandler = Some(handler)
       }
@@ -294,6 +320,7 @@ class WriteChannelActor extends ChannelActor {
 
     }
     case RemoteServerSetup(handler, configs) => {
+      log.debug("Remote server setup received for WriteChannelActor")
       if(!myServerReturnHandler.isDefined){
         myServerReturnHandler = Some(handler)
       }
@@ -301,6 +328,9 @@ class WriteChannelActor extends ChannelActor {
         myServerConfigs = Some(configs)
       }
       setupServer
+    }
+    case unknown => {
+      log.warn("received unknown message in WriteChannel actor %s", unknown)
     }
     /* TODO may need to reconnect and recreate exchanges */
   }
@@ -312,14 +342,14 @@ class WriteChannelActor extends ChannelActor {
     val params = config.exchangeConfig
     channel.foreach{
       ch => {
-        log.debug("Creating Exchange {} ", Array(inboundExchangeName, params))
+        log.debug("Creating Exchange %s %s", inboundExchangeName, params)
         ch.exchangeDeclare(inboundExchangeName,
                                    params.typeConfig,
                                    params.durable,
                                    params.autoDelete,
                                    params.arguments)
         if(outboundExchangeName.isDefined){
-          log.debug("Creating Exchange {} ", Array(outboundExchangeName.get, params))
+          log.debug("Creating Exchange %s %s",outboundExchangeName.get, params)
           ch.exchangeDeclare(outboundExchangeName.get,
                                 params.typeConfig,
                                 params.durable,
@@ -348,10 +378,19 @@ class ReadChannelActor extends ChannelActor {
 
   def receive = {
     case StartReadChannel => {
+      log.debug("Starting read channel for actor %s", self.id)
       if(!channel.isDefined || !channel.get.isOpen){
         self.supervisor.foreach {
           sup =>
-            channel = (sup !! ReadChannelRequest).asInstanceOf[Option[Channel]]
+            val result = (sup !! ReadChannelRequest).asInstanceOf[Option[Channel]]
+            result match {
+              case Some(value: Channel) => channel = result
+              case _ => {
+                log.warn("Read channel not received")
+                throw new IllegalArgumentException("Read channel did not receive a channel.")
+              }
+            }
+
         }
       }
     }
@@ -372,6 +411,7 @@ class ReadChannelActor extends ChannelActor {
       clientSetup
     }
     case RemoteServerSetup(handler, configs) =>{
+      log.debug("Remote server setup received for ReadChannelActor")
       if(!myServerHandler.isDefined) {
         myServerHandler = Some(handler)
       }
@@ -383,54 +423,59 @@ class ReadChannelActor extends ChannelActor {
     case ReconnectRemoteServerSetup => {
       serverSetup
     }
-
+    case unknown => {
+      log.warn("received unknown message in ReadChannel actor %s", unknown)
+    }
   }
 
   private def serverSetup = {
-    val config = myServerConfigs.get
-    val outboundQueueName = config.queueName
-    val inboundExchangeName = config.exchangeName
-    val params = config.queueConfig
-    val handler = myServerHandler.get
-    val routingKeyToServer = config.routingKey
-    channel.foreach{
-      ch => {
-        log.debug("Creating outbound queue {}", Array(outboundQueueName, params))
-        ch.queueDeclare(outboundQueueName,
-                           params.durable,
-                           params.exclusive,
-                           params.autoDelete,
-                           params.arguments)
-        val exchangeName = if(config.fanoutExchangeName.isDefined) config.fanoutExchangeName.get else inboundExchangeName
-        log.debug("Binding outbound queue {} ", Array(outboundQueueName, exchangeName, routingKeyToServer))
-        ch.queueBind(outboundQueueName, exchangeName, routingKeyToServer)
-        log.debug("Binding consumer to {}", outboundQueueName)
-        val consumer = new BridgeConsumer(ch, handler)
-        ch.basicConsume(outboundQueueName, false, consumer)
+    myServerConfigs.foreach{ config =>
+      val outboundQueueName = config.queueName
+      val inboundExchangeName = config.exchangeName
+      val params = config.queueConfig
+      val handler = myServerHandler.get
+      val routingKeyToServer = config.routingKey
+      channel.foreach{
+        ch => {
+          log.debug("Creating outbound queue %s %s", outboundQueueName, params)
+          ch.queueDeclare(outboundQueueName,
+                             params.durable,
+                             params.exclusive,
+                             params.autoDelete,
+                             params.arguments)
+          val exchangeName = if(config.fanoutExchangeName.isDefined) config.fanoutExchangeName.get else inboundExchangeName
+          log.debug("Binding outbound queue %s %s %s", outboundQueueName, exchangeName, routingKeyToServer)
+          ch.queueBind(outboundQueueName, exchangeName, routingKeyToServer)
+          log.debug("Binding consumer to %s", outboundQueueName)
+          val consumer = new BridgeConsumer(ch, handler)
+          ch.basicConsume(outboundQueueName, false, consumer)
+        }
       }
     }
   }
 
   private def clientSetup = {
-    val config = myConfigs.get
-    val inboundQueueName    = config.name
-    val inboundExchangeName = config.exchangeToBind
-    val id = config.routingKey
-    val params = config.config
-    val handler = myHandler.get
-    channel.foreach{
-      ch => {
-        log.debug("Creating inbound queue {}", Array(inboundQueueName, inboundExchangeName, id))
-        ch.queueDeclare(inboundQueueName,
-                        params.durable,
-                        params.exclusive,
-                        params.autoDelete,
-                        params.arguments)
-        log.debug("Binding inbound queue {}", Array(inboundQueueName, inboundExchangeName, id))
-        ch.queueBind(inboundQueueName, inboundExchangeName, id)
-        log.debug("Binding consumer to {}", inboundQueueName)
-        val consumer = new BridgeConsumer(ch, handler)
-        ch.basicConsume(inboundQueueName, false, consumer)
+    log.debug("Remote client setup received for ReadChannelActor")
+    myConfigs.foreach { config =>
+      val inboundQueueName    = config.name
+      val inboundExchangeName = config.exchangeToBind
+      val id = config.routingKey
+      val params = config.config
+      val handler = myHandler.get
+      channel.foreach{
+        ch => {
+          log.debug("Creating inbound queue %s", inboundQueueName, inboundExchangeName, id)
+          ch.queueDeclare(inboundQueueName,
+                          params.durable,
+                          params.exclusive,
+                          params.autoDelete,
+                          params.arguments)
+          log.debug("Binding inbound queue %s %s %s", inboundQueueName, inboundExchangeName, id)
+          ch.queueBind(inboundQueueName, inboundExchangeName, id)
+          log.debug("Binding consumer to %s", inboundQueueName)
+          val consumer = new BridgeConsumer(ch, handler)
+          ch.basicConsume(inboundQueueName, false, consumer)
+        }
       }
     }
   }
@@ -439,17 +484,17 @@ class ReadChannelActor extends ChannelActor {
 class FaultTolerantConnection(readChannel: ActorRef, writeChannel: ActorRef){
 
   def close = {
-    // TODO implementar
+    throw new UnsupportedOperationException
   }
 
   def clientSetup(setupInfo: RemoteClientSetup) {
-    readChannel  ! RemoteClientSetup
-    writeChannel ! RemoteClientSetup
+    readChannel  ! setupInfo
+    writeChannel ! setupInfo
   }
 
   def serverSetup(setupInfo: RemoteServerSetup) {
-    writeChannel ! RemoteServerSetup
-    readChannel  ! RemoteServerSetup
+    writeChannel ! setupInfo
+    readChannel  ! setupInfo
   }
 
   def publishTo(exchange: String, routingKey: String, message: Array[Byte]) {
@@ -467,7 +512,7 @@ class BridgeConsumer(channel: Channel, handler: MessageHandler) extends DefaultC
   }
 
   override def handleConsumeOk(consumerTag: String) = {
-    log.debug("Registered consumer handler with tag {}", Array(handler.getClass.getName, consumerTag))
+    log.debug("Registered consumer handler with tag %s %s", handler.getClass.getName, consumerTag)
   }
 
 
