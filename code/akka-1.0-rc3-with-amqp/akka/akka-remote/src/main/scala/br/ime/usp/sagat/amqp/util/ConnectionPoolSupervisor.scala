@@ -17,6 +17,7 @@ object ConnectionSharePolicy extends Enumeration {
 
 import ConnectionSharePolicy._
 
+
 abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolicyParams) {
   require(policy != null)
   lazy val factory: ConnectionFactory = {
@@ -114,7 +115,7 @@ trait AMQPSupervisor {
     val conn = newSupervisedConnection(nodeName, policy)
     val read = newSupervisedReadChannel(conn)
     val write = newSupervisedWriteChannel(conn)
-    new FaultTolerantConnection(readChannel = read, writeChannel = write)
+    new FaultTolerantConnection(connection = conn, readChannel = read, writeChannel = write)
   }
 }
 
@@ -481,24 +482,34 @@ class ReadChannelActor extends ChannelActor {
   }
 }
 
-class FaultTolerantConnection(readChannel: ActorRef, writeChannel: ActorRef){
+class FaultTolerantConnection(connection: ActorRef, readChannel: ActorRef, writeChannel: ActorRef) extends ControlStructures{
+  @volatile private[this] var open = true
 
-  def close = {
-    throw new UnsupportedOperationException
-  }
+  def close =
+    ifTrueOrException(open){
+      open = false
+      connection.stop
+    }
+
 
   def clientSetup(setupInfo: RemoteClientSetup) {
-    readChannel  ! setupInfo
-    writeChannel ! setupInfo
+    ifTrueOrException(open){
+      readChannel  ! setupInfo
+      writeChannel ! setupInfo
+    }
   }
 
   def serverSetup(setupInfo: RemoteServerSetup) {
-    writeChannel ! setupInfo
-    readChannel  ! setupInfo
+    ifTrueOrException(open){
+      writeChannel ! setupInfo
+      readChannel  ! setupInfo
+    }
   }
 
   def publishTo(exchange: String, routingKey: String, message: Array[Byte]) {
-    writeChannel ! BasicPublish(exchange, routingKey, mandatory = true, immediate = false, message)
+    ifTrueOrException(open){
+      writeChannel ! BasicPublish(exchange, routingKey, mandatory = true, immediate = false, message)
+    }
   }
 }
 
@@ -512,7 +523,7 @@ class BridgeConsumer(channel: Channel, handler: MessageHandler) extends DefaultC
   }
 
   override def handleConsumeOk(consumerTag: String) = {
-    log.debug("Registered consumer handler with tag %s %s", handler.getClass.getName, consumerTag)
+    log.debug("Registered consumer")
   }
 
 

@@ -77,5 +77,4 @@ class ConnectionPoolTest extends JUnitSuite with ShouldMatchers {
     latch.await(1, SECONDS)
     linkedCount should be (0)
   }
-
 }

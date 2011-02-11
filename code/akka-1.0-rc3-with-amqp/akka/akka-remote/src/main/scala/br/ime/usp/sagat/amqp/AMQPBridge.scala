@@ -57,7 +57,7 @@ abstract class AMQPBridge(val nodeName: String,
   private[sagat] val id: String
   private[sagat] lazy val inboundExchangeName = "actor.exchange.in." + nodeName
   private[sagat] lazy val outboundExchangeName = "actor.exchange.out." + nodeName
-  private[sagat] lazy val inboundQueueName = "actor.queue.in." + nodeName
+  private[sagat] lazy val inboundQueueName = "actor.queue.in."
   private[sagat] lazy val outboundQueueName = "actor.queue.out." + nodeName
   private[sagat] lazy val routingKeyToServer = "to.server." + nodeName
   def sendMessageTo(message: Array[Byte], to: Option[String]): Unit
@@ -81,7 +81,7 @@ class ClientAMQPBridge(name: String, connection: FaultTolerantConnection) extend
     }
     connection.clientSetup(
       RemoteClientSetup(handler,
-        ClientSetupInfo(config = queueParams, name = inboundQueueName, exchangeToBind = inboundExchangeName, routingKey = id))
+        ClientSetupInfo(config = queueParams, name = inboundQueueName + id, exchangeToBind = inboundExchangeName, routingKey = id))
     )
     this
   }

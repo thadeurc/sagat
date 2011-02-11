@@ -59,7 +59,7 @@ object StorageAndConsumptionPolicy extends Enumeration {
 
   val TRANSIENT  = Value("TRANSIENT", exchangeNotDurable, queueNotDurable)
   val PERSISTENT = Value("PERSISTENT", exchangeDurable, queueDurable)
-  val TRANSIENT_AUTODELETE = Value("RANSIENT_AUTODELETE", exchangeNotDurableAutoDelete, queueNotDurableAutoDelete)
+  val TRANSIENT_AUTODELETE = Value("TRANSIENT_AUTODELETE", exchangeNotDurableAutoDelete, queueNotDurableAutoDelete)
   val EXCLUSIVE_TRANSIENT  = Value("EXCLUSIVE_TRANSIENT",exchangeNotDurable, exclusiveQueueNotDurable)
   val EXCLUSIVE_PERSISTENT = Value("EXCLUSIVE_PERSISTENT",exchangeDurable, exclusiveQueueDurable)
   val EXCLUSIVE_TRANSIENT_AUTODELETE = Value("EXCLUSIVE_TRANSIENT_AUTODELETE",exchangeNotDurableAutoDelete, exclusiveQueueNotDurableAutoDelete)
