@@ -12,25 +12,39 @@ class AMQPBridgeTest extends JUnitSuite with ShouldMatchers  with DefaultBridgeT
 
   @Test
   def clientWithConsumerAndTransientMessagesWithExclusiveConnectionSending =
-    defaultClientSendTest("node1", 100000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_CHANNEL) should equal (0)
+    defaultClientSendTest("node1", 1000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_CHANNEL) should equal (0)
 
   @Test
   def clientWithConsumerAndTransientMessagesWithSharedConnectionSending =
-    defaultClientSendTest("node3", 100000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_NODE) should equal (0)
+    defaultClientSendTest("node3", 1000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_NODE) should equal (0)
 
   @Test
   def serverWithConsumerAndTransientMessagesWithExclusiveConnectionSending =
-    defaultServerSendTest("node2", 100000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_CHANNEL) should equal (0)
+    defaultServerSendTest("node2", 1000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_CHANNEL) should equal (0)
 
   @Test
   def serverWithConsumerAndTransientMessagesWithSharedConnectionSending =
-    defaultServerSendTest("node4", 100000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_NODE) should equal (0)
+    defaultServerSendTest("node4", 1000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_NODE) should equal (0)
 
   @Test
   def multipleClientsSendingMessages = {
-    defaultMultiClientSendTest("node5", 10000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_NODE, 10) should equal (0)
+    defaultMultiClientSendTest("node5", 1000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_NODE, 10) should equal (0)
   }
 
+  @Test
+  def multipleClientsSendingMessagesAndMultipleConnections = {
+    defaultMultiClientSendTest("node5", 1000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_CHANNEL, 10) should equal (0)
+  }
+
+  @Test
+  def multipleClientsSendingMessagesWithServerReply = {
+    defaultMultiClientSendTestWithServerReply("node6", 1000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_NODE, 10) should equal (0)
+  }
+
+  @Test
+  def multipleClientsSendingMessagesWithServerReplyMultipleConnections = {
+    defaultMultiClientSendTestWithServerReply("node7", 1000, false, EXCLUSIVE_TRANSIENT, ONE_CONN_PER_CHANNEL, 10) should equal (0)
+  }
 }
 
 object AMQPBridgeTest {

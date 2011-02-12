@@ -7,6 +7,7 @@ import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 
 import akka.serialization.Serializable.ScalaJSON
+import akka.serialization.Serializables
 
 object Serializables {
   import DefaultProtocol._

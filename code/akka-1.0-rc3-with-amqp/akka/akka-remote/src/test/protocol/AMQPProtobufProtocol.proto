@@ -1,0 +1,17 @@
+/**
+ * Copyright (C) 2009-2011 Scalable Solutions AB <http://scalablesolutions.se>
+ */
+
+package br.ime.usp.sagat.amqp;
+
+/*
+  Compile with:
+  cd ./akka-remote/src/test/protocol
+  protoc AMQPProtobufProtocol.proto --java_out ../java
+*/
+
+message AMQPSampleMessage {
+  required uint64 id = 1;
+  required string payload = 2;
+  required string clientId = 3;
+}
