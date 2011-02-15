@@ -262,6 +262,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
         senderOption,
         typedActorInfo,
         actorType,
+        None,
         Some(amqpClientBridge.id)
       ).build, senderFuture)
   }
@@ -633,6 +634,7 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
                   Some(actorRef),
                   None,
                   AkkaActorType.ScalaActor,
+                  None,
                   None)
                 if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
                 bridge.sendMessageTo(messageBuilder.build.toByteArray, Some(request.getRemoteClientId))
@@ -668,6 +670,7 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
             None,
             None,
             AkkaActorType.TypedActor,
+            None,
             None)
           if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
           bridge.sendMessageTo(messageBuilder.build.toByteArray, Some(request.getRemoteClientId))
@@ -858,7 +861,8 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
                           None,
                           None,
                           actorType,
-                          None)
+                          None,
+                          if(request.hasRemoteClientId) Some(request.getRemoteClientId) else None)
     if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
     messageBuilder.build
   }

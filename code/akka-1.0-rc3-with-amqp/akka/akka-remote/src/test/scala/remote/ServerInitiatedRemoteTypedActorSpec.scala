@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit
 
 import akka.actor._
 import RemoteTypedActorLog._
+import akka.actor.remote._
 
 class ServerInitiatedRemoteTypedActorSpec extends AkkaRemoteTest {
 

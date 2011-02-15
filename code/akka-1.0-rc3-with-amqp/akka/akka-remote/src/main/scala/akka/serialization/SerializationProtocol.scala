@@ -142,7 +142,7 @@ object ActorSerialization {
             actorRef.getSender,
             None,
             ActorType.ScalaActor,
-            RemoteClientSettings.SECURE_COOKIE).build)
+            RemoteClientSettings.SECURE_COOKIE, None).build)
 
       requestProtocols.foreach(rp => builder.addMessages(rp))
     }
@@ -273,7 +273,7 @@ object RemoteActorSerialization {
         .build
   }
 
-  def createRemoteMessageProtocolBuilder(
+  /*def createRemoteMessageProtocolBuilder(
       actorRef: Option[ActorRef],
       replyUuid: Either[Uuid, UuidProtocol],
       actorId: String,
@@ -297,7 +297,7 @@ object RemoteActorSerialization {
                                        actorType,
                                        secureCookie,
                                        None)
-  }
+  }*/
 
   def createRemoteMessageProtocolBuilder(
       actorRef: Option[ActorRef],

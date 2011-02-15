@@ -179,7 +179,8 @@ abstract class RemoteClient private[akka] (
         senderOption,
         typedActorInfo,
         actorType,
-        if (isAuthenticated.compareAndSet(false, true)) RemoteClientSettings.SECURE_COOKIE else None
+        if (isAuthenticated.compareAndSet(false, true)) RemoteClientSettings.SECURE_COOKIE else None,
+        None
       ).build, senderFuture)
   }
 
@@ -965,7 +966,7 @@ class RemoteServerHandler(
                   Some(actorRef),
                   None,
                   AkkaActorType.ScalaActor,
-                  None)
+                  None, None)
 
                 // FIXME lift in the supervisor uuid management into toh createRemoteMessageProtocolBuilder method
                 if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
@@ -1004,7 +1005,7 @@ class RemoteServerHandler(
             None,
             None,
             AkkaActorType.TypedActor,
-            None)
+            None, None)
           if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
 
           write(channel, messageBuilder.build)
@@ -1191,7 +1192,7 @@ class RemoteServerHandler(
       None,
       None,
       actorType,
-      None)
+      None, None)
     if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
     messageBuilder.build
   }

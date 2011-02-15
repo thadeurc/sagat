@@ -85,7 +85,7 @@ class ClientInitiatedRemoteActorSpec extends AkkaRemoteTest {
 
     "shouldSendOneWayAndReceiveReply" in {
       val latch = new CountDownLatch(1)
-      val actor = remote.actorOf[SendOneWayAndReplyReceiverActor](host,port).start
+      val actor = remote.actorOf[SendOneWayAndReplyReceiverActor](host,port+1).start
       implicit val sender = Some(actorOf(new CountDownActor(latch)).start)
 
       actor ! "Hello"
@@ -94,14 +94,14 @@ class ClientInitiatedRemoteActorSpec extends AkkaRemoteTest {
     }
 
     "shouldSendBangBangMessageAndReceiveReply" in {
-      val actor = remote.actorOf[RemoteActorSpecActorBidirectional](host,port).start
+      val actor = remote.actorOf[RemoteActorSpecActorBidirectional](host,port+2).start
       val result = actor !! "Hello"
       "World" must equal (result.get.asInstanceOf[String])
       actor.stop
     }
 
     "shouldSendBangBangMessageAndReceiveReplyConcurrently" in {
-      val actors = (1 to 10).map(num => { remote.actorOf[RemoteActorSpecActorBidirectional](host,port).start }).toList
+      val actors = (1 to 10).map(num => { remote.actorOf[RemoteActorSpecActorBidirectional](host,port+3).start }).toList
       actors.map(_ !!! "Hello") foreach { future =>
         "World" must equal (future.await.result.asInstanceOf[Option[String]].get)
       }
@@ -109,8 +109,8 @@ class ClientInitiatedRemoteActorSpec extends AkkaRemoteTest {
     }
 
     "shouldRegisterActorByUuid" in {
-      val actor1 = remote.actorOf[MyActorCustomConstructor](host, port).start
-      val actor2 = remote.actorOf[MyActorCustomConstructor](host, port).start
+      val actor1 = remote.actorOf[MyActorCustomConstructor](host, port+4).start
+      val actor2 = remote.actorOf[MyActorCustomConstructor](host, port+4).start
 
       actor1 ! "incrPrefix"
 
@@ -128,7 +128,7 @@ class ClientInitiatedRemoteActorSpec extends AkkaRemoteTest {
 
     "shouldSendAndReceiveRemoteException" in {
 
-      val actor = remote.actorOf[RemoteActorSpecActorBidirectional](host, port).start
+      val actor = remote.actorOf[RemoteActorSpecActorBidirectional](host, port+5).start
       try {
         implicit val timeout = 500000000L
         val f = (actor !!! "Failure").await.resultOrException
