@@ -260,7 +260,6 @@ object RemoteActorSerialization {
    */
   def toRemoteActorRefProtocol(ar: ActorRef): RemoteActorRefProtocol = {
     import ar._
-
     Actor.log.slf4j.debug("Register serialized Actor [{}] as remote @ [{}:{}]",actorClassName, ar.homeAddress)
 
     Actor.remote.registerByUuid(ar)

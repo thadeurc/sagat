@@ -103,7 +103,6 @@ trait DefaultBridgeTemplate {
       if(AMQP.enabled) {
         val (latchServer, latchClients, server, clients, messages) =
           basicSetupForMultipleClients(nodeName, count, verbose, messageStorePolicy, policy, nClients)
-        latchServer.await(nClients, SECONDS)
         clients.foreach(c => messages.foreach(c.sendMessageToServer))
         latchServer.await((count * nClients) / 100 + 2, SECONDS)
         result = latchServer.getCount
@@ -118,7 +117,6 @@ trait DefaultBridgeTemplate {
       var result = 0L
       if(AMQP.enabled) {
           val (latchServer, latchClients, server, clientsMessagePair) = basicSetupForMultipleClientsWithReply(nodeName, count, verbose, messageStorePolicy, policy, nClients)
-          latchServer.await(nClients, SECONDS)
           clientsMessagePair.foreach{
             line => {
               val aClient = line._1
@@ -141,7 +139,6 @@ trait DefaultBridgeTemplate {
     var result = 0L
     if(AMQP.enabled) {
         val (latchServer, latchClient, server, client, messages) = basicSetup(nodeName, count, verbose, messageStorePolicy, policy)
-        latchServer.await(1, SECONDS)
         messages.foreach(client.sendMessageToServer)
         latchServer.await(count / 100 + 2, SECONDS)
         result = latchServer.getCount
@@ -157,7 +154,6 @@ trait DefaultBridgeTemplate {
     if(AMQP.enabled) {
         val (_, latchClient, server, client, messages) = basicSetup(nodeName, count, verbose, messageStorePolicy, policy)
         val to = Some(client.id)
-        latchClient.await(1, SECONDS)
         messages.foreach(server.sendMessageTo(_, to))
         latchClient.await(count / 100 + 2, SECONDS)
         result = latchClient.getCount

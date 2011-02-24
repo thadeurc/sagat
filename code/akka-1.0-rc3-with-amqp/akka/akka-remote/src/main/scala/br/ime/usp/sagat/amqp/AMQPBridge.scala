@@ -43,14 +43,14 @@ object AMQPBridge extends Logging {
     new ClientAMQPBridge(name, newConnection(name, policy)).setup(handler, messageStorePolicy.queueParams, messageStorePolicy.fanout)
   }
 
-  def newConnection(name: String, policy: ConnectionSharePolicyParams): FaultTolerantConnection = {
-    AMQPConnectionFactory.createNewFaultTolerantConnection(name, policy)
+  def newConnection(name: String, policy: ConnectionSharePolicyParams): SupervisedConnectionWrapper = {
+    AMQPConnectionFactory.createNewSupervisedConnection(name, policy)
   }
 
 }
 
 abstract class AMQPBridge(val nodeName: String,
-                          val connection: FaultTolerantConnection) extends Logging {
+                          val connection: SupervisedConnectionWrapper) extends Logging {
 
   require(nodeName != null)
   require(connection != null)
@@ -66,7 +66,7 @@ abstract class AMQPBridge(val nodeName: String,
   }
 }
 
-class ClientAMQPBridge(name: String, connection: FaultTolerantConnection) extends AMQPBridge(name, connection) {
+class ClientAMQPBridge(name: String, connection: SupervisedConnectionWrapper) extends AMQPBridge(name, connection) {
   import scala.util.Random._
 
   private var targetExchange = inboundExchangeName
@@ -95,7 +95,7 @@ class ClientAMQPBridge(name: String, connection: FaultTolerantConnection) extend
   }
 }
 
-class ServerAMQPBridge(name: String, connection: FaultTolerantConnection) extends AMQPBridge(name, connection){
+class ServerAMQPBridge(name: String, connection: SupervisedConnectionWrapper) extends AMQPBridge(name, connection){
   private[sagat] lazy val id = "server." + nodeName
 
   def setup(handler: MessageHandler, exchangeParams: ExchangeConfig.ExchangeParameters,

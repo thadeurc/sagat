@@ -120,7 +120,6 @@ trait AMQPRemoteClientModule extends RemoteClientModule { self: ListenerManageme
                               typedActorInfo: Option[(String, String)],
                               actorType: AkkaActorType,
                               loader: Option[ClassLoader]): Option[CompletableFuture[T]] = {
-
     withClientFor(nodeName, loader)(_.send[T](message, senderOption, senderFuture, nodeName, timeout, isOneWay, actorRef, typedActorInfo, actorType))
   }
 
@@ -399,7 +398,7 @@ trait AMQPRemoteServerModule extends RemoteServerModule { self: RemoteModule =>
   private[akka] val currentServerBridge = new AtomicReference[Option[AMQPRemoteServer]](None)
 
   /* it does not make much sense for an amqp based transport */
-  def address = ReflectiveAccess.Remote.configDefaultAddress
+  def address = currentServerBridge.get.get.nodeName//ReflectiveAccess.Remote.configDefaultAddress
 
   def name = currentServerBridge.get match {
     case Some(s) => "AMQPRemoteServerModule:name=" + s.nodeName

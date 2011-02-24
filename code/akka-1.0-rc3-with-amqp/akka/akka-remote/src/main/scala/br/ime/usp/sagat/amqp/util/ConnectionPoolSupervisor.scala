@@ -93,29 +93,29 @@ trait AMQPSupervisor {
   def newSupervisedConnection(nodeName: String, policy: ConnectionSharePolicyParams): ActorRef = {
     val connectionActor = actorOf(new ConnectionActor(nodeName, policy))
     supervisor.startLink(connectionActor)
-    connectionActor ! Connect
+    connectionActor !! Connect
     connectionActor
   }
 
   def newSupervisedReadChannel(supervisor: ActorRef): ActorRef = {
     val channel = actorOf(new ReadChannelActor)
     supervisor.startLink(channel)
-    channel ! StartReadChannel
+    channel !! StartReadChannel
     channel
   }
 
   def newSupervisedWriteChannel(supervisor: ActorRef): ActorRef = {
     val channel = actorOf(new WriteChannelActor)
     supervisor.startLink(channel)
-    channel ! StartWriteChannel
+    channel !! StartWriteChannel
     channel
   }
 
-  def createNewFaultTolerantConnection(nodeName: String, policy: ConnectionSharePolicyParams): FaultTolerantConnection = {
+  def createNewSupervisedConnection(nodeName: String, policy: ConnectionSharePolicyParams): SupervisedConnectionWrapper = {
     val conn = newSupervisedConnection(nodeName, policy)
     val read = newSupervisedReadChannel(conn)
     val write = newSupervisedWriteChannel(conn)
-    new FaultTolerantConnection(connection = conn, readChannel = read, writeChannel = write)
+    new SupervisedConnectionWrapper(connection = conn, readChannel = read, writeChannel = write)
   }
 }
 
@@ -246,7 +246,10 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
   }
 
   def receive = {
-    case Connect => connect
+    case Connect => {
+      connect
+      self.reply(None)
+    }
     case ConnectionShutdown(cause) => shutdownReceived(cause)
     case ReadChannelRequest  => requestReadChannel
     case WriteChannelRequest => requestWriteChannel
@@ -263,7 +266,7 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
   }
 
   def postRestart = {
-    self ! Connect
+    self !! Connect
   }
 }
 
@@ -293,9 +296,10 @@ class WriteChannelActor extends ChannelActor {
 
         }
       }
+      self.reply(None)
     }
     case NeedToRequestNewChannel => {
-        self ! StartWriteChannel
+        self !! StartWriteChannel
     }
     case BasicPublish(exchange, routingKey, mandatory, immediate, message) => {
       channel.foreach {
@@ -318,7 +322,7 @@ class WriteChannelActor extends ChannelActor {
           }
         })
       }
-
+      self.reply(None)
     }
     case RemoteServerSetup(handler, configs) => {
       log.debug("Remote server setup received for WriteChannelActor")
@@ -329,6 +333,7 @@ class WriteChannelActor extends ChannelActor {
         myServerConfigs = Some(configs)
       }
       setupServer
+      self.reply(None)
     }
     case unknown => {
       log.warn("received unknown message in WriteChannel actor %s", unknown)
@@ -391,13 +396,14 @@ class ReadChannelActor extends ChannelActor {
                 throw new IllegalArgumentException("Read channel did not receive a channel.")
               }
             }
-
         }
       }
+      self.reply(None)
     }
     case NeedToRequestNewChannel => {
-      self ! StartReadChannel
-      self ! ReconnectRemoteClientSetup
+      self !! StartReadChannel
+      self !! ReconnectRemoteClientSetup
+      self !! ReconnectRemoteServerSetup
     }
     case RemoteClientSetup(handler, configs) => {
       if(!myHandler.isDefined) {
@@ -407,9 +413,11 @@ class ReadChannelActor extends ChannelActor {
         myConfigs = Some(configs)
       }
       clientSetup
+      self.reply(None)
     }
     case ReconnectRemoteClientSetup => {
       clientSetup
+      self.reply(None)
     }
     case RemoteServerSetup(handler, configs) =>{
       log.debug("Remote server setup received for ReadChannelActor")
@@ -420,9 +428,11 @@ class ReadChannelActor extends ChannelActor {
         myServerConfigs = Some(configs)
       }
       serverSetup
+      self.reply(None)
     }
     case ReconnectRemoteServerSetup => {
       serverSetup
+      self.reply(None)
     }
     case unknown => {
       log.warn("received unknown message in ReadChannel actor %s", unknown)
@@ -482,7 +492,7 @@ class ReadChannelActor extends ChannelActor {
   }
 }
 
-class FaultTolerantConnection(connection: ActorRef, readChannel: ActorRef, writeChannel: ActorRef) extends ControlStructures{
+class SupervisedConnectionWrapper(connection: ActorRef, readChannel: ActorRef, writeChannel: ActorRef) extends ControlStructures{
   @volatile private[this] var open = true
 
   def close =
@@ -494,15 +504,15 @@ class FaultTolerantConnection(connection: ActorRef, readChannel: ActorRef, write
 
   def clientSetup(setupInfo: RemoteClientSetup) {
     ifTrueOrException(open){
-      readChannel  ! setupInfo
-      writeChannel ! setupInfo
+      readChannel  !! setupInfo
+      writeChannel !! setupInfo
     }
   }
 
   def serverSetup(setupInfo: RemoteServerSetup) {
     ifTrueOrException(open){
-      writeChannel ! setupInfo
-      readChannel  ! setupInfo
+      writeChannel !! setupInfo
+      readChannel  !! setupInfo
     }
   }
 

@@ -1119,7 +1119,6 @@ private[akka] case class RemoteActorRef private[akka] (
   ensureRemotingEnabled
 
   val homeAddress = Some(new InetSocketAddress(hostname, port))
-
   //protected def clientManaged = classOrServiceName.isEmpty //If no class or service name, it's client managed
   id = classOrServiceName
   //id = classOrServiceName.getOrElse("uuid:" + uuid) //If we're a server-managed we want to have classOrServiceName as id, or else, we're a client-managed and we want to have our uuid as id

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith
 import akka.remote.netty.NettyRemoteSupport
 import akka.actor. {Actor, ActorRegistry}
 import java.util.concurrent. {TimeUnit, CountDownLatch}
+import akka.remote.amqp.AMQPRemoteSupport
 
 object AkkaRemoteTest {
   class ReplyHandlerActor(latch: CountDownLatch, expect: String) extends Actor {
@@ -33,15 +34,17 @@ class AkkaRemoteTest extends
 
   def OptimizeLocal = false
 
-  var optimizeLocal_? = false//remote.asInstanceOf[NettyRemoteSupport].optimizeLocalScoped_?
+  var optimizeLocal_? = remote.asInstanceOf[AMQPRemoteSupport].optimizeLocalScoped_? //remote.asInstanceOf[NettyRemoteSupport].optimizeLocalScoped_?
 
   override def beforeAll {
-    //if (!OptimizeLocal)
+    if (!OptimizeLocal)
+      remote.asInstanceOf[AMQPRemoteSupport].optimizeLocal.set(false)
       //remote.asInstanceOf[NettyRemoteSupport].optimizeLocal.set(false) //Can't run the test if we're eliminating all remote calls
   }
 
   override def afterAll {
-    //if (!OptimizeLocal)
+    if (!OptimizeLocal)
+      remote.asInstanceOf[AMQPRemoteSupport].optimizeLocal.set(optimizeLocal_?)
       //remote.asInstanceOf[NettyRemoteSupport].optimizeLocal.set(optimizeLocal_?) //Reset optimizelocal after all tests
   }
 

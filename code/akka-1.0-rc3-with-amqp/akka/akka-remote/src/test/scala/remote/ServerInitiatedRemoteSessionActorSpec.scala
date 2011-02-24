@@ -8,6 +8,7 @@ import akka.actor._
 import akka.actor.Actor._
 import java.util.concurrent. {ConcurrentSkipListSet, TimeUnit}
 import akka.remote.netty.NettyRemoteSupport
+import akka.remote.amqp.AMQPRemoteSupport
 
 object ServerInitiatedRemoteSessionActorSpec {
 
@@ -84,9 +85,11 @@ class ServerInitiatedRemoteSessionActorSpec extends AkkaRemoteTest {
 
     "be able to unregister" in {
       remote.registerPerSession("my-service-1", actorOf[RemoteStatefullSessionActorSpec])
-      remote.asInstanceOf[NettyRemoteSupport].actorsFactories.get("my-service-1") must not be (null)
+      //remote.asInstanceOf[NettyRemoteSupport].actorsFactories.get("my-service-1") must not be (null)
+      remote.asInstanceOf[AMQPRemoteSupport].actorsFactories.get("my-service-1") must not be (null)
       remote.unregisterPerSession("my-service-1")
-      remote.asInstanceOf[NettyRemoteSupport].actorsFactories.get("my-service-1") must be (null)
+      //remote.asInstanceOf[NettyRemoteSupport].actorsFactories.get("my-service-1") must be (null)
+      remote.asInstanceOf[AMQPRemoteSupport].actorsFactories.get("my-service-1") must be (null)
     }
   }
 }
