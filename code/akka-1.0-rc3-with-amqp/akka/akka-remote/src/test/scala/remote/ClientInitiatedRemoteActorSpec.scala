@@ -72,7 +72,7 @@ class MyActorCustomConstructor extends Actor {
   }
 }
 
-class ClientInitiatedRemoteActorSpec extends AkkaRemoteTest {
+/*class ClientInitiatedRemoteActorSpec extends AkkaRemoteTest {
   "ClientInitiatedRemoteActor" should {
    "shouldSendOneWay" in {
       val clientManaged = remote.actorOf[RemoteActorSpecActorUnidirectional](host,port).start
@@ -140,3 +140,4 @@ class ClientInitiatedRemoteActorSpec extends AkkaRemoteTest {
     }
   }
 }
+*/
