@@ -1,9 +1,9 @@
-package br.ime.usp.sagat.amqp
+package akka.remote.amqp
 
 import StorageAndConsumptionPolicy._
 import util._
-import util.ConnectionSharePolicy._
 import java.lang.String
+import ConnectionSharePolicy._
 
 trait MessageHandler {
   def handleMessageReceived(message: Array[Byte]): Boolean
@@ -54,12 +54,12 @@ abstract class AMQPBridge(val nodeName: String,
 
   require(nodeName != null)
   require(connection != null)
-  private[sagat] val id: String
-  private[sagat] lazy val inboundExchangeName = "actor.exchange.in." + nodeName
-  private[sagat] lazy val outboundExchangeName = "actor.exchange.out." + nodeName
-  private[sagat] lazy val inboundQueueName = "actor.queue.in."
-  private[sagat] lazy val outboundQueueName = "actor.queue.out." + nodeName
-  private[sagat] lazy val routingKeyToServer = "to.server." + nodeName
+  private[amqp] val id: String
+  private[amqp] lazy val inboundExchangeName = "actor.exchange.in." + nodeName
+  private[amqp] lazy val outboundExchangeName = "actor.exchange.out." + nodeName
+  private[amqp] lazy val inboundQueueName = "actor.queue.in."+ nodeName
+  private[amqp] lazy val outboundQueueName = "actor.queue.out."
+  private[amqp] lazy val routingKeyToServer = "to.server." + nodeName
   def sendMessageTo(message: Array[Byte], to: Option[String]): Unit
   def shutdown = {
     connection.close
@@ -81,7 +81,7 @@ class ClientAMQPBridge(name: String, connection: SupervisedConnectionWrapper) ex
     }
     connection.clientSetup(
       RemoteClientSetup(handler,
-        ClientSetupInfo(config = queueParams, name = inboundQueueName + id, exchangeToBind = inboundExchangeName, routingKey = id))
+        ClientSetupInfo(config = queueParams, name = outboundQueueName + id, exchangeToBind = inboundExchangeName, routingKey = id))
     )
     this
   }
@@ -96,7 +96,7 @@ class ClientAMQPBridge(name: String, connection: SupervisedConnectionWrapper) ex
 }
 
 class ServerAMQPBridge(name: String, connection: SupervisedConnectionWrapper) extends AMQPBridge(name, connection){
-  private[sagat] lazy val id = "server." + nodeName
+  private[amqp] lazy val id = "server." + nodeName
 
   def setup(handler: MessageHandler, exchangeParams: ExchangeConfig.ExchangeParameters,
             queueParams: QueueConfig.QueueParameters, fanout: Boolean): ServerAMQPBridge = {
@@ -105,7 +105,7 @@ class ServerAMQPBridge(name: String, connection: SupervisedConnectionWrapper) ex
         ServerSetupInfo(exchangeParams,
                         queueParams,
                         exchangeName = inboundExchangeName,
-                        queueName = outboundQueueName,
+                        queueName = inboundQueueName,
                         routingKey = routingKeyToServer,
                         if(fanout) Some(outboundExchangeName) else None))
     )

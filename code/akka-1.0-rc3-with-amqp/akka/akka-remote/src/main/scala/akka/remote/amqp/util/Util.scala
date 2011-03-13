@@ -1,6 +1,4 @@
-package br.ime.usp.sagat.amqp.util
-
-import br.ime.usp.sagat.amqp.AMQPBridge
+package akka.remote.amqp.util
 
 
 trait Logging {

@@ -3,10 +3,8 @@ package akka.remote.amqp
 import akka.remoteinterface._
 import java.net.InetSocketAddress
 import java.util.concurrent.ConcurrentHashMap
-import br.ime.usp.sagat.amqp.util.ConnectionSharePolicy
 import akka.remote.MessageSerializer
 import collection.mutable.HashMap
-import br.ime.usp.sagat.amqp._
 import akka.util._
 import akka.actor._
 import akka.actor.{ActorType => AkkaActorType}
@@ -398,7 +396,10 @@ trait AMQPRemoteServerModule extends RemoteServerModule { self: RemoteModule =>
   private[akka] val currentServerBridge = new AtomicReference[Option[AMQPRemoteServer]](None)
 
   /* it does not make much sense for an amqp based transport */
-  def address = currentServerBridge.get.get.nodeName//ReflectiveAccess.Remote.configDefaultAddress
+  def address = currentServerBridge.get match {
+    case Some(ref) => ref.nodeName
+    case None => ReflectiveAccess.Remote.configDefaultAddress
+  }
 
   def name = currentServerBridge.get match {
     case Some(s) => "AMQPRemoteServerModule:name=" + s.nodeName
@@ -534,7 +535,7 @@ class AMQPRemoteServer(serverModule: AMQPRemoteServerModule, val nodeName: Strin
 
   def shutdown {
     try {
-      serverModule.shutdownServerModule
+      amqpServerBridge.shutdown
       serverModule.notifyListeners(RemoteServerShutdown(serverModule))
     } catch {
       case e => serverModule.log.slf4j.warn("Could not close remote server channel in a graceful way")

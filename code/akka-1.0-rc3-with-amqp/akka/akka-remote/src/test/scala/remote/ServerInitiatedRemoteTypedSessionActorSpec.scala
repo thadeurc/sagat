@@ -6,6 +6,7 @@ package akka.actor.remote
 
 import akka.actor._
 import RemoteTypedActorLog._
+import akka.actor.remote.RemoteTypedSessionActorImpl
 
 class ServerInitiatedRemoteTypedSessionActorSpec extends AkkaRemoteTest {
 

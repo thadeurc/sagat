@@ -1,4 +1,4 @@
-package br.ime.usp.sagat.amqp
+package akka.remote.amqp
 
 import java.util.{Map => JMap}
 

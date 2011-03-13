@@ -1,11 +1,11 @@
-package br.ime.usp.sagat.amqp.util
+package akka.remote.amqp
 
 
 import com.rabbitmq.client._
 import akka.actor.{ActorRef, Exit, Actor}
 import akka.config.Supervision.{Permanent, OneForOneStrategy }
-import br.ime.usp.sagat.amqp.{ExchangeConfig, QueueConfig, MessageHandler}
 import java.io.IOException
+import util.{Logging, ControlStructures}
 
 object ConnectionSharePolicy extends Enumeration {
     val ONE_CONN_PER_CHANNEL = Value("ONE_CONN_PER_CHANNEL", channels = 1)
@@ -18,7 +18,7 @@ object ConnectionSharePolicy extends Enumeration {
 import ConnectionSharePolicy._
 
 
-abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolicyParams) {
+abstract class AbstractConnectionFactory(policy: ConnectionSharePolicyParams) {
   require(policy != null)
   lazy val factory: ConnectionFactory = {
     val cf = new ConnectionFactory
@@ -32,8 +32,8 @@ abstract class ConnectionFactoryWithLimitedChannels(policy: ConnectionSharePolic
   }
   def newConnection: Connection = factory.newConnection
 }
-class ReadAndWriteConnectionFactory extends ConnectionFactoryWithLimitedChannels(ONE_CONN_PER_NODE)
-class ReadOrWriteConnectionFactory extends ConnectionFactoryWithLimitedChannels(ONE_CONN_PER_CHANNEL)
+class ReadAndWriteAbstractConnectionFactory extends AbstractConnectionFactory(ONE_CONN_PER_NODE)
+class ReadOrWriteAbstractConnectionFactory extends AbstractConnectionFactory(ONE_CONN_PER_CHANNEL)
 
 private[amqp] case object Connect
 private[amqp] case class ConnectionShutdown(cause: ShutdownSignalException)
@@ -79,8 +79,8 @@ case class ServerSetupInfo(exchangeConfig: ExchangeConfig.ExchangeParameters,
 trait AMQPSupervisor {
   import Actor._
   private val supervisor = actorOf(new AMQPConnectionFactory).start
-  private[util] val readOrWriteConnFactory  =  new ReadOrWriteConnectionFactory
-  private[util] val readAndWriteConnFactory =  new ReadAndWriteConnectionFactory
+  private[amqp] val readOrWriteConnFactory  =  new ReadOrWriteAbstractConnectionFactory
+  private[amqp] val readAndWriteConnFactory =  new ReadAndWriteAbstractConnectionFactory
 
   def linkedCount: Int = {
     supervisor.linkedActors.size
@@ -94,6 +94,7 @@ trait AMQPSupervisor {
     val connectionActor = actorOf(new ConnectionActor(nodeName, policy))
     supervisor.startLink(connectionActor)
     connectionActor !! Connect
+    Actor.registry.unregister(connectionActor)
     connectionActor
   }
 
@@ -101,6 +102,7 @@ trait AMQPSupervisor {
     val channel = actorOf(new ReadChannelActor)
     supervisor.startLink(channel)
     channel !! StartReadChannel
+    Actor.registry.unregister(channel)
     channel
   }
 
@@ -108,6 +110,7 @@ trait AMQPSupervisor {
     val channel = actorOf(new WriteChannelActor)
     supervisor.startLink(channel)
     channel !! StartWriteChannel
+    Actor.registry.unregister(channel)
     channel
   }
 
@@ -271,7 +274,21 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
 }
 
 trait ChannelActor extends Actor {
-  private[util] var channel: Option[Channel] = None
+  private[amqp] var channel: Option[Channel] = None
+
+  override def postStop = {
+    disconnect
+  }
+
+  private def disconnect = {
+    try {
+      log.info("Disconnecting channel(s) of actor [%s]", self.id)
+      if(!channel.isEmpty && channel.get.isOpen) channel.foreach(_.close)
+    } catch {
+      case e: IOException => log.error("Could not close AMQP channel [%s]", self.id)
+    }
+    channel = None
+  }
 }
 
 class WriteChannelActor extends ChannelActor {
@@ -441,25 +458,25 @@ class ReadChannelActor extends ChannelActor {
 
   private def serverSetup = {
     myServerConfigs.foreach{ config =>
-      val outboundQueueName = config.queueName
+      val inboundQueueName = config.queueName
       val inboundExchangeName = config.exchangeName
       val params = config.queueConfig
       val handler = myServerHandler.get
       val routingKeyToServer = config.routingKey
       channel.foreach{
         ch => {
-          log.debug("Creating outbound queue %s %s", outboundQueueName, params)
-          ch.queueDeclare(outboundQueueName,
+          log.debug("Creating inbound queue %s %s", inboundQueueName, params)
+          ch.queueDeclare(inboundQueueName,
                              params.durable,
                              params.exclusive,
                              params.autoDelete,
                              params.arguments)
           val exchangeName = if(config.fanoutExchangeName.isDefined) config.fanoutExchangeName.get else inboundExchangeName
-          log.debug("Binding outbound queue %s %s %s", outboundQueueName, exchangeName, routingKeyToServer)
-          ch.queueBind(outboundQueueName, exchangeName, routingKeyToServer)
-          log.debug("Binding consumer to %s", outboundQueueName)
+          log.debug("Binding inbound queue %s %s %s", inboundQueueName, exchangeName, routingKeyToServer)
+          ch.queueBind(inboundQueueName, exchangeName, routingKeyToServer)
+          log.debug("Binding consumer to %s", inboundQueueName)
           val consumer = new BridgeConsumer(ch, handler)
-          ch.basicConsume(outboundQueueName, false, consumer)
+          ch.basicConsume(inboundQueueName, false, consumer)
         }
       }
     }
@@ -468,24 +485,24 @@ class ReadChannelActor extends ChannelActor {
   private def clientSetup = {
     log.debug("Remote client setup received for ReadChannelActor")
     myConfigs.foreach { config =>
-      val inboundQueueName    = config.name
+      val outboundQueueName    = config.name
       val inboundExchangeName = config.exchangeToBind
       val id = config.routingKey
       val params = config.config
       val handler = myHandler.get
       channel.foreach{
         ch => {
-          log.debug("Creating inbound queue %s", inboundQueueName, inboundExchangeName, id)
-          ch.queueDeclare(inboundQueueName,
+          log.debug("Creating outbound queue %s", outboundQueueName, inboundExchangeName, id)
+          ch.queueDeclare(outboundQueueName,
                           params.durable,
                           params.exclusive,
                           params.autoDelete,
                           params.arguments)
-          log.debug("Binding inbound queue %s %s %s", inboundQueueName, inboundExchangeName, id)
-          ch.queueBind(inboundQueueName, inboundExchangeName, id)
-          log.debug("Binding consumer to %s", inboundQueueName)
+          log.debug("Binding outbound queue %s %s %s", outboundQueueName, inboundExchangeName, id)
+          ch.queueBind(outboundQueueName, inboundExchangeName, id)
+          log.debug("Binding consumer to %s", outboundQueueName)
           val consumer = new BridgeConsumer(ch, handler)
-          ch.basicConsume(inboundQueueName, false, consumer)
+          ch.basicConsume(outboundQueueName, false, consumer)
         }
       }
     }
