@@ -57,9 +57,13 @@ object ReflectiveAccess extends Logging {
     }
 
     // AMQP changes
-    lazy val STORAGE_AND_CONSUME_POLICY = Config.config.getString("akka.remote.layer.amqp.storage.policy","EXCLUSIVE_TRANSIENT")
-    lazy val SERVER_CONNECTION_POLICY   = Config.config.getString("akka.remote.layer.amqp.server.connection.policy","ONE_CONN_PER_NODE")
-    lazy val CLIENT_CONNECTION_POLICY   = Config.config.getString("akka.remote.layer.amqp.client.connection.policy","ONE_CONN_PER_NODE")
+    lazy val STORAGE_AND_CONSUME_POLICY = Config.config.getString("akka.remote.amqp.policy.storage","EXCLUSIVE_TRANSIENT_AUTODELETE")
+    lazy val SERVER_CONNECTION_POLICY   = Config.config.getString("akka.remote.amqp.policy.connection.server","ONE_CONN_PER_NODE")
+    lazy val CLIENT_CONNECTION_POLICY   = Config.config.getString("akka.remote.amqp.policy.connection.client","ONE_CONN_PER_NODE")
+    lazy val BROKER_HOST                = Config.config.getString("akka.remote.amqp.broker.host","localhost")
+    lazy val BROKER_VIRTUAL_HOST        = Config.config.getString("akka.remote.amqp.broker.virtualhost","/actor_host")
+    lazy val BROKER_USERNAME            = Config.config.getString("akka.remote.amqp.broker.username","actor_admin")
+    lazy val BROKER_PASSWORD            = Config.config.getString("akka.remote.amqp.broker.password","actor_admin")
   }
 
   /**

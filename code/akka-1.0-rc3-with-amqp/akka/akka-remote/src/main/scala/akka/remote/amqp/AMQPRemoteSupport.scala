@@ -30,7 +30,7 @@ object AMQPUtil {
     if(list.length == 2){
       InetSocketAddress.createUnresolved(list(0), list(1).toInt)
     }
-    else null
+    else throw new IllegalArgumentException("String %s cannot be converted as InetAddress".format(name))
   }
 
   private[akka] lazy val storagePolicy = {
@@ -366,14 +366,15 @@ private class ClientMessageHandler(val clientModule: AMQPRemoteClientModule,
 }
 
 class AMQPRemoteSupport extends RemoteSupport with AMQPRemoteClientModule with AMQPRemoteServerModule{
+  import AMQPUtil._
   val optimizeLocal = new AtomicBoolean(true)
 
   def optimizeLocalScoped_?() = optimizeLocal.get
 
   protected[akka] def actorFor(serviceId: String, className: String, timeout: Long, host: String, port: Int, loader: Option[ClassLoader]): ActorRef = {
     if (optimizeLocalScoped_?) {
-      val home = this.address
-      if (host == home.getHostName && port == home.getPort) {
+      val home = makeName(this.address)
+      if (home.equalsIgnoreCase(makeName(host, port))) {
         val localRef = findActorByIdOrUuid(serviceId,serviceId)
         if (localRef ne null) return localRef
       }
@@ -383,8 +384,8 @@ class AMQPRemoteSupport extends RemoteSupport with AMQPRemoteClientModule with A
 
   def clientManagedActorOf(factory: () => Actor, host: String, port: Int): ActorRef = {
     if (optimizeLocalScoped_?) {
-      val home = this.address
-      if (host == home.getHostName && port == home.getPort)
+      val home = makeName(this.address)
+      if (home.equalsIgnoreCase(makeName(host, port)))
         return new LocalActorRef(factory, None)
     }
     new LocalActorRef(factory, Some(new InetSocketAddress(host, port)))
@@ -395,7 +396,7 @@ trait AMQPRemoteServerModule extends RemoteServerModule { self: RemoteModule =>
   import AMQPUtil._
   private[akka] val currentServerBridge = new AtomicReference[Option[AMQPRemoteServer]](None)
 
-  /* it does not make much sense for an amqp based transport */
+  /* it does not make much sense for an amqp based transport - it would be better to return an string or an specific type */
   def address = currentServerBridge.get match {
     case Some(ref) => ref.nodeName
     case None => ReflectiveAccess.Remote.configDefaultAddress

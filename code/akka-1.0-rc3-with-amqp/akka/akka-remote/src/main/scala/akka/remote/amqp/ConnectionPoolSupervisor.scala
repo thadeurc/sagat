@@ -6,6 +6,8 @@ import akka.actor.{ActorRef, Exit, Actor}
 import akka.config.Supervision.{Permanent, OneForOneStrategy }
 import java.io.IOException
 import util.{Logging, ControlStructures}
+import akka.util.ReflectiveAccess
+
 
 object ConnectionSharePolicy extends Enumeration {
     val ONE_CONN_PER_CHANNEL = Value("ONE_CONN_PER_CHANNEL", channels = 1)
@@ -19,13 +21,14 @@ import ConnectionSharePolicy._
 
 
 abstract class AbstractConnectionFactory(policy: ConnectionSharePolicyParams) {
+  import ReflectiveAccess.Remote._
   require(policy != null)
   lazy val factory: ConnectionFactory = {
     val cf = new ConnectionFactory
-    cf.setHost("localhost")
-    cf.setUsername("actor_admin")
-    cf.setPassword("actor_admin")
-    cf.setVirtualHost("/actor_host")
+    cf.setHost(BROKER_HOST)
+    cf.setUsername(BROKER_USERNAME)
+    cf.setPassword(BROKER_PASSWORD)
+    cf.setVirtualHost(BROKER_VIRTUAL_HOST)
     cf.setRequestedChannelMax(policy.channels)
     cf.setRequestedHeartbeat(15) /* to confirm the network is ok - value in seconds */
     cf
