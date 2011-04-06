@@ -7,6 +7,7 @@ import akka.config.Supervision.{Permanent, OneForOneStrategy }
 import java.io.IOException
 import util.{Logging, ControlStructures}
 import akka.util.ReflectiveAccess
+import akka.dispatch.Dispatchers
 
 
 object ConnectionSharePolicy extends Enumeration {
@@ -125,12 +126,15 @@ trait AMQPSupervisor {
   }
 }
 
-object AMQPConnectionFactory extends AMQPSupervisor
+object AMQPConnectionFactory extends AMQPSupervisor {
+  lazy val amqpDispatcher = Dispatchers.newExecutorBasedEventDrivenDispatcher("amqp-internal-connection-dispatcher").build
+}
 
 class AMQPConnectionFactory extends Actor {
   self.id = "amqp.supervisor"
   self.lifeCycle = Permanent
   self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 2000)
+  self.dispatcher = AMQPConnectionFactory.amqpDispatcher
 
   def receive = {
     case _ => {}
@@ -143,6 +147,8 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
   self.id = myId
   self.lifeCycle = Permanent
   self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 2000)
+  self.dispatcher = AMQPConnectionFactory.amqpDispatcher
+
   private var readConn:  Option[Connection] = None
   private var writeConn: Option[Connection] = None
 
@@ -298,6 +304,7 @@ class WriteChannelActor extends ChannelActor {
   private var myReturnHandler: Option[MessageHandler] = None
   private var myServerReturnHandler: Option[MessageHandler] = None
   private var myServerConfigs: Option[ServerSetupInfo] = None
+  self.dispatcher = AMQPConnectionFactory.amqpDispatcher
 
   def receive = {
     case StartWriteChannel => {
@@ -401,6 +408,7 @@ class ReadChannelActor extends ChannelActor {
   private var myConfigs: Option[ClientSetupInfo] = None
   private var myServerConfigs: Option[ServerSetupInfo] = None
   private var myServerHandler: Option[MessageHandler] = None
+  self.dispatcher = AMQPConnectionFactory.amqpDispatcher
 
   def receive = {
     case StartReadChannel => {

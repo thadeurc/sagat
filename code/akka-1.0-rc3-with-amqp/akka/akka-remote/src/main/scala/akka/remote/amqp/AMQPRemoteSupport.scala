@@ -200,9 +200,11 @@ trait AMQPRemoteClientModule extends RemoteClientModule { self: ListenerManageme
 }
 
 class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: String, val loader: Option[ClassLoader],
-                       notifyListenersFunction: (=> Any) => Unit) extends Logging {
+                       notifyListenersFunction: (=> Any) => Unit) extends Logging with MessageHandler {
   import AMQPBridge._
   import AMQPUtil._
+
+  loader.foreach(MessageSerializer.setClassLoader(_))
 
   @volatile private var amqpClientBridge: ClientAMQPBridge  = _
   protected val futures = new ConcurrentHashMap[Uuid, CompletableFuture[_]]
@@ -214,7 +216,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
   def connect(reconnectIfAlreadyConnected: Boolean = false): Boolean = {
     runSwitch switchOn {
       // TODO fazer o tratamento de erro
-      amqpClientBridge = createAMQPRemoteClientBridge(nodeName, loader)
+      amqpClientBridge = createAMQPRemoteClientBridge(nodeName)
       notifyListeners(RemoteClientStarted(clientModule, nodeName))
     }
     true
@@ -229,12 +231,13 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
     log.slf4j.info("{} has been shut down", nodeName)
   }
 
-  private def createAMQPRemoteClientBridge(nodeName: String, loader: Option[ClassLoader]): ClientAMQPBridge = {
-    val handler = new ClientMessageHandler(clientModule, loader, futures, supervisors)
-    val bridge = newClientBridge(nodeName, handler, storagePolicy, clientConnectionPolicy)
+  private def createAMQPRemoteClientBridge(nodeName: String): ClientAMQPBridge = {
+    //val handler = new ClientMessageHandler(clientModule, loader, futures, supervisors)
+    //val bridge = newClientBridge(nodeName, this, storagePolicy, clientConnectionPolicy)
     /* FIXME improve - the api for bridge is very fragile */
-    handler.bridge = bridge
-    bridge
+    //handler.bridge = bridge
+    //bridge
+    newClientBridge(nodeName, this, storagePolicy, clientConnectionPolicy)
   }
 
   def send[T](
@@ -297,16 +300,6 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
     if (!actorRef.supervisor.isDefined) throw new IllegalActorStateException(
       "Can't unregister supervisor for " + actorRef + " since it is not under supervision")
     else supervisors.remove(actorRef.supervisor.get.uuid)
-}
-
-private class ClientMessageHandler(val clientModule: AMQPRemoteClientModule,
-                                   val loader: Option[ClassLoader],
-                                   val futures: ConcurrentHashMap[Uuid, CompletableFuture[_]],
-                                   val supervisors: ConcurrentHashMap[Uuid, ActorRef]) extends MessageHandler with Logging {
-  import AMQPUtil._
-  loader.foreach(MessageSerializer.setClassLoader(_))
-
-  @volatile var bridge: ClientAMQPBridge = _
 
   def handleMessageReceived(message: Array[Byte]): Boolean = {
     if(message == null) throw new IllegalActorStateException("Received null message in AMQP Remote Client is null")
@@ -336,7 +329,7 @@ private class ClientMessageHandler(val clientModule: AMQPRemoteClientModule,
         true
     } catch {
       case e: Exception =>
-        clientModule.notifyListeners(RemoteClientError(e, clientModule, bridge.nodeName))
+        clientModule.notifyListeners(RemoteClientError(e, clientModule, nodeName))
         log.slf4j.error("Unexpected exception in remote client handler", e)
         false
         // throw e ???
@@ -363,6 +356,8 @@ private class ClientMessageHandler(val clientModule: AMQPRemoteClientModule,
   def handleRejectedMessage(message: Array[Byte], clientId: String): Unit = {
     // TODO implement me!
   }
+
+
 }
 
 class AMQPRemoteSupport extends RemoteSupport with AMQPRemoteClientModule with AMQPRemoteServerModule{
@@ -527,12 +522,17 @@ trait AMQPRemoteServerModule extends RemoteServerModule { self: RemoteModule =>
     if (_isRunning.isOn) typedActorsFactories.remove(id)
 }
 
-class AMQPRemoteServer(serverModule: AMQPRemoteServerModule, val nodeName: String, val loader: Option[ClassLoader]) {
+class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: String, val loader: Option[ClassLoader])
+  extends MessageHandler with Logging {
   import AMQPBridge._
   import AMQPUtil._
 
-  private val amqpServerBridge = createAMQPRemoteServer(serverModule, nodeName, loader)
-  serverModule.notifyListeners(RemoteServerStarted(serverModule))
+  loader.foreach(MessageSerializer.setClassLoader(_))
+
+  private val amqpServerBridge = createAMQPRemoteServer(nodeName)
+  private val sessionActors = new ConcurrentHashMap[String, ConcurrentHashMap[String, ActorRef]]()
+  private val typedSessionActors = new ConcurrentHashMap[String, ConcurrentHashMap[String, AnyRef]]()
+
 
   def shutdown {
     try {
@@ -543,23 +543,14 @@ class AMQPRemoteServer(serverModule: AMQPRemoteServerModule, val nodeName: Strin
     }
   }
 
-  private def createAMQPRemoteServer(serverModule: AMQPRemoteServerModule, nodeName: String, loader: Option[ClassLoader] = None): ServerAMQPBridge = {
-    val handler = new ServerMessageHandler(serverModule, loader)
-    val bridge = newServerBridge(nodeName, handler, storagePolicy, serverConnectionPolicy)
+  private def createAMQPRemoteServer(nodeName: String): ServerAMQPBridge = {
+    //val handler = new ServerMessageHandler(serverModule, loader)
+    val bridge = newServerBridge(nodeName, this, storagePolicy, serverConnectionPolicy)
     /* FIXME this api is very fragile */
-    handler.bridge = bridge
+    //handler.bridge = bridge
+    serverModule.notifyListeners(RemoteServerStarted(serverModule))
     bridge
   }
-}
-
-private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loader: Option[ClassLoader]) extends MessageHandler with Logging{
-  loader.foreach(MessageSerializer.setClassLoader(_))
-
-  @volatile var bridge: ServerAMQPBridge = _
-
-  val sessionActors = new ConcurrentHashMap[String, ConcurrentHashMap[String, ActorRef]]()
-
-  val typedSessionActors = new ConcurrentHashMap[String, ConcurrentHashMap[String, AnyRef]]()
 
   def handleMessageReceived(message: Array[Byte]): Boolean = {
     if(message == null){
@@ -575,14 +566,14 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
   private def handleRemoteMessageProtocol(request: RemoteMessageProtocol) = {
     log.slf4j.debug("Received RemoteMessageProtocol[\n{}]",request)
     request.getActorInfo.getActorType match {
-      case SCALA_ACTOR => dispatchToActor(request, bridge)
-      case TYPED_ACTOR => dispatchToTypedActor(request, bridge)
+      case SCALA_ACTOR => dispatchToActor(request)
+      case TYPED_ACTOR => dispatchToTypedActor(request)
       case JAVA_ACTOR  => throw new IllegalActorStateException("ActorType JAVA_ACTOR is currently not supported")
       case other       => throw new IllegalActorStateException("Unknown ActorType [" + other + "]")
     }
   }
 
-  private def dispatchToActor(request: RemoteMessageProtocol, bridge: AMQPBridge) {
+  private def dispatchToActor(request: RemoteMessageProtocol) {
 
     val actorInfo = request.getActorInfo
     log.slf4j.debug("Dispatching to remote actor [{}:{}]", actorInfo.getTarget, actorInfo.getUuid)
@@ -590,7 +581,7 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
     val actorRef =
       try { createActor(actorInfo, request.getRemoteClientId).start } catch {
         case e: SecurityException =>
-          bridge.sendMessageTo(createErrorReplyMessage(e, request, AkkaActorType.ScalaActor).toByteArray, Some(request.getRemoteClientId))
+          amqpServerBridge.sendMessageTo(createErrorReplyMessage(e, request, AkkaActorType.ScalaActor).toByteArray, Some(request.getRemoteClientId))
           serverModule.notifyListeners(RemoteServerError(e, serverModule))
           return
       }
@@ -620,7 +611,7 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
               val exception = f.exception
               if (exception.isDefined) {
                 log.slf4j.debug("Returning exception from actor invocation [{}]",exception.get.getClass)
-                bridge.sendMessageTo(createErrorReplyMessage(exception.get, request, AkkaActorType.ScalaActor).toByteArray, Some(request.getRemoteClientId))
+                amqpServerBridge.sendMessageTo(createErrorReplyMessage(exception.get, request, AkkaActorType.ScalaActor).toByteArray, Some(request.getRemoteClientId))
               }
               else if (result.isDefined) {
                 log.slf4j.debug("Returning result from actor invocation [{}]",result.get)
@@ -638,7 +629,7 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
                   None,
                   None)
                 if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
-                bridge.sendMessageTo(messageBuilder.build.toByteArray, Some(request.getRemoteClientId))
+                  amqpServerBridge.sendMessageTo(messageBuilder.build.toByteArray, Some(request.getRemoteClientId))
               }
             }
           )
@@ -646,7 +637,7 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
     }
   }
 
-  private def dispatchToTypedActor(request: RemoteMessageProtocol, bridge: AMQPBridge) = {
+  private def dispatchToTypedActor(request: RemoteMessageProtocol) = {
     val actorInfo = request.getActorInfo
     val typedActorInfo = actorInfo.getTypedActorInfo
     log.slf4j.debug("Dispatching to remote typed actor [{} :: {}]", typedActorInfo.getMethod, typedActorInfo.getInterface)
@@ -674,7 +665,7 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
             None,
             None)
           if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
-          bridge.sendMessageTo(messageBuilder.build.toByteArray, Some(request.getRemoteClientId))
+          amqpServerBridge.sendMessageTo(messageBuilder.build.toByteArray, Some(request.getRemoteClientId))
           log.slf4j.debug("Returning result from remote typed actor invocation [{}]", result)
         } catch {
           case e: Throwable => serverModule.notifyListeners(RemoteServerError(e, serverModule))
@@ -692,10 +683,10 @@ private class ServerMessageHandler(val serverModule: AMQPRemoteServerModule, loa
       }
     } catch {
       case e: InvocationTargetException =>
-        bridge.sendMessageTo(createErrorReplyMessage(e.getCause, request, AkkaActorType.TypedActor).toByteArray, Some(request.getRemoteClientId))
+        amqpServerBridge.sendMessageTo(createErrorReplyMessage(e.getCause, request, AkkaActorType.TypedActor).toByteArray, Some(request.getRemoteClientId))
         serverModule.notifyListeners(RemoteServerError(e, serverModule))
       case e: Throwable =>
-        bridge.sendMessageTo(createErrorReplyMessage(e, request, AkkaActorType.TypedActor).toByteArray, Some(request.getRemoteClientId))
+        amqpServerBridge.sendMessageTo(createErrorReplyMessage(e, request, AkkaActorType.TypedActor).toByteArray, Some(request.getRemoteClientId))
         serverModule.notifyListeners(RemoteServerError(e, serverModule))
     }
   }
