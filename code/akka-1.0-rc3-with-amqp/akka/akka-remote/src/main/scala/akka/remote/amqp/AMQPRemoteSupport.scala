@@ -203,6 +203,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
                        notifyListenersFunction: (=> Any) => Unit) extends Logging with MessageHandler {
   import AMQPBridge._
   import AMQPUtil._
+  import akka.util.ReflectiveAccess.Remote._
 
   loader.foreach(MessageSerializer.setClassLoader(_))
 
@@ -216,7 +217,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
   def connect(reconnectIfAlreadyConnected: Boolean = false): Boolean = {
     runSwitch switchOn {
       // TODO fazer o tratamento de erro
-      amqpClientBridge = createAMQPRemoteClientBridge(nodeName)
+      amqpClientBridge = createAMQPRemoteClientBridge(nodeName, CLIENT_ID_SUFFIX)
       notifyListeners(RemoteClientStarted(clientModule, nodeName))
     }
     true
@@ -231,13 +232,13 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
     log.slf4j.info("{} has been shut down", nodeName)
   }
 
-  private def createAMQPRemoteClientBridge(nodeName: String): ClientAMQPBridge = {
+  private def createAMQPRemoteClientBridge(nodeName: String, idSuffix: String): ClientAMQPBridge = {
     //val handler = new ClientMessageHandler(clientModule, loader, futures, supervisors)
     //val bridge = newClientBridge(nodeName, this, storagePolicy, clientConnectionPolicy)
     /* FIXME improve - the api for bridge is very fragile */
     //handler.bridge = bridge
     //bridge
-    newClientBridge(nodeName, this, storagePolicy, clientConnectionPolicy)
+    newClientBridge(nodeName, this, storagePolicy, clientConnectionPolicy, idSuffix)
   }
 
   def send[T](

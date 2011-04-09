@@ -57,13 +57,14 @@ object ReflectiveAccess extends Logging {
     }
 
     // AMQP changes
-    lazy val STORAGE_AND_CONSUME_POLICY = Config.config.getString("akka.remote.amqp.policy.storage","EXCLUSIVE_TRANSIENT_AUTODELETE")
+    lazy val STORAGE_AND_CONSUME_POLICY = Config.config.getString("akka.remote.amqp.policy.storage.mode","EXCLUSIVE_TRANSIENT_AUTODELETE")
     lazy val SERVER_CONNECTION_POLICY   = Config.config.getString("akka.remote.amqp.policy.connection.server","ONE_CONN_PER_NODE")
     lazy val CLIENT_CONNECTION_POLICY   = Config.config.getString("akka.remote.amqp.policy.connection.client","ONE_CONN_PER_NODE")
     lazy val BROKER_HOST                = Config.config.getString("akka.remote.amqp.broker.host","localhost")
     lazy val BROKER_VIRTUAL_HOST        = Config.config.getString("akka.remote.amqp.broker.virtualhost","/actor_host")
     lazy val BROKER_USERNAME            = Config.config.getString("akka.remote.amqp.broker.username","actor_admin")
     lazy val BROKER_PASSWORD            = Config.config.getString("akka.remote.amqp.broker.password","actor_admin")
+    lazy val CLIENT_ID_SUFFIX           = Config.config.getString("akka.remote.amqp.policy.storage.client_id.suffix", System.currentTimeMillis.toHexString)
   }
 
   /**

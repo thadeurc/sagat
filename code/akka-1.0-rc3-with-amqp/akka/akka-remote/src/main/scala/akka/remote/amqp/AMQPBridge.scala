@@ -30,17 +30,17 @@ object AMQPBridge extends Logging {
       .setup(handler, messageStorePolicy.exchangeParams, messageStorePolicy.queueParams, messageStorePolicy.exchangeParams.fanout)
   }
 
-  def newClientBridge(name: String, handler: MessageHandler): ClientAMQPBridge = {
-    newClientBridge(name, handler, ONE_CONN_PER_NODE)
+  def newClientBridge(name: String, handler: MessageHandler, idSuffix: String): ClientAMQPBridge = {
+    newClientBridge(name, handler, ONE_CONN_PER_NODE, idSuffix)
   }
 
-  def newClientBridge(name: String, handler: MessageHandler, policy: ConnectionSharePolicyParams): ClientAMQPBridge = {
-    newClientBridge(name, handler,  EXCLUSIVE_TRANSIENT, policy)
+  def newClientBridge(name: String, handler: MessageHandler, policy: ConnectionSharePolicyParams, idSuffix: String): ClientAMQPBridge = {
+    newClientBridge(name, handler,  EXCLUSIVE_TRANSIENT, policy, idSuffix)
   }
 
   def newClientBridge(name: String, handler: MessageHandler, messageStorePolicy: MessageStorageAndConsumptionPolicyParams,
-                     policy: ConnectionSharePolicyParams): ClientAMQPBridge = {
-    new ClientAMQPBridge(name, newConnection(name, policy)).setup(handler, messageStorePolicy.queueParams, messageStorePolicy.fanout)
+                     policy: ConnectionSharePolicyParams, idSuffix: String): ClientAMQPBridge = {
+    new ClientAMQPBridge(name, newConnection(name, policy), idSuffix).setup(handler, messageStorePolicy.queueParams, messageStorePolicy.fanout)
   }
 
   def newConnection(name: String, policy: ConnectionSharePolicyParams): SupervisedConnectionWrapper = {
@@ -66,13 +66,12 @@ abstract class AMQPBridge(val nodeName: String,
   }
 }
 
-class ClientAMQPBridge(name: String, connection: SupervisedConnectionWrapper) extends AMQPBridge(name, connection) {
-  import scala.util.Random._
+class ClientAMQPBridge(name: String, connection: SupervisedConnectionWrapper, idSuffix: String) extends AMQPBridge(name, connection) {
 
   private var targetExchange = inboundExchangeName
 
   lazy val id = {
-    "client.%s.%d.%d".format(nodeName, nextInt.abs, nextInt.abs)
+    "client.%s.%s".format(nodeName, idSuffix)
   }
 
   def setup(handler: MessageHandler, queueParams: QueueConfig.QueueParameters, fanout: Boolean): ClientAMQPBridge = {
