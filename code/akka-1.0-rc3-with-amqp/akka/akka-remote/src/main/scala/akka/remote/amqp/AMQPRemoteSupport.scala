@@ -3,7 +3,6 @@ package akka.remote.amqp
 import akka.remoteinterface._
 import java.net.InetSocketAddress
 import java.util.concurrent.ConcurrentHashMap
-import akka.remote.MessageSerializer
 import collection.mutable.HashMap
 import akka.util._
 import akka.actor._
@@ -17,6 +16,7 @@ import akka.remote.protocol.RemoteProtocol._
 import akka.remote.protocol.RemoteProtocol.ActorType._
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicReference}
 import scala.{Either}
+import akka.remote.{RemoteClientSettings, RemoteServerSettings, AMQPSettings, MessageSerializer}
 
 object AMQPUtil {
   import AMQPBridge._
@@ -34,13 +34,13 @@ object AMQPUtil {
   }
 
   private[akka] lazy val storagePolicy = {
-    var param = ReflectiveAccess.Remote.STORAGE_AND_CONSUME_POLICY
-    var result = EXCLUSIVE_TRANSIENT
+    var param = AMQPSettings.STORAGE_AND_CONSUME_POLICY
+    var result = EXCLUSIVE_TRANSIENT_AUTODELETE
     try{
       result = StorageAndConsumptionPolicy.withName(param).asInstanceOf[MessageStorageAndConsumptionPolicyParams]
     }catch {
       case e: NoSuchElementException =>
-        log.warn("Value [{}] for param 'akka.remote.layer.amqp.storage.policy' is not valid. " +
+        log.warn("Value [{}] for param 'akka.remote.amqp.policy.storage.mode' is not valid. " +
           "It should be either {}.\nUsing default value.",
           Array[Any](param, StorageAndConsumptionPolicy.values.toList))
     }
@@ -48,7 +48,7 @@ object AMQPUtil {
   }
 
   private[akka] lazy val serverConnectionPolicy = {
-    var param  = ReflectiveAccess.Remote.SERVER_CONNECTION_POLICY
+    var param  = RemoteServerSettings.AMQP.SERVER_CONNECTION_POLICY
     var result = ONE_CONN_PER_NODE
     try{
       result = ConnectionSharePolicy.withName(param).asInstanceOf[ConnectionSharePolicyParams]
@@ -62,7 +62,7 @@ object AMQPUtil {
   }
 
   private[akka] lazy val clientConnectionPolicy = {
-    var param  = ReflectiveAccess.Remote.CLIENT_CONNECTION_POLICY
+    var param  = RemoteClientSettings.AMQP.CLIENT_CONNECTION_POLICY
     var result = ONE_CONN_PER_NODE
     try{
       result = ConnectionSharePolicy.withName(param).asInstanceOf[ConnectionSharePolicyParams]
@@ -203,7 +203,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
                        notifyListenersFunction: (=> Any) => Unit) extends Logging with MessageHandler {
   import AMQPBridge._
   import AMQPUtil._
-  import akka.util.ReflectiveAccess.Remote._
+  import RemoteClientSettings.AMQP._
 
   loader.foreach(MessageSerializer.setClassLoader(_))
 
@@ -215,12 +215,21 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
   protected def notifyListeners(msg: => Any): Unit = notifyListenersFunction
 
   def connect(reconnectIfAlreadyConnected: Boolean = false): Boolean = {
+    var result = false
     runSwitch switchOn {
-      // TODO fazer o tratamento de erro
-      amqpClientBridge = createAMQPRemoteClientBridge(nodeName, CLIENT_ID_SUFFIX)
-      notifyListeners(RemoteClientStarted(clientModule, nodeName))
+      try{
+        amqpClientBridge = createAMQPRemoteClientBridge(nodeName, CLIENT_ID_SUFFIX)
+        notifyListeners(RemoteClientStarted(clientModule, nodeName))
+        result = true
+      }catch {
+        case e: Throwable => {
+          notifyListeners(RemoteClientError(e, clientModule, nodeName))
+          log.slf4j.error("Remote client connection to [{}] has failed", nodeName)
+          log.slf4j.debug("Remote client connection failed", e)
+        }
+      }
     }
-    true
+    result
   }
 
   def shutdown: Boolean =
@@ -233,11 +242,6 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
   }
 
   private def createAMQPRemoteClientBridge(nodeName: String, idSuffix: String): ClientAMQPBridge = {
-    //val handler = new ClientMessageHandler(clientModule, loader, futures, supervisors)
-    //val bridge = newClientBridge(nodeName, this, storagePolicy, clientConnectionPolicy)
-    /* FIXME improve - the api for bridge is very fragile */
-    //handler.bridge = bridge
-    //bridge
     newClientBridge(nodeName, this, storagePolicy, clientConnectionPolicy, idSuffix)
   }
 
@@ -555,8 +559,7 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
 
   def handleMessageReceived(message: Array[Byte]): Boolean = {
     if(message == null){
-      // TODO return false here?
-      throw new IllegalActorStateException("Received null message in AMQP Remote Server is null")
+      throw new IllegalStateException("Received null message in AMQP Remote Server")
     }
     else {
       handleRemoteMessageProtocol(RemoteMessageProtocol.parseFrom(message))

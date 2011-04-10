@@ -6,8 +6,8 @@ import akka.actor.{ActorRef, Exit, Actor}
 import akka.config.Supervision.{Permanent, OneForOneStrategy }
 import java.io.IOException
 import util.{Logging, ControlStructures}
-import akka.util.ReflectiveAccess
 import akka.dispatch.Dispatchers
+import akka.remote.AMQPSettings
 
 
 object ConnectionSharePolicy extends Enumeration {
@@ -22,7 +22,7 @@ import ConnectionSharePolicy._
 
 
 abstract class AbstractConnectionFactory(policy: ConnectionSharePolicyParams) {
-  import ReflectiveAccess.Remote._
+  import AMQPSettings._
   require(policy != null)
   lazy val factory: ConnectionFactory = {
     val cf = new ConnectionFactory
@@ -127,14 +127,14 @@ trait AMQPSupervisor {
 }
 
 object AMQPConnectionFactory extends AMQPSupervisor {
-  lazy val amqpDispatcher = Dispatchers.newExecutorBasedEventDrivenDispatcher("amqp-internal-connection-dispatcher").build
+  lazy val AMQPDISPATCHER = Dispatchers.newExecutorBasedEventDrivenDispatcher("amqp-internal-connection-dispatcher").build
 }
 
 class AMQPConnectionFactory extends Actor {
   self.id = "amqp.supervisor"
   self.lifeCycle = Permanent
   self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 2000)
-  self.dispatcher = AMQPConnectionFactory.amqpDispatcher
+  self.dispatcher = AMQPConnectionFactory.AMQPDISPATCHER
 
   def receive = {
     case _ => {}
@@ -147,7 +147,7 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
   self.id = myId
   self.lifeCycle = Permanent
   self.faultHandler = OneForOneStrategy(List(classOf[Throwable]), 5, 2000)
-  self.dispatcher = AMQPConnectionFactory.amqpDispatcher
+  self.dispatcher = AMQPConnectionFactory.AMQPDISPATCHER
 
   private var readConn:  Option[Connection] = None
   private var writeConn: Option[Connection] = None
@@ -304,7 +304,7 @@ class WriteChannelActor extends ChannelActor {
   private var myReturnHandler: Option[MessageHandler] = None
   private var myServerReturnHandler: Option[MessageHandler] = None
   private var myServerConfigs: Option[ServerSetupInfo] = None
-  self.dispatcher = AMQPConnectionFactory.amqpDispatcher
+  self.dispatcher = AMQPConnectionFactory.AMQPDISPATCHER
 
   def receive = {
     case StartWriteChannel => {
@@ -342,9 +342,6 @@ class WriteChannelActor extends ChannelActor {
         ch => ch.setReturnListener(new ReturnListener {
         override def handleBasicReturn(rejectCode: Int, replyText: String, exchange: String, routingKey: String,
                         properties: AMQP.BasicProperties, message: Array[Byte]) {
-            /* TODO melhorar esse callback. acho que vou precisar de outras informacoes
-            println("mensagem rejeitada")
-            println("%d %s %s %s %s".format(rejectCode, replyText, exchange, routingKey, new String(message))) */
             myReturnHandler.get.handleRejectedMessage(message, routingKey)
           }
         })
@@ -392,9 +389,6 @@ class WriteChannelActor extends ChannelActor {
         ch.setReturnListener(new ReturnListener {
           override def handleBasicReturn(rejectCode: Int, replyText: String, exchange: String, routingKey: String,
                         properties: AMQP.BasicProperties, message: Array[Byte]){
-            /* TODO melhorar esse callback. acho que vou precisar de outras informacoes
-            println("mensagem rejeitada")
-            println("%d %s %s %s %s".format(rejectCode, replyText, exchange, routingKey, new String(message))) */
             myServerReturnHandler.get.handleRejectedMessage(message, routingKey)
           }
         })
@@ -408,7 +402,7 @@ class ReadChannelActor extends ChannelActor {
   private var myConfigs: Option[ClientSetupInfo] = None
   private var myServerConfigs: Option[ServerSetupInfo] = None
   private var myServerHandler: Option[MessageHandler] = None
-  self.dispatcher = AMQPConnectionFactory.amqpDispatcher
+  self.dispatcher = AMQPConnectionFactory.AMQPDISPATCHER
 
   def receive = {
     case StartReadChannel => {

@@ -17,6 +17,20 @@ object RemoteClientSettings {
   val READ_TIMEOUT       = Duration(config.getInt("akka.remote.client.read-timeout", 1), TIME_UNIT)
   val RECONNECT_DELAY    = Duration(config.getInt("akka.remote.client.reconnect-delay", 5), TIME_UNIT)
   val MESSAGE_FRAME_SIZE = config.getInt("akka.remote.client.message-frame-size", 1048576)
+
+  object AMQP{
+    lazy val CLIENT_CONNECTION_POLICY   = config.getString("akka.remote.amqp.policy.connection.client","ONE_CONN_PER_NODE")
+    lazy val CLIENT_ID_SUFFIX           = config.getString("akka.remote.amqp.policy.storage.client_id.suffix", System.currentTimeMillis.toHexString)
+  }
+}
+
+
+object AMQPSettings{
+  lazy val BROKER_HOST                = config.getString("akka.remote.amqp.broker.host","localhost")
+  lazy val BROKER_VIRTUAL_HOST        = config.getString("akka.remote.amqp.broker.virtualhost","/actor_host")
+  lazy val BROKER_USERNAME            = config.getString("akka.remote.amqp.broker.username","actor_admin")
+  lazy val BROKER_PASSWORD            = config.getString("akka.remote.amqp.broker.password","actor_admin")
+  lazy val STORAGE_AND_CONSUME_POLICY = config.getString("akka.remote.amqp.policy.storage.mode","EXCLUSIVE_TRANSIENT_AUTODELETE")
 }
 
 object RemoteServerSettings {
@@ -42,25 +56,9 @@ object RemoteServerSettings {
     level
   }
 
-  val SECURE = {
-    /*if (config.getBool("akka.remote.ssl.service",false)) {
-      val properties = List(
-        ("key-store-type"  , "keyStoreType"),
-        ("key-store"       , "keyStore"),
-        ("key-store-pass"  , "keyStorePassword"),
-        ("trust-store-type", "trustStoreType"),
-        ("trust-store"     , "trustStore"),
-        ("trust-store-pass", "trustStorePassword")
-        ).map(x => ("akka.remote.ssl." + x._1, "javax.net.ssl." + x._2))
+  val SECURE = false
 
-      // If property is not set, and we have a value from our akka.conf, use that value
-      for {
-        p <- properties if System.getProperty(p._2) eq null
-        c <- config.getString(p._1)
-      } System.setProperty(p._2, c)
-
-      if (config.getBool("akka.remote.ssl.debug", false)) System.setProperty("javax.net.debug","ssl")
-      true
-    } else */false
+  object AMQP{
+    lazy val SERVER_CONNECTION_POLICY   = config.getString("akka.remote.amqp.policy.connection.server","ONE_CONN_PER_NODE")
   }
 }
