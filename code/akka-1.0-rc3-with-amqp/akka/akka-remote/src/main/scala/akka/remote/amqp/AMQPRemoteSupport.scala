@@ -359,7 +359,8 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
   }
 
   def handleRejectedMessage(message: Array[Byte], clientId: String): Unit = {
-    // TODO implement me!
+    log.warn("Message %s sent to client %s has been rejected. The corresponding queue might not exist"
+      .format(message.toString, clientId))
   }
 
 
@@ -549,10 +550,7 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
   }
 
   private def createAMQPRemoteServer(nodeName: String): ServerAMQPBridge = {
-    //val handler = new ServerMessageHandler(serverModule, loader)
     val bridge = newServerBridge(nodeName, this, storagePolicy, serverConnectionPolicy)
-    /* FIXME this api is very fragile */
-    //handler.bridge = bridge
     serverModule.notifyListeners(RemoteServerStarted(serverModule))
     bridge
   }
@@ -837,7 +835,8 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
   }
 
   def handleRejectedMessage(message: Array[Byte], clientId: String): Unit = {
-
+      log.warn("Message %s sent to client %s has been rejected. The corresponding queue might not exist"
+        .format(message.toString, clientId))
   }
 
   protected def parseUuid(protocol: UuidProtocol): Uuid = uuidFrom(protocol.getHigh,protocol.getLow)
