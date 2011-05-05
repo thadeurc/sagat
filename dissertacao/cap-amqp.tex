@@ -1,0 +1,117 @@
+%% ------------------------------------------------------------------------- %%
+\chapter{O Padrão AMQP}
+%% \section{Fundamentos}\index{atores!fundamentos}
+\label{cap:amqp}
+	AMQP (\english{Advanced Message Queuing Protocol}) é um protocolo aberto para 
+	sistemas corporativos de troca de mensagens. Especificado pelo AMQP \english{Working Group}, 
+	o protocolo permite completa interoperabilidade para \english{middleware} 
+	orientado a mensagens. A especificação define não somente o protocolo de rede, 
+	mas também a semântica dos serviços do da aplicação servidora. Também é parte 
+	do foco que capacidades providas por sistemas de \english{middleware} orientados 
+	a mensagem possam estar pervasivamente disponíveis nas redes das empresas, 
+	incentivando o desenvolvimento de aplicações interoperáveis baseadas em troca 
+	de mensagens~\cite{amqp-spec}.
+	
+	Os componentes principais do modelo AMQP são: 
+	\begin{itemize}
+		\item Servidor: É o processo,  conhecido também como \english{broker}, que 
+		aceita conexões de clientes e implementa as funções de filas de mensagens e 
+		roteamento.
+		  
+		\item Filas: São entidades internas do servidor que armazenam as mensagens, 
+		tanto em memória quanto em disco, até que elas sejam enviadas em sequência para 
+		as aplicações consumidoras. As filas são totalmente independentes umas das outras. 
+		Na criação de uma fila, várias propriedades podem ser especificadas: a fila de ser 
+		pública ou privada, armazenar mensagens de modo durável ou transiente, e ter 
+		existência permanente ou temporária (e.g.: a existência da fila é vinculada ao ciclo 
+		de vida de uma aplicação consumidora). A combinação de propriedades como essas viabiliza 
+		a criação de diversos tipos de fila, como por exemplo: fila armazena-e-encaminha 
+		(\english{store-and-forward}), que armazena as mensagens e as distribui para vários 
+		consumidores na forma \english{round-robin}, fila temporária para resposta, que 
+		armazena as mensagens e as encaminha para um  único consumidor; e fila \english{pub-sub}, 
+		que armazena mensagens provenientes de vários produtores e as envia para um único 
+		consumidor.
+		  
+		\item \english{Exchanges}: São entidades internas do servidor que recebem e roteiam 
+		as mensagens das aplicações produtoras para as filas, levando em conta critérios 
+		pré-definidos (\english{bindings}). Essas entidades inspecionam as mensagens, verificando, 
+		na maioria dos casos, a chave de roteamento presente no cabeçalho de cada mensagem. 
+		Com o auxílio da tabela de \english{bindings}, uma \english{exchange} decide como 
+		encaminhar as mensagens às respectivas filas, jamais armazenado mensagens.
+		  
+		\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas. 
+		Esses relacionamentos definem como deverá ser feito o roteamento das mensagens.
+		  
+		\item \english{Virtual hosts}: São coleções de \english{exchanges}, filas e 
+		objetos associados. \english{Virtual hosts} são domínios independentes no servidor 
+		e compartilham um ambiente comum para autenticação e segurança. As aplicações
+		clientes escolhem um \english{virtual host} após se autenticarem no servidor.		  			
+	\end{itemize}	
+	
+	A figura~\ref{fig:amqp_overview} mostra os componentes acima descritos e os 
+	relacionamentos entre esses componentes. 
+	\vspace{1ex}
+	\begin{figure}[hbtp]
+	  \centering
+	  \includegraphics{amqp-overview}
+	  \caption{Visão geral dos componentes do modelo AMQP.}
+	  \label{fig:amqp_overview}
+	\end{figure}
+        
+	Em modelos pré-AMQP, as tarefas das \english{exchanges} e das filas eram 
+	feitas por blocos monolíticos que implementavam tipos específicos de
+	roteamento e armazenamento. O modelo AMQP separa essas tarefas e as atribui a 
+	entidades distintas (\english{exchanges} e filas), que têm os seguintes
+	papéis: \entry{(i)} receber as mensagens e fazer o roteamento para as filas; 
+	\entry{(ii)} armazenar as mensagens e fazer o encaminhamento para as aplicações
+	consumidoras. Vale frisar que filas, \english{exchanges} e \english{bindings} 
+	podem ser criados tanto de modo programático como por meio de ferramentas 
+	administrativas.
+	
+	Há uma analogia entre o modelo AMQP e sistemas de email:
+	\begin{enumerate}	
+		\item Uma mensagem AMQP é análoga a uma mensagem de \english{email}.
+		
+		\item Uma fila é análoga a uma caixa de mensagens.
+		
+		\item Um consumidor corresponde a um cliente de \english{email} que carrega e 
+		apaga as mensagens.
+		
+		\item Uma \english{exchange} corresponde a um \english{mail transfer agent} (MTA) 
+		que inspeciona as mensagens e, com base nas chaves de roteamento, 
+		verifica as tabelas de registro e decide como enviar as mensagens para uma 
+		ou mais caixas de mensagens. No caso do correio eletrônico as chaves de 
+		roteamento são os campos de destinatário e cópias (To, Cc e Bcc).
+		
+		\item Um \english{binding} corresponde a uma entrada nas tabelas de roteamento 
+		do MTA.		
+	\end{enumerate}
+        
+	Para enviar uma mensagem, uma aplicação produtora especifica uma determinada 
+	\english{exchange} de um determinado \english{virtual host}, uma rotulação com 
+	informação de roteamento e eventualmente algumas propriedades adicionais, bem
+	como os dados do corpo da mensagem. Uma vez que a mensagem tenha sido recebida 
+	no servidor AMQP, ocorre o roteamento para uma ou mais filas do conjunto de 
+	filas do \english{virtual host} especificado. No caso de não ser possível rotear a 
+	mensagem, seja qual for o motivo, as opções  são: rejeitar a mensagem, descartá-la 
+	silenciosamente, ou ainda fazer o roteamento para uma \english{exchange} alternativa. 
+	A escolha depende do comportamento definido pelo produtor. Quando a mensagem
+	é depositada em alguma fila (ou possivelmente em algumas filas), a fila tenta repassá-la 
+	imediatamente para a aplicação consumidora. Caso isso não seja possível, a fila mantém a 
+	mensagem armazenada para uma futura tentativa de entrega. Uma vez que a mensagem foi 
+	entregue com sucesso a um consumidor, ela é removida da fila. 
+	A figura~\ref{fig:amqp-message-flow} mostra o envio e recebimento de uma mensagem.
+        
+	\vspace{1ex}
+	\begin{figure}[hbtp]
+	  \centering
+	  \includegraphics{amqp-message-flow}
+	  \caption{Visão geral do fluxo de uma mensagem desde o produtor até o seu consumidor.}
+	  \label{fig:amqp-message-flow}
+	\end{figure}
+        
+	A aceitação ou confirmação de recebimento de uma mensagem fica a critério da aplicação 
+	consumidora, podendo acontecer imediatamente depois da retirada da mensagem da fila ou
+	após a aplicação consumidora ter processado a mensagem.
+
+

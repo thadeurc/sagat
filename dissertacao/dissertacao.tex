@@ -143,16 +143,17 @@ basicstyle={\small\ttfamily}
     {\texttt{#1}}
 
 \newcommand{\entry}[1]
-    {\textit{#1}\xspace}
+    {\textit{#1}}
 
 \newcommand{\english}[1]
-    {\textit{#1}\xspace}
+    {\textit{#1}}
 
 \def \chapterautorefname{Capítulo}
 \def \sectionautorefname{Seção}
 \def \subsectionautorefname{Seção}
 \def \figureautorefname{Figura}
 
+\setlength{\parskip}{.5pc} 	 	 % espaçamento entre paragráfos
 
 % ---------------------------------------------------------------------------- %
 % Corpo do texto
@@ -167,6 +168,7 @@ basicstyle={\small\ttfamily}
 
 \onehalfspacing  % espaçamento
 
+
 % ---------------------------------------------------------------------------- %
 % CAPA
 % Nota: O título para as teses/dissertações do IME-USP devem caber em um 
@@ -174,7 +176,7 @@ basicstyle={\small\ttfamily}
 \thispagestyle{empty}
 \begin{center}
     \vspace*{2.3cm}
-    \textbf{\Large{Uso do Protocolo AMQ para o Transporte de Mensagens entre Atores Remotos}}\\
+    \textbf{\Large{Uso do Protocolo AMQP para o Transporte de Mensagens entre Atores Remotos}}\\
     
     \vspace*{1.2cm}
     \Large{Thadeu de Russo e Carmo}
@@ -192,7 +194,7 @@ basicstyle={\small\ttfamily}
     Mestre em Ciências}
     
     \vskip 1.5cm
-    Programa: Nome do Programa\\
+    Programa: Ciência da Computação\\
     Orientador: Prof. Dr. Francisco Carlos da Rocha Reverbel\\
 
    	\vskip 1cm
@@ -297,18 +299,19 @@ Abstract ...
 % ---------------------------------------------------------------------------- %
 \chapter{Lista de Abreviaturas}
 \begin{tabular}{ll}
-         CFT         & Transformada contínua de Fourier (\emph{Continuous Fourier Transform})\\
-         DFT         & Transformada discreta de Fourier (\emph{Discrete Fourier Transform})\\
-        EIIP         & Potencial de interação elétron-íon (\emph{Electron-Ion Interaction Potentials})\\
-        STFT         & Tranformada de Fourier de tempo reduzido (\emph{Short-Time Fourier Transform})\\
+%         CFT         & Transformada contínua de Fourier (\emph{Continuous Fourier Transform})\\
+%         DFT         & Transformada discreta de Fourier (\emph{Discrete Fourier Transform})\\
+%        EIIP         & Potencial de interação elétron-íon (\emph{Electron-Ion Interaction Potentials})\\
+%        STFT         & Tranformada de Fourier de tempo reduzido (\emph{Short-Time Fourier Transform})\\
+         AMQP         & Protocolo Avançado para Enfileramento de Mensagens (\emph{Advanced Message Queuing Protocol})\\
 \end{tabular}
 
 % ---------------------------------------------------------------------------- %
 \chapter{Lista de Símbolos}
 \begin{tabular}{ll}
-        $\omega$    & Frequência angular\\
-        $\psi$      & Função de análise \emph{wavelet}\\
-        $\Psi$      & Transformada de Fourier de $\psi$\\
+%        $\omega$    & Frequência angular\\
+%        $\psi$      & Função de análise \emph{wavelet}\\
+%        $\Psi$      & Transformada de Fourier de $\psi$\\
 \end{tabular}
 
 % ---------------------------------------------------------------------------- %
@@ -329,6 +332,8 @@ Abstract ...
 \input cap-introducao        % associado ao arquivo: 'cap-introducao.tex'
 \input cap-conceitos         % associado ao arquivo: 'cap-conceitos.tex'
 \input cap-conclusoes        % associado ao arquivo: 'cap-conclusoes.tex'
+\input cap-atores			 % associado ao arquivo: 'cap-atores.tex'
+\input cap-amqp			 	 % associado ao arquivo: 'cap-amqp.tex'
 
 % cabeçalho para os apêndices
 \renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\appendixname\ \thechapter}} {\MakeUppercase{#1}} }
@@ -345,11 +350,11 @@ Abstract ...
 
 % ---------------------------------------------------------------------------- %
 % Índice remissivo
-\index{TBP|see{periodicidade região codificante}}
-\index{DSP|see{processamento digital de sinais}}
-\index{STFT|see{transformada de Fourier de tempo reduzido}}
-\index{DFT|see{transformada discreta de Fourier}}
-\index{Fourier!transformada|see{transformada de Fourier}}
+%\index{TBP|see{periodicidade região codificante}}
+%\index{DSP|see{processamento digital de sinais}}
+%\index{STFT|see{transformada de Fourier de tempo reduzido}}
+%\index{DFT|see{transformada discreta de Fourier}}
+%\index{Fourier!transformada|see{transformada de Fourier}}
 
 \printindex   % imprime o índice remissivo no documento 
 
