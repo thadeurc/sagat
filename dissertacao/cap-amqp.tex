@@ -1,18 +1,47 @@
 %% ------------------------------------------------------------------------- %%
 \chapter{O Padrão AMQP}
-%% \section{Fundamentos}\index{atores!fundamentos}
 \label{cap:amqp}
-	AMQP (\english{Advanced Message Queuing Protocol}) é um protocolo aberto para 
-	sistemas corporativos de troca de mensagens. Especificado pelo AMQP \english{Working Group}, 
+	AMQP \cite{amqp} (\english{Advanced Message Queuing Protocol}) é um 
+	protocolo aberto para sistemas corporativos de troca de mensagens. 
+	Especificado pelo AMQP \english{Working Group}, 
 	o protocolo permite completa interoperabilidade para \english{middleware} 
 	orientado a mensagens. A especificação define não somente o protocolo de rede, 
-	mas também a semântica dos serviços do da aplicação servidora. Também é parte 
+	mas também a semântica dos serviços da aplicação servidora. Também é parte 
 	do foco que capacidades providas por sistemas de \english{middleware} orientados 
 	a mensagem possam estar pervasivamente disponíveis nas redes das empresas, 
 	incentivando o desenvolvimento de aplicações interoperáveis baseadas em troca 
-	de mensagens~\cite{amqp-spec}.
+	de mensagens. 
 	
-	Os componentes principais do modelo AMQP são: 
+	O protocolo AMQP é um protocolo binário, assíncrono, seguro, portável, 
+	neutro e eficiente, sendo também multi canal. 
+	Na especificação \cite{amqp-spec}, o protocolo é dividido em em três camadas, 
+	mostradas na figura \ref{fig:protocol_overview}).	
+
+	\begin{figure}[!h]
+  		\centering
+		\includegraphics{protocol_overview} 
+	  	\caption{Camadas do protocolo AMQP.}
+	  	\label{fig:protocol_overview}
+	\end{figure}
+	
+	Nas seções seguintes descrevemos as camadas do protocolo AMQP.
+	A camada de modelo, que é a camada que define o conjunto de objetos que 
+	utilizamos em nosso trabalho, como interagimos com a camada de sessão 
+	pelo uso da biblioteca para clientes Java, e comentamos brevemente sobre
+	a camada de transporte, pois seus detalhes não se enquadram no escopo deste 
+	trabalho.
+
+\section{A camada de modelo}		
+	\label{sec:amqp-modelo}
+	\index{AMQP!Padrão!Modelo}
+	A camada de modelo é responsável pela definição do conjunto de comandos
+	e dos objetos que as aplicações podem utilizar, como por exemplo, filas. 
+	A especificação dos requisítos para essa camada possui, entre outros itens: 
+	garantir a interoperabilidade das implementações, prover controle explícito
+	sobre a qualidade do serviço, proporcionar um mapeamento fácil entre os 
+	comandos e as bibliotecas de nível de aplicação e ter clareza, de modo 
+	que cada comando seja responsável por uma única ação. Os componentes são: 
+
 	\begin{itemize}
 		\item Servidor: É o processo,  conhecido também como \english{broker}, que 
 		aceita conexões de clientes e implementa as funções de filas de mensagens e 
@@ -34,13 +63,14 @@
 		  
 		\item \english{Exchanges}: São entidades internas do servidor que recebem e roteiam 
 		as mensagens das aplicações produtoras para as filas, levando em conta critérios 
-		pré-definidos (\english{bindings}). Essas entidades inspecionam as mensagens, verificando, 
-		na maioria dos casos, a chave de roteamento presente no cabeçalho de cada mensagem. 
+		pré-definidos. Essas entidades inspecionam as mensagens, verificando, 
+		na maioria dos casos, a chave de roteamento presente no cabeçalho de cada mensagem. 		
 		Com o auxílio da tabela de \english{bindings}, uma \english{exchange} decide como 
 		encaminhar as mensagens às respectivas filas, jamais armazenado mensagens.
 		  
 		\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas. 
 		Esses relacionamentos definem como deverá ser feito o roteamento das mensagens.
+		
 		  
 		\item \english{Virtual hosts}: São coleções de \english{exchanges}, filas e 
 		objetos associados. \english{Virtual hosts} são domínios independentes no servidor 
@@ -48,8 +78,9 @@
 		clientes escolhem um \english{virtual host} após se autenticarem no servidor.		  			
 	\end{itemize}	
 	
-	A figura~\ref{fig:amqp_overview} mostra os componentes acima descritos e os 
+	A figura \ref{fig:amqp_overview} mostra os componentes acima descritos e os 
 	relacionamentos entre esses componentes. 
+	
 	\vspace{1ex}
 	\begin{figure}[hbtp]
 	  \centering
@@ -114,4 +145,28 @@
 	consumidora, podendo acontecer imediatamente depois da retirada da mensagem da fila ou
 	após a aplicação consumidora ter processado a mensagem.
 
+\section{A camada de sessão}		
+	\index{AMQP!Padrão!Sessão}
+	\label{sec:amqp-sessao}
+
+	A camada de sessão, por sua vez age como uma interface entre a camada de modelo
+	e a camada de transporte, proporcionando confiabilidade à transmissão de comandos
+	para a aplicação servidora. É parte das suas responsabilidades dar confiabilidade
+	as interações entre aplicações ciente e a aplicação servidora.
+	
+	Continuar daqui...
+
+\section{A camada de transporte}
+	\label{sec:amqp-modelo}
+	\index{AMQP!Padrão!Transporte}
+
+	A camada de transporte é responsável por tarefas como 
+	multiplexação de canais, detecção de falhas, representação de dados e 
+	janelamento (\english{framing}).  A lista dos requisítos dessa camada 
+	inclui, entre outros itens: possuir uma representação de dados binária 
+	e compacta que seja rápida de se embrulhar e desembrulhar, trabalhar 
+	com mensagens sem um limite significante de tamanho, permitir que 
+	sessões não sejam perdidas no caso de falhas de rede ou de aplicação, 
+	possuir assincronidade e neutralidade em relação a linguagens de 
+	programação. 
 
