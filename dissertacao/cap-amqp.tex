@@ -1,6 +1,7 @@
 %% ------------------------------------------------------------------------- %%
 \chapter{O Padrão AMQP}
 \label{cap:amqp}
+\index{AMQP!Padrão}
 	AMQP \cite{amqp} (\english{Advanced Message Queuing Protocol}) é um 
 	protocolo aberto para sistemas corporativos de troca de mensagens. 
 	Especificado pelo AMQP \english{Working Group}, 
@@ -14,7 +15,7 @@
 	
 	O protocolo AMQP é um protocolo binário, assíncrono, seguro, portável, 
 	neutro e eficiente, sendo também multi canal. 
-	Na especificação \cite{amqp-spec}, o protocolo é dividido em em três camadas, 
+	Na especificação \cite{amqp-spec}, o protocolo é dividido em três camadas, 
 	mostradas na figura \ref{fig:protocol_overview}).	
 
 	\begin{figure}[!h]
@@ -26,10 +27,11 @@
 	
 	Nas seções seguintes descrevemos as camadas do protocolo AMQP.
 	A camada de modelo, que é a camada que define o conjunto de objetos que 
-	utilizamos em nosso trabalho, como interagimos com a camada de sessão 
-	pelo uso da biblioteca para clientes Java, e comentamos brevemente sobre
-	a camada de transporte, pois seus detalhes não se enquadram no escopo deste 
-	trabalho.
+	utilizamos em nosso trabalho, a camada de sessão que age como intermediária
+	entre as camadas de modelo e transporte, e comentamos brevemente sobre a 
+	camada de transporte, pois seus detalhes não se enquadram no escopo 
+	deste trabalho. Apresentamos também algumas implementações do padrão e
+	nossa escolha para este trabalho.
 
 \section{A camada de modelo}		
 	\label{sec:amqp-modelo}
@@ -149,15 +151,56 @@
 	\index{AMQP!Padrão!Sessão}
 	\label{sec:amqp-sessao}
 
-	A camada de sessão, por sua vez age como uma interface entre a camada de modelo
-	e a camada de transporte, proporcionando confiabilidade à transmissão de comandos
-	para a aplicação servidora. É parte das suas responsabilidades dar confiabilidade
-	as interações entre aplicações ciente e a aplicação servidora.
+	A camada de sessão, por sua vez age como uma intermediária entre a camada de modelo
+	e a camada de transporte, proporcionando confiabilidade para a transmissão de comandos
+	à aplicação servidora. É parte das suas responsabilidades dar confiabilidade
+	às interações entre aplicações ciente e a aplicação servidora.
 	
-	Continuar daqui...
+	Sessões são interações nomeadas entre um cliente e um servidor AMQP
+	(também chamados de pares (\english{peers})). Todos os comandos,
+	como por exemplo envios de mensagens e criações de filas ou \english{exchanges}, devem
+	acontecer no contexto de uma sessão. O ciclo de vida de alguns dos objetos da camada
+	modelo como filas, \english{exchanges} e \english{bindings} podem ser limitados ao
+	escopo de uma sessão. 
+	
+	Os principais serviços providos pela camada de sessão para a camada de modelo são:
+	\begin{itemize}
+		\item Identificação sequencial dos comandos: Cada comando emitido pelos pares
+		é identificado única e individualmente dentro da sessão, para que o sistema 
+		seja capaz de garantir sua execução exatamente uma vez. Utiliza-se um esquema
+		de numeração sequencial. A noção de idenficação permite a correlação de comandos
+		e o retorno de resultados assíncronos. O identificador do comando é disponibilizado
+		para a camada de modelo e, quando um resultado é retornado para um comando, o
+		identificador desse comando é utilizado para estabelecer a correlação entre o
+		comando e o resultado.
+		
+		\item Confirmação que comandos serão executados: É utilizado para que o par 
+		solicitante possa seguramente descartar o estado associado a um comando, 
+		com a certeza de que ele será executado. A camada de sessão controla o envio
+		e recebimento das confirmações permitindo o gerenciamento do estado a ser mantido
+		na sessão corrente. O estado da sessão é importante para que o sistema possa se
+		recuperar no caso de falhas temporárias em um dos pares. As confirmações podem
+		ser entregues em lotes ou mesmo serem deferidas indefinidamente no caso do par
+		solicitante não requerer a confirmação de que o comando será executado.
+		
+		\item Notificação de comandos completados: Diferente do conceito de confirmação,
+		este serviço informa o par que solicitou a execução de um comando que esse foi
+		executado por completo. As notificações de comandos completados tem como motivação
+		a sincronização e a garantia de ordem de execução entre diferentes sessões. Quando
+		o par que solicitou a execução do comando não exige confirmação imediata, as 
+		confirmações podem ser acumuladas e enviadas em lotes, reduzindo o tráfego de rede.
+		
+		\item Reenvio e recuperação em caso de falhas de rede: Para que o sistema possa
+		se recuperar no caso de falhas de rede, a sessão deve ser capaz de reenviar comandos
+		cujos recebimentos pelo outro par são duvidosos. A camada de sessão provê as
+		ferramentas necessárias para identificar o conjunto com os comandos rotulados
+		como duvidosos, e reenviá-los sem o risco de causar duplicidade.
+	\end{itemize}
+		
+	
 
 \section{A camada de transporte}
-	\label{sec:amqp-modelo}
+	\label{sec:amqp-transporte}
 	\index{AMQP!Padrão!Transporte}
 
 	A camada de transporte é responsável por tarefas como 
@@ -170,3 +213,68 @@
 	possuir assincronidade e neutralidade em relação a linguagens de 
 	programação. 
 
+
+\section{Implementações}	
+	\label{sec:amqp-implementacoes}
+	\index{AMQP!Padrão!Implementações}
+	
+	Dentre as implementações de \english{message brokers} baseados no protocolo AMQP
+	disponíveis, destacamos Apache Qpid \cite{qpid}, ZeroMQ \cite{zeromq} e 
+	RabbitMQ \cite{rabbitmq}. 	
+	
+	A implementação feita no projeto Apache Qpid é uma implementação com código
+	aberto feita em Java e em C++, com bibliotecas para aplicações cliente em 
+	diversas linguagens, como Java, C++, Ruby, Python e C\#.Net. A implementação da 
+	biblioteca cliente para Java é compatível com o a versão $1.1$ do padrão Java 
+	\english{Message Service} \cite{jms}. A implementação está disponível sob a licença 
+	Apache $2.0$ \cite{apache-lic}.
+	
+	O projeto ZeroMQ também é uma implementação com código aberto feita em C++, com
+	bibliotecas disponibilizadas para aplicações cliente em mais de $20$ linguagens,
+	incluindo Java, Python, C++ e C. A implementação para clientes Java depende de
+	bibliotecas nativas compiladas para cada sistema operacional suportado. 
+	A implementação está disponível sob a licença LGPL \cite{lgpl}.
+	
+	O projeto RabbitMQ é implementado na linguagem Erlang, e também possui bibliotecas
+	para aplicações cliente em diversas linguagens como Java, Erlang e Python. 
+	A implementação da biblioteca para clientes Java é totalmente feita na linguagem
+	e não possui dependências de sistema operacional. A implementação está disponível
+	sob a licença MPL \cite{mpl}.
+
+	Como a especificação AMQP não define uma API padrão para as aplicações clientes,	
+	o código desenvolvido acabou por ser específico para a biblioteca cliente do 
+	projeto RabbitMQ. Optamos por esta implementação por diversos fatores, a destacar:
+	
+	\begin{itemize}
+		\item Atividade na comunidade de usuários e desenvolvedores.
+		
+		\item Facilidade para se obter informações, seja via tutoriais ou em listas 
+		de discussões.
+		
+		\item Possuir código aberto.
+		
+		\item Biblioteca para clientes Java independente de plataforma.
+		
+		\item Se tratar não só de um projeto, mas sim de um produto\footnote{
+			A empresa responsável pelo suporte é a Spring Source, uma divisão da VMware}.			
+		
+		\item Ser escrito em uma linguagem desenvolvida apropriada para 
+		sistemas concorrentes.
+		
+		\item Possuir ferramentas para administração e monitoramento.
+	\end{itemize}
+	
+	Apresentamos na próxima sub-seção os objetos biblioteca para clientes Java disponibilizada 
+	no projeto RabbitMQ que utilizamos e como eles se relacionam.
+	
+	\subsection{RabbitMQ - Biblioteca para clientes Java}
+		\label{subsec:amqp-rabbit-api}
+		\index{AMQP!Padrão!Implementações!RabbitMQ cliente Java}
+	
+	A biblioteca para clientes Java disponibilizada pelo projeto RabbitMQ define 
+	diversos classes para que seja possível a interação com o \english{broker}. 
+	A conexão acontece através de um objeto \lstinline$com.rabbitmq.client.Connection$, 
+	que pode ser obtido pelo objeto \lstinline$com.rabbitmq.client.ConnectionFactory$.
+	
+	
+	
