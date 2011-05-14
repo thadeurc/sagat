@@ -236,32 +236,31 @@
 	RabbitMQ \cite{rabbitmq}. 	
 	
 	O projeto Apache Qpid é uma implementação de código
-	aberto com uma distribuição em Java e uma em C++. Possui bibliotecas para aplicações 
-	cliente em diversas linguagens como por exemplo, Java, C++, Ruby, Python e C\#.Net. 
-	A implementação da biblioteca cliente para Java é compatível com o a versão $1.1$ 
-	do padrão Java \english{Message Service} \cite{jms}. A implementação está 
-	disponível sob a licença Apache $2.0$ \cite{apache-lic}.
+	aberto com uma distribuição escrita em Java e uma outra escrita em C++. 
+	Possui bibliotecas para aplicações cliente em diversas linguagens, como por exemplo, 
+	Java, C++, Ruby, Python e C\#.Net. A implementação está disponível sob a licença 
+	Apache $2.0$ \cite{apache-lic}. A implementação da biblioteca cliente para Java é 
+	compatível com o a versão $1.1$ do padrão Java \english{Message Service} \cite{jms}.
 	
 	O projeto ZeroMQ também é uma implementação de código aberto feita em C++, com
 	bibliotecas disponibilizadas para aplicações cliente em mais de $20$ linguagens,
-	incluindo Java, Python, C++ e C. A implementação para clientes Java depende de
-	bibliotecas nativas compiladas para cada sistema operacional suportado. 
-	A implementação está disponível sob a licença LGPL \cite{lgpl}.
+	incluindo Java, Python, C++ e C. A implementação está disponível sob a 
+	licença LGPL \cite{lgpl}. A biblioteca para clientes Java depende de
+	outras bibliotecas nativas específicas para sistema operacional suportado. 
 	
 	Assim como os outros dois projetos, o projeto RabbitMQ também é um projeto de código aberto,
-	porém é implementado na linguagem Erlang. Possui bibliotecas
-	para aplicações cliente em diversas linguagens como Java, Erlang e Python. 
+	porém é implementado na linguagem Erlang e  está disponível sob a licença MPL \cite{mpl}.
+	Possui bibliotecas para aplicações cliente em diversas linguagens como Java, Erlang e Python. 
 	A implementação da biblioteca para clientes Java é totalmente feita em Java
-	e não possui dependências de sistema operacional. A implementação está disponível
-	sob a licença MPL \cite{mpl}.
+	e não possui dependências de código nativo, sendo totalmente independente de plataforma.
 
 	Como a especificação AMQP não define uma API padrão para as aplicações clientes,	
 	tivemos de optar por uma implementação para o desenvolvimento deste trabalho. 
-	Optamos por utilizar a biblioteca cliente do projeto RabbitMQ. Tomamos como base para
+	Optamos por utilizar o projeto RabbitMQ. Tomamos como base para
 	nossa decisão alguns fatores, a destacar:
 	
 	\begin{itemize}
-		\item Atividade na comunidade de usuários e desenvolvedores.
+		\item Grande quantidade de atividade na comunidade de usuários e desenvolvedores.
 		
 		\item Facilidade para se obter informações, seja via tutoriais ou em listas 
 		de discussões.
@@ -281,19 +280,18 @@
 	
 	Apresentamos a seguir uma visão geral de alguns dos principais componentes da biblioteca
 	para clientes Java do projeto RabbitMQ e como eles se relacionam. Mostramos também
-	uma aplicação de exemplo escrita na linguagem Scala, onde uma das aplicações faz o
-	papel de um produtor de mensagens e a outra o papel de consumidor.
+	uma aplicação produtor/consumidor de exemplo escrita na linguagem Scala.
 	
 	\subsection{RabbitMQ - Biblioteca para clientes Java}
 		\label{subsec:amqp-rabbit-api}
 		\index{AMQP!Padrão!Implementações!RabbitMQ cliente Java}
 	
-	A biblioteca para clientes Java disponibilizada pelo projeto 
-	RabbitMQ \cite{rabbit-api} define diversas classes para que seja possível a interação 
+	A biblioteca para clientes Java \cite{rabbit-api} disponibilizada pelo projeto 
+	RabbitMQ define diversas classes para que seja possível a interação 
 	com o \english{broker}. A conexão acontece com uma instância de 
 	\lstinline$com.rabbitmq.client.Connection$, que pode ser obtida pelo objeto 
 	\lstinline$com.rabbitmq.client.ConnectionFactory$, através do método \lstinline$newConnection$.
-	Na implementação, as conexões tem como papel principal estabelecer a comunicação da
+	Na implementação, as conexões têm como papel principal estabelecer a comunicação da
 	aplicação cliente com o \english{broker}. Conexões podem ser vistas como sendo
 	a implementação de uma parte considerável da camada de transporte do modelo AMQP.
 	
@@ -363,7 +361,7 @@ trait CommonAMQP {
 	uma configuração diferente, uma exceção é lançada.} direta e transiente, uma fila pública, 
 	transiente e temporária e faz o \english{binding} de ambos. O método \lstinline$publish$ por 
 	sua vez, verifica logo na sua primeira linha se o estado da instância é válido, e em 
-	seguida itera na sequência de mensagens fazendo o envio. Para este exemplo em particular, 
+	seguida itera na sequência de mensagens fazendo o envio. Para esse exemplo em particular, 
 	omitimos as propriedades adicionais (\lstinline$BASIC_PROPS$) que podem ser utilizadas no 
 	envio. Exemplos dessas propriedades são definir a prioridade da mensagem, especificar um 
 	remetente diferente para resposta (\english{replyTo}) e definir uma data para expiração 
@@ -397,7 +395,7 @@ class SampleProducer extends CommonAMQP {
 	\end{lstlisting}
 	
 	A listagem \ref{lst:producer-app} mostra a aplicação que faz uso da classe 
-	\lstinline$SampleProducer$. Nessa listagem fazemos a instanciação e inicialização
+	\lstinline$SampleProducer$. Nessa listagem fazemos a instanciação e a inicialização
 	de um \lstinline$producer$, geramos uma sequência com $100$ mensagens e as
 	repassamos para o envio. Por fim, encerramos a conexão e implicitamente canais que 
 	tenham sido abertos junto a ela.
@@ -425,9 +423,9 @@ object SampleProducerApplication  extends Application {
 	com a camada de sessão. Em seguida, ele registra a instância corrente como um consumidor
 	na fila previamente criada com confirmação implícita de recebimento. O método 
 	\lstinline$handleDelivery$ é o método invocado a cada mensagem recebida. Podemos
-	notar que o método, além de receber o corpo da mensagem, ainda recebe informações sobre
+	notar que o método, além de receber o corpo da mensagem, ainda recebe algumas informações sobre
 	o envio. Os demais métodos são herdados da interface \lstinline$com.rabbitmq.client.Consumer$
-	e servem como notificadores para eventos outros eventos, como registro 
+	e servem como notificadores para outros eventos, como registro 
 	(\lstinline$handleConsumerOk$) ou cancelamento (\lstinline$handleCancelOk$) de um 
 	consumidor na fila. Mais detalhes sobre a interface \lstinline$com.rabbitmq.client.Consumer$
 	e de suas implementações podem ser encontradas em \cite{rabbit-api}.
