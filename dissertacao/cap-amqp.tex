@@ -14,7 +14,7 @@
 	de mensagens. 
 	
 	O protocolo AMQP é um protocolo binário, assíncrono, seguro, portável, 
-	neutro, eficiente e possui suporte para múltiplos canais. 
+	neutro, eficiente e possui suporte a múltiplos canais. 
 	A especificação \cite{amqp-spec} apresenta o protocolo dividido em três camadas,
 	como mostrado na figura \ref{fig:protocol_overview}.	
 
@@ -37,7 +37,7 @@
 \section{A camada de modelo}		
 	\label{sec:amqp-modelo}
 	\index{AMQP!Padrão!Modelo}
-	A camada de modelo é a responsável pela definição do conjunto de comandos
+	A camada de modelo é a camada responsável pela definição do conjunto de comandos
 	e dos objetos que as aplicações podem utilizar, como por exemplo, filas. 
 	A especificação dos requisítos para essa camada possui, entre outros itens: 
 	garantir a interoperabilidade das implementações, prover controle explícito
@@ -71,17 +71,15 @@
 		Com o auxílio da tabela de \english{bindings}, uma \english{exchange} decide como 
 		encaminhar as mensagens às respectivas filas, jamais armazenando mensagens.
 		\english{Exchanges} podem ser: diretas (\english{direct}), onde o valor da chave 
-		de roteamento que é parte do cabeçalho da mensagem, deve ser exatamente igual 
+		de roteamento, que é parte do cabeçalho da mensagem, deve ser exatamente igual 
 		a uma entrada da tabela de \english{bindings} para que a mensagem seja 
-		roteada para a fila; tópicos \english{topic}, onde o valor da chave de roteamento 
-		não precisa ser exatamente igual às entradas da tabela de \english{bindings}, 
-		bastando possuir o mesmo padrão para ser roteada para a fila. 
-		Os caracteres coringa suportados são *, que indica
-		uma única palavra e \#, que indica zero ou muitas palavras. A chave de roteamento
-		deve ser formada por palavras e pontos. Por exemplo, o padrão *.stock.\# casa
-		com usd.stock e eur.stock.db, nas não com stock.nasdaq; e \english{fanout},
-		onde o roteamento acontece para todas as filas associadas a \english{exchange},
-		indepententemente da chave de roteamento.
+		roteada para a fila; tópicos (\english{topic}), onde é utilizado o casamento de
+		padrões para determinar o roteamento às filas. Os caracteres coringa 
+		suportados são *, que indica uma única palavra, e \#, que indica zero ou muitas palavras. 
+		A chave de roteamento deve ser formada por palavras e pontos. Por exemplo, 
+		o padrão *.stock.\# casa com usd.stock e eur.stock.db, nas não com stock.nasdaq; 
+		e \english{fanout}, onde o roteamento acontece para todas as filas 
+		associadas a \english{exchange}, indepententemente da chave de roteamento.
 		  
 		\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas. 
 		Esses relacionamentos definem como deverá ser feito o roteamento das mensagens.
@@ -164,16 +162,16 @@
 	\index{AMQP!Padrão!Sessão}
 	\label{sec:amqp-sessao}
 
-	A camada de sessão age como uma intermediária entre a camada de modelo
-	e a camada de transporte, proporcionando confiabilidade para a transmissão de comandos
+	A camada de sessão age como uma intermediária entre as camadas de modelo
+	e transporte, proporcionando confiabilidade para a transmissão de comandos
 	à aplicação servidora. É parte das suas responsabilidades dar confiabilidade
-	às interações entre aplicações cliente e a aplicação servidora.
+	às interações entre as aplicações cliente e a aplicação servidora.
 	
 	Sessões são interações nomeadas entre um cliente e um servidor AMQP
 	(também chamados de pares (\english{peers})). Todos os comandos,
 	como por exemplo envios de mensagens e criações de filas ou \english{exchanges}, devem
 	acontecer no contexto de uma sessão. O ciclo de vida de alguns dos objetos da camada
-	modelo como filas, \english{exchanges} e \english{bindings} podem ser limitados ao
+	de modelo como filas, \english{exchanges} e \english{bindings} podem ser limitados ao
 	escopo de uma sessão. 
 	
 	Os principais serviços providos pela camada de sessão para a camada de modelo são:
@@ -237,9 +235,9 @@
 	
 	O projeto Apache Qpid é uma implementação de código
 	aberto com uma distribuição escrita em Java e uma outra escrita em C++. 
-	Possui bibliotecas para aplicações cliente em diversas linguagens, como por exemplo, 
-	Java, C++, Ruby, Python e C\#.Net. A implementação está disponível sob a licença 
-	Apache $2.0$ \cite{apache-lic}. A implementação da biblioteca cliente para Java é 
+	A implementação está disponível sob a licença Apache $2.0$ \cite{apache-lic} e
+	possui bibliotecas para aplicações cliente em diversas linguagens, como por exemplo, 
+	Java, C++, Ruby, Python e C\#.Net.  A implementação da biblioteca cliente para Java é 
 	compatível com o a versão $1.1$ do padrão Java \english{Message Service} \cite{jms}.
 	
 	O projeto ZeroMQ também é uma implementação de código aberto feita em C++, com
@@ -284,7 +282,7 @@
 	
 	\subsection{RabbitMQ - Biblioteca para clientes Java}
 		\label{subsec:amqp-rabbit-api}
-		\index{AMQP!Padrão!Implementações!RabbitMQ cliente Java}
+		\index{AMQP!Exemplo}
 	
 	A biblioteca para clientes Java \cite{rabbit-api} disponibilizada pelo projeto 
 	RabbitMQ define diversas classes para que seja possível a interação 
