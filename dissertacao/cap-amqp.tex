@@ -6,26 +6,26 @@
 	protocolo aberto para sistemas corporativos de troca de mensagens. 
 	Especificado pelo AMQP \english{Working Group}, 
 	o protocolo permite completa interoperabilidade para \english{middleware} 
-	orientado a mensagens. A especificação define não somente o protocolo de rede, 
+	orientado a mensagens. A especificação \cite{amqp-spec} define não somente o protocolo de rede, 
 	mas também a semântica dos serviços da aplicação servidora. Também é parte 
 	do foco que capacidades providas por sistemas de \english{middleware} orientados 
 	a mensagem possam estar pervasivamente disponíveis nas redes das empresas, 
 	incentivando o desenvolvimento de aplicações interoperáveis baseadas em troca 
 	de mensagens. 
 	
-	O protocolo AMQP é um protocolo binário, assíncrono, seguro, portável, 
+	AMQP é um protocolo binário, assíncrono, seguro, portável, 
 	neutro, eficiente e possui suporte a múltiplos canais. 
-	A especificação \cite{amqp-spec} apresenta o protocolo dividido em três camadas,
+	A especificação apresenta o protocolo dividido em três camadas,
 	como mostrado na figura \ref{fig:protocol_overview}.	
 
 	\begin{figure}[!h]
   		\centering
 		\includegraphics[scale=.9]{protocol_overview} 
-	  	\caption{Camadas do protocolo AMQP.}
+	  	\caption{Camadas do padrão AMQP.}
 	  	\label{fig:protocol_overview}
 	\end{figure}
 	
-	Nas seções seguintes descrevemos as camadas do protocolo AMQP.
+	Nas seções seguintes descrevemos as camadas do padrão AMQP.
 	A camada de modelo, que é a camada que define o conjunto de objetos que 
 	utilizamos em nosso trabalho, a camada de sessão que age como intermediária
 	entre as camadas de modelo e transporte, e comentamos brevemente sobre a 
@@ -38,7 +38,7 @@
 	\label{sec:amqp-modelo}
 	\index{AMQP!Padrão!Modelo}
 	A camada de modelo é a camada responsável pela definição do conjunto de comandos
-	e dos objetos que as aplicações podem utilizar, como por exemplo, filas. 
+	e dos objetos que as aplicações podem utilizar, como por exemplo a criação de filas. 
 	A especificação dos requisítos para essa camada possui, entre outros itens: 
 	garantir a interoperabilidade das implementações, prover controle explícito
 	sobre a qualidade do serviço, proporcionar um mapeamento fácil entre os 
@@ -98,13 +98,13 @@
 	\begin{figure}[hbtp]
 	  \centering
 	  \includegraphics[scale=.9]{amqp-overview}
-	  \caption{Visão geral dos componentes do modelo AMQP.}
+	  \caption{Componentes da camada de modelo do padrão AMQP.}
 	  \label{fig:amqp_overview}
 	\end{figure}
         
 	Em modelos pré-AMQP, as tarefas das \english{exchanges} e das filas eram 
 	feitas por blocos monolíticos que implementavam tipos específicos de
-	roteamento e armazenamento. O modelo AMQP separa essas tarefas e as atribui a 
+	roteamento e armazenamento. O padrão AMQP separa essas tarefas e as atribui a 
 	entidades distintas (\english{exchanges} e filas), que têm os seguintes
 	papéis: \entry{(i)} receber as mensagens e fazer o roteamento para as filas; 
 	\entry{(ii)} armazenar as mensagens e fazer o encaminhamento para as aplicações
@@ -150,7 +150,7 @@
 	\begin{figure}[hbtp]
 	  \centering
 	  \includegraphics[scale=.9]{amqp-message-flow}
-	  \caption{Visão geral do fluxo de uma mensagem desde o produtor até o seu consumidor.}
+	  \caption{Fluxo de uma mensagem no padrão AMQP.}
 	  \label{fig:amqp-message-flow}
 	\end{figure}
         
@@ -229,7 +229,7 @@
 	\label{sec:amqp-implementacoes}
 	\index{AMQP!Padrão!Implementações}
 	
-	Dentre as implementações de \english{message brokers} baseados no protocolo AMQP
+	Dentre as implementações de \english{message brokers} baseados no padrão AMQP
 	disponíveis, destacamos Apache Qpid \cite{qpid}, ZeroMQ \cite{zeromq} e 
 	RabbitMQ \cite{rabbitmq}. 	
 	
@@ -252,7 +252,7 @@
 	A implementação da biblioteca para clientes Java é totalmente feita em Java
 	e não possui dependências de código nativo, sendo totalmente independente de plataforma.
 
-	Como a especificação AMQP não define uma API padrão para as aplicações clientes,	
+	Como a especificação do padrão AMQP não define uma API padrão para as aplicações clientes,	
 	tivemos de optar por uma implementação para o desenvolvimento deste trabalho. 
 	Optamos por utilizar o projeto RabbitMQ. Tomamos como base para
 	nossa decisão alguns fatores, a destacar:
@@ -271,7 +271,7 @@
 			A empresa responsável pelo suporte é a Spring Source, uma divisão da VMware}.			
 		
 		\item Ter sido escrito em Erlang, uma linguagem desenvolvida para o desenvolvimento
-		de sistemas distribuiídos e concorrentes.
+		de sistemas distribuídos e concorrentes \cite{erlang:97}.
 		
 		\item Possuir ferramentas para administração e monitoramento.
 	\end{itemize}
@@ -284,19 +284,19 @@
 		\label{subsec:amqp-rabbit-api}
 		\index{AMQP!Exemplo}
 	
-	A biblioteca para clientes Java \cite{rabbit-api} disponibilizada pelo projeto 
+	A biblioteca \cite{rabbit-api} para clientes Java disponibilizada pelo projeto 
 	RabbitMQ define diversas classes para que seja possível a interação 
 	com o \english{broker}. A conexão acontece com uma instância de 
 	\lstinline$com.rabbitmq.client.Connection$, que pode ser obtida pelo objeto 
 	\lstinline$com.rabbitmq.client.ConnectionFactory$, através do método \lstinline$newConnection$.
 	Na implementação, as conexões têm como papel principal estabelecer a comunicação da
 	aplicação cliente com o \english{broker}. Conexões podem ser vistas como sendo
-	a implementação de uma parte considerável da camada de transporte do modelo AMQP.
+	a implementação de uma parte considerável da camada de transporte do padrão AMQP.
 	
 	Como descrito na seção \ref{sec:amqp-transporte}, a camada de transporte deve ser
 	capaz de prover a multiplexação de canais. A classe \lstinline$Connection$ provê,
-	dentre outros métodos, o método \lstinline$createChannel$. Esse método devolve
-	uma instância de \lstinline$com.rabbitmq.client.Channel$ e, através desta instância,
+	dentre outros métodos, o método \lstinline$createChannel$. A invocação desse método resulta em
+	uma instância de \lstinline$com.rabbitmq.client.Channel$ e através desta instância,
 	podemos executar os comandos definidos na camada de sessão, como por exemplo a 
 	criação de filas (\lstinline$queueDeclare$) ou o envio (\lstinline$basicPublish$) e 
 	recebimento de mensagens (\lstinline$basicConsume$). O recebimento das mensagens 
@@ -312,7 +312,7 @@
 	\begin{figure}[hbtp]
 	  \centering
 	  \includegraphics[scale=.6]{rabbitmq-colaboracao}
-	  \caption{Relacionamento entre componentes das camadas de transporte e sessão.}
+	  \caption{RabbitMQ Java API -- Relacionamento entre classes de transporte e sessão.}
 	  \label{fig:rabbitmq-colaboracao}
 	\end{figure} 
 	
@@ -460,7 +460,7 @@ object SampleConsumerApplication extends Application {
 }
 	\end{lstlisting}
 	
-	Para finalizar esta seção, é importante destacar que a implementação de canais 
+	Para finalizar este capítulo, é importante destacar que a implementação de canais 
 	\cite{rabbit-channels} não é uma segura para acesso concorrente (\english{thread safe}), 
 	de modo que é de responsabilidade da aplicação fazer a devida proteção para 
 	evitar que diferentes \english{threads} façam uso dos canais concorrentemente. Canais
@@ -469,6 +469,6 @@ object SampleConsumerApplication extends Application {
 	aos seus respectivos destinatários. Em situações como essas, o corpo da mensagem e algumas
 	informações do envio, como o nome da \english{exchange}, a chave de roteamento e 
 	o código de rejeição, são repassados para o tratador de erros que foi registrado no canal.
-	Aplicação produtora passa a ter autonomia de fazer fazer o tratamento apropriado.
+	A aplicação produtora passa a ter autonomia de fazer fazer o tratamento apropriado.
 	
 	
