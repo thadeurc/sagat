@@ -2,10 +2,10 @@
 \chapter{Atores}
 \label{cap:atores}
 
-O modelo de atores é um modelo para programação concorrente em sistemas distribuídos, 
-que foi apresentado como uma das possíveis alternativas ao uso de memória compartilhada e travas. 
-Atores são agentes computacionais autônomos e concorrentes que possuem uma caixa de correio 
-e um comportamento \cite{Agha86}.
+Apresentamos neste capítulo informações sobre o modelo de atores (seção \ref{sec:atores-modelo}),
+um breve histórico sobre alguns estudos relacionados (seção \ref{sec:atores-historico}),
+a computação em um sistema de atores (seção \ref{sec:atores-computacao}) e por fim
+algumas referências para implementações (seção \ref{sec:atores-implementacoes}).
 
 \section{Breve histórico}
 \label{sec:atores-historico}
@@ -14,54 +14,60 @@ e um comportamento \cite{Agha86}.
 O modelo de atores foi originalmente proposto por Carl Hewitt em $1971$ \cite{hewitt:71}. 
 O termo ator foi originalmente utilizado para descrever entidades ativas que analizavam 
 padrões para iniciar atividades. O conceito de atores passou então a ser explorado pela 
-comunidade científica e, em $1973$, a noção de atores se aproximou do conceito de agentes existente
-na área de inteligência artificial distribuída por possuírem intenções, recursos,
+comunidade científica e em $1973$, a noção de atores se aproximou do conceito de agentes existente
+na área de inteligência artificial distribuída, por possuírem intenções, recursos,
 monitores de mensagem e um agendador \cite{Hewitt:1973}.
 
 Em $1975$, Irene Greif desenvolveu um modelo abstrato de atores orientado 
 a eventos, onde cada ator armazenava eventos locais para que se pudesse analizar 
 a relação causal entre os eventos. Baker e Hewitt formalizaram um conjunto
 de axiomas para computação concorrente em $1977$. Desse estudo surgiu uma propriedade 
-importante onde a ordem que os eventos são gerados deve ser obedecida a fim de prever 
+importante onde a ordem em que eventos são gerados deve ser obedecida a fim de prever 
 violações de causalidade. No mesmo ano, Hewitt apresentou um estudo sobre como o 
-entendimento dos padrões de troca de mensagens entre atores pode ajudar na definição de 
+entendimento dos padrões de troca de mensagens entre atores, pode ajudar na definição de 
 estruturas de controle. Esse estudo demonstrou o uso do estilo de passagem de continuações
 no modelo de atores.	
 
 O conceito de guardião foi definido em $1978$ por Attardi e Hewitt. Um guardião é 
 uma entidade que regula o uso de recursos compartilhados. Guardiões incorporam 
 explitamente a noção de estado e são responsáveis por agendar o acesso e fazer a 
-proteção dos recursos. Hewitt e Atkinson definirão em $1979$ um conceito relacionado ao 
+proteção dos recursos. Hewitt e Atkinson definiram em $1979$ um conceito relacionado ao 
 de guardião denominado seriador (\english{serializer}). Um seriador age como um monitor, 
 porém, ao invés de aguardar sinais explícitos de processos, seriadores procuram ativamente 
 por condições que permitam que processos em espera possam voltar a ser executados. 
 Em $1987$, Henry Lieberman implementou em Lisp a linguagem Act1 \cite{Lieberman:1987}, 
 uma linguagem de atores com guardiões, seriadores e atores chamados de ``trapaceiros'' 
 (\english{rock-bottom}). Atores trapaceiros são atores que podem burlar as regras do modelo
-de atores para, por exemplo, usar dados primitivos e funções da linguagem usada para a sua
+de atores para, por exemplo, usar dados primitivos e funções da linguagem usada em sua
 implementação.
 
 Gul Agha definiu em $1986$ um sistema simples de transição para atores. Em seu trabalho foi
-desenvolvido o conceito de configurações, recepcionistas e atores externos. Esse modelo
-foi implementado na linguagem Acore por Carl Manning em $1987$, e na linguagem
-Rosette por Tomlinson e outros em $1989$.
+desenvolvido o conceito de configurações, recepcionistas e atores externos. 
+Atores recepcionistas são atores que ocultam a existência outros atores de um
+sistema de atores, agindo como intermediários no recebimento das mensagens. 
+O uso de atores recepcionistas permite uma forma de encapsulamento, já que eles acabam 
+agindo como interface para atores externos. Esse modelo foi implementado na linguagem Acore 
+por Carl Manning em $1987$, e na linguagem Rosette por Tomlinson e outros em $1989$.
 
-\section{O Modelo}
+\section{Modelo}
 \label{sec:atores-modelo}
 \index{Atores!Modelo}
+O modelo de atores é um modelo para programação concorrente em sistemas distribuídos, 
+que foi apresentado como uma das possíveis alternativas ao uso de memória compartilhada e travas. 
+Atores são agentes computacionais autônomos e concorrentes que possuem uma fila de mensagens
+e um comportamento \cite{Agha86}.
 
-%% tem q falar de encapsulamento, comentar de recepcionistas 
+O modelo define que toda interação entre atores deve acontecer via trocas assíncronas
+de mensagens. Uma vez que o endereço da fila de mensagens de um ator é conhecido, 
+mensagens podem ser enviadas ao ator. As mensagem enviadas são armazenadas para processamento 
+assíncrono, desacoplando o envio de uma mensagem do seu processamento. 
 
-O modelo define que a interação dos atores deve acontecer via trocas assíncronas
-de mensagens. Uma vez que o endereço da caixa de correio de um ator é conhecido, 
-mensagens podem ser enviadas para processamento assíncrono, desacoplando o envio
-de uma mensagem do seu processamento.
 Toda computação em um sistema de atores é resultado do processamento de uma mensagem. 
 Cada mensagem recebida por um ator é mapeada em uma $3$-tupla que consiste de:
 
 \begin{enumerate}
-	\item um conjunto finito de envios de mensagens para atores cujas caixas de correio
-	têm endereços conhecidos (um desses atores pode ser o próprio ator destinatário
+	\item um conjunto finito de envios de mensagens para atores cujas filas
+	tenham seus endereços conhecidos (um desses atores pode ser o próprio ator destinatário
 	da mensagem que está sendo processada);
 	
 	\item um novo comportamento, que será usado para processar a próxima mensagem
@@ -70,30 +76,76 @@ Cada mensagem recebida por um ator é mapeada em uma $3$-tupla que consiste de:
 	\item um conjunto finito de criações de novos atores.
 \end{enumerate}
 
-O ator que recebe as mensagens faz o processamento individual de cada mensagem em 
+Um ator que recebe mensagens faz o processamento individual de cada mensagem em 
 uma execução atômica. Cada execução atômica consiste no conjunto de todas as ações 
-tomadas para processar a mensagem em questão, não permitindo intercalações no processamento 
-de duas mensagens.
+tomadas para processar a mensagem em questão, não permitindo intercalações no 
+processamento de duas mensagens.
 
-Gul Agha, em sua definição da semântica do modelo de atores \cite{Agha86}, diz que 
-``em qualquer rede real de agentes computacionais, não de pode prever quando uma mensagem 
-enviada por um agente será recebida por outro''. A afirmação é enfatizada para redes dinâmicas, 
-onde novos agentes podem ser criados ou destruídos, e reconfigurações como migrações de agentes
-para diferentes nós podem acontecer. Sua conclusão afirma que um modelo realista deve assumir
-que a ordem de recebimento das mensagens não é determinística, mas sim arbitrária e desconhecida.
+Em um sistema de atores, envios de mensagens (também chamados de comunicações) são
+encapsulados em tarefas. Uma tarefa é uma $3$-tupla que consiste em um identificador
+único, o endereço da fila do ator destinatário e a mensagem. A configuração
+de um sistema de atores é definida pelos atores que o sistema contém e pelo conjunto
+de tarefas não processadas. É importante ressaltar que o endereço da fila de mensagens 
+na tarefa deve ser válido, ou seja, ele deve ter sido previamente
+comunicado. Há três maneiras de um ator ao receber uma mensagem \emph{m}, passar
+a conhecer um destinatário no qual o ator pode enviar uma mensagem:
 
-%% fairness - comentar qual tipo que ele adota no modelo
-%% falar sobre o behavior e mostrar a maquina de processamento do ator
-%% historico?
+\begin{enumerate}
+	\item O ator já conhecia o endereço da fila do destinatário antes
+		do recebimento da mensagem \emph{m};
 
+	\item O endereço fila estava presente na mensagem \emph{m};
+	
+	\item Um novo ator foi criado como resultado do processamento da mensagem \emph{m}.
+\end{enumerate}
 
-O modelo faz referência a garantia de entrega de mensagens, definindo que toda mensagem enviada 
-deve ser depositada na caixa de correio do ator destinatário. O não determinismo na ordem de 
-recebimento das mensagens pelo ator não interefe na garantia de entrega de mensagens.  
-Vale destacar que a garantia de entrega de mensagens não assume que mensagens na caixa de 
-correio tenham um processamento semanticamente significativo, já que o processamento de 
+Um aspecto importante que faz parte o modelo de atores é existência de igualdade durante a
+execução (\english{fairness}). Sem essa propriedade, um sistema de atores teria ambos a garantia 
+de entrega e a componibilidade comprometida \cite{Agha98afoundation}.
+No contexto de atores, garantia de entrega signfica que
+uma mensagem que foi depositada na fila de mensagens de um ator, não deve ficar armazenada
+indefinidamente sem ser eventualmente repassada para o ator fazer o seu processamento. 
+A ordem de chegada de mensagens obedece uma ordem linear, e fica a cargo da implementação
+do modelo arbitrar em casos de conflito onde duas mensagens sejam recebidas no mesmo momento.
+O modelo assume uma entrega enventual, pois podem ocorrer casos onde o ator esteja em um estado 
+não propício a receber novas mensagens, com por exemplo, estar executando um laço infinito ou
+alguma operação ilegal. Vale destacar que a garantia de entrega de mensagens não assume que 
+mensagens tenham um processamento semanticamente significativo. O processamento de 
 uma mensagem depende do comportamento definido no ator. Por exemplo, alguns atores poderiam 
 optar por descartar todas as mensagens recebidas. 
+
+Gul Agha, em sua definição da semântica do modelo de atores \cite{Agha86}, 
+afirma que ``em qualquer rede real de agentes computacionais, não é possível prever quando uma 
+mensagem enviada por um agente será recebida por outro''. A afirmação é enfatizada para redes 
+dinâmicas, onde novos agentes podem ser criados ou destruídos, e reconfigurações como migrações 
+de agentes para diferentes nós podem acontecer. Em sua conclusão, Agha afirma que um modelo 
+realista deve assumir que a ordem de recebimento das mensagens não é determinística, mas sim 
+arbitrária e desconhecida. O não determinismo na ordem de recebimento das mensagens pelo ator não 
+interefe na garantia de entrega de mensagens.
+
+O comportamento de um ator define como o ator irá processar a próxima mensagem recebida.
+Ao processar uma mensagem, o ator deve definir o comportamento substituto que será utilizado para
+processar a próxima mensagem que lhe for entregue. Mostramos na figura \ref{fig:atores-estado}
+a máquina de estados de um ator processando uma mensagem recebida e definindo seu novo 
+comportamento.
+Na figura, o ator $A$ com comportamento inicial é $B_1$ retira a mensagem $m_1$ de sua fila 
+e faz o processamento da mensagem. Para esse exemplo, o processamento da mensagem $m_1$ resultou na
+criação de um novo ator $A'$, com comportamento inicial $B_{1'}$, e no envio da mensagem $m_{1'}$ 
+do ator $A$ para o ator $A'$. O ator $A$ passa a ter o comportamento $B_2$, que será 
+usado no processamento da mensagem $m_2$. O processo de determinação do comportamento 
+substituto para processamentos futuros se repete. Vale ressaltar que o comportamento substituto 
+não precisa necessariamente ser diferente do comportamento anterior. Por exemplo, $B_1$ e $B_2$ 
+podem ser comportamentos idênticos.
+
+\vspace{1ex}
+\begin{figure}[hbtp]
+ 		\centering
+	\includegraphics{ator-state-machine} 
+  	\caption{Máquina de estados de um ator.}
+  	\label{fig:atores-estado}
+\end{figure}
+
+%% location transparency e mobility
 
 
 
