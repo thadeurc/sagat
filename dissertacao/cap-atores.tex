@@ -110,9 +110,9 @@ do modelo arbitrar em casos de conflito onde duas mensagens sejam recebidas no m
 O modelo assume uma entrega enventual, pois podem ocorrer casos onde o ator esteja em um estado 
 não propício a receber novas mensagens, com por exemplo, estar executando um laço infinito ou
 alguma operação ilegal. Vale destacar que a garantia de entrega de mensagens não assume que 
-mensagens tenham um processamento semanticamente significativo. O processamento de 
-uma mensagem depende do comportamento definido no ator. Por exemplo, alguns atores poderiam 
-optar por descartar todas as mensagens recebidas. 
+as mensagens entregues tenham um processamento semanticamente significativo. O processamento de 
+uma mensagem depende do do ator. Alguns atores poderiam, por exemplo, optar por descartar 
+todas as mensagens recebidas. 
 
 Gul Agha, em sua definição da semântica do modelo de atores \cite{Agha86}, 
 afirma que ``em qualquer rede real de agentes computacionais, não é possível prever quando uma 
@@ -127,15 +127,13 @@ O comportamento de um ator define como o ator irá processar a próxima mensagem r
 Ao processar uma mensagem, o ator deve definir o comportamento substituto que será utilizado para
 processar a próxima mensagem que lhe for entregue. Mostramos na figura \ref{fig:atores-estado}
 a máquina de estados de um ator processando uma mensagem recebida e definindo seu novo 
-comportamento.
-Na figura, o ator $A$ com comportamento inicial é $B_1$ retira a mensagem $m_1$ de sua fila 
-e faz o processamento da mensagem. Para esse exemplo, o processamento da mensagem $m_1$ resultou na
-criação de um novo ator $A'$, com comportamento inicial $B_{1'}$, e no envio da mensagem $m_{1'}$ 
-do ator $A$ para o ator $A'$. O ator $A$ passa a ter o comportamento $B_2$, que será 
-usado no processamento da mensagem $m_2$. O processo de determinação do comportamento 
-substituto para processamentos futuros se repete. Vale ressaltar que o comportamento substituto 
-não precisa necessariamente ser diferente do comportamento anterior. Por exemplo, $B_1$ e $B_2$ 
-podem ser comportamentos idênticos.
+comportamento. Nessa figura, o ator $A$ com comportamento inicial é $B_1$ retira a mensagem 
+$m_1$ de sua fila e faz o processamento da mensagem. Para esse exemplo, o processamento da 
+mensagem $m_1$ resultou na criação de um novo ator $A'$, com comportamento inicial $B_{1'}$, 
+e no envio da mensagem $m_{1'}$ do ator $A$ para o ator $A'$. O ator $A$ passa a ter o 
+comportamento $B_2$, que será usado no processamento da mensagem $m_2$. Vale ressaltar que o 
+comportamento substituto não precisa necessariamente ser diferente do comportamento anterior. 
+Por exemplo, os comportamentos $B_1$ e $B_2$ podem ser comportamentos idênticos.
 
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -145,7 +143,46 @@ podem ser comportamentos idênticos.
   	\label{fig:atores-estado}
 \end{figure}
 
-%% location transparency e mobility
+No modelo de atores, a real localicação de um ator não afeta a interação com outros atores. 
+Os atores que um ator conhece podem estar distribuídos em diferentes núcleos de um processador,
+ou mesmo em nós diferente em uma rede de computadores. A transparência da localidade
+abstrai a infra-estrutura e permite que programas sejam desenvolvidos de modo distribuído,
+ou seja, sem que a real localização de seus atores seja conhecida. Duas consequências diretas da  
+transparência da localidade são o encapsulamento do estado do ator e
+a capacidade de se mover atores entre os diferentes nós de uma rede de computadores. 
+
+Apesar de o modelo ser bem explícito e claro em relação a interação ser via troca de mensagens e
+dizer que o estado de um ator não deve ser compartilhado, implementações 
+poderiam permitir que o estado interno de um ator fosse acessado diretamente por outro ator. 
+Por exemplo, um ator em sua pilha de execução fazer invocação de algum método do outro ator. 
+Mesmo que a interface de um ator não permita o compartilhamento do seu estado interno que não
+seja via troca de mensagens, as mensagens enviadas podem expor um compartilhamento indesejado
+caso não sejam imutáveis e passadas por cópia. 
+
+Mobilidade é definida como a habilidade de se poder mover uma computação de um nó para outro,
+e pode ser classificada como mobilidade fraca ou mobilidade forte. Mobilidade fraca é a 
+habilidade de tranferir código entre nós, enquanto que mobilidade forte é definida como a 
+habilidade de tranferir ambos o código e o estado da execução \cite{Fuggetta:1998}. Em um
+sistema baseado em atores, mobilidade fraca permite que atores que não tenham mensagens em suas
+filas e não estão fazendo processamento algum sejam tranferidos para outros nós.
+
+Pelo fato de o modelo de atores prover transparência de localidade e encapsulamento, a mobilidade
+se torna natural. Mover atores entre diferentes nós em um sistema de atores é uma necessidade
+importante para se obter um melhor desempenho, tolerância a falhas e sistemas reconfiguráveis 
+\cite{Panwar:1994}. 
+
+A semântica padrão do modelo de atores apresentada nesta seção objetiva proporcionar
+uma arquitetura modular e componível \cite{Agha98afoundation} e um melhor desempenho para 
+sistemas concorrentes e distribuídos, em particular para situações onde as aplicações
+precisem de escalabilidade \cite{Kim95}.
+
+\section{Implementações}
+\index{Atores!Implementações}
+\label{sec:atores-implementacoes}
+%% comtentar do paper do actor frameworks for the jvm platform. Dizer que nele
+%% ficam ex
+Karmani e Agha argumentam as vantagens da preservação dessas propriedades e 
+fazem uma comparação de algumas implementações para a JVM em \cite{karmani2009}.
 
 
 
@@ -153,15 +190,5 @@ podem ser comportamentos idênticos.
 \index{Atores!Computação}
 \label{sec:atores-computacao}
 %% aqui eu acho legal dar um exemplo? jogar fora? colocar metade do que esta em cima aqui dentro?
-
-\section{Implementações}
-\index{Atores!Implementações}
-\label{sec:atores-implementacoes}
-O modelo de atores provê uma semântica padrão com um conjunto de propriedades
-a serem preservadas nas implementações do modelo, cujo objetivo é proporcionar
-uma arquitetura modular e componível \cite{Agha98afoundation} e um melhor 
-desempenho \cite{Kim95}. Apresentamos a seguir quatro propriedades, como 
-encapsulamento, agendamento equalitário de execuções (\english{fair scheduling}), 
-transparência da localidade do ator e mobilidade de atores entre nós em uma rede.
-Karmani e Agha argumentam as vantagens da preservação dessas propriedades e 
-fazem uma comparação de algumas implementações para a JVM em \cite{karmani2009}.
+%% poderia escrever um ator em erlang ou scala que fosse um contador - o exemplo que dei no
+%% techday
