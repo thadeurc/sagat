@@ -2,10 +2,12 @@
 \chapter{Atores}
 \label{cap:atores}
 
-Apresentamos neste capítulo informações sobre o modelo de atores (seção \ref{sec:atores-modelo}),
-um breve histórico sobre alguns estudos relacionados (seção \ref{sec:atores-historico}),
-a computação em um sistema de atores (seção \ref{sec:atores-computacao}) e por fim
-algumas referências para implementações (seção \ref{sec:atores-implementacoes}).
+Apresentamos neste capítulo o modelo de atores. Na seção 
+\ref{sec:atores-historico} apresentamos um breve histórico com alguns estudos
+relacionados ao modelo. Na seção \ref{sec:atores-modelo} apresentamos a semântica
+do modelo de atores e por fim, citamos na seção \ref{sec:atores-implementacoes} algumas
+de suas implementações, além de apresentamos um exemplo de computação
+em um sistema de atores.
 
 \section{Breve histórico}
 \label{sec:atores-historico}
@@ -19,12 +21,12 @@ na área de inteligência artificial distribuída, por possuírem intenções, recurso
 monitores de mensagem e um agendador \cite{Hewitt:1973}.
 
 Em $1975$, Irene Greif desenvolveu um modelo abstrato de atores orientado 
-a eventos, onde cada ator armazenava eventos locais para que se pudesse analizar 
+a eventos, onde cada ator armazenava os eventos locais para que fosse possível analizar 
 a relação causal entre os eventos. Baker e Hewitt formalizaram um conjunto
 de axiomas para computação concorrente em $1977$. Desse estudo surgiu uma propriedade 
-importante onde a ordem em que eventos são gerados deve ser obedecida a fim de prever 
+importante: a ordem em que eventos são gerados deve ser obedecida a fim de prever 
 violações de causalidade. No mesmo ano, Hewitt apresentou um estudo sobre como o 
-entendimento dos padrões de troca de mensagens entre atores, pode ajudar na definição de 
+entendimento dos padrões de troca de mensagens entre atores pode ajudar na definição de 
 estruturas de controle. Esse estudo demonstrou o uso do estilo de passagem de continuações
 no modelo de atores.	
 
@@ -102,17 +104,17 @@ a conhecer um destinatário no qual o ator pode enviar uma mensagem:
 Um aspecto importante que faz parte o modelo de atores é existência de igualdade durante a
 execução (\english{fairness}). Sem essa propriedade, um sistema de atores teria ambos a garantia 
 de entrega e a componibilidade comprometida \cite{Agha98afoundation}.
-No contexto de atores, garantia de entrega signfica que
+No contexto de atores, garantia de entrega significa que
 uma mensagem que foi depositada na fila de mensagens de um ator, não deve ficar armazenada
 indefinidamente sem ser eventualmente repassada para o ator fazer o seu processamento. 
 A ordem de chegada de mensagens obedece uma ordem linear, e fica a cargo da implementação
 do modelo arbitrar em casos de conflito onde duas mensagens sejam recebidas no mesmo momento.
-O modelo assume uma entrega enventual, pois podem ocorrer casos onde o ator esteja em um estado 
+O modelo assume uma entrega eventual, pois podem ocorrer casos onde o ator esteja em um estado 
 não propício a receber novas mensagens, com por exemplo, estar executando um laço infinito ou
-alguma operação ilegal. Vale destacar que a garantia de entrega de mensagens não assume que 
+alguma operação ilegal. A garantia de entrega de mensagens não assume que 
 as mensagens entregues tenham um processamento semanticamente significativo. O processamento de 
-uma mensagem depende do do ator. Alguns atores poderiam, por exemplo, optar por descartar 
-todas as mensagens recebidas. 
+uma mensagem depende do comportamento definido no ator. 
+Alguns atores poderiam, por exemplo, optar por descartar todas as mensagens recebidas. 
 
 Gul Agha, em sua definição da semântica do modelo de atores \cite{Agha86}, 
 afirma que ``em qualquer rede real de agentes computacionais, não é possível prever quando uma 
@@ -127,12 +129,12 @@ O comportamento de um ator define como o ator irá processar a próxima mensagem r
 Ao processar uma mensagem, o ator deve definir o comportamento substituto que será utilizado para
 processar a próxima mensagem que lhe for entregue. Mostramos na figura \ref{fig:atores-estado}
 a máquina de estados de um ator processando uma mensagem recebida e definindo seu novo 
-comportamento. Nessa figura, o ator $A$ com comportamento inicial é $B_1$ retira a mensagem 
+comportamento. Nessa figura, o ator $A$ com comportamento inicial $B_1$ retira a mensagem 
 $m_1$ de sua fila e faz o processamento da mensagem. Para esse exemplo, o processamento da 
 mensagem $m_1$ resultou na criação de um novo ator $A'$, com comportamento inicial $B_{1'}$, 
 e no envio da mensagem $m_{1'}$ do ator $A$ para o ator $A'$. O ator $A$ passa a ter o 
 comportamento $B_2$, que será usado no processamento da mensagem $m_2$. Vale ressaltar que o 
-comportamento substituto não precisa necessariamente ser diferente do comportamento anterior. 
+comportamento substituto não precisa ser necessariamente diferente do comportamento anterior. 
 Por exemplo, os comportamentos $B_1$ e $B_2$ podem ser comportamentos idênticos.
 
 \vspace{1ex}
@@ -154,7 +156,7 @@ a capacidade de se mover atores entre os diferentes nós de uma rede de computado
 Apesar de o modelo ser bem explícito e claro em relação a interação ser via troca de mensagens e
 dizer que o estado de um ator não deve ser compartilhado, implementações 
 poderiam permitir que o estado interno de um ator fosse acessado diretamente por outro ator. 
-Por exemplo, um ator em sua pilha de execução fazer invocação de algum método do outro ator. 
+Por exemplo, um ator em sua pilha de execução fazer a invocação de algum método de outro ator. 
 Mesmo que a interface de um ator não permita o compartilhamento do seu estado interno que não
 seja via troca de mensagens, as mensagens enviadas podem expor um compartilhamento indesejado
 caso não sejam imutáveis e passadas por cópia. 
@@ -179,14 +181,176 @@ precisem de escalabilidade \cite{Kim95}.
 \section{Implementações}
 \index{Atores!Implementações}
 \label{sec:atores-implementacoes}
+
+O modelo de atores pode estar disponível em um linguagem de programação seja fazendo parte
+da estrutura da linguagem, como uma biblioteca embutida em sua distribuição ou ainda como uma 
+biblioteca separada da distribuição padrão. 
+
+\subsection{Linguagens baseadas no modelo de atores}
+
+Linguagens como Axum \cite{axum-lang-overview}, SALSA \cite{SALSA2001}, Ptolemy \cite{Lee03} e
+Erlang \cite{PROG_ERLANG07} são exemplos de linguagens baseadas no modelo
+de atores, onde o suporte é dado via primitivas da estrutura da própria linguagem.
+Apresentamos a seguir algumas informações sobre essas linguagem.
+
+\subsubsection{Axum}
+\index{Atores!Implementações!Axum}
+Axum (anteriormente conhecida como Maestro) é uma linguagem experimental orientada a objetos
+\footnote{O projeto está em uma encubadora de projetos.} criada pela Microsoft 
+Corporation para o desenvolvimento de sistemas concorrentes na plataforma .Net \cite{axum-lang-overview}. 
+A criação da linguagem tem como motivação permitir que sistemas modelados como 
+componentes que interajam entre si, possam ser traduzidos naturalmente na linguagem.
+Pelo fato de ser uma linguagem da plataforma .Net, Axum pode fazer uso e ser utilizada
+por outras linguagem da plataforma, como VB.Net, C\# e F\#.
+
+Nessa linguagem, o termo ator é substituído pelo termo agente (\english{agent}). Agentes
+são executados como \english{threads} dentro da CLR (\english{Common Language Runtime}) 
+e são definidos com o uso da palavra chave \english{agent}. A troca de
+mensagens é feita através de canais. Os canais são responsáveis por definir os tipos de dados
+que trafegam entre neles com o uso das palavras chaves \english{input} e \english{output}. 
+Canais possuem duas extremidades, a extremidade implementadora
+(\english{implementing end}) e a extremidade de uso (\english{using end}). Agentes que implementam
+o comportamento da extremidade implementadora de um canal, passam a agir como um servidor de 
+mensagens do canal. A extremidade de uso do canal é visível e deve ser utilizada por 
+outros agentes para fazer o envio de mensagens. 
+
+A linguagem possui ainda o conceito de domínio. Domínios são definidos com a palavra chave 
+\english{domain} e permitem que agentes definidos dentro de um domínio compartilhem informações
+de um modo diferente. Uma instância de domínio pode ter atributos que são usados para 
+compartilhamento seguro e controlado de informações.
+
+Apesar da linguagem ter seu desenvolvimento interrompido na versão $0.3$ no início
+de $2011$, segundo os seus autores os conceitos implementados na linguagem deverão ser portados 
+para as linguagens C\# e Visual Basic \cite{axum}.
+
+\subsubsection{SALSA}
+\index{Atores!Implementações!SALSA}
+
+SALSA (\english{Simple Actor Language System and Architecture} é uma linguagem que foi criada
+em meados de $2001$ no \english{Rensselaer Poytechnic Institute} para facilitar o desenvolvimento 
+de sistemas abertos com requisitos de serem dinamicamente reconfiguráveis. SALSA é uma linguagem
+concorrente e orientada a objetos que implementa a semântica do modelo de atores. A linguagem
+possui um pré-processador que converte o código fonte escrito SALSA para código fonte Java. Esse
+que por sua vez pode ser, com a biblioteca de atores SALSA, compilado para \english{bytecode} Java
+para ser executado sobre a JVM.
+
+A linguagem possui algumas primitivas para a criação, uso e organização dos atores. A primitiva
+\english{behavior} é análoga a palavra chave \english{class} de Java, e é utilizada para definir
+os métodos que definem o comportamento do ator. Assim como é permitido na hierarquia de classes
+em Java, onde não existe herança múltipla e classes podem implementar zero ou muitas 
+\english{interfaces}, \english{behaviors} seguem a mesma regra. O \english{behavior} 
+\lstinline$salsa.language.UniversalActor$ é análogo a classe \lstinline$java.lang.Object$, e todos os
+\english{behaviors} o estendem direta ou indiretamente. A primitiva \lstinline$<-$ é utilizada
+para enviar uma mensagem a um ator.
+
+A implementação de atores da linguagem utiliza o objeto \lstinline$salsa.language.Actor$
+como ator base que estende the \lstinline$java.lang.Thread$, criando uma relação onde 
+cada ator executa em uma \english{thread}. Cada ator possui uma fila de mensagens onde
+as mensagens enviadas ficam armazenadas até que o método \lstinline$run$ as retire
+para que o método correspondente seja executado via reflexão. 
+
+Além de prover a implementação da semântica do modelo de atores, a 
+linguagem introduz ainda três abstrações para facilitar a coordenação das interações 
+assíncronas entre os atores:
+
+\begin{enumerate}
+	\item Continuações com passagem de \english{token} (\english{Token-passing continuations}): 
+	envios de mensagens para atores resultam em invocações de métodos. Esses métodos podem retornar
+	valores que precisarão ser repassados a outros atores. Os valores de retorno são definidos como
+	\english{tokens}. Essa abstração permite que uma mensagem enviada a um ator contenha uma 
+	referência para o ator que irá consumir \english{token}, como mostrado no exemplo a seguir:
+	
+	\begin{center}
+		\lstinline$gerente <- aprovacao1(500) @ gerente2 <- aprovacao2(token)$ \\
+		\lstinline$@ diretor <- aprovacaoFinal(token)$
+	\end{center}
+	
+	Nesse exemplo, o \lstinline$gerente$ processa a mensagem \lstinline$aprovacao1(500)$ e seu retorno,
+	quando computado, é passado como \lstinline$token$ no envio da mensagem para o ator
+	\lstinline$gerente2$. Apesar de o \lstinline$diretor3$ também receber como argumento
+	da ação a lhe ser enviada \english{token}, o valor recebido será o resultado da
+	computação do \lstinline$gerente2$. A palavra \english{token} é uma palavra chave e seu valor
+	é associado no contexto do último \english{token} passado. Ainda nesse exemplo, utilizamos
+	a primitiva \lstinline$@$ para indicar que desejamos utilizar a continuação com passagem
+	de \english{token}.
+				
+	\item Continuações de junção (\english{Join continuations}): atores podem receber vetores
+	com \english{tokens} recebidos de diversos atores. Essa abstração permite que os 
+	\english{tokens} sejam agrupados para que o ator que os está recebendo só execute quando
+	todos os \english{tokens} aguardados forem recebidos. Por exemplo:
+	
+	\begin{center}
+		\lstinline$join(gerente <- aprovacao1(500), gerente2 <- aprovacao2(500))$ \\
+		\lstinline$@ diretor <- aprovacaoFinal(500)$
+	\end{center}
+	
+	Nesse exemplo, os dois atores \lstinline$gerente1$ e \lstinline$gerente2$ fazem suas aprovações
+	em paralelo e, somente quando os dois tiverem dado suas aprovações, o ator \lstinline$diretor$
+	irá receber a mensagem de \lstinline$aprovacaoFinal$. 
+
+	\item Continuações de primeira classe (\english{First-class continuations}):
+\end{enumerate}
+
+Varela e Agha apresentaram um estudo da linguagem SALSA em um contexto de computação na internet,
+utilizando nomeação universal, comunicação remota e migração de atores em \cite{SALSA2001}.
+
+\subsubsection{Ptolemy}
+\index{Atores!Implementações!Ptolemy}
+salgo sobre ptolemy
+
+\subsubsection{Erlang}
+\index{Atores!Implementações!Erlang}
+
+Erlang é uma linguagem funcional, com tipagem dinâmica e executada por 
+uma máquina virtual Erlang. Voltada para o desenvolvimento de sistemas distribuídos de 
+larga escala e tempo real, foi desenvolvida nos laboratórios da Ericsson no período 
+de $1985$ à $1997$ \cite{erlang:97}. 
+
+A linguagem em si, embora bem enxuta, possui características interessantes para simplificar o 
+desenvolvimento de sistemas concorrentes. Exemplos de tais características são: variáveis de 
+atribuição única, casamento de padrões e um conjunto de primitivas que inclui \english{spawn} 
+para criação de atores, \english{send} e \english{!} para o envio de mensagens, \english{receive} 
+para o recebimento de mensagens e \english{link} para a definição de adjacências entre atores. 
+Ademais a linguagem dá suporte a hierarquias de supervisão entre atores e troca quente de 
+código (\english{hotswap}).
+
+Em Erlang, atores são processos ultra leves criados dentro de uma máquina virtual. 
+Embora Erlang implemente o modelo de atores, sua literatura e suas bibliotecas não 
+utilizam o termo ``ator'' (\english{actor}). O termo utilizado é ``processo'' (\english{process}).
+A criação, destruição e troca de mensagens entre atores é extremamente rápida. Num teste feito 
+em um computador com $512MB$ de memória, com um processador de $2.4GHz$  Intel Celeron rodando 
+Ubuntu Linux, a criação de $20000$ processos levou em média $3.5\mu s$ de tempo de CPU por 
+ator e $9.2\mu s$ de tempo de relógio por ator \cite{PROG_ERLANG07}.
+
+Com a possibilidade de se criar uma quantidade considerável de atores, o uso de uma hierarquia 
+de supervisão torna-se extremamente importante. No que diz respeito ao tratamento de erros em 
+atores filhos, as primitivas existentes na linguagem dão suporte a três abordagens:
+\begin{enumerate}
+	\item Não se tem interesse em saber se um ator filho foi terminado normalmente ou não; 
+	
+	\item caso um ator filho não tenha terminado normalmente, o ator criador também é 
+		  terminado; 
+
+	\item caso um ator filho não tenha terminado normalmente, o ator criador é 
+		  notificado e pode fazer o controle de erros da maneira que julgar mais apropriada. 
+\end{enumerate}
+
+Em Erlang é possível criar atores em nós remotos (\english{remote spawn}). Vale ressaltar 
+que o código do ator deve estar acessível na máquina virtual onde o ator irá ser executado, 
+pois não há suporte para carga remota de código. Uma vez que alguns detalhes de infra-estrutura 
+foram observados\footnote{As máquinas virtuais Erlang necessitam se autenticar umas com as outras.},
+a troca de mensagens entre atores remotos acontece de maneira transparente. No processo de 
+envio, as mensagens trafegam com o uso de \english{sockets} TCP e UDP.
+
+
 %% comtentar do paper do actor frameworks for the jvm platform. Dizer que nele
 %% ficam ex
-Karmani e Agha argumentam as vantagens da preservação dessas propriedades e 
-fazem uma comparação de algumas implementações para a JVM em \cite{karmani2009}.
+%Karmani e Agha argumentam as vantagens da preservação dessas propriedades e 
+%fazem uma comparação de algumas implementações para a JVM em \cite{karmani2009}.
 
 
 
-\section{Computações em um Sistema de Atores}
+\subsection{Computações em um Sistema de Atores}
 \index{Atores!Computação}
 \label{sec:atores-computacao}
 %% aqui eu acho legal dar um exemplo? jogar fora? colocar metade do que esta em cima aqui dentro?
