@@ -1,0 +1,109 @@
+%% ------------------------------------------------------------------------- %%
+\chapter{Atores no projeto Akka}
+\label{cap:atores_akka}
+
+Os atores do Akka podem ser locais ou remotos. O termo ``ator local'' é usado
+para denotar um ator que pode receber mensagens apenas de atores residentes
+na mesma máquina virtual. Por outro lado, um ator remoto pode receber mensagens
+de quaisquer outros atores, inclusive daqueles residentes em outras máquinas virtuais.
+Em outras palavras, o termo ``ator remoto'' é um sinônimo de ``ator remotamente acessível''.
+
+Nas próximas duas seções examinaremos a implementação de atores do projeto Akka. 
+Mostraremos a criação e o uso de atores locais ou remotos, bem como o fluxo de uma 
+mensagem (envio, tráfego e processamento da mensagem) tanto no caso local como no remoto.
+        
+\section{Atores locais}
+A criação de atores locais pode acontecer tanto por meio uma sub-classe de \code{Actor}
+provendo uma implementação para o método \code{receive}, como mostrado na 
+listagem \ref{lst:subclass-actor}, quanto via chamadas ao método \code{actor} da 
+própria classe \code{Actor}, como mostrado na listagem \ref{lst:anonym-actor}. 
+Note que no segundo caso o ator criado é uma instância de uma classe anônima, e que 
+não é necessário chamar explicitamente o método \code{start} para inicializá-lo.
+        
+        
+Uma vez que uma mensagem foi enviada para um ator, ela é colocada sincronamente 
+na fila de mensagens do ator, em tempo $O(1)$. As mensagens enfileiradas são então 
+despachadas assincronamente para a função parcial definida no bloco \code{receive}, 
+como mostrado na figura \ref{fig:local-actor-message}. Por padrão, atores são criados 
+com um despachador que é impulsionado por eventos e que utiliza um \english{thread pool} 
+para despachar as mensagens. Cada vez que uma mensagem é adicionada na fila de um ator, 
+uma tarefa de despachamento é criada e colocada na fila de processamento do 
+\english{thread pool}. É possível a definição e utilização de outros tipos de 
+despachadores para se obter melhores resultados em casos específicos \cite{akka-dispatchers}.
+                
+\section{Atores remotos}
+\label{sec:atores_remotos_akka}
+No contexto de um envio de mensagem para um ator remoto, o termo cliente se refere à 
+entidade que está enviando a mensagem. O termo servidor denota o processo (máquina virtual) 
+no qual reside o ator remoto. A infra-estrutura de atores remotos utiliza os seguintes elementos:
+	
+\begin{itemize}
+
+	\item \code{RemoteActor}: Sub-classe de \code{Actor} que torna conveniente 
+	a criação de um ator remoto, ao invés de se criar explicitamente um ator local 
+	e torná-lo remoto.
+
+	\item \code{RemoteServer}: É um componente usado no lado do servidor. Tem como 
+	responsabilidade manter registrados os atores, bem como encaminhar a eles as mensagens 
+	recebidas de clientes remotos. Cada \code{RemoteServer} é associado a um \english{host} 
+	e a uma porta TCP. Um mesma máquina virtual pode conter múltiplos \code{RemoteServer}s.
+
+	\item \code{RemoteNode}: Objeto \english{singleton} que é instância de 
+	\code{RemoteServer}. Não possui nenhum comportamento adicional e é usado quando 
+	se deseja ter um único \code{RemoteServer} numa dada máquina virtual.
+
+	\item \code{Cluster}: Abstração para se agrupar instâncias de \code{RemoteServer}. 
+	Permite que um cliente interaja com múltiplos \code{RemoteServer}s, por exemplo via 
+	\english{broadcasts} de mensagens;
+
+	\item \code{RemoteClient}: É um componente usado pelo cliente. Tem como responsabilidade 
+	visível oferecer uma interface para obtenção de referências a atores remotos. 
+	Oferece também suporte em tempo de execução para a infra-estrutura de atores do lado do 
+	cliente, provendo uma série de serviços não vísiveis para o usuário, tais como: 
+	\entry{(i)} seriação de mensagens; \entry{(ii)} envio de mensagens para atores remotos; 
+	\entry{(iii)} conversão de ator local em ator remoto; \entry{(iv)} intermediação de 
+	mensagens de resposta vindas do \code{RemoteServer}, no caso envios via \code{!!} 
+	ou \code{!!!}.
+
+\end{itemize}
+	
+A figura \ref{fig:remote-actor-diagram} mostra os elementos acima descritos e os 
+relacionamentos entre esses elementos. A criação de atores remotos pelo cliente é 
+análoga a de atores locais, salvo o fato de se informar o \english{host} e porta 
+de um \code{RemoteServer} já em execução. A listagem \ref{lst:subclass-actor-remote} 
+mostra a criação por meio de uma sub-classe de \code{RemoteActor}. Vale destacar que, 
+nesta listagem, o valor de \code{myRemoteActor} (linha $12$) é um \english{proxy} local 
+para o ator remoto. Outra possibilidade é criar um ator local e posteriormente convertê-lo
+em remoto, por meio de uma chamada ao método \code{makeRemote(host, port)} 
+(listagem \ref{lst:make-remote-of-local-actor}). Tal chamada deve ocorrer anteriormente
+à ativação do ator via chamada ao método \code{start}.
+       	
+A criação de atores remotos pelo servidor, por sua vez, é exatamente igual a de atores 
+locais, mostram as listagens \ref{lst:subclass-actor} e \ref{lst:anonym-actor}. 
+Depois de criar o ator localmente, basta registrá-lo em um \code{RemoteServer} 
+ou \code{RemoteNode}, como mostra a listagem \ref{lst:registering-actor}. 
+A maneira com que o cliente remoto busca pelo ator e envia uma mensagem pode ser
+vista na listagem \ref{lst:using-remote-actor}.
+        
+Quando um cliente envia uma mensagem a um ator remoto, o \english{proxy} local 
+embrulha a mensagem, adicionando a ela informações de cabeçalho necessárias para 
+o envio. O \english{proxy} usa um  \code{RemoteClient} para enviar a mensagem ao 
+\code{RemoteServer} correspondente. Este processo de envio, do ponto de vista do cliente
+leva tempo $O(1)$, já que a seriação da mensagem é feita de modo assíncrono.
+        
+A figura \ref{fig:remote-actor-message-flow} mostra o caminho que a mensagem faz saindo
+da aplicação cliente via \english{proxy} e sendo repassada para um \code{RemoteClient}, 
+que por sua vez faz a seriação assíncrona da mensagem e a envia para o \code{RemoteServer} 
+correspondente. Uma vez que a mensagem tenha sido recebida pelo \english{handler} plugado 
+ao JBoss Netty no lado servidor, o \english{handler} examina as informações de cabeçalho, 
+localiza o ator destinatário no registro local de atores e encaminha a mensagem a caixa de 
+mensagens do ator, como se o envio fosse local. O despachador associado ao ator faz o 
+tratamento mostrado na figura \ref{fig:local-actor-message}, já que do ponto de vista do
+despachador não há diferença entre um envio local e um remoto.
+
+Em alguns casos, o processamento deve gerar uma mensagem de resposta, como por exemplo
+um resultado futuro ou uma mensagem de erro para um ator supervisor. Em tais casos a 
+mensagem de resposta faz o caminho contrário, indo do \code{RemoteServer} para
+o \code{RemoteClient}, onde analogamente o \english{handler} faz o repasse da resposta
+para quem a estiver aguardando.
+        

@@ -2,53 +2,11 @@
 \chapter{Atores}
 \label{cap:atores}
 
-Apresentamos neste capítulo o modelo de atores. Na seção 
-\ref{sec:atores-historico} apresentamos um breve histórico com alguns estudos
-relacionados ao modelo. Na seção \ref{sec:atores-modelo} apresentamos a semântica
-do modelo de atores e por fim, citamos na seção \ref{sec:atores-implementacoes} algumas
-linguagens baseadas no modelo de atores e algumas bibliotecas para linguagens gerais.
-
-\section{Breve histórico}
-\label{sec:atores-historico}
-\index{Atores!Histórico}
-
-O modelo de atores foi originalmente proposto por Carl Hewitt em $1971$ \cite{hewitt:71}. 
-O termo ator foi originalmente utilizado para descrever entidades ativas que analizavam 
-padrões para iniciar atividades. O conceito de atores passou então a ser explorado pela 
-comunidade científica e, em $1973$, a noção de atores se aproximou do conceito de agentes existente
-na área de inteligência artificial distribuída, por possuírem intenções, recursos,
-monitores de mensagens e um agendador \cite{Hewitt:1973}.
-
-Em $1975$, Irene Greif desenvolveu um modelo abstrato de atores orientado 
-a eventos, onde cada ator armazenava os eventos locais para que fosse possível analizar 
-a relação causal entre os eventos. Baker e Hewitt formalizaram um conjunto
-de axiomas para computação concorrente em $1977$. Desse estudo surgiu uma propriedade 
-importante: a ordem em que eventos são gerados deve ser obedecida a fim de prever 
-violações de causalidade. No mesmo ano, Hewitt apresentou um estudo sobre como o 
-entendimento dos padrões de troca de mensagens entre atores pode ajudar na definição de 
-estruturas de controle. Esse estudo demonstrou o uso do estilo de passagem de continuações
-no modelo de atores.	
-
-O conceito de guardião foi definido em $1978$ por Attardi e Hewitt. Um guardião é 
-uma entidade que regula o uso de recursos compartilhados. Guardiões incorporam 
-explitamente a noção de estado e são responsáveis por agendar o acesso e fazer a 
-proteção dos recursos. Hewitt e Atkinson definiram em $1979$ um conceito relacionado ao 
-de guardião denominado seriador (\english{serializer}). Um seriador age como um monitor, 
-porém, ao invés de aguardar sinais explícitos vindos dos processos, seriadores procuram ativamente 
-por condições que permitam que processos em espera possam voltar a ser executados. 
-Em $1987$, Henry Lieberman implementou em Lisp a linguagem Act1 \cite{Lieberman:1987}, 
-uma linguagem de atores com guardiões, seriadores e atores chamados de ``trapaceiros'' 
-(\english{rock-bottom}). Atores trapaceiros são atores que podem burlar as regras do modelo
-de atores para, por exemplo, usar dados primitivos e funções da linguagem usada em sua
-implementação.
-
-Gul Agha definiu em $1986$ um sistema simples de transição para atores. Em seu trabalho foi
-desenvolvido o conceito de configurações, recepcionistas e atores externos. 
-Atores recepcionistas são atores que ocultam a existência de outros atores em um
-sistema de atores, agindo como intermediários no recebimento das mensagens. 
-O uso de atores recepcionistas permite uma forma de encapsulamento, já que eles acabam 
-agindo como interface para atores externos. Esse modelo foi implementado na linguagem Acore 
-por Carl Manning em $1987$, e na linguagem Rosette por Tomlinson e outros em $1989$.
+Apresentamos neste capítulo o modelo de atores. Na seção \ref{sec:atores-modelo} 
+apresentamos a semântica do modelo de atores, na seção \ref{sec:atores-historico} 
+apresentamos um breve histórico com alguns estudos relacionados ao modelo. Por fim, 
+apresentamos na seção \ref{sec:atores-implementacoes} algumas linguagens baseadas no modelo 
+de atores e algumas bibliotecas desenvolvidas em linguagens mais gerais.
 
 \section{Modelo}
 \label{sec:atores-modelo}
@@ -177,6 +135,48 @@ uma arquitetura modular e componível \cite{Agha98afoundation}, e um melhor desem
 sistemas concorrentes e distribuídos, em particular para situações onde as aplicações
 precisem de escalabilidade \cite{Kim95}.
 
+\section{Breve histórico}
+\label{sec:atores-historico}
+\index{Atores!Histórico}
+
+O modelo de atores foi originalmente proposto por Carl Hewitt em $1971$ \cite{hewitt:71}. 
+O termo ator foi originalmente utilizado para descrever entidades ativas que analizavam 
+padrões para iniciar atividades. O conceito de atores passou então a ser explorado pela 
+comunidade científica e, em $1973$, a noção de atores se aproximou do conceito de agentes existente
+na área de inteligência artificial distribuída, por possuírem intenções, recursos,
+monitores de mensagens e um agendador \cite{Hewitt:1973}.
+
+Em $1975$, Irene Greif desenvolveu um modelo abstrato de atores orientado 
+a eventos, onde cada ator armazenava os eventos locais para que fosse possível analizar 
+a relação causal entre os eventos. Baker e Hewitt formalizaram um conjunto
+de axiomas para computação concorrente em $1977$. Desse estudo surgiu uma propriedade 
+importante: a ordem em que eventos são gerados deve ser obedecida a fim de prever 
+violações de causalidade. No mesmo ano, Hewitt apresentou um estudo sobre como o 
+entendimento dos padrões de troca de mensagens entre atores pode ajudar na definição de 
+estruturas de controle. Esse estudo demonstrou o uso do estilo de passagem de continuações
+no modelo de atores.	
+
+O conceito de guardião foi definido em $1978$ por Attardi e Hewitt. Um guardião é 
+uma entidade que regula o uso de recursos compartilhados. Guardiões incorporam 
+explitamente a noção de estado e são responsáveis por agendar o acesso e fazer a 
+proteção dos recursos. Hewitt e Atkinson definiram em $1979$ um conceito relacionado ao 
+de guardião denominado seriador (\english{serializer}). Um seriador age como um monitor, 
+porém, ao invés de aguardar sinais explícitos vindos dos processos, seriadores procuram ativamente 
+por condições que permitam que processos em espera possam voltar a ser executados. 
+Em $1987$, Henry Lieberman implementou em Lisp a linguagem Act1 \cite{Lieberman:1987}, 
+uma linguagem de atores com guardiões, seriadores e atores chamados de ``trapaceiros'' 
+(\english{rock-bottom}). Atores trapaceiros são atores que podem burlar as regras do modelo
+de atores para, por exemplo, usar dados primitivos e funções da linguagem usada em sua
+implementação.
+
+Gul Agha definiu em $1986$ um sistema simples de transição para atores. Em seu trabalho foi
+desenvolvido o conceito de configurações, recepcionistas e atores externos. 
+Atores recepcionistas são atores que ocultam a existência de outros atores em um
+sistema de atores, agindo como intermediários no recebimento das mensagens. 
+O uso de atores recepcionistas permite uma forma de encapsulamento, já que eles acabam 
+agindo como interface para atores externos. Esse modelo foi implementado na linguagem Acore 
+por Carl Manning em $1987$, e na linguagem Rosette por Tomlinson e outros em $1989$.
+
 \section{Implementações}
 \index{Atores!Implementações}
 \label{sec:atores-implementacoes}
@@ -239,7 +239,7 @@ que por sua vez pode ser, com a biblioteca de atores SALSA, compilado para \engl
 e ser executado sobre a JVM.
 
 A linguagem possui algumas primitivas para a criação, uso e organização dos atores. A primitiva
-\lstinline$behavior$ é análoga a palavra chave \lstinline$class$ de Java, e é utilizada para definir
+\lstinline$behavior$ é equivalente a palavra chave \code{class} de Java, e é utilizada para definir
 os métodos que definem o comportamento do ator. Assim como na hierarquia de classes
 em Java, onde não existe herança múltipla e classes podem implementar zero ou muitas 
 \english{interfaces}, \english{behaviors} seguem a mesma regra. O \english{behavior}
@@ -375,9 +375,8 @@ bibliotecas:
 	\item Java: Akka \cite{akka}, Kilim \cite{kilim}, Jetlang \cite{jetlang} e Actor Foundry
 	\cite{foundry};
 
-	\item Scala: Scala Actors \cite{scala-actors}, Akka \cite{akka} e Scalaz \cite{scalaz}; 
+	\item Scala: Scala Actors \cite{scala-actors}, Akka \cite{akka} e Scalaz \cite{scalaz}.
 	
-	\item Closure: Agents \cite{closure-agents}.	 
 \end{itemize}
 
 Pelo fato de nosso trabalho ter sido desenvolvido sobre a JVM, mais especificamente na linguagem
