@@ -302,9 +302,6 @@ assíncronas entre os atores:
 	
 \end{enumerate}
 
-Varela e Agha apresentaram um estudo da linguagem SALSA em um contexto de computação na internet,
-utilizando nomeação universal, comunicação remota e migração de atores em \cite{SALSA2001}.
-
 \subsubsection{Erlang}
 \label{sec:atores-linguagens-erlang}
 \index{Atores!Implementações!Linguagens!Erlang}
@@ -403,8 +400,8 @@ definidos os padrões a serem casados com as mensagens que o ator processa e as a
 A primeira mensagem que casar com qualquer dos padrões é removida da caixa de correio e a 
 ação correspondente é executada. Caso não haja casamento com nenhum dos padrões, o ator é suspenso.
 
-Atores são executados em um conjunto de \english{threads}\footnote{Idealmente o tamanho do 
-conjunto corresponde ao número de núcleos do processador.}. O conjunto cresce conforme a demanda. 
+Atores são executados em um \english{thread pool}\footnote{Idealmente o tamanho do 
+\english{thread pool} corresponde ao número de núcleos do processador.} que cresce conforme a demanda. 
 É importante ressaltar que o uso do método \lstinline$receive$
 fixa o ator à \english{thread} que o está executando, limitando superiormente a quantidade
 de atores pelo número de \english{threads} que podem ser criadas. É recomendado o uso do método 

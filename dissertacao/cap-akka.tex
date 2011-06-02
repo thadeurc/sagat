@@ -1,7 +1,6 @@
 %% ------------------------------------------------------------------------- %%
 \chapter{Atores no projeto Akka}
 \label{cap:atores_akka}
-
 Os atores do Akka podem ser locais ou remotos. O termo ``ator local'' é usado
 para denotar um ator que pode receber mensagens apenas de atores residentes
 na mesma máquina virtual. Por outro lado, um ator remoto pode receber mensagens
@@ -13,23 +12,114 @@ Mostraremos a criação e o uso de atores locais ou remotos, bem como o fluxo de u
 mensagem (envio, tráfego e processamento da mensagem) tanto no caso local como no remoto.
         
 \section{Atores locais}
-A criação de atores locais pode acontecer tanto por meio uma sub-classe de \code{Actor}
-provendo uma implementação para o método \code{receive}, como mostrado na 
-listagem \ref{lst:subclass-actor}, quanto via chamadas ao método \code{actor} da 
-própria classe \code{Actor}, como mostrado na listagem \ref{lst:anonym-actor}. 
-Note que no segundo caso o ator criado é uma instância de uma classe anônima, e que 
-não é necessário chamar explicitamente o método \code{start} para inicializá-lo.
-        
-        
-Uma vez que uma mensagem foi enviada para um ator, ela é colocada sincronamente 
-na fila de mensagens do ator, em tempo $O(1)$. As mensagens enfileiradas são então 
-despachadas assincronamente para a função parcial definida no bloco \code{receive}, 
-como mostrado na figura \ref{fig:local-actor-message}. Por padrão, atores são criados 
-com um despachador que é impulsionado por eventos e que utiliza um \english{thread pool} 
-para despachar as mensagens. Cada vez que uma mensagem é adicionada na fila de um ator, 
-uma tarefa de despachamento é criada e colocada na fila de processamento do 
-\english{thread pool}. É possível a definição e utilização de outros tipos de 
-despachadores para se obter melhores resultados em casos específicos \cite{akka-dispatchers}.
+\index{Akka!Atores locais}
+
+A definição de atores locais acontece por meio de extensões da 
+\english{trait} \lstinline$akka.actor.Actor$ provendo uma implementação para o 
+método \code{receive} como mostrado na listagem \ref{lst:def-actor}. 
+A definição de um ator ``descreve'' o comportamento que o
+ator terá, sendo que o ator propriamente dito que possui a infraestrutura provida
+pelo arcabouço, é uma instância de \lstinline$akka.actor.ActorRef$. \lstinline$ActorRef$s
+são imutáveis, seriáveis, possuem um relacionamento único com a definição do ator,
+são acessíveis dentro da definição do ator como \lstinline$self$, além
+de conter informação do nó onde foram criadas. 
+
+\begin{lstlisting}[frame=tb, caption={Classe SampleActor.}, label={lst:def-actor}]
+class SampleActor(val name: String) extends akka.actor.Actor {
+  def this() = this("No name")
+
+  def receive = {
+    case "hello" => println("%s received hello".format(name))
+    case          _ => println("%s received unknown".format(name))
+  }
+}
+\end{lstlisting}
+
+Atores são criados pelo método \lstinline$actorOf$ do objeto \lstinline$akka.actor.Actor$
+como mostrado na listagem \ref{lst:actorOf1}. Nessa listagem a instância do ator é criada
+com base no tipo da classe, onde o construtor público e sem argumentos da classe é invocado
+por reflexão. O método \lstinline$actorOf$ é sobrecarregado para permitir que uma função sem 
+argumentos e com tipo de retorno \lstinline$Actor$, possa ser passada como argumento para ser 
+invocada na criação do ator substituíndo a invocação do construtor padrão, como mostrado na 
+listagem \ref{lst:actorOf2}. 
+
+Nas duas listagens tivemos que chamar explicitamente o método 
+\lstinline$start$ para inicializar o ator. Os atores do projeto Akka possuem um conjunto de estados
+simples, bem definido e linear. Um ator, logo após sua criação, está no estado chamado de ``novo'' 
+e ainda não pode receber mensagens. Após a chamada do método \lstinline$start$, o ator passa ao 
+estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método \lstinline$exit$ é invocado
+o ator passa ao estado de ``desligado'' e não pode mais executar ação alguma.
+
+\begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via construtor padrão.}, label={lst:actorOf1}]
+  val theActor = Actor.actorOf[SampleActor].start
+  theActor ! "hello"
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via função de inicialização.}, label={lst:actorOf2}]
+  val function = {
+    // some other actions here
+    new SampleActor("John")
+  }
+  val theActor = Actor.actorOf(function).start
+  theActor ! "hello"
+\end{lstlisting}
+
+Mensagens que são enviadas para um ator são colocada sincronamente 
+na fila de mensagens do ator, levando tempo $O(1)$. As mensagens enfileiradas são então 
+despachadas assincronamente para a função parcial definida no bloco \lstinline$receive$, 
+como mostrado na figura \ref{fig:local-actor-message}. 
+
+\vspace{1ex}
+\begin{figure}[hbtp]
+ 		\centering
+	\includegraphics{local-actor-message} 
+  	\caption{Akka -- Envio e despacho de mensagens para atores locais.}
+  	\label{fig:local-actor-message}
+\end{figure}
+
+O despachador de um ator possui um papel importante. Ele permite a configuração do tipo
+da fila do ator e a semântica de despachamento das mensagens. As filas dos atores podem ser 
+duráveis ou transiente e terem seu tamanho limitado superiormente ou não. O Akka
+permite que despachadores específicos sejam definidos, porém possui em sua distribuição quatro 
+tipos de despachadores listados a seguir:
+
+\begin{itemize}
+	\item \english{ExecutorBasedEventDrivenDispatcher}: é o despachador padrão impulsionado por 
+	eventos. Esse despachador normalmente é compartilhado por diversos atores de diferentes
+	tipos, já que ele utiliza um \english{thread pool} para agendar as ações de despachamento.
+	É o despachador mais flexível em termos de configurações, já que permite que os
+	parâmetros do \english{thread pool}, como quantidade máxima e mínima de \english{threads}
+	sejam configurados, e da fila, como limite de mensagens, durabilidade e políticas para
+	rejeição sejam configurados;
+
+	\item \english{ExecutorBasedEventDrivenWorkStealingDispatcher}: semelhante ao despachador
+	anterior, esse despachador deve ser usado em atores do mesmo tipo já que permite que
+	instâncias que não estão processando mensagens, possam ``roubar'' mensagens de filas de atores
+	que estão sobrecarregados, permitindo o balanceamento do processamento das mensagens entre
+	os atores;
+	
+	\item \english{HawtDispatcher}: inspirado no \english{Grand Central Dispacher} do Mac OS X
+	\cite{apple-gcd}, define um \english{thread pool} cujo tamanho é ajustado ao automaticamente
+	para minimizar a quantidade de \english{threads} concorrentes e inativas
+	\footnote{Idealmente a quantidade de \english{threads} corresponde ao número de núcleos disponíveis.}.
+	A grande diferença desse despachador é a capacidade de agrupar diversos eventos gerados pela
+	aplicação, por exemplo diversas mensagens recebidas, gerando uma única tarefa assíncrona;		
+	
+	\item \english{ThreadBasedDispatcher}:  é o mais simples de todos os dispachadores, já que
+	associa uma \english{thread} para cada ator. O uso desse despachador implica no ator
+	utilizar filas transientes. É importante ressaltar que internamente é utilizado uma fila
+	que faz o bloqueio da \english{thread} que está tentando adicionar um elemento, caso o limite
+	superior da fila tenha sido atingido (para o caso onde há um limite informado). 		
+\end{itemize}
+
+Por padrão, atores são associados ao despachador global impulsionado por eventos. A 
+configuração padrão do despachador define uma fila transiente sem limite máximo de mensagens. 
+Caso seja necessário definir um outro despachador para um ator, a definição deve acontecer 
+antes de o ator ser inciado via método \lstinline$self.dispatcher$. 
+
+
+% falar dos outros tipos de envio? falar de hotswap? falar de hierarquia de supervisao?
+
                 
 \section{Atores remotos}
 \label{sec:atores_remotos_akka}
