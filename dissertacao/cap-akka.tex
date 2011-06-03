@@ -17,12 +17,19 @@ mensagem (envio, tráfego e processamento da mensagem) tanto no caso local como n
 A definição de atores locais acontece por meio de extensões da 
 \english{trait} \lstinline$akka.actor.Actor$ provendo uma implementação para o 
 método \code{receive} como mostrado na listagem \ref{lst:def-actor}. 
-A definição de um ator ``descreve'' o comportamento que o
-ator terá, sendo que o ator propriamente dito que possui a infraestrutura provida
-pelo arcabouço, é uma instância de \lstinline$akka.actor.ActorRef$. \lstinline$ActorRef$s
-são imutáveis, seriáveis, possuem um relacionamento único com a definição do ator,
-são acessíveis dentro da definição do ator como \lstinline$self$, além
-de conter informação do nó onde foram criadas. 
+A definição de um ator descreve o comportamento inicial que o
+ator terá. A ator propriamente dito (que possui a infraestrutura provida
+pelo arcabouço) é uma instância de \lstinline$akka.actor.ActorRef$. \lstinline$ActorRef$s
+são imutáveis, seriáveis, identificáveis e possuem um relacionamento único com a 
+definição do ator. 
+
+A \english{trait} \lstinline$Actor$ tem em sua declaração uma referência para o
+\lstinline$ActorRef$ que é acessível pela referência \lstinline$self$. No caso de
+atores locais, \lstinline$self$ referencia uma instância de \lstinline$akka.actor.LocalActorRef$.
+Com essa referência, a classe que define o comportamento do ator pode alterar as definições
+padrão providas pelo arcabouço e utilizar métodos, por exemplo, para responder ou encaminhar 
+mensagens recebidas, acessar as referências para um ator supervisor ou atores que estejam
+sobre supervisão.
 
 \begin{lstlisting}[frame=tb, caption={Classe SampleActor.}, label={lst:def-actor}]
 class SampleActor(val name: String) extends akka.actor.Actor {
@@ -37,18 +44,17 @@ class SampleActor(val name: String) extends akka.actor.Actor {
 
 Atores são criados pelo método \lstinline$actorOf$ do objeto \lstinline$akka.actor.Actor$
 como mostrado na listagem \ref{lst:actorOf1}. Nessa listagem a instância do ator é criada
-com base no tipo da classe, onde o construtor público e sem argumentos da classe é invocado
-por reflexão. O método \lstinline$actorOf$ é sobrecarregado para permitir que uma função sem 
-argumentos e com tipo de retorno \lstinline$Actor$, possa ser passada como argumento para ser 
-invocada na criação do ator substituíndo a invocação do construtor padrão, como mostrado na 
-listagem \ref{lst:actorOf2}. 
+com base no tipo da classe via invocação por reflexão do construtor padrão da classe.
+O método \lstinline$actorOf$ é sobrecarregado para permitir que uma função sem 
+argumentos e com tipo de retorno \lstinline$Actor$, possa ser utilizada como alternativa ao
+construtor padrão na criação do ator, como mostrado na listagem \ref{lst:actorOf2}. 
 
 Nas duas listagens tivemos que chamar explicitamente o método 
 \lstinline$start$ para inicializar o ator. Os atores do projeto Akka possuem um conjunto de estados
-simples, bem definido e linear. Um ator, logo após sua criação, está no estado chamado de ``novo'' 
+simples, bem definido e linear. Um ator logo após sua criação está no estado chamado de ``novo'' 
 e ainda não pode receber mensagens. Após a chamada do método \lstinline$start$, o ator passa ao 
-estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método \lstinline$exit$ é invocado
-o ator passa ao estado de ``desligado'' e não pode mais executar ação alguma.
+estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método \lstinline$exit$ é 
+invocado, o ator passa ao estado de ``desligado'' e não pode mais executar ação alguma.
 
 \begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via construtor padrão.}, label={lst:actorOf1}]
   val theActor = Actor.actorOf[SampleActor].start
@@ -64,7 +70,7 @@ o ator passa ao estado de ``desligado'' e não pode mais executar ação alguma.
   theActor ! "hello"
 \end{lstlisting}
 
-Mensagens que são enviadas para um ator são colocada sincronamente 
+As mensagens que são enviadas para um ator são colocada sincronamente 
 na fila de mensagens do ator, levando tempo $O(1)$. As mensagens enfileiradas são então 
 despachadas assincronamente para a função parcial definida no bloco \lstinline$receive$, 
 como mostrado na figura \ref{fig:local-actor-message}. 
@@ -73,40 +79,51 @@ como mostrado na figura \ref{fig:local-actor-message}.
 \begin{figure}[hbtp]
  		\centering
 	\includegraphics{local-actor-message} 
-  	\caption{Akka -- Envio e despacho de mensagens para atores locais.}
+  	\caption{Envio e despacho de mensagens para atores locais.}
   	\label{fig:local-actor-message}
 \end{figure}
 
-O despachador de um ator possui um papel importante. Ele permite a configuração do tipo
-da fila do ator e a semântica de despachamento das mensagens. As filas dos atores podem ser 
-duráveis ou transiente e terem seu tamanho limitado superiormente ou não. O Akka
-permite que despachadores específicos sejam definidos, porém possui em sua distribuição quatro 
-tipos de despachadores listados a seguir:
+\subsubsection{Despachadores}
+
+O despachador de um ator é uma entidade que possui um papel importante. O despachador permite a 
+configuração do tipo da fila do ator e a semântica de despachamento das mensagens. As filas 
+dos atores podem ser duráveis ou transientes e ter seu tamanho limitado superiormente ou não. O Akka
+permite que despachadores específicos sejam definidos, porém possui em sua distribuição os quatro 
+despachadores listados a seguir:
 
 \begin{itemize}
-	\item \english{ExecutorBasedEventDrivenDispatcher}: é o despachador padrão impulsionado por 
-	eventos. Esse despachador normalmente é compartilhado por diversos atores de diferentes
+	\item Despachador impulsionado por eventos: 
+	O despachador é definido na classe \lstinline$akka.dispatch.ExecutorBasedEventDrivenDispatcher$
+	e é normalmente compartilhado por diversos atores de diferentes
 	tipos, já que ele utiliza um \english{thread pool} para agendar as ações de despachamento.
-	É o despachador mais flexível em termos de configurações, já que permite que os
-	parâmetros do \english{thread pool}, como quantidade máxima e mínima de \english{threads}
-	sejam configurados, e da fila, como limite de mensagens, durabilidade e políticas para
-	rejeição sejam configurados;
+	É o despachador mais flexível em termos de configurações, já que permite que
+	parâmetros do \english{thread pool} e da fila de mensagens sejam configurados;
 
-	\item \english{ExecutorBasedEventDrivenWorkStealingDispatcher}: semelhante ao despachador
-	anterior, esse despachador deve ser usado em atores do mesmo tipo já que permite que
-	instâncias que não estão processando mensagens, possam ``roubar'' mensagens de filas de atores
+	%, como quantidade máxima e mínima de \english{threads},
+	%sejam configurados, e da fila, como limite de mensagens, durabilidade e políticas para
+	%rejeição sejam configurados;
+
+	\item Despachador impulsionado por eventos com balanceamento de processamento:
+	O despachador é definido na classe \lstinline$akka.dispatch.ExecutorBasedEventDrivenWorkStealingDispatcher$
+	e é semelhante ao despachador anterior, já que também é impulsionado por eventos. 
+	Esse despachador deve ser usado em atores do mesmo tipo já que permite que
+	atores que não estão processando mensagens possam ``roubar'' mensagens das filas dos atores
 	que estão sobrecarregados, permitindo o balanceamento do processamento das mensagens entre
 	os atores;
 	
-	\item \english{HawtDispatcher}: inspirado no \english{Grand Central Dispacher} do Mac OS X
-	\cite{apple-gcd}, define um \english{thread pool} cujo tamanho é ajustado ao automaticamente
+	\item Despachador quente: 
+	O despachador é definido na classe \lstinline$akka.dispatch.HawtDispatcher$ e é inspirado no 
+	\english{Grand Central Dispacher} do Mac OS X \cite{apple-gcd}. Esse despachador 
+	define um \english{thread pool} cujo tamanho é ajustado ao automaticamente
 	para minimizar a quantidade de \english{threads} concorrentes e inativas
 	\footnote{Idealmente a quantidade de \english{threads} corresponde ao número de núcleos disponíveis.}.
 	A grande diferença desse despachador é a capacidade de agrupar diversos eventos gerados pela
 	aplicação, por exemplo diversas mensagens recebidas, gerando uma única tarefa assíncrona;		
 	
-	\item \english{ThreadBasedDispatcher}:  é o mais simples de todos os dispachadores, já que
-	associa uma \english{thread} para cada ator. O uso desse despachador implica no ator
+	\item Despachador impulsionado por \english{threads}:  
+	O despachador é definido na classe \lstinline$akka.dispatch.ThreadBasedDispatcher$ e
+	é o mais simples de todos os dispachadores, já que associa uma \english{thread} para 
+	cada ator. O uso desse despachador implica no ator
 	utilizar filas transientes. É importante ressaltar que internamente é utilizado uma fila
 	que faz o bloqueio da \english{thread} que está tentando adicionar um elemento, caso o limite
 	superior da fila tenha sido atingido (para o caso onde há um limite informado). 		
@@ -117,45 +134,79 @@ configuração padrão do despachador define uma fila transiente sem limite máximo 
 Caso seja necessário definir um outro despachador para um ator, a definição deve acontecer 
 antes de o ator ser inciado via método \lstinline$self.dispatcher$. 
 
+\subsubsection{Envios de respostas}
 
-% falar dos outros tipos de envio? falar de hotswap? falar de hierarquia de supervisao?
+Envios de mensagens podem gerar mensagens de resposta ao remetente. Os métodos para
+envios de mensagens capturam implicitamente uma cópia da referência da entidade que está 
+fazendo o envio. A referência é enviada junto com a mensagem para que o ator destinatário 
+possa eventualmente enviar uma mensagem de resposta.
 
+O ator destinatário pode responder a uma mensagem via método \lstinline$self.reply$. 
+A execução do método de resposta nada mais é que um envio de mensagem como já apresentado.
+Envios de mensagens feitos via métodos \lstinline$!!$ e \lstinline$!!!$ são 
+considerados como feitos por ``remetentes futuros''. Uma vez que o ator enviou
+a mensagem de resposta, a mensagem não é coloca em uma fila de mensagens assim como
+acontece para atores, mas é utilizada para indicar no resultado futuro que a computação 
+foi completada. 
+
+Envios de mensagens não são limitados somente a atores. Qualquer objeto
+ou classe pode enviar uma mensagem a um ator. Podemos notar que o código da listagem 
+\ref{lst:actorOf1} não está definido em um ator. O ator que está para enviar a mensagem
+de resposta pode verificar se há um remetente definido associado a mensagem recebida, 
+porém existe um modo alternativo e mais simples. O método \lstinline$seld.reply_?$ faz o 
+envio ao remetente somente no caso em que há um remetente definido, devolvendo o valor 
+boleano \english{true} para indicar se houve envio, ou \english{false} caso contrário.
                 
 \section{Atores remotos}
+\index{Akka!Atores remotos}
 \label{sec:atores_remotos_akka}
+
 No contexto de um envio de mensagem para um ator remoto, o termo cliente se refere à 
 entidade que está enviando a mensagem. O termo servidor denota o processo (máquina virtual) 
-no qual reside o ator remoto. A infra-estrutura de atores remotos utiliza os seguintes elementos:
+no qual reside o ator remoto. Atores remotamente acessíveis possuem as mesmas características
+de atores locais no que diz respeito ao recebimento e despachamento de mensagens. Atores
+locais e remotos diferem basicamente na criação e no envio de mensagens. A infra-estrutura 
+de atores remotos utiliza os seguintes elementos:
 	
-\begin{itemize}
-
-	\item \code{RemoteActor}: Sub-classe de \code{Actor} que torna conveniente 
-	a criação de um ator remoto, ao invés de se criar explicitamente um ator local 
-	e torná-lo remoto.
-
-	\item \code{RemoteServer}: É um componente usado no lado do servidor. Tem como 
+\begin{itemize}	
+	\item \lstinline$RemoteServerModule$: É uma \english{trait} que define as responsabilidades
+	do componente usado no lado do servidor. Suas implementações têm como
 	responsabilidade manter registrados os atores, bem como encaminhar a eles as mensagens 
-	recebidas de clientes remotos. Cada \code{RemoteServer} é associado a um \english{host} 
-	e a uma porta TCP. Um mesma máquina virtual pode conter múltiplos \code{RemoteServer}s.
+	recebidas de clientes remotos. Cada \code{RemoteServerMobule} é associado a um \english{host} 
+	e a uma porta TCP. Um mesma máquina virtual pode conter múltiplos \code{RemoteServerModule}s;
 
-	\item \code{RemoteNode}: Objeto \english{singleton} que é instância de 
-	\code{RemoteServer}. Não possui nenhum comportamento adicional e é usado quando 
-	se deseja ter um único \code{RemoteServer} numa dada máquina virtual.
-
-	\item \code{Cluster}: Abstração para se agrupar instâncias de \code{RemoteServer}. 
-	Permite que um cliente interaja com múltiplos \code{RemoteServer}s, por exemplo via 
-	\english{broadcasts} de mensagens;
-
-	\item \code{RemoteClient}: É um componente usado pelo cliente. Tem como responsabilidade 
+	\item \lstinline$RemoteClientModule$: É uma \english{trait} que define as responsabilidades
+	do componente usado no lado do cliente. Suas implementações têm como responsabilidade 
 	visível oferecer uma interface para obtenção de referências a atores remotos. 
 	Oferece também suporte em tempo de execução para a infra-estrutura de atores do lado do 
-	cliente, provendo uma série de serviços não vísiveis para o usuário, tais como: 
-	\entry{(i)} seriação de mensagens; \entry{(ii)} envio de mensagens para atores remotos; 
-	\entry{(iii)} conversão de ator local em ator remoto; \entry{(iv)} intermediação de 
-	mensagens de resposta vindas do \code{RemoteServer}, no caso envios via \code{!!} 
-	ou \code{!!!}.
+	cliente, provendo uma série de serviços não vísiveis para o usuário, tais como
+	seriação de mensagens, envio de mensagens para atores remotos,
+	conversão de ator local em ator remoto e intermediação de 
+	mensagens de resposta vindas do \code{RemoteServerModule}, no caso envios via \lstinline$!!$
+	ou \lstinline$!!!$;
 
+	\item \lstinline$RemoteSupport$: É acessível via \lstinline$Actor.remote$. Essa
+	classe abstrata é responsável por concentrar as responsabilidades definidas para os
+	módulos remotos do cliente e do servidor e ser um ponto único de suporte remoto;
+
+	\item \lstinline$RemoteActorRef$: É uma classe equivalente a \lstinline$LocalActorRef$, porém
+	utiliza o suporte remoto para fazer envio das mensagens.
 \end{itemize}
+
+A implementação de atores remotos do Akka, implementa os componentes de suporte remoto com o
+auxílio do JBoss Netty. Apresentamos na figura \ref{fig:remote-actor-colaboracao} como os 
+componentes se relacionam. Dividimos a figura em duas partes, sendo a camada de interface remota
+que é a que a implementação interage diretamente, e a camada de implementação. A camada
+de implementação é associada com a implementação em tempo de execução, sendo que outras 
+implementações podem criadas e utilizadas.
+
+\vspace{1ex}
+\begin{figure}[hbtp]
+ 	\centering
+	\includegraphics[scale=.75]{remote-actor-colaboracao} 
+  	\caption{Relacionamento entre os componentes remotos.}
+  	\label{fig:remote-actor-colaboracao}
+\end{figure}
 	
 A figura \ref{fig:remote-actor-diagram} mostra os elementos acima descritos e os 
 relacionamentos entre esses elementos. A criação de atores remotos pelo cliente é 

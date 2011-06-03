@@ -25,14 +25,14 @@ Toda computação em um sistema de atores é resultado do processamento de uma mens
 Cada mensagem recebida por um ator é mapeada em uma $3$-tupla que consiste de:
 
 \begin{enumerate}
-	\item um conjunto finito de envios de mensagens para atores cujas filas
+	\item Um conjunto finito de envios de mensagens para atores cujas filas
 	tenham seus endereços conhecidos (um desses atores pode ser o próprio ator destinatário
 	da mensagem que está sendo processada);
 	
-	\item um novo comportamento, que será usado para processar a próxima mensagem
+	\item Um novo comportamento, que será usado para processar a próxima mensagem
 	recebida;
 	
-	\item um conjunto finito de criações de novos atores.
+	\item Um conjunto finito de criações de novos atores.
 \end{enumerate}
 
 Um ator que recebe mensagens faz o processamento individual de cada mensagem em 
@@ -333,10 +333,10 @@ atores filhos, as primitivas existentes na linguagem dão suporte a três abordage
 \begin{enumerate}
 	\item Não se tem interesse em saber se um ator filho foi terminado normalmente ou não; 
 	
-	\item caso um ator filho não tenha terminado normalmente, o ator criador também é 
+	\item Caso um ator filho não tenha terminado normalmente, o ator criador também é 
 		  terminado; 
 
-	\item caso um ator filho não tenha terminado normalmente, o ator criador é 
+	\item Caso um ator filho não tenha terminado normalmente, o ator criador é 
 		  notificado e pode fazer o controle de erros da maneira que julgar mais apropriada. 
 \end{enumerate}
 
@@ -461,6 +461,6 @@ futuro ao remetente.
 No que diz respeito à seriação das mensagens para um ator remoto, o Akka oferece as 
 seguintes opções: JSON \cite{json}, Protobuf \cite{protobuf} e seriação
 Java padrão. O transporte das mensagens é feito via TCP/IP, com o auxílio do JBoss 
-Netty~\cite{jboss-netty}, um arcabouço para comunicação assíncrona dirigido a eventos e baseado 
+Netty \cite{jboss-netty}, um arcabouço para comunicação assíncrona dirigido a eventos e baseado 
 em \english{sockets}. Esse arcabouço oferece facilidades para compressão de mensagens, 
 que são utilizados pelo Akka.
