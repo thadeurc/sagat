@@ -42,9 +42,9 @@
      inkscape:window-width="1260"
      inkscape:window-height="674"
      inkscape:zoom="2"
-     inkscape:cx="447.36567"
-     inkscape:cy="926.44738"
-     inkscape:window-x="18"
+     inkscape:cx="486.8328"
+     inkscape:cy="920.31013"
+     inkscape:window-x="31"
      inkscape:window-y="0"
      inkscape:current-layer="svg2"
      showgrid="true"
@@ -343,16 +343,6 @@
     </filter>
   </defs>
   <rect
-     width="177.77937"
-     height="148.36913"
-     rx="0"
-     ry="0"
-     x="390.22061"
-     y="32.993065"
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4154)"
-     id="rect4152"
-     transform="matrix(0.92687566,0,0,0.90564074,34.534624,15.113201)" />
-  <rect
      inkscape:transform-center-y="-12.974146"
      inkscape:transform-center-x="51.471693"
      transform="matrix(0,-0.70000006,-0.84605825,0,110.24169,31.332243)"
@@ -384,23 +374,6 @@
      transform="matrix(0,-0.76004778,-0.92222222,0,24.879849,23.984521)"
      inkscape:transform-center-x="51.821691"
      inkscape:transform-center-y="-8.3405288" />
-  <rect
-     id="rect1335"
-     style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:4.13058615;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-     y="28.993063"
-     x="382.22061"
-     ry="0"
-     rx="0"
-     height="148.36913"
-     width="177.77937" />
-  <rect
-     transform="matrix(0.92342423,0.00587322,0,0.82067916,37.66244,28.370167)"
-     y="139.49126"
-     x="428.12128"
-     height="26.162951"
-     width="90.002274"
-     id="rect4170"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.00001276;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4172)" />
   <text
      sodipodi:linespacing="100%"
      xml:space="preserve"
@@ -416,150 +389,6 @@
        x="450.41962"
        id="tspan1341"
        sodipodi:role="line" /></text>
-  <text
-     xml:space="preserve"
-     style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-     x="455.84222"
-     y="45.017715"
-     id="text1342"><tspan
-       style="font-size:14px"
-       sodipodi:role="line"
-       id="tspan1344"
-       x="455.84222"
-       y="45.017715">Ator</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-size:11px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="429.40106"
-     y="57.715988"
-     id="text3188"><tspan
-       sodipodi:role="line"
-       id="tspan3190"
-       x="429.40106"
-       y="57.715988"
-       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">Função Parcial</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-     x="470.9599"
-     y="137.69876"
-     id="text4046"><tspan
-       sodipodi:role="line"
-       x="470.9599"
-       y="137.69876"
-       id="tspan4050"
-       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif">Fila</tspan></text>
-  <rect
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4166)"
-     y="64.52359"
-     x="424.58951"
-     height="54.838593"
-     width="97.041573"
-     id="rect4164"
-     transform="matrix(0.89272134,0,0,0.85706065,53.959884,15.061552)" />
-  <rect
-     id="rect3219"
-     width="97.041573"
-     height="54.838593"
-     x="422.58951"
-     y="62.52359"
-     style="fill:#ffffff;stroke:#000000;stroke-width:1.10181975;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-  <text
-     xml:space="preserve"
-     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="430.36224"
-     y="72.131393"
-     id="text3120"><tspan
-       sodipodi:role="line"
-       id="tspan3122"
-       x="430.36224"
-       y="72.131393"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"><tspan
-   style="font-weight:bold;-inkscape-font-specification:Serif Bold"
-   id="tspan3983">case</tspan> padrao1 =&gt; ...</tspan><tspan
-       sodipodi:role="line"
-       x="430.36224"
-       y="82.149918"
-       id="tspan3124"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"><tspan
-   style="font-weight:bold;-inkscape-font-specification:Serif Bold"
-   id="tspan3981">case</tspan> padrao2 =&gt; ...</tspan><tspan
-       sodipodi:role="line"
-       x="430.36224"
-       y="92.149918"
-       id="tspan3126"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">:</tspan><tspan
-       sodipodi:role="line"
-       x="430.36224"
-       y="102.14992"
-       id="tspan3128"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">:</tspan><tspan
-       sodipodi:role="line"
-       x="430.36224"
-       y="112.16844"
-       id="tspan3130"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"><tspan
-   style="font-weight:bold;-inkscape-font-specification:Serif Bold"
-   id="tspan3979">case</tspan> padraon =&gt; ...</tspan></text>
-  <rect
-     style="fill:#ffffff;stroke:#000000;stroke-width:0.87701124;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-     id="rect4044"
-     width="90.002274"
-     height="26.162951"
-     x="426.12122"
-     y="137.50557"
-     transform="matrix(0.99997439,0.00715653,0,1,0,0)" />
-  <rect
-     y="182.45865"
-     x="391.11029"
-     height="11"
-     width="25.889709"
-     id="rect4178"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4199)"
-     transform="matrix(0.7296223,0,0,0.63636393,154.74719,36.829557)" />
-  <g
-     id="g4018"
-     transform="translate(4,1.0964633)">
-    <rect
-       y="147.36218"
-       x="429.11029"
-       height="11"
-       width="25.889709"
-       id="rect3134"
-       style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1.0465126;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-    <g
-       transform="translate(15.019989,16.080078)"
-       id="g3149">
-      <g
-         id="g3144">
-        <g
-           id="g3140">
-          <text
-             xml:space="preserve"
-             style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-             x="416.5"
-             y="138.86218"
-             id="text3136"><tspan
-               sodipodi:role="line"
-               id="tspan3138"
-               x="416.5"
-               y="138.86218">msg<tspan
-   style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-   id="tspan3111">1</tspan></tspan></text>
-        </g>
-      </g>
-    </g>
-  </g>
-  <text
-     xml:space="preserve"
-     style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="466.28708"
-     y="154.57877"
-     id="text3248"><tspan
-       sodipodi:role="line"
-       id="tspan3250"
-       x="466.28708"
-       y="154.57877">...</tspan></text>
   <rect
      inkscape:transform-center-y="-10.97369"
      inkscape:transform-center-x="56.192194"
@@ -621,14 +450,6 @@
        id="tspan7101"
        sodipodi:role="line" /></text>
   <rect
-     id="rect4158"
-     width="88.000008"
-     height="19.999996"
-     x="637.28027"
-     y="84.362183"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4160)"
-     transform="matrix(0.87499998,0,0,0.9,87.379772,8.436218)" />
-  <rect
      style="fill:#ffffff;stroke:#000000;stroke-width:0.96289623;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      y="82.362183"
      x="635.28027"
@@ -646,36 +467,6 @@
        x="640.51172"
        y="94.642944"
        style="font-size:9px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">ator ! mensagem</tspan></text>
-  <path
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.22061992;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.22062003, 2.44124002;stroke-dashoffset:0.12206199;marker-end:url(#marker1523)"
-     d="M 629.44557,107.36218 520,152.36218"
-     id="path3308"
-     inkscape:connector-type="polyline"
-     inkscape:connector-curvature="0" />
-  <text
-     xml:space="preserve"
-     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="463.52475"
-     y="348.13956"
-     id="text4328"
-     transform="matrix(0.91514874,-0.40311635,0.40311635,0.91514874,0,0)"><tspan
-       sodipodi:role="line"
-       id="tspan4330"
-       x="463.52475"
-       y="348.13956"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">adiciona na fila</tspan></text>
-  <path
-     style="fill:none;stroke:#000000;stroke-width:1.02304387;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#marker1523)"
-     d="m 299.49161,153.96803 122.0469,0"
-     id="path4336"
-     inkscape:connector-type="polyline"
-     inkscape:connector-curvature="0" />
-  <path
-     style="fill:none;stroke:#000000;stroke-width:1.03141367px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1523)"
-     d="m 345.06025,89.213178 73.07882,0"
-     id="path4342"
-     inkscape:connector-type="polyline"
-     inkscape:connector-curvature="0" />
   <rect
      style="fill:#ffffff;stroke:#000000;stroke-width:0.87699997;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      y="195.36218"
@@ -720,7 +511,7 @@
     <path
        inkscape:connector-curvature="0"
        style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 2;stroke-dashoffset:0"
-       d="m 436.3897,205.63416 20,0"
+       d="m 436.3897,209.63416 20,0"
        id="path5041"
        inkscape:connector-type="polyline" />
   </g>
@@ -730,17 +521,168 @@
      id="path5617"
      inkscape:connector-type="polyline"
      inkscape:connector-curvature="3" />
+  <text
+     transform="matrix(0.99999436,0.0033573,-0.0033573,0.99999436,0,0)"
+     id="text3115"
+     y="150.31049"
+     x="313.50638"
+     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     xml:space="preserve"><tspan
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       y="150.31049"
+       x="313.50638"
+       id="tspan3117"
+       sodipodi:role="line">2.retira da fila</tspan></text>
   <rect
-     transform="matrix(0.7296223,0,0,0.63636393,204.74719,36.829557)"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4199)"
-     id="rect4203"
-     width="25.889709"
-     height="11"
-     x="391.11029"
-     y="182.45865" />
+     width="177.77937"
+     height="148.36913"
+     rx="0"
+     ry="0"
+     x="390.22061"
+     y="32.993065"
+     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4154)"
+     id="rect4152"
+     transform="matrix(0.92687566,0,0,0.90564074,34.534624,15.113201)" />
+  <rect
+     id="rect1335"
+     style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:4.13058615;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     y="28.993063"
+     x="382.22061"
+     ry="0"
+     rx="0"
+     height="148.36913"
+     width="177.77937" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     x="455.84222"
+     y="45.017715"
+     id="text1342"><tspan
+       style="font-size:14px"
+       sodipodi:role="line"
+       id="tspan1344"
+       x="455.84222"
+       y="45.017715">Ator</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:11px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="429.40106"
+     y="57.715988"
+     id="text3188"><tspan
+       sodipodi:role="line"
+       id="tspan3190"
+       x="429.40106"
+       y="57.715988"
+       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">Função Parcial</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     x="470.9599"
+     y="137.69876"
+     id="text4046"><tspan
+       sodipodi:role="line"
+       x="470.9599"
+       y="137.69876"
+       id="tspan4050"
+       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif">Fila</tspan></text>
+  <rect
+     id="rect3219"
+     width="97.041573"
+     height="54.838593"
+     x="422.58951"
+     y="62.52359"
+     style="fill:#ffffff;stroke:#000000;stroke-width:1.10181975;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+  <text
+     xml:space="preserve"
+     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="430.36224"
+     y="72.131393"
+     id="text3120"><tspan
+       sodipodi:role="line"
+       id="tspan3122"
+       x="430.36224"
+       y="72.131393"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Serif Bold"
+   id="tspan3983">case</tspan> padrao1 =&gt; ...</tspan><tspan
+       sodipodi:role="line"
+       x="430.36224"
+       y="82.149918"
+       id="tspan3124"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Serif Bold"
+   id="tspan3981">case</tspan> padrao2 =&gt; ...</tspan><tspan
+       sodipodi:role="line"
+       x="430.36224"
+       y="92.149918"
+       id="tspan3126"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">:</tspan><tspan
+       sodipodi:role="line"
+       x="430.36224"
+       y="102.14992"
+       id="tspan3128"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">:</tspan><tspan
+       sodipodi:role="line"
+       x="430.36224"
+       y="112.16844"
+       id="tspan3130"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Serif Bold"
+   id="tspan3979">case</tspan> padraon =&gt; ...</tspan></text>
+  <rect
+     style="fill:#ffffff;stroke:#000000;stroke-width:0.87701124;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     id="rect4044"
+     width="90.002274"
+     height="26.162951"
+     x="426.12122"
+     y="137.50557"
+     transform="matrix(0.99997439,0.00715653,0,1,0,0)" />
+  <g
+     id="g4018"
+     transform="translate(4,1.0964633)">
+    <rect
+       y="147.36218"
+       x="429.11029"
+       height="11"
+       width="25.889709"
+       id="rect3134"
+       style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1.0465126;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <g
+       transform="translate(15.019989,16.080078)"
+       id="g3149">
+      <g
+         id="g3144">
+        <g
+           id="g3140">
+          <text
+             xml:space="preserve"
+             style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+             x="416.5"
+             y="138.86218"
+             id="text3136"><tspan
+               sodipodi:role="line"
+               id="tspan3138"
+               x="416.5"
+               y="138.86218">msg<tspan
+   style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+   id="tspan3111">1</tspan></tspan></text>
+        </g>
+      </g>
+    </g>
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="466.28708"
+     y="154.57877"
+     id="text3248"><tspan
+       sodipodi:role="line"
+       id="tspan3250"
+       x="466.28708"
+       y="154.57877">...</tspan></text>
   <g
      id="g4091"
-     transform="translate(18,-2.7157062e-6)">
+     transform="translate(18,-2.7000001e-6)">
     <rect
        style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1.0465126;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect4029"
@@ -773,27 +715,45 @@
     </g>
   </g>
   <text
-     transform="matrix(0.99999436,0.0033573,-0.0033573,0.99999436,0,0)"
-     id="text3115"
-     y="150.29706"
-     x="317.50638"
-     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     xml:space="preserve"><tspan
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-       y="150.29706"
-       x="317.50638"
-       id="tspan3117"
-       sodipodi:role="line">retira da fila</tspan></text>
-  <text
      xml:space="preserve"
      style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="349.29153"
-     y="86.189865"
+     x="332.2478"
+     y="73.247139"
      id="text3140"
      transform="matrix(0.99999436,0.0033573,-0.0033573,0.99999436,0,0)"><tspan
        sodipodi:role="line"
        id="tspan3142"
-       x="349.29153"
-       y="86.189865"
-       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">invoca</tspan></text>
+       x="332.2478"
+       y="73.247139"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">3.despacha</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="463.52475"
+     y="348.13956"
+     id="text4328"
+     transform="matrix(0.91514874,-0.40311635,0.40311635,0.91514874,0,0)"><tspan
+       sodipodi:role="line"
+       id="tspan4330"
+       x="463.52475"
+       y="348.13956"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">1.adiciona na fila</tspan></text>
+  <path
+     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.22061992;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.22062003, 2.44124002;stroke-dashoffset:0.12206199;marker-end:url(#marker1523)"
+     d="M 629.44557,107.36218 520,152.36218"
+     id="path3308"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1.02304387;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#marker1523)"
+     d="m 299.49161,153.96803 122.0469,0"
+     id="path4336"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1.03141367px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1523)"
+     d="m 345.06025,89.213178 73.07882,0"
+     id="path4342"
+     inkscape:connector-type="polyline"
+     inkscape:connector-curvature="0" />
 </svg>

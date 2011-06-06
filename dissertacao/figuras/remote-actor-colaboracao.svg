@@ -112,7 +112,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="426.42037"
-     inkscape:cy="796.61114"
+     inkscape:cy="916.41656"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -133,7 +133,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -393,7 +393,7 @@
            height="159.28572"
            x="230"
            y="330.21933" /></flowRegion><flowPara
-         id="flowPara3314"></flowPara></flowRoot>    <g
+         id="flowPara3314" /></flowRoot>    <g
        id="g5870"
        transform="translate(94.610506,-110.63183)">
       <rect
@@ -515,7 +515,7 @@
          sodipodi:role="line"
          id="tspan7710"
          x="369.52783"
-         y="346.36218">Camada de implementacão</tspan></text>
+         y="346.36218">Camada de implementação</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text7712"

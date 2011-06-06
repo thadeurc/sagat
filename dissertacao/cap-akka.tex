@@ -63,7 +63,7 @@ invocado, o ator passa ao estado de ``desligado'' e não pode mais executar ação 
 
 \begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via função de inicialização.}, label={lst:actorOf2}]
   val function = {
-    // some other actions here
+    // outras ações
     new SampleActor("John")
   }
   val theActor = Actor.actorOf(function).start
@@ -173,7 +173,9 @@ de atores remotos utiliza os seguintes elementos:
 	do componente usado no lado do servidor. Suas implementações têm como
 	responsabilidade manter registrados os atores, bem como encaminhar a eles as mensagens 
 	recebidas de clientes remotos. Cada \code{RemoteServerMobule} é associado a um \english{host} 
-	e a uma porta TCP. Um mesma máquina virtual pode conter múltiplos \code{RemoteServerModule}s;
+	e a uma porta TCP. Um mesma máquina virtual pode conter múltiplos \code{RemoteServerModule}s.
+	A documentação do Akka utiliza para esse componente a terminologia ``servidor remoto'' 
+	(\english{remote server});
 
 	\item \lstinline$RemoteClientModule$: É uma \english{trait} que define as responsabilidades
 	do componente usado no lado do cliente. Suas implementações têm como responsabilidade 
@@ -183,22 +185,24 @@ de atores remotos utiliza os seguintes elementos:
 	seriação de mensagens, envio de mensagens para atores remotos,
 	conversão de ator local em ator remoto e intermediação de 
 	mensagens de resposta vindas do \code{RemoteServerModule}, no caso envios via \lstinline$!!$
-	ou \lstinline$!!!$;
+	ou \lstinline$!!!$. A documentação do Akka utiliza para esse componente a terminologia
+	``cliente remoto'' (\english{remote client});
 
 	\item \lstinline$RemoteSupport$: É acessível via \lstinline$Actor.remote$. Essa
 	classe abstrata é responsável por concentrar as responsabilidades definidas para os
 	módulos remotos do cliente e do servidor e ser um ponto único de suporte remoto;
 
 	\item \lstinline$RemoteActorRef$: É uma classe equivalente a \lstinline$LocalActorRef$, porém
-	utiliza o suporte remoto para fazer envio das mensagens.
+	utiliza o suporte remoto para fazer envio das mensagens.		
+	
 \end{itemize}
 
 A implementação de atores remotos do Akka, implementa os componentes de suporte remoto com o
 auxílio do JBoss Netty. Apresentamos na figura \ref{fig:remote-actor-colaboracao} como os 
 componentes se relacionam. Dividimos a figura em duas partes, sendo a camada de interface remota
-que é a que a implementação interage diretamente, e a camada de implementação. A camada
-de implementação é associada com a implementação em tempo de execução, sendo que outras 
-implementações podem criadas e utilizadas.
+que é a camada que implementação interage diretamente, e a camada de implementação. A camada
+de implementação é associada em tempo de execução, permitindo outras implementações possam ser
+criadas e utilizadas.
 
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -207,28 +211,69 @@ implementações podem criadas e utilizadas.
   	\caption{Relacionamento entre os componentes remotos.}
   	\label{fig:remote-actor-colaboracao}
 \end{figure}
-	
-A figura \ref{fig:remote-actor-diagram} mostra os elementos acima descritos e os 
-relacionamentos entre esses elementos. A criação de atores remotos pelo cliente é 
-análoga a de atores locais, salvo o fato de se informar o \english{host} e porta 
-de um \code{RemoteServer} já em execução. A listagem \ref{lst:subclass-actor-remote} 
-mostra a criação por meio de uma sub-classe de \code{RemoteActor}. Vale destacar que, 
-nesta listagem, o valor de \code{myRemoteActor} (linha $12$) é um \english{proxy} local 
-para o ator remoto. Outra possibilidade é criar um ator local e posteriormente convertê-lo
-em remoto, por meio de uma chamada ao método \code{makeRemote(host, port)} 
-(listagem \ref{lst:make-remote-of-local-actor}). Tal chamada deve ocorrer anteriormente
-à ativação do ator via chamada ao método \code{start}.
-       	
-A criação de atores remotos pelo servidor, por sua vez, é exatamente igual a de atores 
-locais, mostram as listagens \ref{lst:subclass-actor} e \ref{lst:anonym-actor}. 
-Depois de criar o ator localmente, basta registrá-lo em um \code{RemoteServer} 
-ou \code{RemoteNode}, como mostra a listagem \ref{lst:registering-actor}. 
-A maneira com que o cliente remoto busca pelo ator e envia uma mensagem pode ser
-vista na listagem \ref{lst:using-remote-actor}.
+
+Na versão $1.0$ do Akka, a definição de atores remotos não possui diferença em
+relação a definição de atores locais. Podemos utilizar a classe apresentada na 
+listagem \ref{lst:def-actor} para criamos um ator remoto. A criação de atores
+remotos pode acontecer tanto no nó onde reside a aplicação servidora, quanto
+ser criado remotamente por uma aplicação cliente.
+
+A criação de atores remotos gerenciados pelo servidor (\english{server managed actors})
+é mostrada na listagem \ref{lst:remote-server1}. Nessa listagem, um servidor
+remoto é inicializado na linha $2$ para que os atores possam ser registrados. Na implementação
+padrão feita com o Netty, a inicialização de um servidor remoto implica em associar 
+um componente do Netty para monitorar a \english{socket} associada ao par \english{host} e 
+porta. Na linha $3$ registramos o ator sob o nome \lstinline$hello-service$. O ator passou a 
+estar remotamente acessível por aplicações que residam em outras máquinas virtuais. Um detalhe
+importante a destacar é a inicialização implícita do ator feita pelo método \lstinline$register$.
+A implementação desse método fica a critério dos componentes da camada de implementação de
+suporte remoto, porém sua interface obriga que implementações compatíveis inicializem atores
+que ainda não estão em execução.
+
+\begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteServer.}, label={lst:remote-server1}]
+object SampleRemoteServer extends Application {
+	Actor.remote.start("localhost", 2552)
+	Actor.remote.register("hello-service", actorOf[SampleActor])
+}
+\end{lstlisting}
+
+Referências para atores remotos podem ser obtidas via método \lstinline$actorFor$. Esse
+método possui diversas sobrecargas, porém a mais simples recebe como argumentos o nome do ator, 
+o \english{host} e a porta onde foi feito o registro. A linha $2$ da listagem 
+\ref{lst:remote-client1} mostra como uma aplicação cliente 
+obtém uma referência para o ator. Podemos notar que o uso do ator na linha $3$ não possui 
+nenhuma indicação explícita sobre um envio remoto. O método \lstinline$actorFor$ retorna na 
+maioria das vezes instâncias de \lstinline$RemoteActorRef$, que representam \english{proxies} 
+locais para o ator remoto. A implementação possui algumas otimizações para o caso em que, 
+quem busca a referência remota estar no mesmo nó onde o ator reside. Em casos como esse, 
+uma instância de \lstinline$LocalActorRef$ é retornada. 
+
+\begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteClient.}, label={lst:remote-client1}]
+object SampleRemoteClient extends Application{
+  val helloActor = Actor.remote.actorFor("hello-service", "localhost", 2552)
+  helloActor ! "Hello"
+}
+\end{lstlisting}
+		
+Aplicações cliente podem optar por criar e iniciar atores em nós que não sejam o corrente.
+Esses atores são chamados de atores gerenciados pelo cliente (\english{client managed actors}). 
+Para tal, a biblioteca de atores fornece uma versão alternativa do método \lstinline$actorOf$
+que recebe parâmetros adicionais para indicar o nó onde o ator criado será executado. Akka
+não possui carregamento remoto de classes, obrigando que as classes com as definições
+dos atores estejam acessíveis para a máquina virtual onde ele será instanciado e executado.
+Uma outra observação importante a ser feita em relação ao servidor remoto que irá executar
+o ator sendo criado, é a necessidade de ele estar em execução antes de o método \lstinline$actorOf$
+ser invocado. Os detalhes observados são alguns dos exemplos que motivam discussões no projeto
+para que esse tipo de suporte seja depreciado e removido em versões futuras, já que os
+mesmos resultados podem ser obtidos com o uso de atores gerenciados pelo servidor.
+
+\subsection{Fluxo de envio das mensagens}
+
+%% explicar como funciona o envio. deveria ter uma mensagem mostrando a interação dos componentes?
         
 Quando um cliente envia uma mensagem a um ator remoto, o \english{proxy} local 
 embrulha a mensagem, adicionando a ela informações de cabeçalho necessárias para 
-o envio. O \english{proxy} usa um  \code{RemoteClient} para enviar a mensagem ao 
+o envio. O \english{proxy} usa um \code{RemoteClient} para enviar a mensagem ao 
 \code{RemoteServer} correspondente. Este processo de envio, do ponto de vista do cliente
 leva tempo $O(1)$, já que a seriação da mensagem é feita de modo assíncrono.
         
@@ -241,6 +286,15 @@ localiza o ator destinatário no registro local de atores e encaminha a mensagem 
 mensagens do ator, como se o envio fosse local. O despachador associado ao ator faz o 
 tratamento mostrado na figura \ref{fig:local-actor-message}, já que do ponto de vista do
 despachador não há diferença entre um envio local e um remoto.
+
+\vspace{1ex}
+\begin{figure}[hbtp]
+ 	\centering
+	\includegraphics[scale=.9]{remote-actor-message-flow} 
+  	\caption{Fluxo de envio de mensagens para atores remotos.}
+  	\label{fig:remote-actor-message-flow}
+\end{figure}
+
 
 Em alguns casos, o processamento deve gerar uma mensagem de resposta, como por exemplo
 um resultado futuro ou uma mensagem de erro para um ator supervisor. Em tais casos a 

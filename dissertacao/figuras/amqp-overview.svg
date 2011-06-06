@@ -41,8 +41,8 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1280"
      inkscape:window-height="694"
-     inkscape:zoom="1"
-     inkscape:cx="349.18412"
+     inkscape:zoom="2"
+     inkscape:cx="525.10082"
      inkscape:cy="916.26692"
      inkscape:window-x="0"
      inkscape:window-y="0"
@@ -322,24 +322,6 @@
      rx="0"
      height="204.94008"
      width="325.41138" />
-  <rect
-     id="rect4106"
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4102)"
-     y="30.993065"
-     x="544.43213"
-     ry="0"
-     rx="0"
-     height="189.17191"
-     width="146.66737" />
-  <rect
-     width="146.66737"
-     height="189.17191"
-     rx="0"
-     ry="0"
-     x="384.43216"
-     y="30.993065"
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4102)"
-     id="rect4100" />
   <text
      sodipodi:linespacing="100%"
      xml:space="preserve"
@@ -416,18 +398,6 @@
        id="tspan7101"
        sodipodi:role="line" /></text>
   <rect
-     inkscape:transform-center-y="-21.890672"
-     inkscape:transform-center-x="56.302992"
-     transform="matrix(0,-1,-1,0,0,-2)"
-     width="47.24308"
-     height="90.177467"
-     rx="0"
-     ry="0"
-     x="-93.100494"
-     y="-243.32115"
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter5212)"
-     id="rect5210" />
-  <rect
      id="rect7920"
      style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.2722466;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
      y="-241.32115"
@@ -467,18 +437,6 @@
      rx="0"
      height="189.17191"
      width="146.66737" />
-  <rect
-     id="rect3119"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.96347189;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;filter:url(#filter4110)"
-     y="-452"
-     x="-83.050606"
-     ry="0"
-     rx="0"
-     height="58.200668"
-     width="27.412083"
-     transform="matrix(0,-0.85818679,-1.000971,0,32.694929,11.066213)"
-     inkscape:transform-center-x="29.512459"
-     inkscape:transform-center-y="-8.6004359" />
   <text
      xml:space="preserve"
      style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
@@ -554,21 +512,9 @@
        y="-383.56787"
        style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
        id="tspan3871" /></text>
-  <rect
-     id="rect3129"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.96347189;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;filter:url(#filter4110)"
-     y="-452"
-     x="-83.050606"
-     ry="0"
-     rx="0"
-     height="58.200668"
-     width="27.412083"
-     transform="matrix(0,-0.85818679,-1.000971,0,-0.41063,140.83398)"
-     inkscape:transform-center-x="29.512459"
-     inkscape:transform-center-y="-8.6004359" />
   <g
      id="g3877"
-     transform="translate(4.8875809e-6,0)">
+     transform="translate(4.9e-6,0)">
     <rect
        inkscape:transform-center-y="-10.021814"
        inkscape:transform-center-x="29.483766"
@@ -598,18 +544,6 @@
          x="420.79254"
          sodipodi:role="line">f1</tspan></text>
   </g>
-  <rect
-     inkscape:transform-center-y="-8.6004359"
-     inkscape:transform-center-x="29.512459"
-     transform="matrix(0,-0.85818679,-1.000971,0,67.58937,140.83398)"
-     width="27.412083"
-     height="58.200668"
-     rx="0"
-     ry="0"
-     x="-83.050606"
-     y="-452"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.96347189;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;filter:url(#filter4110)"
-     id="rect3127" />
   <rect
      inkscape:transform-center-y="-9.3249103"
      inkscape:transform-center-x="29.502062"
@@ -696,18 +630,6 @@
        id="tspan3952"
        sodipodi:role="line">Virtual Host VHn</tspan></text>
   <rect
-     inkscape:transform-center-y="-8.6004359"
-     inkscape:transform-center-x="29.512459"
-     transform="matrix(0,-0.85818679,-1.000971,0,193.58937,10.83398)"
-     width="27.412083"
-     height="58.200668"
-     rx="0"
-     ry="0"
-     x="-83.050606"
-     y="-452"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.96347189;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;filter:url(#filter4110)"
-     id="rect3117" />
-  <rect
      id="rect3948"
      style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.96347189;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
      y="-644.84454"
@@ -768,18 +690,6 @@
        y="-578.41241"
        x="132.82492"
        sodipodi:role="line" /></text>
-  <rect
-     id="rect4116"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.96347189;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;filter:url(#filter4110)"
-     y="-452"
-     x="-83.050606"
-     ry="0"
-     rx="0"
-     height="58.200668"
-     width="27.412083"
-     transform="matrix(0,-0.85818679,-1.000971,0,193.58937,140.83398)"
-     inkscape:transform-center-x="29.512459"
-     inkscape:transform-center-y="-8.6004359" />
   <g
      id="g3972"
      transform="translate(194.84454,0)">
@@ -857,18 +767,6 @@
        id="tspan4172"
        x="196.19116"
        y="176.37938" /></text>
-  <rect
-     id="rect5216"
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter5212)"
-     y="-243.32115"
-     x="-93.100494"
-     ry="0"
-     rx="0"
-     height="90.177467"
-     width="47.24308"
-     transform="matrix(0,-1,-1,0,0,130)"
-     inkscape:transform-center-x="56.302992"
-     inkscape:transform-center-y="-21.890672" />
   <g
      id="g3976"
      transform="translate(-11.667271,-5.7220459e-6)">
