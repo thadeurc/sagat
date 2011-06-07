@@ -10,7 +10,8 @@ de atores e algumas bibliotecas desenvolvidas em linguagens mais gerais.
 
 \section{Modelo}
 \label{sec:atores-modelo}
-\index{Atores!Modelo}
+\index{Atores!modelo}
+
 O modelo de atores é um modelo para programação concorrente em sistemas distribuídos, 
 que foi apresentado como uma das possíveis alternativas ao uso de memória compartilhada e travas. 
 Atores são agentes computacionais autônomos e concorrentes que possuem uma fila de mensagens
@@ -137,7 +138,7 @@ precisem de escalabilidade \cite{Kim95}.
 
 \section{Breve histórico}
 \label{sec:atores-historico}
-\index{Atores!Histórico}
+\index{Atores!histórico}
 
 O modelo de atores foi originalmente proposto por Carl Hewitt em $1971$ \cite{hewitt:71}. 
 O termo ator foi originalmente utilizado para descrever entidades ativas que analizavam 
@@ -178,7 +179,7 @@ agindo como interface para atores externos. Esse modelo foi implementado na ling
 por Carl Manning em $1987$, e na linguagem Rosette por Tomlinson e outros em $1989$.
 
 \section{Implementações}
-\index{Atores!Implementações}
+\index{Atores!implementações}
 \label{sec:atores-implementacoes}
 
 O suporte ao modelo de atores pode estar disponível em uma linguagem de programação, seja 
@@ -189,7 +190,7 @@ a criação de sistemas baseados em atores. Apresentamos também algumas biblioteca
 o suporte ao modelo de atores a linguagens mais gerais.
 
 \subsection{Linguagens}
-\index{Atores!Implementações!Linguagens}
+\index{Atores!implementações!linguagens}
 \label{sec:atores-linguagens}
 
 Linguagens como Axum \cite{axum-lang-overview}, SALSA \cite{SALSA2001} e
@@ -197,7 +198,7 @@ Erlang \cite{PROG_ERLANG07} são exemplos de linguagens baseadas no modelo
 de atores. Nessas linguagens, o suporte é dado via primitivas na estrutura da linguagem.
 
 \subsubsection{Axum}
-\index{Atores!Implementações!Linguagens!Axum}
+\index{Atores!implementações!linguagens!Axum}
 
 Axum (anteriormente conhecida como Maestro) é uma linguagem experimental orientada a objetos
 \footnote{O projeto está em uma encubadora de projetos.} criada pela Microsoft 
@@ -209,16 +210,16 @@ da plataforma, como VB.Net, C\# e F\#.
 
 Em Axum, o termo ator é substituído pelo termo agente (\english{agent}). Agentes
 são executados como \english{threads} dentro da CLR (\english{Common Language Runtime}) 
-e são definidos com o uso da palavra chave \lstinline$agent$. A troca de
+e são definidos com o uso da palavra-chave \lstinline$agent$. A troca de
 mensagens é feita via canais. Os canais são responsáveis por definir os tipos de dados
-que trafegam neles com o uso das palavras chaves \lstinline$input$ e \lstinline$output$. 
+que trafegam neles com o uso das palavras-chaves \lstinline$input$ e \lstinline$output$. 
 Canais possuem duas extremidades, a extremidade implementadora
 (\english{implementing end}) e a extremidade de uso (\english{using end}). Agentes que implementam
 o comportamento da extremidade implementadora de um canal, passam a agir como servidores de 
 mensagens de seus respectivos canais. A extremidade de uso do canal é visível e deve ser utilizada por 
 outros agentes para fazer o envio de mensagens. 
 
-A linguagem possui ainda o conceito de domínio. Domínios são definidos com a palavra chave 
+A linguagem possui ainda o conceito de domínio. Domínios são definidos com a palavra-chave 
 \lstinline$domain$ e permitem que agentes definidos dentro de um domínio compartilhem informações
 de um modo diferente. Uma instância de domínio pode ter atributos que são usados para 
 compartilhamento seguro e controlado de informações.
@@ -228,7 +229,7 @@ de $2011$, segundo os seus autores os conceitos implementados na linguagem poder
 para as linguagens C\# e Visual Basic \cite{axum}.
 
 \subsubsection{SALSA}
-\index{Atores!Implementações!Linguagens!SALSA}
+\index{Atores!implementações!linguagens!SALSA}
 
 SALSA (\english{Simple Actor Language System and Architecture}) é uma linguagem que foi criada
 em meados de $2001$ no \english{Rensselaer Poytechnic Institute} para facilitar o desenvolvimento 
@@ -239,7 +240,7 @@ que por sua vez pode ser, com a biblioteca de atores SALSA, compilado para \engl
 e ser executado sobre a JVM.
 
 A linguagem possui algumas primitivas para a criação, uso e organização dos atores. A primitiva
-\lstinline$behavior$ é equivalente a palavra chave \code{class} de Java, e é utilizada para definir
+\lstinline$behavior$ é equivalente a palavra-chave \code{class} de Java, e é utilizada para definir
 os métodos que definem o comportamento do ator. Assim como na hierarquia de classes
 em Java, onde não existe herança múltipla e classes podem implementar zero ou muitas 
 \english{interfaces}, \english{behaviors} seguem a mesma regra. O \english{behavior}
@@ -273,7 +274,7 @@ assíncronas entre os atores:
 	quando computado, é passado como \lstinline$token$ no envio da mensagem para o ator
 	\lstinline$gerente2$. Apesar de \lstinline$diretor$ também receber como argumento
 	da ação a lhe ser enviada o \english{token}, o valor recebido será o resultado da
-	computação do \lstinline$gerente2$. A palavra \english{token} é uma palavra chave e seu valor
+	computação do \lstinline$gerente2$. A palavra \english{token} é uma palavra-chave e seu valor
 	é associado no contexto do último \english{token} passado. Ainda nesse exemplo, utilizamos
 	a primitiva \lstinline$@$ para indicar que desejamos utilizar a continuação com passagem
 	de \english{token}.
@@ -298,13 +299,13 @@ assíncronas entre os atores:
 	para outras continuações. O processamento da mensagem pode optar por delegar o restante do 
 	processamento à continuação recebida, por exemplo em chamadas recursivas. 
 	No processamento de uma mensagem, a continuação recebida como parâmetro é acessada 
-	pela palavra chave \lstinline$currentContinuation$.
+	pela palavra-chave \lstinline$currentContinuation$.
 	
 \end{enumerate}
 
 \subsubsection{Erlang}
 \label{sec:atores-linguagens-erlang}
-\index{Atores!Implementações!Linguagens!Erlang}
+\index{Atores!implementações!linguagens!Erlang}
 
 Erlang é uma linguagem funcional, com tipagem dinâmica e executada por 
 uma máquina virtual Erlang. Voltada para o desenvolvimento de sistemas distribuídos de 
@@ -348,7 +349,7 @@ a troca de mensagens entre atores remotos acontece de maneira transparente. No p
 envio, as mensagens trafegam com o uso de \english{sockets} TCP e UDP.
 
 \subsection{Bibliotecas}
-\index{Atores!Implementações!Bibliotecas}
+\index{Atores!implementações!bibliotecas}
 \label{sec:atores-bibliotecas}
 
 Diversas linguagens de programação possuem suporte ao modelo de atores via bibliotecas. Essas
@@ -459,7 +460,7 @@ semelhante ao método \lstinline$!!$ da biblioteca de atores de Scala, que devolv
 futuro ao remetente.
 
 No que diz respeito à seriação das mensagens para um ator remoto, o Akka oferece as 
-seguintes opções: JSON \cite{json}, Protobuf \cite{protobuf} e seriação
+seguintes opções: JSON \cite{json}, Protobuf \cite{protobuf}, SBinary \cite{sbinary} e seriação
 Java padrão. O transporte das mensagens é feito via TCP/IP, com o auxílio do JBoss 
 Netty \cite{jboss-netty}, um arcabouço para comunicação assíncrona dirigido a eventos e baseado 
 em \english{sockets}. Esse arcabouço oferece facilidades para compressão de mensagens, 

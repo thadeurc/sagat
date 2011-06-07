@@ -12,7 +12,7 @@ Mostraremos a criação e o uso de atores locais ou remotos, bem como o fluxo de u
 mensagem (envio, tráfego e processamento da mensagem) tanto no caso local como no remoto.
         
 \section{Atores locais}
-\index{Akka!Atores locais}
+\index{Akka!atores locais}
 
 A definição de atores locais acontece por meio de extensões da 
 \english{trait} \lstinline$akka.actor.Actor$ provendo uma implementação para o 
@@ -23,13 +23,13 @@ pelo arcabouço) é uma instância de \lstinline$akka.actor.ActorRef$. \lstinline$A
 são imutáveis, seriáveis, identificáveis e possuem um relacionamento único com a 
 definição do ator. 
 
-A \english{trait} \lstinline$Actor$ tem em sua declaração uma referência para o
-\lstinline$ActorRef$ que é acessível pela referência \lstinline$self$. No caso de
+A \english{trait} \lstinline$Actor$ possui em sua declaração uma referência para o seu 
+\lstinline$ActorRef$ definida como \lstinline$self$. No caso de
 atores locais, \lstinline$self$ referencia uma instância de \lstinline$akka.actor.LocalActorRef$.
 Com essa referência, a classe que define o comportamento do ator pode alterar as definições
 padrão providas pelo arcabouço e utilizar métodos, por exemplo, para responder ou encaminhar 
-mensagens recebidas, acessar as referências para um ator supervisor ou atores que estejam
-sobre supervisão.
+mensagens recebidas, acessar as referências para um ator supervisor ou ainda atores que estejam
+sob supervisão.
 
 \begin{lstlisting}[frame=tb, caption={Classe SampleActor.}, label={lst:def-actor}]
 class SampleActor(val name: String) extends akka.actor.Actor {
@@ -50,7 +50,7 @@ argumentos e com tipo de retorno \lstinline$Actor$, possa ser utilizada como alt
 construtor padrão na criação do ator, como mostrado na listagem \ref{lst:actorOf2}. 
 
 Nas duas listagens tivemos que chamar explicitamente o método 
-\lstinline$start$ para inicializar o ator. Os atores do projeto Akka possuem um conjunto de estados
+\lstinline$start$ para iniciar o ator. Os atores do projeto Akka possuem um conjunto de estados
 simples, bem definido e linear. Um ator logo após sua criação está no estado chamado de ``novo'' 
 e ainda não pode receber mensagens. Após a chamada do método \lstinline$start$, o ator passa ao 
 estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método \lstinline$exit$ é 
@@ -99,22 +99,18 @@ despachadores listados a seguir:
 	É o despachador mais flexível em termos de configurações, já que permite que
 	parâmetros do \english{thread pool} e da fila de mensagens sejam configurados;
 
-	%, como quantidade máxima e mínima de \english{threads},
-	%sejam configurados, e da fila, como limite de mensagens, durabilidade e políticas para
-	%rejeição sejam configurados;
-
-	\item Despachador impulsionado por eventos com balanceamento de processamento:
+	\item Despachador impulsionado por eventos com balanceamento de carga:
 	O despachador é definido na classe \lstinline$akka.dispatch.ExecutorBasedEventDrivenWorkStealingDispatcher$
 	e é semelhante ao despachador anterior, já que também é impulsionado por eventos. 
 	Esse despachador deve ser usado em atores do mesmo tipo já que permite que
-	atores que não estão processando mensagens possam ``roubar'' mensagens das filas dos atores
+	atores que não estejam processando mensagens possam ``roubar'' mensagens das filas dos atores
 	que estão sobrecarregados, permitindo o balanceamento do processamento das mensagens entre
 	os atores;
 	
 	\item Despachador quente: 
 	O despachador é definido na classe \lstinline$akka.dispatch.HawtDispatcher$ e é inspirado no 
 	\english{Grand Central Dispacher} do Mac OS X \cite{apple-gcd}. Esse despachador 
-	define um \english{thread pool} cujo tamanho é ajustado ao automaticamente
+	define um \english{thread pool} cujo tamanho é ajustado automaticamente
 	para minimizar a quantidade de \english{threads} concorrentes e inativas
 	\footnote{Idealmente a quantidade de \english{threads} corresponde ao número de núcleos disponíveis.}.
 	A grande diferença desse despachador é a capacidade de agrupar diversos eventos gerados pela
@@ -138,7 +134,7 @@ antes de o ator ser inciado via método \lstinline$self.dispatcher$.
 
 Envios de mensagens podem gerar mensagens de resposta ao remetente. Os métodos para
 envios de mensagens capturam implicitamente uma cópia da referência da entidade que está 
-fazendo o envio. A referência é enviada junto com a mensagem para que o ator destinatário 
+fazendo o envio. Essa cópia é enviada junto com a mensagem para que o ator destinatário 
 possa eventualmente enviar uma mensagem de resposta.
 
 O ator destinatário pode responder a uma mensagem via método \lstinline$self.reply$. 
@@ -153,12 +149,14 @@ Envios de mensagens não são limitados somente a atores. Qualquer objeto
 ou classe pode enviar uma mensagem a um ator. Podemos notar que o código da listagem 
 \ref{lst:actorOf1} não está definido em um ator. O ator que está para enviar a mensagem
 de resposta pode verificar se há um remetente definido associado a mensagem recebida, 
-porém existe um modo alternativo e mais simples. O método \lstinline$seld.reply_?$ faz o 
+porém existe um modo alternativo e mais simples: o método \lstinline$self.reply_?$ faz o 
 envio ao remetente somente no caso em que há um remetente definido, devolvendo o valor 
 boleano \english{true} para indicar se houve envio, ou \english{false} caso contrário.
-                
+
+%\subsubsection{Hierarquia de supervisão} - vale a pena?
+
 \section{Atores remotos}
-\index{Akka!Atores remotos}
+\index{Akka!atores remotos}
 \label{sec:atores_remotos_akka}
 
 No contexto de um envio de mensagem para um ator remoto, o termo cliente se refere à 
@@ -172,7 +170,7 @@ de atores remotos utiliza os seguintes elementos:
 	\item \lstinline$RemoteServerModule$: É uma \english{trait} que define as responsabilidades
 	do componente usado no lado do servidor. Suas implementações têm como
 	responsabilidade manter registrados os atores, bem como encaminhar a eles as mensagens 
-	recebidas de clientes remotos. Cada \code{RemoteServerMobule} é associado a um \english{host} 
+	recebidas de clientes remotos. Cada \code{RemoteServerModule} é associado a um \english{host} 
 	e a uma porta TCP. Um mesma máquina virtual pode conter múltiplos \code{RemoteServerModule}s.
 	A documentação do Akka utiliza para esse componente a terminologia ``servidor remoto'' 
 	(\english{remote server});
@@ -200,9 +198,9 @@ de atores remotos utiliza os seguintes elementos:
 A implementação de atores remotos do Akka, implementa os componentes de suporte remoto com o
 auxílio do JBoss Netty. Apresentamos na figura \ref{fig:remote-actor-colaboracao} como os 
 componentes se relacionam. Dividimos a figura em duas partes, sendo a camada de interface remota
-que é a camada que implementação interage diretamente, e a camada de implementação. A camada
-de implementação é associada em tempo de execução, permitindo outras implementações possam ser
-criadas e utilizadas.
+que é a camada que se interage diretamente, e a camada de implementação. A camada
+de implementação é associada em tempo de execução, permitindo que outras implementações 
+possam ser criadas e utilizadas.
 
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -214,7 +212,7 @@ criadas e utilizadas.
 
 Na versão $1.0$ do Akka, a definição de atores remotos não possui diferença em
 relação a definição de atores locais. Podemos utilizar a classe apresentada na 
-listagem \ref{lst:def-actor} para criamos um ator remoto. A criação de atores
+listagem \ref{lst:def-actor} para criamos instâncias de atores remotos. A criação de atores
 remotos pode acontecer tanto no nó onde reside a aplicação servidora, quanto
 ser criado remotamente por uma aplicação cliente.
 
@@ -258,7 +256,7 @@ object SampleRemoteClient extends Application{
 Aplicações cliente podem optar por criar e iniciar atores em nós que não sejam o corrente.
 Esses atores são chamados de atores gerenciados pelo cliente (\english{client managed actors}). 
 Para tal, a biblioteca de atores fornece uma versão alternativa do método \lstinline$actorOf$
-que recebe parâmetros adicionais para indicar o nó onde o ator criado será executado. Akka
+que recebe parâmetros adicionais para indicar o nó onde o ator criado será executado. O Akka
 não possui carregamento remoto de classes, obrigando que as classes com as definições
 dos atores estejam acessíveis para a máquina virtual onde ele será instanciado e executado.
 Uma outra observação importante a ser feita em relação ao servidor remoto que irá executar
@@ -268,24 +266,20 @@ para que esse tipo de suporte seja depreciado e removido em versões futuras, já 
 mesmos resultados podem ser obtidos com o uso de atores gerenciados pelo servidor.
 
 \subsection{Fluxo de envio das mensagens}
+\index{Akka!atores remotos!fluxo de envio}
+\label{sec:atores_remotos_akka_fluxo}
 
-%% explicar como funciona o envio. deveria ter uma mensagem mostrando a interação dos componentes?
-        
-Quando um cliente envia uma mensagem a um ator remoto, o \english{proxy} local 
-embrulha a mensagem, adicionando a ela informações de cabeçalho necessárias para 
-o envio. O \english{proxy} usa um \code{RemoteClient} para enviar a mensagem ao 
-\code{RemoteServer} correspondente. Este processo de envio, do ponto de vista do cliente
-leva tempo $O(1)$, já que a seriação da mensagem é feita de modo assíncrono.
-        
-A figura \ref{fig:remote-actor-message-flow} mostra o caminho que a mensagem faz saindo
-da aplicação cliente via \english{proxy} e sendo repassada para um \code{RemoteClient}, 
-que por sua vez faz a seriação assíncrona da mensagem e a envia para o \code{RemoteServer} 
-correspondente. Uma vez que a mensagem tenha sido recebida pelo \english{handler} plugado 
-ao JBoss Netty no lado servidor, o \english{handler} examina as informações de cabeçalho, 
-localiza o ator destinatário no registro local de atores e encaminha a mensagem a caixa de 
-mensagens do ator, como se o envio fosse local. O despachador associado ao ator faz o 
-tratamento mostrado na figura \ref{fig:local-actor-message}, já que do ponto de vista do
-despachador não há diferença entre um envio local e um remoto.
+Quando um cliente envia uma mensagem a um ator remoto, alguns passos adicionais
+acontecem em relação a um envio local, como mostrado na figura 
+\ref{fig:remote-actor-message-flow}. O processo começa com o \english{proxy} local 
+embrulhando a mensagem e adicionando a ela informações de cabeçalho necessárias para 
+o envio e posterior processamento. O seriador é responsável por converter a informação 
+recebida em um vetor de \english{bytes} para que o transporte possa ocorrer. 
+Uma vez que a informação esteja no formato a ser transportado, o \english{proxy} usa uma 
+implementação de \lstinline$RemoteSupport$ (que na figura \ref{fig:remote-actor-message-flow} é 
+uma instância de \lstinline$NettyRemoteSupport$) para enviar a mensagem ao \lstinline$RemoteSupport$ 
+que está no lado do servidor. Este processo de envio, do ponto de vista do cliente leva tempo $O(1)$, 
+já que o envio da mensagem é feita de modo assíncrono.
 
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -294,11 +288,112 @@ despachador não há diferença entre um envio local e um remoto.
   	\caption{Fluxo de envio de mensagens para atores remotos.}
   	\label{fig:remote-actor-message-flow}
 \end{figure}
-
-
-Em alguns casos, o processamento deve gerar uma mensagem de resposta, como por exemplo
-um resultado futuro ou uma mensagem de erro para um ator supervisor. Em tais casos a 
-mensagem de resposta faz o caminho contrário, indo do \code{RemoteServer} para
-o \code{RemoteClient}, onde analogamente o \english{handler} faz o repasse da resposta
-para quem a estiver aguardando.
         
+Uma vez que a mensagem tenha sido recebida pelo \english{handler} plugado 
+ao JBoss Netty no lado servidor, o \english{handler} repassa a informação recebida para o
+seriador. O seriador faz o processo inverso do envio, repassando uma representação desseriada da
+informação recebida para o \english{handler}. O \english{handler} examina as informações de 
+cabeçalho adicionadas na mensagem, localiza o ator destinatário no registro local de atores 
+e encaminha a mensagem à caixa de mensagens do ator fazendo um envio local. Esse envio local
+respeita o remetente remoto original da mensagem. O despachador associado ao ator tem o 
+mesmo comportamento já mostrado na figura \ref{fig:local-actor-message}, já que do ponto de vista do 
+despachador não há diferença entre um envio local e um remoto.
+
+Em alguns casos o processamento deve gerar uma mensagem de resposta, como por exemplo,
+um resultado futuro ou uma mensagem de erro para um ator supervisor. Em tais casos, a 
+mensagem de resposta faz o caminho inverso. O \english{handler} ao receber a mensagem,
+utiliza o seriador e faz o repasse da resposta para quem a estiver aguardando.
+
+O Akka possui uma configuração opcional de segurança onde cada JVM que esteja executando o
+arcabouço pode definir um \english{cookie}. O \english{cookie} nada mais é do que uma chave
+que o usuário pode gerar e que é parte das informações de cabeçalho das mensagens.
+Quando a verificação de segurança está ativada, o recebedor da mensagem verifica se a informação
+do \english{cookie} presente na mensagem confere com a informação esperada. Essa verificação
+ocorre entre os passos $6$ e $7$ da figura \ref{fig:remote-actor-message-flow} e caso
+os valores sejam iguais, o passo $7$ será executado. Caso contrário, uma excessão de segurança 
+é lançada na JVM que recebeu a mensagem e o passo $7$ não será executado.
+
+%% falar da compactação do stream de bytes
+
+\subsection{Protocolo para envios de mensagens a atores remotos}
+\index{Akka!atores remotos!protocolo}
+\label{sec:atores_remotos_akka_protocolo}
+
+O protocolo utilizado para envios de mensagens a atores remotos é definido no Akka com o
+uso da biblioteca Protobuf \cite{protobuf}. 
+
+Protobuf é uma biblioteca que permite que dados estruturados sejam representados 
+em um formato eficiente e extensível. A biblioteca possui uma espécie de compilador que 
+converte a definição de protocolos em classes Java, Python e C++, permitindo uma interação 
+direta com o protocolo nas linguagens, sem a necessidade de bibliotecas adicionais 
+para conversões. A bibliteca permite que protocolos sejam definidos com a palavra-chave 
+\lstinline$message$. Protocolos podem contér outros protocolos e tipos primitivos 
+de dados, como por exemplo números, textos, boleanos e vetores de dados. Ademais, pode-se
+definir a obrigatoriedade dos valores para alguns atributos com as palavras-chaves
+\lstinline$optional$ e \lstinline$required$.
+
+O protocolo para endereços remotos é apresentado na listagem 
+\ref{lst:proto-remote-address}. Endereços remotos são utilizados por referências remotas 
+para identificar, por exemplo, onde o ator remoto foi criado. 
+O protocolo para referências de atores remotos é apresentado na listagem 
+\ref{lst:proto-remote-actor}. As mensagens para atores remotos são definidas com 
+base no tipo de seriação que foi definido na JVM que fez o envio. Para que a JVM 
+que esteja recebendo a mensagem possa fazer o processamento correto, a informação do tipo de 
+seriação deve estar presente. Os protocolos para definição dos tipos de seriações e 
+das mensagens são mostrados nas listagens \ref{lst:proto-enum-serial} e \ref{lst:proto-message}, 
+respectivamente. Por fim, o protocolo utilizado para as mensagens remotas que é composto, dentre
+outros protocolos menores, pelo protocolo para mensagens e pelo protocolo para referências remotas,
+é apresentado na listagem \ref{lst:proto-remote-message}.
+
+Optamos por não detalhar os demais protocolos utilizados para compor o protocolo para
+mensagens remotas pois, apesar de serem importantes para o suporte a atores remotos, 
+eles não possuem grande relevância para o desenvolvimento deste trabalho.
+
+\begin{lstlisting}[frame=tb, caption={Protocolo para endereços remotos.}, label={lst:proto-remote-address}]
+message AddressProtocol {
+  required string hostname = 1;
+  optional uint32 port = 2;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb, caption={Protocolo para referências de atores remotos.}, label={lst:proto-remote-actor}]
+message RemoteActorRefProtocol {
+  required string classOrServiceName = 1;
+  required string actorClassname = 2;
+  required AddressProtocol homeAddress = 3;
+  optional uint64 timeout = 4;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb, caption={Enumeração com tipos de seriação suportados.}, label={lst:proto-enum-serial}]
+enum SerializationSchemeType {
+  JAVA = 1;
+  SBINARY = 2;
+  SCALA_JSON = 3;
+  JAVA_JSON = 4;
+  PROTOBUF = 5;
+}
+\end{lstlisting}  
+
+\begin{lstlisting}[frame=tb, caption={Protocolo para mensagens.}, label={lst:proto-message}]
+message MessageProtocol {
+  required SerializationSchemeType serializationScheme = 1;
+  required bytes message = 2;
+  optional bytes messageManifest = 3;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb, caption={Protocolo para mensagens remotas.}, label={lst:proto-remote-message}]
+message RemoteMessageProtocol {
+  required UuidProtocol uuid = 1;
+  required ActorInfoProtocol actorInfo = 2;
+  required bool oneWay = 3;
+  optional MessageProtocol message = 4;
+  optional ExceptionProtocol exception = 5;
+  optional UuidProtocol supervisorUuid = 6;
+  optional RemoteActorRefProtocol sender = 7;
+  repeated MetadataEntryProtocol metadata = 8;
+  optional string cookie = 9;
+}
+\end{lstlisting}
+
