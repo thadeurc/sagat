@@ -110,9 +110,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="426.42037"
-     inkscape:cy="916.41656"
+     inkscape:zoom="0.7"
+     inkscape:cx="476.00433"
+     inkscape:cy="742.00993"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -123,7 +123,11 @@
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
-       id="grid2985" />
+       id="grid2985"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -149,43 +153,39 @@
        id="rect6910"
        style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1.26860535;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:5.07442153, 1.26860537;stroke-dashoffset:0" />
     <rect
-       style="fill:#c8c8c8;fill-opacity:1;stroke:#000000;stroke-width:0.81549042000000005;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.26196170000000008, 0.81549042000000005;stroke-dashoffset:0"
+       style="fill:#c8c8c8;fill-opacity:1;stroke:#000000;stroke-width:1.15327764;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.61311048, 1.15327761;stroke-dashoffset:0"
        id="rect5894"
        width="540"
-       height="100"
+       height="200"
        x="196"
        y="252.36218" />
-    <g
-       id="g3406"
-       transform="translate(98.25177,-0.45605469)">
-      <rect
-         transform="matrix(0.925,0,0,0.26,279.65,10.628015)"
-         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3880)"
-         id="rect3886"
-         width="160"
-         height="100"
-         x="22"
-         y="14.362183" />
-      <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.70710677;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-         id="rect3767"
-         width="160"
-         height="30"
-         x="288"
-         y="10.362183" />
-      <text
-         xml:space="preserve"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-         x="367.94629"
-         y="32.818237"
-         id="text3769"
-         sodipodi:linespacing="125%"><tspan
-           style="font-size:20px"
-           sodipodi:role="line"
-           x="367.94629"
-           y="32.818237"
-           id="tspan3773">RemoteModule</tspan></text>
-    </g>
+    <rect
+       y="14.362183"
+       x="22"
+       height="100"
+       width="160"
+       id="rect3886"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3880)"
+       transform="matrix(0.925,0,0,0.26,377.90177,10.17196)" />
+    <rect
+       y="9.9061279"
+       x="386.25177"
+       height="42.456055"
+       width="160"
+       id="rect3767"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.84119022;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3769"
+       y="26.59021"
+       x="466.19806"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         id="tspan3773"
+         y="26.59021"
+         x="466.19806"
+         sodipodi:role="line"
+         style="font-size:20px">RemoteModule</tspan></text>
     <g
        id="g3400"
        transform="translate(94.706079,77.647369)">
@@ -217,78 +217,70 @@
            sodipodi:role="line"
            style="font-size:20px">RemoteSupport</tspan></text>
     </g>
-    <g
-       id="g3412"
-       transform="translate(53.33203,25.147288)">
-      <rect
-         y="14.362183"
-         x="22"
-         height="100"
-         width="160"
-         id="rect3884"
-         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3880)"
-         transform="matrix(0.925,0,0,0.48736329,510.31797,48.62625)" />
-      <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.93747598;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-         id="rect3783"
-         width="160.03801"
-         height="52.719158"
-         x="516.64893"
-         y="51.643021" />
-      <text
-         xml:space="preserve"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-         x="596.19916"
-         y="72.958649"
-         id="text3785"
-         sodipodi:linespacing="125%"><tspan
-           style="font-size:20px"
-           sodipodi:role="line"
-           x="596.19916"
-           y="72.958649"
-           id="tspan3787">RemoteClient</tspan><tspan
-           id="tspan3100"
-           style="font-size:20px"
-           sodipodi:role="line"
-           x="596.19916"
-           y="97.958649">Module</tspan></text>
-    </g>
-    <g
-       id="g3419"
-       transform="translate(164.90628,-43.194733)">
-      <rect
-         transform="matrix(0.925,0,0,0.48000014,29.29063,117.46832)"
-         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3880)"
-         id="rect3114"
-         width="160"
-         height="100"
-         x="22"
-         y="14.362183" />
-      <rect
-         y="120.37933"
-         x="35.621586"
-         height="51.982853"
-         width="160.03801"
-         id="rect3116"
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.9309063;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3118"
-         y="141.15103"
-         x="115.09372"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-         xml:space="preserve"><tspan
-           id="tspan3120"
-           y="141.15103"
-           x="115.09372"
-           sodipodi:role="line"
-           style="font-size:20px">RemoteServer</tspan><tspan
-           y="166.15103"
-           x="115.09372"
-           sodipodi:role="line"
-           style="font-size:20px"
-           id="tspan3122">Module</tspan></text>
-    </g>
+    <rect
+       transform="matrix(0.925,0,0,0.48736329,563.65,73.773538)"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3880)"
+       id="rect3884"
+       width="160"
+       height="100"
+       x="22"
+       y="14.362183" />
+    <rect
+       y="76.790306"
+       x="569.98096"
+       height="65.571884"
+       width="160.03801"
+       id="rect3783"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.04552579;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3785"
+       y="94.105934"
+       x="649.53119"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         id="tspan3787"
+         y="94.105934"
+         x="649.53119"
+         sodipodi:role="line"
+         style="font-size:20px">RemoteClient</tspan><tspan
+         y="119.10593"
+         x="649.53119"
+         sodipodi:role="line"
+         style="font-size:20px"
+         id="tspan3100">Module</tspan></text>
+    <rect
+       y="14.362183"
+       x="22"
+       height="100"
+       width="160"
+       id="rect3114"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3880)"
+       transform="matrix(0.925,0,0,0.48000014,194.19691,74.273587)" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.04515219;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect3116"
+       width="159.92377"
+       height="65.571846"
+       x="200.58499"
+       y="77.538483" />
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       x="280"
+       y="97.956299"
+       id="text3118"
+       sodipodi:linespacing="125%"><tspan
+         style="font-size:20px"
+         sodipodi:role="line"
+         x="280"
+         y="97.956299"
+         id="tspan3120">RemoteServer</tspan><tspan
+         id="tspan3122"
+         style="font-size:20px"
+         sodipodi:role="line"
+         x="280"
+         y="122.9563">Module</tspan></text>
     <g
        id="g5878"
        transform="translate(164.91115,-0.99999231)">
@@ -395,7 +387,7 @@
            y="330.21933" /></flowRegion><flowPara
          id="flowPara3314" /></flowRoot>    <g
        id="g5870"
-       transform="translate(94.610506,-110.63183)">
+       transform="translate(94.610506,-14.63183)">
       <rect
          y="14.362183"
          x="22"
@@ -450,20 +442,20 @@
        d="m 362.8339,100.31122 52.18242,0 0,72.05096"
        style="fill:none;stroke:#000000;stroke-width:0.84625721;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.38502872, 0.84625718;stroke-dashoffset:0;marker-start:url(#Arrow2Lstart);marker-end:none" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.36933303px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)"
-       d="m 284.82537,269.15369 0,-138.49898"
+       style="fill:none;stroke:#000000;stroke-width:1.30537879px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)"
+       d="m 280.82538,269.15609 0,-125.80521"
        id="path5898"
        inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
        id="path6906"
-       d="m 654.27809,269.15369 0,-138.49898"
-       style="fill:none;stroke:#000000;stroke-width:1.36933303px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" />
+       d="m 650.2781,269.15609 0,-125.80521"
+       style="fill:none;stroke:#000000;stroke-width:1.30537879px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" />
     <path
        inkscape:connector-curvature="0"
        id="path6908"
-       d="m 465,269.36218 0,-65"
-       style="fill:none;stroke:#000000;stroke-width:0.93798524px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" />
+       d="m 464.99998,364.3577 0,-159.97603"
+       style="fill:none;stroke:#000000;stroke-width:1.47097301px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" />
     <g
        id="g6942"
        transform="translate(4,12.099855)">
@@ -509,13 +501,13 @@
        xml:space="preserve"
        style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
        x="369.52783"
-       y="346.36218"
+       y="446.36218"
        id="text7708"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan7710"
          x="369.52783"
-         y="346.36218">Camada de implementação</tspan></text>
+         y="446.36218">Camada de implementação</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text7712"
@@ -528,14 +520,47 @@
          id="tspan7714"
          sodipodi:role="line">Interface remota</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.11441231000000007px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)"
-       d="m 384.95606,302.36218 c -24.8383,0 -24.8383,0 -24.8383,0"
-       id="path7716"
+       style="fill:none;stroke:#000000;stroke-width:1.18066084;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-start:url(#Arrow2Lstart);marker-end:none"
+       d="m 280,332.91771 0,69.45704 105.30316,0"
+       id="path3882"
        inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
-       id="path7718"
-       d="m 570.0238,302.36218 c -23.92649,0 -23.92649,0 -23.92649,0"
-       style="fill:none;stroke:#000000;stroke-width:1.09376633000000001px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow2Lstart)" />
+       id="path4682"
+       d="m 650,332.93052 0,69.43105 -103.98682,0"
+       style="fill:none;stroke:#000000;stroke-width:1.17303872;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-start:url(#Arrow2Lstart);marker-end:none" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       x="432.94708"
+       y="48.351768"
+       id="text4688"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4690"
+         x="432.94708"
+         y="48.351768">&lt;&lt;trait&gt;&gt;</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4705"
+       y="138.36218"
+       x="616.69525"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         y="138.36218"
+         x="616.69525"
+         id="tspan4707"
+         sodipodi:role="line">&lt;&lt;trait&gt;&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       x="247.24219"
+       y="138.36218"
+       id="text4714"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4716"
+         x="247.24219"
+         y="138.36218">&lt;&lt;trait&gt;&gt;</tspan></text>
   </g>
 </svg>

@@ -1,7 +1,7 @@
 %% ------------------------------------------------------------------------- %%
 \chapter{Atores no projeto Akka}
 \label{cap:atores_akka}
-Os atores do Akka podem ser locais ou remotos. O termo ``ator local'' é usado
+O projeto Akka disponibiliza tanto atores locais quanto remotos. O termo ``ator local'' é usado
 para denotar um ator que pode receber mensagens apenas de atores residentes
 na mesma máquina virtual. Por outro lado, um ator remoto pode receber mensagens
 de quaisquer outros atores, inclusive daqueles residentes em outras máquinas virtuais.
@@ -15,7 +15,7 @@ mensagem (envio, tráfego e processamento da mensagem) tanto no caso local como n
 \index{Akka!atores locais}
 
 A definição de atores locais acontece por meio de extensões da 
-\english{trait} \lstinline$akka.actor.Actor$ provendo uma implementação para o 
+\english{trait} \lstinline$akka.actor.Actor$, onde deve-se prover uma implementação para o 
 método \code{receive} como mostrado na listagem \ref{lst:def-actor}. 
 A definição de um ator descreve o comportamento inicial que o
 ator terá. A ator propriamente dito (que possui a infraestrutura provida
@@ -28,7 +28,7 @@ A \english{trait} \lstinline$Actor$ possui em sua declaração uma referência para
 atores locais, \lstinline$self$ referencia uma instância de \lstinline$akka.actor.LocalActorRef$.
 Com essa referência, a classe que define o comportamento do ator pode alterar as definições
 padrão providas pelo arcabouço e utilizar métodos, por exemplo, para responder ou encaminhar 
-mensagens recebidas, acessar as referências para um ator supervisor ou ainda atores que estejam
+mensagens recebidas, acessar a referência de um ator supervisor ou ainda de atores que estejam
 sob supervisão.
 
 \begin{lstlisting}[frame=tb, caption={Classe SampleActor.}, label={lst:def-actor}]
@@ -43,8 +43,8 @@ class SampleActor(val name: String) extends akka.actor.Actor {
 \end{lstlisting}
 
 Atores são criados pelo método \lstinline$actorOf$ do objeto \lstinline$akka.actor.Actor$
-como mostrado na listagem \ref{lst:actorOf1}. Nessa listagem a instância do ator é criada
-com base no tipo da classe via invocação por reflexão do construtor padrão da classe.
+como mostrado na listagem \ref{lst:actorOf1}. Nessa listagem, a instância do ator é criada
+por reflexão com base no tipo da classe, onde o construtor padrão é invocado.
 O método \lstinline$actorOf$ é sobrecarregado para permitir que uma função sem 
 argumentos e com tipo de retorno \lstinline$Actor$, possa ser utilizada como alternativa ao
 construtor padrão na criação do ator, como mostrado na listagem \ref{lst:actorOf2}. 
@@ -52,7 +52,7 @@ construtor padrão na criação do ator, como mostrado na listagem \ref{lst:actorOf
 Nas duas listagens tivemos que chamar explicitamente o método 
 \lstinline$start$ para iniciar o ator. Os atores do projeto Akka possuem um conjunto de estados
 simples, bem definido e linear. Um ator logo após sua criação está no estado chamado de ``novo'' 
-e ainda não pode receber mensagens. Após a chamada do método \lstinline$start$, o ator passa ao 
+e ainda não pode receber mensagens. Após a invocação do método \lstinline$start$, o ator passa ao 
 estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método \lstinline$exit$ é 
 invocado, o ator passa ao estado de ``desligado'' e não pode mais executar ação alguma.
 
@@ -86,8 +86,8 @@ como mostrado na figura \ref{fig:local-actor-message}.
 \subsubsection{Despachadores}
 
 O despachador de um ator é uma entidade que possui um papel importante. O despachador permite a 
-configuração do tipo da fila do ator e a semântica de despachamento das mensagens. As filas 
-dos atores podem ser duráveis ou transientes e ter seu tamanho limitado superiormente ou não. O Akka
+configuração do tipo da fila do ator e a semântica do despachamento das mensagens. A fila
+de um ator pode ser durável ou transiente e ter seu tamanho limitado superiormente ou não. O Akka
 permite que despachadores específicos sejam definidos, porém possui em sua distribuição os quatro 
 despachadores listados a seguir:
 
@@ -125,7 +125,7 @@ despachadores listados a seguir:
 	superior da fila tenha sido atingido (para o caso onde há um limite informado). 		
 \end{itemize}
 
-Por padrão, atores são associados ao despachador global impulsionado por eventos. A 
+Por padrão atores são associados ao despachador global impulsionado por eventos. A 
 configuração padrão do despachador define uma fila transiente sem limite máximo de mensagens. 
 Caso seja necessário definir um outro despachador para um ator, a definição deve acontecer 
 antes de o ator ser inciado via método \lstinline$self.dispatcher$. 
@@ -151,9 +151,7 @@ ou classe pode enviar uma mensagem a um ator. Podemos notar que o código da list
 de resposta pode verificar se há um remetente definido associado a mensagem recebida, 
 porém existe um modo alternativo e mais simples: o método \lstinline$self.reply_?$ faz o 
 envio ao remetente somente no caso em que há um remetente definido, devolvendo o valor 
-boleano \english{true} para indicar se houve envio, ou \english{false} caso contrário.
-
-%\subsubsection{Hierarquia de supervisão} - vale a pena?
+boleano \lstinline$true$ para indicar se houve envio, ou \lstinline$false$ caso contrário.
 
 \section{Atores remotos}
 \index{Akka!atores remotos}
@@ -170,8 +168,8 @@ de atores remotos utiliza os seguintes elementos:
 	\item \lstinline$RemoteServerModule$: É uma \english{trait} que define as responsabilidades
 	do componente usado no lado do servidor. Suas implementações têm como
 	responsabilidade manter registrados os atores, bem como encaminhar a eles as mensagens 
-	recebidas de clientes remotos. Cada \code{RemoteServerModule} é associado a um \english{host} 
-	e a uma porta TCP. Um mesma máquina virtual pode conter múltiplos \code{RemoteServerModule}s.
+	recebidas de clientes remotos. Cada \lstinline$RemoteServerModule$ é associado a um \english{host} 
+	e a uma porta TCP. Um mesma máquina virtual pode conter múltiplos \lstinline$RemoteServerModule$s.
 	A documentação do Akka utiliza para esse componente a terminologia ``servidor remoto'' 
 	(\english{remote server});
 
@@ -182,7 +180,7 @@ de atores remotos utiliza os seguintes elementos:
 	cliente, provendo uma série de serviços não vísiveis para o usuário, tais como
 	seriação de mensagens, envio de mensagens para atores remotos,
 	conversão de ator local em ator remoto e intermediação de 
-	mensagens de resposta vindas do \code{RemoteServerModule}, no caso envios via \lstinline$!!$
+	mensagens de resposta vindas do \lstinline$RemoteServerModule$, no caso envios via \lstinline$!!$
 	ou \lstinline$!!!$. A documentação do Akka utiliza para esse componente a terminologia
 	``cliente remoto'' (\english{remote client});
 
@@ -202,14 +200,6 @@ que é a camada que se interage diretamente, e a camada de implementação. A camad
 de implementação é associada em tempo de execução, permitindo que outras implementações 
 possam ser criadas e utilizadas.
 
-\vspace{1ex}
-\begin{figure}[hbtp]
- 	\centering
-	\includegraphics[scale=.75]{remote-actor-colaboracao} 
-  	\caption{Relacionamento entre os componentes remotos.}
-  	\label{fig:remote-actor-colaboracao}
-\end{figure}
-
 Na versão $1.0$ do Akka, a definição de atores remotos não possui diferença em
 relação a definição de atores locais. Podemos utilizar a classe apresentada na 
 listagem \ref{lst:def-actor} para criamos instâncias de atores remotos. A criação de atores
@@ -219,21 +209,23 @@ ser criado remotamente por uma aplicação cliente.
 A criação de atores remotos gerenciados pelo servidor (\english{server managed actors})
 é mostrada na listagem \ref{lst:remote-server1}. Nessa listagem, um servidor
 remoto é inicializado na linha $2$ para que os atores possam ser registrados. Na implementação
-padrão feita com o Netty, a inicialização de um servidor remoto implica em associar 
-um componente do Netty para monitorar a \english{socket} associada ao par \english{host} e 
+padrão feita com o Netty, a inicialização de um servidor remoto implica na associação
+de um componente do Netty para monitorar a \english{socket} associada ao par \english{host} e 
 porta. Na linha $3$ registramos o ator sob o nome \lstinline$hello-service$. O ator passou a 
 estar remotamente acessível por aplicações que residam em outras máquinas virtuais. Um detalhe
-importante a destacar é a inicialização implícita do ator feita pelo método \lstinline$register$.
+importante a ser destacado é a inicialização implícita do ator feita pelo método \lstinline$register$.
 A implementação desse método fica a critério dos componentes da camada de implementação de
 suporte remoto, porém sua interface obriga que implementações compatíveis inicializem atores
 que ainda não estão em execução.
 
-\begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteServer.}, label={lst:remote-server1}]
-object SampleRemoteServer extends Application {
-	Actor.remote.start("localhost", 2552)
-	Actor.remote.register("hello-service", actorOf[SampleActor])
-}
-\end{lstlisting}
+\vspace{1ex}
+\begin{figure}[hbtp]
+ 	\centering
+	\includegraphics[scale=.75]{remote-actor-colaboracao} 
+  	\caption{Relacionamento entre os componentes remotos.}
+  	\label{fig:remote-actor-colaboracao}
+\end{figure}
+
 
 Referências para atores remotos podem ser obtidas via método \lstinline$actorFor$. Esse
 método possui diversas sobrecargas, porém a mais simples recebe como argumentos o nome do ator, 
@@ -242,9 +234,17 @@ o \english{host} e a porta onde foi feito o registro. A linha $2$ da listagem
 obtém uma referência para o ator. Podemos notar que o uso do ator na linha $3$ não possui 
 nenhuma indicação explícita sobre um envio remoto. O método \lstinline$actorFor$ retorna na 
 maioria das vezes instâncias de \lstinline$RemoteActorRef$, que representam \english{proxies} 
-locais para o ator remoto. A implementação possui algumas otimizações para o caso em que, 
-quem busca a referência remota estar no mesmo nó onde o ator reside. Em casos como esse, 
-uma instância de \lstinline$LocalActorRef$ é retornada. 
+locais para o ator remoto. A implementação possui algumas otimizações para que referências
+locais sempre que possível. Por exemplo, a entidade que está enviando a mensagem reside no 
+mesmo nó que o ator. Em casos como esse, uma instância de \lstinline$LocalActorRef$ é retornada. 
+
+\begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteServer.}, label={lst:remote-server1}]
+object SampleRemoteServer extends Application {
+	Actor.remote.start("localhost", 2552)
+	Actor.remote.register("hello-service", actorOf[SampleActor])
+}
+\end{lstlisting}
+
 
 \begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteClient.}, label={lst:remote-client1}]
 object SampleRemoteClient extends Application{
@@ -261,9 +261,10 @@ não possui carregamento remoto de classes, obrigando que as classes com as defin
 dos atores estejam acessíveis para a máquina virtual onde ele será instanciado e executado.
 Uma outra observação importante a ser feita em relação ao servidor remoto que irá executar
 o ator sendo criado, é a necessidade de ele estar em execução antes de o método \lstinline$actorOf$
-ser invocado. Os detalhes observados são alguns dos exemplos que motivam discussões no projeto
-para que esse tipo de suporte seja depreciado e removido em versões futuras, já que os
-mesmos resultados podem ser obtidos com o uso de atores gerenciados pelo servidor.
+ser invocado. Os detalhes observados são alguns dos exemplos que motivam discussões entre
+a comunidade de desenvolvedores do Akka para que esse tipo de suporte seja depreciado e 
+removido em versões futuras, já que os mesmos resultados podem ser obtidos com o uso de 
+atores gerenciados pelo servidor.
 
 \subsection{Fluxo de envio das mensagens}
 \index{Akka!atores remotos!fluxo de envio}
@@ -296,8 +297,7 @@ informação recebida para o \english{handler}. O \english{handler} examina as inf
 cabeçalho adicionadas na mensagem, localiza o ator destinatário no registro local de atores 
 e encaminha a mensagem à caixa de mensagens do ator fazendo um envio local. Esse envio local
 respeita o remetente remoto original da mensagem. O despachador associado ao ator tem o 
-mesmo comportamento já mostrado na figura \ref{fig:local-actor-message}, já que do ponto de vista do 
-despachador não há diferença entre um envio local e um remoto.
+mesmo comportamento já mostrado na figura \ref{fig:local-actor-message}.
 
 Em alguns casos o processamento deve gerar uma mensagem de resposta, como por exemplo,
 um resultado futuro ou uma mensagem de erro para um ator supervisor. Em tais casos, a 
@@ -313,7 +313,15 @@ ocorre entre os passos $6$ e $7$ da figura \ref{fig:remote-actor-message-flow} e
 os valores sejam iguais, o passo $7$ será executado. Caso contrário, uma excessão de segurança 
 é lançada na JVM que recebeu a mensagem e o passo $7$ não será executado.
 
-%% falar da compactação do stream de bytes
+O Netty oferece algumas opções específicas para o transporte de mensagens baseadas
+em \english{socket}s TCP. Exemplos dessas opções são a definição do tamanho máximo da
+janela utilizada para o envio das mensagens a atores remotos, o tempo limite de espera 
+para leitura na \english{socket}, o intervalo de espera para tentativa de reconexão e
+o intervalo máximo em que o cliente deve tentar se conectar. Além dessas opções, o
+Netty fornece ainda a possibilidade de compactação das mensagens durante o envio. O Akka
+faz uso de todas as opções listadas, permitindo que os usuários da biblioteca definam
+os valores desejados. As configurações de todos os módulos do Akka são feitas no 
+arquivo \lstinline$akka.conf$. 
 
 \subsection{Protocolo para envios de mensagens a atores remotos}
 \index{Akka!atores remotos!protocolo}
