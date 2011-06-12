@@ -53,8 +53,10 @@ Nas duas listagens tivemos que chamar explicitamente o método
 \lstinline$start$ para iniciar o ator. Os atores do projeto Akka possuem um conjunto de estados
 simples, bem definido e linear. Um ator logo após sua criação está no estado chamado de ``novo'' 
 e ainda não pode receber mensagens. Após a invocação do método \lstinline$start$, o ator passa ao 
-estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método \lstinline$exit$ é 
-invocado, o ator passa ao estado de ``desligado'' e não pode mais executar ação alguma.
+estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método \lstinline$exit$ ou 
+\lstinline$stop$\footnote{O método \lstinline$exit$ chama internamente o método 
+\lstinline$stop$ que é responsável por desligar o ator.} é invocado, o ator passa 
+ao estado de ``desligado'' e não pode mais executar ação alguma.
 
 \begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via construtor padrão.}, label={lst:actorOf1}]
   val theActor = Actor.actorOf[SampleActor].start
@@ -153,6 +155,126 @@ porém existe um modo alternativo e mais simples: o método \lstinline$self.reply_
 envio ao remetente somente no caso em que há um remetente definido, devolvendo o valor 
 boleano \lstinline$true$ para indicar se houve envio, ou \lstinline$false$ caso contrário.
 
+\subsubsection{Hierarquia de supervisão}
+%%% TODO revisar e fazer figura
+
+A biblioteca de atores do Akka permite que o tratamento de erros possa ser feito por
+atores definidos como supervisores. Sua implementação é totalmente baseada na abordagem feita na
+linguagem Erlang descrita na seção \ref{sec:atores-linguagens-erlang}, e é conhecida como
+``deixe que falhe'' (\english{let it crash}). 
+
+Uma hierarquia de supervisão é criada com o uso de ligações entre os atores. A ligação
+de dois atores pode acontecer via métodos \lstinline$link$, \lstinline$startLink$ e
+\lstinline$spawnLink$, definidos em \lstinline$ActorRef$. O método \lstinline$link$ 
+faz a ligação de dois atores. O método \lstinline$startLink$ também faz a ligação
+de dois atores, porém coloca o ator que está sendo passado como parâmetro em execução,
+enquanto que o método \lstinline$spawnLink$ faz a criação do ator, sua ligação e ainda
+o coloca em execução. 
+
+É necessário definir nos atores sob supervisão qual ciclo de vida que o ator possui, para
+que o ator supervisor saiba como proceder no caso de erros. Existem duas opções de ciclo de vida:
+
+\begin{enumerate}
+	\item Permantente: O ciclo de vida é definido na classe 
+	\lstinline$akka.config.Supervision.Permanent$. Indica que o ator possui um ciclo de 
+	vida permante, ou seja, sempre deve ser reiniciado no caso de erros;
+	
+	\item Temporário: O ciclo de vida é definido na classe 
+	\lstinline$akka.config.Supervision.Temporary$.
+	Indica que o ator possui um ciclo de vida temporário, ou seja,
+	não deve ser reiniciado no caso de erros. Contudo, esse ciclo de vida
+	indica que o ator deve ser desligado pelo processo regular, ou seja, como
+	se o método \lstinline$exit$ tivesse sido invocado. O processo regular
+	ainda faz uma invocação ao método \lstinline$postStop$;	
+\end{enumerate}
+
+A definição de um ator com ciclo de vida permanente é mostrada na listagem
+\ref{lst:supervised-actor}. Na linha $2$ definimos o seu ciclo de vida. 
+
+O processo de reinicialização de um ator consiste na criação de uma nova instância da
+classe que define o ator. Os métodos \lstinline$preRestart$ e \lstinline$postRestart$ são 
+invocados, respectivamente, antes de o ator ser desligado e logo após ele ter sido reiniciado.
+O método \lstinline$preRestart$ é invocado no ator onde ocorreu a exceção. Em contrapartida, 
+o método \lstinline$postRestart$é invocado na nova instância. A \lstinline$ActorRef$ do
+ator onde ocorreu o erro e do novo ator é a mesma. A criação da nova instância da classe que
+define o ator utiliza o mesmo modo que o ator foi criado originalmente. Por exemplo, 
+na listagem \ref{lst:actorOf1} criamos o ator via construtor padrão e na listagem \ref{lst:actorOf2}, 
+utilizamos uma função específica. 
+
+\begin{lstlisting}[frame=tb, caption={Ator com ciclo de vida permanente.}, label={lst:supervised-actor}]
+class MySupervised extends akka.actor.Actor{
+  self.lifeCycle = akka.config.Supervision.Permanent
+
+  override def postRestart(reason: Throwable): Unit = {
+    // restore the state
+  }
+
+  override def preRestart(reason: Throwable): Unit = {
+    // save the current state
+  }
+
+  def receive = {
+    case msg => println("message received: %s".format(msg))
+  }
+}
+\end{lstlisting}
+
+É necessário também definir no ator supervisor qual será a estratégia de reinicialização para
+os atores que estejam ligados a ele. Existem duas estratégias possíveis:
+
+\begin{enumerate}
+	\item Um por um: É definida na classe 
+	\lstinline$akka.config.Supervision.OneForOneStrategy$. Quando essa estratégia é utilizada,
+	exceções que sejam lançadas em um ator sob supervisão que possua um ciclo de vida permanente,
+	fazem com que somente o ator seja reiniciado;
+	
+	\item Todos por um: É definida na classe 
+	\lstinline$akka.config.Supervision.AllForOneStrategy$. 
+	Quando essa estratégia é utilizada, exceções que sejam lançadas em um ator sob supervisão, 
+	fazem com que todos os atores sob o mesmo supervisor sejam reiniciados. 	
+\end{enumerate}
+
+Junto com a estratégida de reinicialização, é necessário definir quais são as exceções que o ator
+é responsável por fazer o tratamento, além de configurações relacionadas a quantas tentativas de
+reinicialização devem ser feitas dentro de um período de tempo. Mostramos na listagem 
+\ref{lst:supervisor-actor} a definição do ator supervisor. Na linha $2$ utilizamos a estratégia 
+um por um, capturando as exceções do tipo \lstinline$java.lang.Exception$, com $2$ 
+tentativas de reinicialização em um período de $5$ segundos. Caso o limite de tentativas
+de reinicialização tenha sido atingido, porém sem sucesso na reinicialização do ator supervisionado,
+uma mensagem específica é enviada para o ator supervisor. Essa mensagem pode ser capturada para
+que as ações necessárias sejam tomadas.
+
+\begin{lstlisting}[frame=tb, caption={Ator supervisor.}, label={lst:supervisor-actor}]
+class MySupervisor extends akka.actor.Actor {
+  self.faultHandler = akka.config.Supervision.OneForOneStrategy(List(classOf[Exception]), 2, 5000)
+
+  def receive = {
+    case _ => // ignore all messages
+  }
+}
+\end{lstlisting}
+
+Apresentamos na listagem \ref{lst:supervisor-hier} a criação de uma hierarquia de 
+supervisão entre os atores apresentados nas listagens \ref{lst:supervised-actor} 
+e \ref{supervisor-actor}.
+
+\begin{lstlisting}[frame=tb, caption={Criação da hierarquia de supervisão.}, label={lst:supervisor-hier}]
+object SampleSupervisorHierarchy extends Application {
+  val actorSupervisor = Actor.actorOf[MySupervisor].start
+  val supervised = Actor.actorOf[MySupervised]
+  actorSupervisor.startLink(supervised)
+}
+\end{lstlisting}
+
+Atores supervisores e supervisionados podem trocar mensagens. Quando criamos uma ligação
+de supervisão entre dois atores, como na linha $4$ da listagem \ref{lst:supervisor-hier},
+a referência para o ator supervisor passa a estar definida no ator \lstinline$supervised$.
+Essa referência é acessível via método \lstinline$self.supervisor$. 
+
+Um ator que supervisiona outros atores também pode ser supervisionado por outro ator, como 
+mostrado na figura \ref{}. Podemos notar na figura que podemos criar sub-hierarquias de 
+supervisão que permitem certa flexibilidade do tratamento de erros.
+
 \section{Atores remotos}
 \index{Akka!atores remotos}
 \label{sec:atores_remotos_akka}
@@ -241,7 +363,7 @@ mesmo nó que o ator. Em casos como esse, uma instância de \lstinline$LocalActorR
 \begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteServer.}, label={lst:remote-server1}]
 object SampleRemoteServer extends Application {
 	Actor.remote.start("localhost", 2552)
-	Actor.remote.register("hello-service", actorOf[SampleActor])
+	Actor.remote.register("hello-service", Actor.actorOf[SampleActor])
 }
 \end{lstlisting}
 
