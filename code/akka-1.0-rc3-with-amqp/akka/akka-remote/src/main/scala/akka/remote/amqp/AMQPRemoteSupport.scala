@@ -306,7 +306,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
       "Can't unregister supervisor for " + actorRef + " since it is not under supervision")
     else supervisors.remove(actorRef.supervisor.get.uuid)
 
-  def handleMessageReceived(message: Array[Byte]): Boolean = {
+  def handleReceived(message: Array[Byte]): Boolean = {
     if(message == null) throw new IllegalActorStateException("Received null message in AMQP Remote Client is null")
     try {
       val reply = RemoteMessageProtocol.parseFrom(message)
@@ -358,7 +358,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
     }
   }
 
-  def handleRejectedMessage(message: Array[Byte], clientId: String): Unit = {
+  def handleRejected(message: Array[Byte], clientId: String): Unit = {
     log.warn("Message %s sent to client %s has been rejected. The corresponding queue might not exist"
       .format(message.toString, clientId))
   }
@@ -555,7 +555,7 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
     bridge
   }
 
-  def handleMessageReceived(message: Array[Byte]): Boolean = {
+  def handleReceived(message: Array[Byte]): Boolean = {
     if(message == null){
       throw new IllegalStateException("Received null message in AMQP Remote Server")
     }
@@ -583,7 +583,7 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
     val actorRef =
       try { createActor(actorInfo, request.getRemoteClientId).start } catch {
         case e: SecurityException =>
-          amqpServerBridge.sendMessageTo(createErrorReplyMessage(e, request, AkkaActorType.ScalaActor).toByteArray, Some(request.getRemoteClientId))
+          amqpServerBridge.sendMessageTo(createErrorReplyMessage(e, request, AkkaActorType.ScalaActor).toByteArray, request.getRemoteClientId)
           serverModule.notifyListeners(RemoteServerError(e, serverModule))
           return
       }
@@ -613,7 +613,7 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
               val exception = f.exception
               if (exception.isDefined) {
                 log.slf4j.debug("Returning exception from actor invocation [{}]",exception.get.getClass)
-                amqpServerBridge.sendMessageTo(createErrorReplyMessage(exception.get, request, AkkaActorType.ScalaActor).toByteArray, Some(request.getRemoteClientId))
+                amqpServerBridge.sendMessageTo(createErrorReplyMessage(exception.get, request, AkkaActorType.ScalaActor).toByteArray, request.getRemoteClientId)
               }
               else if (result.isDefined) {
                 log.slf4j.debug("Returning result from actor invocation [{}]",result.get)
@@ -631,7 +631,7 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
                   None,
                   None)
                 if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
-                  amqpServerBridge.sendMessageTo(messageBuilder.build.toByteArray, Some(request.getRemoteClientId))
+                  amqpServerBridge.sendMessageTo(messageBuilder.build.toByteArray, request.getRemoteClientId)
               }
             }
           )
@@ -667,7 +667,7 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
             None,
             None)
           if (request.hasSupervisorUuid) messageBuilder.setSupervisorUuid(request.getSupervisorUuid)
-          amqpServerBridge.sendMessageTo(messageBuilder.build.toByteArray, Some(request.getRemoteClientId))
+          amqpServerBridge.sendMessageTo(messageBuilder.build.toByteArray, request.getRemoteClientId)
           log.slf4j.debug("Returning result from remote typed actor invocation [{}]", result)
         } catch {
           case e: Throwable => serverModule.notifyListeners(RemoteServerError(e, serverModule))
@@ -685,10 +685,10 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
       }
     } catch {
       case e: InvocationTargetException =>
-        amqpServerBridge.sendMessageTo(createErrorReplyMessage(e.getCause, request, AkkaActorType.TypedActor).toByteArray, Some(request.getRemoteClientId))
+        amqpServerBridge.sendMessageTo(createErrorReplyMessage(e.getCause, request, AkkaActorType.TypedActor).toByteArray, request.getRemoteClientId)
         serverModule.notifyListeners(RemoteServerError(e, serverModule))
       case e: Throwable =>
-        amqpServerBridge.sendMessageTo(createErrorReplyMessage(e, request, AkkaActorType.TypedActor).toByteArray, Some(request.getRemoteClientId))
+        amqpServerBridge.sendMessageTo(createErrorReplyMessage(e, request, AkkaActorType.TypedActor).toByteArray, request.getRemoteClientId)
         serverModule.notifyListeners(RemoteServerError(e, serverModule))
     }
   }
@@ -834,7 +834,7 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
     }
   }
 
-  def handleRejectedMessage(message: Array[Byte], clientId: String): Unit = {
+  def handleRejected(message: Array[Byte], clientId: String): Unit = {
       log.warn("Message %s sent to client %s has been rejected. The corresponding queue might not exist"
         .format(message.toString, clientId))
   }

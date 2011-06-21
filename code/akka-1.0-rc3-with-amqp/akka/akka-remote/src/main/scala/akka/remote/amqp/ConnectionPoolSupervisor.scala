@@ -70,13 +70,12 @@ case class RemoteServerSetup(handler: MessageHandler, config: ServerSetupInfo){
 }
 case class ServerSetupInfo(exchangeConfig: ExchangeConfig.ExchangeParameters,
                            queueConfig: QueueConfig.QueueParameters,
-                           exchangeName: String, queueName: String, routingKey: String, fanoutExchangeName: Option[String]){
+                           exchangeName: String, queueName: String, routingKey: String){
   require(exchangeConfig != null)
   require(queueConfig != null)
   require(exchangeName   != null)
   require(queueName != null)
   require(routingKey != null)
-  require(fanoutExchangeName != null)
 }
 
 
@@ -342,7 +341,7 @@ class WriteChannelActor extends ChannelActor {
         ch => ch.setReturnListener(new ReturnListener {
         override def handleBasicReturn(rejectCode: Int, replyText: String, exchange: String, routingKey: String,
                         properties: AMQP.BasicProperties, message: Array[Byte]) {
-            myReturnHandler.get.handleRejectedMessage(message, routingKey)
+            myReturnHandler.get.handleRejected(message, routingKey)
           }
         })
       }
@@ -368,7 +367,6 @@ class WriteChannelActor extends ChannelActor {
   def setupServer = {
     val config = myServerConfigs.get
     val inboundExchangeName = config.exchangeName
-    val outboundExchangeName = config.fanoutExchangeName
     val params = config.exchangeConfig
     channel.foreach{
       ch => {
@@ -378,18 +376,10 @@ class WriteChannelActor extends ChannelActor {
                                    params.durable,
                                    params.autoDelete,
                                    params.arguments)
-        if(outboundExchangeName.isDefined){
-          log.debug("Creating Exchange %s %s",outboundExchangeName.get, params)
-          ch.exchangeDeclare(outboundExchangeName.get,
-                                params.typeConfig,
-                                params.durable,
-                                params.autoDelete,
-                                params.arguments)
-        }
         ch.setReturnListener(new ReturnListener {
           override def handleBasicReturn(rejectCode: Int, replyText: String, exchange: String, routingKey: String,
                         properties: AMQP.BasicProperties, message: Array[Byte]){
-            myServerReturnHandler.get.handleRejectedMessage(message, routingKey)
+            myServerReturnHandler.get.handleRejected(message, routingKey)
           }
         })
       }
@@ -476,9 +466,8 @@ class ReadChannelActor extends ChannelActor {
                              params.exclusive,
                              params.autoDelete,
                              params.arguments)
-          val exchangeName = if(config.fanoutExchangeName.isDefined) config.fanoutExchangeName.get else inboundExchangeName
-          log.debug("Binding inbound queue %s %s %s", inboundQueueName, exchangeName, routingKeyToServer)
-          ch.queueBind(inboundQueueName, exchangeName, routingKeyToServer)
+          log.debug("Binding inbound queue %s %s %s", inboundQueueName, inboundExchangeName, routingKeyToServer)
+          ch.queueBind(inboundQueueName, inboundExchangeName, routingKeyToServer)
           log.debug("Binding consumer to %s", inboundQueueName)
           val consumer = new BridgeConsumer(ch, handler)
           ch.basicConsume(inboundQueueName, false, consumer)
@@ -549,7 +538,7 @@ class BridgeConsumer(channel: Channel, handler: MessageHandler) extends DefaultC
   require(channel != null && channel.isOpen)
   require(handler != null)
   override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, message: Array[Byte])  = {
-    if(handler.handleMessageReceived(message)){
+    if(handler.handleReceived(message)){
       channel.basicAck(envelope.getDeliveryTag, false)
     }
   }

@@ -27,8 +27,6 @@ object ExchangeConfig extends Enumeration {
       new ExchangeParameters(name, typeConfig, durable, autoDelete, arguments)
 }
 
-
-
 object QueueConfig extends Enumeration {
   val queueDurable    = Value("queueDurable",exclusive = false, durable = true,  autoDelete = false, arguments = null)
   val queueAutoDelete = Value("queueAutoDelete",exclusive = false, durable = false, autoDelete = true , arguments = null)
