@@ -130,6 +130,11 @@
 		\item Um \english{binding} corresponde a uma entrada nas tabelas de roteamento 
 		do MTA.		
 	\end{enumerate}
+
+	\subsection{Envios de mensagens}		
+	\label{subsec:amqp-modelo-envios}
+	\index{AMQP!padrão!modelo!envios de mensagens}
+
         
 	Para enviar uma mensagem, uma aplicação produtora especifica uma determinada 
 	\english{exchange} de um determinado \english{virtual host}, uma rotulação com 
@@ -144,7 +149,7 @@
 	imediatamente para a aplicação consumidora. Caso isso não seja possível, a fila mantém a 
 	mensagem armazenada para uma futura tentativa de entrega. Uma vez que a mensagem foi 
 	entregue com sucesso a um consumidor, ela é removida da fila. 
-	A figura~\ref{fig:amqp-message-flow} mostra o envio e recebimento de uma mensagem.
+	A figura \ref{fig:amqp-message-flow} mostra o envio e recebimento de uma mensagem.
         
 	\vspace{1ex}
 	\begin{figure}[hbtp]
