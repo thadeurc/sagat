@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,9 +41,9 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1280"
      inkscape:window-height="694"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="541.94516"
-     inkscape:cy="876.78042"
+     inkscape:zoom="1"
+     inkscape:cx="245.17388"
+     inkscape:cy="930.32406"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:current-layer="svg2"
@@ -327,24 +327,6 @@
          stdDeviation="3" />
     </filter>
   </defs>
-  <rect
-     y="242.36218"
-     x="540"
-     height="90"
-     width="197.52222"
-     id="rect10770"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.18309879;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter10772)"
-     transform="matrix(0.96191711,0,0,0.88888889,26.56476,38.929131)" />
-  <rect
-     width="325.41138"
-     height="204.94008"
-     rx="0"
-     ry="0"
-     x="174.58862"
-     y="162.36218"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4096)"
-     id="rect4094"
-     transform="matrix(1.2458427,0,0,1,-40.92135,-138)" />
   <text
      sodipodi:linespacing="100%"
      xml:space="preserve"
@@ -360,185 +342,141 @@
        x="450.41962"
        id="tspan1341"
        sodipodi:role="line" /></text>
-  <g
-     id="g5738"
-     transform="translate(-6,6)">
-    <g
-       transform="matrix(1.1373015,0,0,0.9563089,434.10867,0.5451366)"
-       id="g4257">
-      <rect
-         inkscape:transform-center-y="-23.206892"
-         inkscape:transform-center-x="54.813302"
-         transform="matrix(0,-1,-1,0,-68,-15.144454)"
-         width="63.477551"
-         height="108.20067"
-         rx="0"
-         ry="0"
-         x="-114.36218"
-         y="-334"
-         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4150)"
-         id="rect4148" />
-    </g>
-    <rect
-       inkscape:transform-center-y="-23.152029"
-       inkscape:transform-center-x="66.635879"
-       transform="matrix(0,-1,-1,0,0,0)"
-       width="63.327492"
-       height="131.53828"
-       rx="0"
-       ry="0"
-       x="-92.50737"
-       y="-735.76624"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.63171256;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       id="rect7095" />
-    <text
-       inkscape:transform-center-y="-38.932037"
-       inkscape:transform-center-x="33.267991"
-       x="669.95581"
-       y="23.939054"
-       style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-       id="text7097"
-       xml:space="preserve"
-       sodipodi:linespacing="100%"><tspan
-         x="669.95581"
-         y="23.939054"
-         id="tspan7099"
-         style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">JVM1</tspan><tspan
-         sodipodi:role="line"
-         id="tspan7101"
-         x="669.95581"
-         y="36.939056" /></text>
-    <rect
-       inkscape:transform-center-y="-21.890672"
-       inkscape:transform-center-x="61.721697"
-       transform="matrix(0,-1,-1,0,0,0)"
-       width="47.24308"
-       height="98.856316"
-       rx="0"
-       ry="0"
-       x="-84.465164"
-       y="-719.42523"
-       style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.37907791;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       id="rect7920" />
-    <text
-       inkscape:transform-center-y="-10.915985"
-       inkscape:transform-center-x="33.979997"
-       sodipodi:linespacing="100%"
-       id="text7922"
-       y="52.362183"
-       x="670"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-       xml:space="preserve"><tspan
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-         y="52.362183"
-         x="670"
-         id="tspan7926"
-         sodipodi:role="line">ServerAMQP</tspan><tspan
-         id="tspan5582"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-         y="64.362183"
-         x="671.91016"
-         sodipodi:role="line">Bridge </tspan><tspan
-         id="tspan5584"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-         y="76.362183"
-         x="670"
-         sodipodi:role="line">(name=node1)</tspan></text>
-  </g>
-  <g
-     id="g5830"
-     transform="translate(3.1299896,-134.49452)">
-    <g
-       id="g3988"
-       transform="matrix(1.1373015,0,0,0.9563089,-160.90058,137.63716)">
-      <rect
-         id="rect3990"
-         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4150)"
-         y="-334"
-         x="-114.36218"
-         ry="0"
-         rx="0"
-         height="108.20067"
-         width="63.477551"
-         transform="matrix(0,-1,-1,0,-68,-15.144454)"
-         inkscape:transform-center-x="54.813302"
-         inkscape:transform-center-y="-23.206892" />
-    </g>
-    <g
-       transform="translate(2,2)"
-       id="g5777">
-      <rect
-         inkscape:transform-center-y="-23.152378"
-         inkscape:transform-center-x="66.558765"
-         transform="matrix(0,-1,-1,0,0,0)"
-         width="63.328423"
-         height="131.38606"
-         rx="0"
-         ry="0"
-         x="-230.40485"
-         y="-140.60429"
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.6307801;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-         id="rect4166" />
-      <text
-         inkscape:transform-center-y="-38.932037"
-         inkscape:transform-center-x="33.267991"
-         x="74.87001"
-         y="161.83607"
-         style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-         id="text4168"
-         xml:space="preserve"
-         sodipodi:linespacing="100%"><tspan
-           x="74.87001"
-           y="161.83607"
-           id="tspan4170"
-           style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">JVM2</tspan><tspan
-           sodipodi:role="line"
-           id="tspan4172"
-           x="74.87001"
-           y="174.83607" /></text>
-      <rect
-         inkscape:transform-center-y="-23.168129"
-         inkscape:transform-center-x="62.546569"
-         transform="matrix(0,-1,-1,0,0,0)"
-         width="50.000008"
-         height="100.17747"
-         rx="0"
-         ry="0"
-         x="-223.74063"
-         y="-125"
-         style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.46381116;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-         id="rect4174" />
-      <text
-         inkscape:transform-center-y="-10.915985"
-         inkscape:transform-center-x="33.979997"
-         sodipodi:linespacing="100%"
-         id="text4965"
-         y="184.36465"
-         x="75.29213"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-         xml:space="preserve"><tspan
-           style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-           y="184.36465"
-           x="75.29213"
-           id="tspan4967"
-           sodipodi:role="line">ClientAMQP</tspan><tspan
-           style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-           y="196.36465"
-           x="75.29213"
-           id="tspan4969"
-           sodipodi:role="line">Bridge</tspan><tspan
-           id="tspan5751"
-           style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-           y="208.36465"
-           x="75.29213"
-           sodipodi:role="line">(name=node1)</tspan><tspan
-           id="tspan5753"
-           style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-           y="220.36465"
-           x="75.29213"
-           sodipodi:role="line">(id=client1)</tspan></text>
-    </g>
-  </g>
+  <rect
+     id="rect7095"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.63171256;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     y="-729.76624"
+     x="-98.50737"
+     ry="0"
+     rx="0"
+     height="131.53828"
+     width="63.327492"
+     transform="matrix(0,-1,-1,0,0,0)"
+     inkscape:transform-center-x="66.635879"
+     inkscape:transform-center-y="-23.152029" />
+  <text
+     sodipodi:linespacing="100%"
+     xml:space="preserve"
+     id="text7097"
+     style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     y="29.939054"
+     x="663.95581"
+     inkscape:transform-center-x="33.267991"
+     inkscape:transform-center-y="-38.932037"><tspan
+       style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       id="tspan7099"
+       y="29.939054"
+       x="663.95581">JVM1</tspan><tspan
+       y="42.939056"
+       x="663.95581"
+       id="tspan7101"
+       sodipodi:role="line" /></text>
+  <rect
+     id="rect7920"
+     style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.37907791;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     y="-713.42523"
+     x="-90.465164"
+     ry="0"
+     rx="0"
+     height="98.856316"
+     width="47.24308"
+     transform="matrix(0,-1,-1,0,0,0)"
+     inkscape:transform-center-x="61.721697"
+     inkscape:transform-center-y="-21.890672" />
+  <text
+     xml:space="preserve"
+     style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     x="664"
+     y="58.362183"
+     id="text7922"
+     sodipodi:linespacing="100%"
+     inkscape:transform-center-x="33.979997"
+     inkscape:transform-center-y="-10.915985"><tspan
+       sodipodi:role="line"
+       id="tspan7926"
+       x="664"
+       y="58.362183"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">ServerAMQP</tspan><tspan
+       sodipodi:role="line"
+       x="665.91016"
+       y="70.362183"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       id="tspan5582">Bridge </tspan><tspan
+       sodipodi:role="line"
+       x="664"
+       y="82.362183"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       id="tspan5584">(name=node1)</tspan></text>
+  <rect
+     inkscape:transform-center-y="-23.152378"
+     inkscape:transform-center-x="66.558765"
+     transform="matrix(0,-1,-1,0,0,0)"
+     width="63.328423"
+     height="131.38606"
+     rx="0"
+     ry="0"
+     x="-97.910324"
+     y="-145.73428"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.6307801;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     id="rect4166" />
+  <text
+     inkscape:transform-center-y="-38.932037"
+     inkscape:transform-center-x="33.267991"
+     x="80"
+     y="29.341555"
+     style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     id="text4168"
+     xml:space="preserve"
+     sodipodi:linespacing="100%"><tspan
+       x="80"
+       y="29.341555"
+       id="tspan4170"
+       style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">JVM2</tspan><tspan
+       sodipodi:role="line"
+       id="tspan4172"
+       x="80"
+       y="42.341557" /></text>
+  <rect
+     inkscape:transform-center-y="-23.168129"
+     inkscape:transform-center-x="62.546569"
+     transform="matrix(0,-1,-1,0,0,0)"
+     width="50.000008"
+     height="100.17747"
+     rx="0"
+     ry="0"
+     x="-91.246109"
+     y="-130.12999"
+     style="fill:#e6e6e6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.46381116;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     id="rect4174" />
+  <text
+     inkscape:transform-center-y="-10.915985"
+     inkscape:transform-center-x="33.979997"
+     sodipodi:linespacing="100%"
+     id="text4965"
+     y="51.870136"
+     x="80.422119"
+     style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     xml:space="preserve"><tspan
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       y="51.870136"
+       x="80.422119"
+       id="tspan4967"
+       sodipodi:role="line">ClientAMQP</tspan><tspan
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       y="63.870136"
+       x="80.422119"
+       id="tspan4969"
+       sodipodi:role="line">Bridge</tspan><tspan
+       id="tspan5751"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       y="75.870132"
+       x="80.422119"
+       sodipodi:role="line">(name=node1)</tspan><tspan
+       id="tspan5753"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       y="87.870132"
+       x="80.422119"
+       sodipodi:role="line">(id=client1)</tspan></text>
   <rect
      id="rect2069"
      style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.99618781;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -652,7 +590,7 @@
        style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
        id="tspan4185">to.server.<tspan
    style="font-size:11px;font-style:normal;-inkscape-font-specification:Serif"
-   id="tspan5553"></tspan></tspan><tspan
+   id="tspan5553" /></tspan><tspan
        sodipodi:role="line"
        x="132.47766"
        y="-507.96582"
@@ -675,70 +613,62 @@
        y="-466.71582"
        style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
        id="tspan4189" /></text>
-  <g
-     id="g5049"
-     transform="translate(-296.21783,52.027237)">
-    <rect
-       inkscape:transform-center-y="-10.405148"
-       inkscape:transform-center-x="60.366408"
-       transform="matrix(0,-1,-1,0,0,0)"
-       width="28.461082"
-       height="119.16245"
-       rx="0"
-       ry="0"
-       x="-150.21124"
-       y="-600"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.4047513;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       id="rect5029" />
-    <text
-       xml:space="preserve"
-       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-       x="540.49127"
-       y="132.76878"
-       id="text5031"><tspan
-         id="tspan5041"
-         sodipodi:role="line"
-         x="540.49127"
-         y="132.76878"
-         style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif">actor.queue.out.</tspan><tspan
-         id="tspan5047"
-         sodipodi:role="line"
-         x="540.49127"
-         y="146.51878"
-         style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif">node1.client1</tspan></text>
-  </g>
-  <g
-     id="g5068"
-     transform="translate(-166.15437,52.584778)">
-    <rect
-       inkscape:transform-center-y="-10.405148"
-       inkscape:transform-center-x="60.366408"
-       transform="matrix(0,-1,-1,0,0,0)"
-       width="28.461082"
-       height="119.16245"
-       rx="0"
-       ry="0"
-       x="-150.21124"
-       y="-600"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.4047513;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
-       id="rect5070" />
-    <text
-       xml:space="preserve"
-       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-       x="540.49127"
-       y="132.76878"
-       id="text5072"><tspan
-         id="tspan5074"
-         sodipodi:role="line"
-         x="540.49127"
-         y="132.76878"
-         style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif">actor.queue.out.</tspan><tspan
-         id="tspan5078"
-         sodipodi:role="line"
-         x="540.49127"
-         y="146.51878"
-         style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif">node1.clientn</tspan></text>
-  </g>
+  <rect
+     id="rect5029"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.4047513;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     y="-303.78217"
+     x="-202.23848"
+     ry="0"
+     rx="0"
+     height="119.16245"
+     width="28.461082"
+     transform="matrix(0,-1,-1,0,0,0)"
+     inkscape:transform-center-x="60.366408"
+     inkscape:transform-center-y="-10.405148" />
+  <text
+     id="text5031"
+     y="184.79602"
+     x="244.27344"
+     style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     xml:space="preserve"><tspan
+       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
+       y="184.79602"
+       x="244.27344"
+       sodipodi:role="line"
+       id="tspan5041">actor.queue.out.</tspan><tspan
+       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
+       y="198.54602"
+       x="244.27344"
+       sodipodi:role="line"
+       id="tspan5047">node1.client1</tspan></text>
+  <rect
+     id="rect5070"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.4047513;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     y="-433.84564"
+     x="-202.79602"
+     ry="0"
+     rx="0"
+     height="119.16245"
+     width="28.461082"
+     transform="matrix(0,-1,-1,0,0,0)"
+     inkscape:transform-center-x="60.366408"
+     inkscape:transform-center-y="-10.405148" />
+  <text
+     id="text5072"
+     y="185.35356"
+     x="374.33691"
+     style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     xml:space="preserve"><tspan
+       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
+       y="185.35356"
+       x="374.33691"
+       sodipodi:role="line"
+       id="tspan5074">actor.queue.out.</tspan><tspan
+       style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
+       y="199.10356"
+       x="374.33691"
+       sodipodi:role="line"
+       id="tspan5078">node1.clientn</tspan></text>
   <path
      style="fill:none;stroke:#000000;stroke-width:1.06154191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.24616762, 1.0615419;stroke-dashoffset:0"
      d="m 244.20094,93.355526 0,78.880984"
@@ -827,22 +757,6 @@
        y="-205"
        style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
        id="tspan5551" /></text>
-  <g
-     id="g5811"
-     transform="matrix(1.1373015,0,0,0.9563089,134.48341,224.18353)">
-    <rect
-       id="rect5813"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4150)"
-       y="-334"
-       x="-114.36218"
-       ry="0"
-       rx="0"
-       height="108.20067"
-       width="63.477551"
-       transform="matrix(0,-1,-1,0,-68,-15.144454)"
-       inkscape:transform-center-x="54.813302"
-       inkscape:transform-center-y="-23.206892" />
-  </g>
   <rect
      id="rect5791"
      style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.6307801;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"

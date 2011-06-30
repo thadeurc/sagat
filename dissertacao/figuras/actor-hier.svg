@@ -47,6 +47,150 @@
          id="feGaussianBlur3859"
          stdDeviation="3" />
     </filter>
+    <filter
+       id="filter3165"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3167"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3169"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter3171"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3173"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3175"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter3177"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3179"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3181"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter3183"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3185"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3187"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter3189"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3191"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3193"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter3195"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3197"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3199"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter3201"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3203"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3205"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter3207"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3209"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3211"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter3213"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3215"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3217"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -55,9 +199,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="242.85335"
-     inkscape:cy="904.42852"
+     inkscape:zoom="1.4"
+     inkscape:cx="463.55182"
+     inkscape:cy="1013.0183"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -86,92 +230,8 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <path
-       sodipodi:type="arc"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3857)"
-       id="path3869"
-       sodipodi:cx="150"
-       sodipodi:cy="162.36218"
-       sodipodi:rx="30"
-       sodipodi:ry="30"
-       d="m 180,162.36218 a 30,30 0 1 1 -60,0 30,30 0 1 1 60,0 z"
-       transform="matrix(1.3278689,0,0,1.3278689,440.81967,116.60256)" />
-    <path
-       transform="matrix(1.3278689,0,0,1.3278689,300.81967,116.60256)"
-       d="m 180,162.36218 a 30,30 0 1 1 -60,0 30,30 0 1 1 60,0 z"
-       sodipodi:ry="30"
-       sodipodi:rx="30"
-       sodipodi:cy="162.36218"
-       sodipodi:cx="150"
-       id="path3867"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3857)"
-       sodipodi:type="arc" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3857)"
-       id="path3865"
-       sodipodi:cx="150"
-       sodipodi:cy="162.36218"
-       sodipodi:rx="30"
-       sodipodi:ry="30"
-       d="m 180,162.36218 a 30,30 0 1 1 -60,0 30,30 0 1 1 60,0 z"
-       transform="matrix(1.3278689,0,0,1.3278689,164.81967,116.60256)" />
-    <path
-       transform="matrix(1.3278689,0,0,1.3278689,162.81967,-23.397443)"
-       d="m 180,162.36218 a 30,30 0 1 1 -60,0 30,30 0 1 1 60,0 z"
-       sodipodi:ry="30"
-       sodipodi:rx="30"
-       sodipodi:cy="162.36218"
-       sodipodi:cx="150"
-       id="path3863"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3857)"
-       sodipodi:type="arc" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3857)"
-       id="path3861"
-       sodipodi:cx="150"
-       sodipodi:cy="162.36218"
-       sodipodi:rx="30"
-       sodipodi:ry="30"
-       d="m 180,162.36218 a 30,30 0 1 1 -60,0 30,30 0 1 1 60,0 z"
-       transform="matrix(1.3278689,0,0,1.3278689,0.81967,-23.397443)" />
-    <path
-       transform="matrix(1.3278689,0,0,1.3278689,-137.18033,-21.397443)"
-       d="m 180,162.36218 a 30,30 0 1 1 -60,0 30,30 0 1 1 60,0 z"
-       sodipodi:ry="30"
-       sodipodi:rx="30"
-       sodipodi:cy="162.36218"
-       sodipodi:cx="150"
-       id="path3855"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3857)"
-       sodipodi:type="arc" />
     <rect
-       transform="matrix(1,0,0,0.9041204,215.88564,143.5688)"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.16684389;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3849)"
-       id="rect3853"
-       width="79.847504"
-       height="81.847504"
-       x="244.11436"
-       y="16.362183" />
-    <rect
-       y="16.362183"
-       x="244.11436"
-       height="81.847504"
-       width="79.847504"
-       id="rect3839"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.16684389;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3849)"
-       transform="matrix(1,0,0,0.92855611,-4,1.1689779)" />
-    <rect
-       y="262.36218"
-       x="29.999996"
-       height="120"
-       width="250"
-       id="rect3065"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.17851126;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter3835)"
-       transform="matrix(0.96,0,0,0.91666667,1.1999998,21.863515)" />
-    <rect
-       style="fill:#969696;fill-opacity:1;stroke:#000000;stroke-width:1.15249944;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#969696;fill-opacity:1;stroke:#000000;stroke-width:1.15249943999999993;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;"
        id="rect2987"
        width="79.847504"
        height="79.847504"
@@ -179,7 +239,7 @@
        y="12.362183" />
     <path
        sodipodi:type="arc"
-       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;"
        id="path2989"
        sodipodi:cx="150"
        sodipodi:cy="162.36218"
@@ -195,25 +255,25 @@
        sodipodi:cy="162.36218"
        sodipodi:cx="150"
        id="path3759"
-       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;"
        sodipodi:type="arc" />
     <path
        sodipodi:type="arc"
-       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;"
        id="path3761"
        sodipodi:cx="150"
        sodipodi:cy="162.36218"
        sodipodi:rx="30"
        sodipodi:ry="30"
        d="m 180,162.36218 a 30,30 0 1 1 -60,0 30,30 0 1 1 60,0 z"
-       transform="matrix(1.3278689,0,0,1.3278689,162.20383,-23.23351)" />
+       transform="matrix(1.3278689,0,0,1.3278689,162.20383,-23.397443)" />
     <rect
        y="152.36218"
        x="460.15247"
        height="79.847504"
        width="79.847504"
        id="rect3765"
-       style="fill:#969696;fill-opacity:1;stroke:#000000;stroke-width:1.15249944;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+       style="fill:#969696;fill-opacity:1;stroke:#000000;stroke-width:1.15249943999999993;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;" />
     <path
        transform="matrix(1.3278689,0,0,1.3278689,164.65573,116.76649)"
        d="m 180,162.36218 a 30,30 0 1 1 -60,0 30,30 0 1 1 60,0 z"
@@ -222,7 +282,7 @@
        sodipodi:cy="162.36218"
        sodipodi:cx="150"
        id="path3767"
-       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;"
        sodipodi:type="arc" />
     <path
        transform="matrix(1.3278689,0,0,1.3278689,300.89588,116.76649)"
@@ -232,7 +292,7 @@
        sodipodi:cy="162.36218"
        sodipodi:cx="150"
        id="path3769"
-       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;"
        sodipodi:type="arc" />
     <path
        transform="matrix(1.3278689,0,0,1.3278689,440.81966,116.76649)"
@@ -242,7 +302,7 @@
        sodipodi:cy="162.36218"
        sodipodi:cx="150"
        id="path3771"
-       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;"
        sodipodi:type="arc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -416,7 +476,7 @@
    style="font-size:20px"
    id="tspan3847">n+k</tspan></tspan></text>
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.17851126;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.17851126000000006;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;"
        id="rect3849"
        width="250"
        height="120"

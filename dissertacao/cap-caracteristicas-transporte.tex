@@ -1,0 +1,528 @@
+\chapter{Estrutura para troca de mensagens entre entidades remotas via AMQP}
+\index{Estrutura}
+\label{cap:estrutura-troca-mensagens-amqp}
+
+Apresentamos nesse capítulo a estrutura que definimos para a troca de mensagens 
+entre entidades remotas via \english{message broker} AMQP. A estrutura apresentada
+neste capítulo foi utilizada como suporte para o desenvolvimento dos novos componentes 
+da camada de implementação para transporte de mensagens entre atores remoto do projeto Akka 
+(figura \ref{fig:remote-actor-colaboracao}). Entretanto, 
+antes de apresentar a estrutra que definimos, comentamos brevemente algumas 
+características de entidades conectadas ponto-a-ponto via \english{sockets}
+que são impactadas ou deixam de fazer sentido com a nova abordagem.
+
+\section{Entidades conectadas ponto-a-ponto via \english{sockets}}
+\index{Estrutura!ponto-a-ponto}
+\label{sec:entidades-ponto-a-ponto}
+
+Em uma transferência de mensagens entre duas entidades conectadas 
+ponto-a-ponto por \english{sockets} TCP ou UDP, ambas as entidades devem conhecer
+detalhes sobre a conexão e sobre o protocolo das mensagens que são enviadas. 
+O fato de não haver uma entidade intermediando a troca de mensagens, permite que 
+uma das entidades identifique uma eventual desconexão da outra, ou ainda que uma 
+entidade conheça o endereço do nó onde está a outra entidade. Nos casos onde as 
+entidades estão em nós que não fazem parte de uma rede interna,
+a informação de localidade pode não indicar exatamente o nó corrente da entidade, 
+mas o endereço de alguma porta de ligação (\english{gateway}). 
+
+Uma característica importante da transferência de mensagens entre entidades 
+conectadas ponto-a-ponto via \english{sockets}, é que cada \english{socket} utiliza 
+exclusivamente uma porta para aceitar as conexões remotas, criando uma relação de um 
+para um entre portas e entidades. 
+
+Os protocolos TCP e UDP utilizam para a numeração
+de portas em seus cabeçalhos inteiros de $16$ bits sem sinal, limitando o número de
+portas a $65536$ ($0$ -- $65535$)\cite{tcp}. Ademais, algumas portas que são utilizadas 
+para serviços comuns, como por exemplo servidores de correio eletrônico, 
+possuem numeração fixa definida pela IANA (\english{Internet Assigned Numbers Authority})
+e não podem ser abertas para uso geral. 
+
+%% todo.. falar com reverbel para pegar paper : http://portal.acm.org/citation.cfm?id=1101798&dl=ACM&coll=DL&CFID=29058066&CFTOKEN=41896717
+
+%% argumentar sobre questoes básicas de segurança e firewall ?
+
+Este tipo de abortagem não implica no uso de armazenamento intermediário das mensagens. Uma
+mensagem enviada de uma entidade para outra, até poderia ser armazenada pela entidade que 
+recebe a mensagem, mas não pelo mecanismo de transporte. Fica a cargo da entidade que recebe 
+a mensagem implementar o armazenamento temporário caso haja essa necessidade.
+
+\subsection{Atores remotos conectados ponto-a-ponto}
+\label{subsec:atores-remotos-ponto-a-ponto}
+
+Uma implementação de atores remotos que não imponha como limite à quantidade
+de atores remotos a serem criados em um nó o número de portas disponíveis no
+próprio nó deve, de alguma maneira permitir que conjuntos de atores sejam
+associados às portas TCP ou UDP.
+
+Na implementação de atores remotos do Akka apresentada na seção 
+\ref{sec:atores_remotos_akka}, vimos que os atores são agrupados por
+\english{host} e porta, sendo armazenados no \lstinline$RemoteServerModule$. 
+Vimos também na seção \ref{sec:atores_locais} que atores são identificáveis, 
+o que permite que eles sejam localizados no \lstinline$RemoteServerModule$ 
+para que possam fazer o recebimento e processamento das mensagens. 
+
+%% investigar mais a fundo o jboss netty e comentar de alguns detalhes dele aqui.
+Ainda que a implementação de atores remotos do Akka agrupe
+os atores, removendo a relação do limite do número de atores com o 
+número de portas disponíveis, as entidades \lstinline$RemoteServerModule$ 
+e \lstinline$RemoteClientModule$ ainda assim possuem o conhecimento 
+do \english{host} e porta aonde se está conectado e não fazem armazenamento
+intermediário das mensagens.
+
+%% entrar mais em detalhes sobre erlang?
+A implementação de atores remotos de Erlang, por sua vez, não usa explicitamente portas. 
+Cada máquina virtual Erlang possui um nome associado, e esse nome é utilizado
+junto com a informação do \english{host} durante a criação de atores remotos.
+O nome da máquina virtual é definido durante a inicialização da máquina virtual
+via parâmetro \lstinline$-name$. Diversas máquinas virtuais podem estar em
+execução em um determinado \english{host} e são unicamente identificadas
+por \lstinline$name@host$. Vale ressaltar que as máquinas virtuais Erlang
+que estão em uma mesma rede de computadores estão por padrão em \english{cluster}.
+
+\section{Entidades conectadas via \english{message broker} AMQP}
+\index{Estrutura!message broker amqp}
+\label{sec:entidades-via-broker-amqp}
+
+A substituição por um mecanismo baseado em troca de mensagens com AMQP,
+naturalmente introduz novas característas à comunicação. As entidades passam 
+a não estarem mais conectadas diretamente, já que o \english{broker} passa a ser 
+o componente central de conexão entre todas as entidades. Eventuais funcionalidades 
+baseadas na comunicação ponto-a-ponto, como por exemplo uma das partes saber que a 
+outra não está mais conectada, ainda que possíveis não são triviais. 
+O \english{broker} passa a ser o responsável por abrir uma porta para que
+as demais entidades possam se conectar e é responsável por fazer o gerenciamento de
+múltiplas conexões na porta. 
+
+Tanto a rotulação das entidades por \english{host} e porta ou por 
+nome e \english{host} deixam de fazer sentido pois são redundantes. 
+As entidades passam a ser identificadas somente por seus nomes.
+Cada nova entidade que entrar no sistema é responsável por registrar uma fila no \english{broker}
+e associá-la a uma \english{exchange} afim de poder receber mensagens. Dependendo
+do papel que a entidade exerce, além de definir a fila e a associação, a entidade
+precisa definir antes a sua \english{exchange}. Entidades que possuem o papel de
+servidora têm essa responsabilidade. Tarefas administrativas como a 
+criação de \english{virtual hosts}, a criação de usuários e a definição das permissões dos 
+usuários não são de responsabilidade das entidades, e devem ter sido executadas previamente.
+
+O suporte ao desenvolvimento dos novos componentes da camada de implementação
+de transporte remoto do projeto Akka (figura \ref{fig:remote-actor-colaboracao}) é
+dado com a ajuda de alguns componentes intermediários. Esses componentes intermediários 
+formam uma ponte entre a nova camada de transporte remoto e a implementação 
+do \english{message broker} RabbitMQ \cite{rabbitmq}.
+
+\subsection{Pontes AMQP}
+\index{Estrutura!message broker amqp!pontes}
+\label{sec:entidades-via-broker-amqp-bridges}
+
+O módulo \lstinline$AMQPBridge$ é responsável por fornecer classes que agem como pontes
+para o \english{message broker} utilizado neste trabalho. Juntas, suas classes definem uma interface
+para funcionalidades básicas para troca de mensagens como envios, recebimentos, 
+tratamento de mensagens retornadas e suporte a múltiplas entidades cliente em uma 
+entidade servidora. O módulo \lstinline$AMQPBridge$ contém as seguintes classes:
+
+\begin{itemize}
+	\item \lstinline$AMQPBridge$: É a classe abstrata que define o comportamento básico
+	de uma entidade conectada a um \english{broker} AMQP. O construtor de \lstinline$AMQPBridge$
+	recebe como argumentos o nome que identifica a ponte e uma conexão para um \english{broker} 
+	AMQP. Essa classe define ainda o padrão dos nomes a serem utilizados na criação dos objetos 
+	no \english{virtual host} acessível pela conexão recebida no construtor, como mostrado
+	na listagem \ref{lst:amqp-bridge}. A classe possui também um objeto companheiro que
+	define métodos para a criação de instâncias das sub-classes de \lstinline$AMQPBridge$;
+
+	\item \lstinline$MessageHandler$: É a \english{trait} que define os métodos a serem
+	invocados quando mensagens forem recebidas ou envios feitos pela entidade forem 
+	rejeitados pelo \english{broker}; 
+	
+	\item \lstinline$ServerAMQPBridge$: É uma das sub-classes de \lstinline$AMQPBridge$ e
+	define o comportamento para entidades que atuam como servidoras de um serviço. 
+	Além dos métodos herdados, essa classe ainda define o método \lstinline$setup$. Esse
+	método recebe como argumento uma implementação de \lstinline$MessageHandler$ e os
+	parâmetros com as configurações da fila e da \english{exchange} que serão criadas
+	durante a execução do método, como mostrado na listagem \ref{lst:amqp-server-bridge};	
+
+	\item \lstinline$ClientAMQPBridge$: É a outra sub-classe de \lstinline$AMQPBridge$ e
+	define o comportamento para entidades que atuam como clientes de um serviço. Essa
+	classe tem em seu construtor um parâmetro adicional para a identificação do
+	cliente. A identificação é necessária para compôr a chave de roteamento que 
+	associa a fila que essa ponte irá criar no método \lstinline$setup$, com
+	a \english{exchange} correspondente. A definição dessa classe é mostrada na 
+	listagem \ref{lst:amqp-client-bridge}.
+\end{itemize}
+
+\begin{lstlisting}[frame=tb, caption={Classe AMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-bridge}]
+abstract class AMQPBridge(val nodeName: String, 
+						  val connection: SupervisedConnectionWrapper) {
+
+  require(nodeName != null)
+  require(connection != null)
+  
+  val id: String
+  lazy val inboundExchangeName = "actor.exchange.in.%s".format(nodeName)
+  lazy val inboundQueueName    = "actor.queue.in.%s".format(nodeName)
+  lazy val outboundQueueName   = "actor.queue.out.%s".format(nodeName)
+  lazy val routingKeyToServer  = "to.server.%s".format(nodeName)
+
+  def sendMessageTo(message: Array[Byte], to: String): Unit
+
+  def shutdown = {
+    connection.close
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb, caption={Classe ServerAMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-server-bridge}]
+class ServerAMQPBridge(name: String, 
+					   connection: SupervisedConnectionWrapper) 
+					   		extends AMQPBridge(name, connection){
+  lazy val id = "server.%s".format(nodeName)
+  
+  def setup(handler: MessageHandler, 
+  			exchangeParams: ExchangeConfig.ExchangeParameters,
+            queueParams: QueueConfig.QueueParameters): ServerAMQPBridge = {
+    connection.serverSetup(
+      RemoteServerSetup(handler,
+        ServerSetupInfo(exchangeParams, queueParams,
+                        exchangeName = inboundExchangeName,
+                        queueName    = inboundQueueName,
+                        routingKey   = routingKeyToServer))
+    )
+    this
+  }
+ ...
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb, caption={Classe ClientAMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-client-bridge}]
+class ClientAMQPBridge(name: String, 
+						connection: SupervisedConnectionWrapper, 
+							idSuffix: String) extends AMQPBridge(name, connection) {
+  lazy val id =  "client.%s.%s".format(nodeName, idSuffix)
+  
+  def setup(handler: MessageHandler, queueParams: QueueConfig.QueueParameters): ClientAMQPBridge = {
+    connection.clientSetup(
+      RemoteClientSetup(handler,
+        ClientSetupInfo(config = queueParams, 
+        				name = outboundQueueName + id, 
+        				exchangeToBind = inboundExchangeName, 
+        				routingKey = id))
+    )
+    this
+  }
+...
+}
+\end{lstlisting}
+
+Definimos também um módulo auxiliar chamado \lstinline$AMQP$. Esse módulo possui algumas 
+classes com configurações pré-definidas para os objetos a serem criados no \english{broker}. 
+A enumeração \lstinline$StorageAndConsumptionPolicy$ define um 
+conjunto de valores que definem políticas de armazenamento e de consumo. A enumeração é composta pela 
+combinação de outras duas enumerações: \lstinline$QueueConfig$ e \lstinline$ExchangeConfig$. 
+Essas duas enumerações definem as configurações específicas e detalhadas para 
+filas e \english{exchanges}. A combinação dos seus valores dão semântica às 
+políticas de configuração. Por exemplo, a configuração \lstinline$EXCLUSIVE_PERSISTENT$ 
+presente em \lstinline$StorageAndConsumptionPolicy$ é uma combinação de 
+\lstinline$ExchangeConfig.exchangeDurable$ e \lstinline$QueueConfig.exclusiveQueueDurable$, 
+e contém informações suficientes para a criação de uma \english{exchange} durável e uma fila 
+também durável, com um único consumidor.
+
+\subsection{Gerenciamento de conexões e canais}
+\index{Estrutura!message broker amqp!gerenciamento de conexões}
+\label{sec:entidades-via-broker-amqp-gerenciamento-conexoes}
+
+O módulo \lstinline$ConnectionPoolSupervisor$ é responsável por encapsular os detalhes 
+da interação com o \english{broker}. Como mostrado em \ref{subsec:amqp-rabbit-api}, o envio
+de comandos e recebimentos de mensagens com o RabbitMQ acontece por meio de canais
+que são abertos em uma conexão. Esses canais não oferecem proteção para acesso concorrente,
+deixando a cargo da aplicação fazer a proteção.
+
+A principal missão desse módulo é prover uma implementação segura para acesso concorrente 
+aos canais e conexões abertos com o RabbitMQ. Além disso, o módulo
+ainda define uma interface simples e clara para as pontes AMQP, abstraindo
+toda a responsabilidade em relação à interação com o \english{broker}. 
+
+Para que os canais possam ser acessados concorrentemente de modo seguro, optamos por
+encapsulá-los em atores. A idéia de encapsular o acesso aos canais em atores foi inspirada
+na implementação de um dos módulos adicionais do projeto Akka. O módulo AMQP do projeto
+Akka abstrai a criação de consumidores e produtores como atores, além de também abstrair
+a criação de objetos no \english{broker}.
+
+A classe \lstinline$SupervisedConnectionWrapper$ define uma conexão supervisionada, expondo 
+uma interface muito simples com apenas quatro métodos. Os métodos expõem funcionalidades básicas 
+para envios de mensagens, fechamento da conexão e configuração, como mostrado na listagem \ref{lst:amqp-supervised}. 
+Nessa listagem podemos notar também que o construtor da classe recebe como argumento 
+três atores, sendo o primeiro ator um ator referente a conexão, o segundo um ator referente 
+ao canal utilizado para recebimento de mensagens (canal de leitura) e por último, o ator referente 
+ao canal utilizado para o envio de mensagens (canal de escrita). Esses atores são os responsáveis por
+efetivamente executar as ações, já que a classe \lstinline$SupervisedConnectionWrapper$
+delega aos atores todas as ações via envios síncronos ou assíncronos de mensagens.
+
+\begin{lstlisting}[frame=tb, caption={Classe SupervisedConnectionWrapper.}, label={lst:amqp-supervised}]
+class SupervisedConnectionWrapper(connection: ActorRef, 
+									readChannel: ActorRef, writeChannel: ActorRef){
+  def close() { ... }
+  
+  def clientSetup(setupInfo: RemoteClientSetup) { ... }
+
+  def serverSetup(setupInfo: RemoteServerSetup) { ... }
+
+  def publishTo(exchange: String, routingKey: String, 
+					message: Array[Byte]) { ... }
+}
+\end{lstlisting}
+
+As principais classes do módulo \lstinline$ConnectionPoolSupervisor$ são:
+
+\begin{itemize}
+	\item \lstinline$BridgeConsumer$: É uma implementação de um consumidor padrão
+	de mensagens. Essa implementação extende a classe \lstinline$DefaultConsumer$
+	do RabbitMQ, e utiliza a implementação do \lstinline$MessageHandler$ para a
+	notificação de eventos como mensagens recebidas ou mensagens rejeitadas e retornadas;
+	
+	\item \lstinline$ChannelActor$: É a \english{trait} que define as ações básicas
+	de um ator responsável por um canal genérico;
+	
+	\item \lstinline$ReadChannelActor$: É a classe que define o comportamento inicial
+	de um ator responsável por um canal de leitura, utilizado para o recebimento de
+	mensagens;
+
+	\item \lstinline$WriteChannelActor$: É a classe que define o comportamento inicial
+	de um ator responsável por um canal de escrita, utilizado para o envio de mensagens;
+
+	\item \lstinline$ConnectionActor$: É a classe que define o comportamento inicial
+	de um ator responsável pela conexão e abertura de canais com o \english{broker}.
+    Uma outra responsabilidade desse ator é supervisionar os atores que lhe
+	solicitaram a abertura de canais;
+	
+	\item \lstinline$AMQPSupervisor$: É a \english{trait} que define o comportamento
+	padrão a ser utilizado por um ator que será responsável por supervisionar os
+	atores de conexão. Essa \english{trait} define ainda métodos que interagem
+	com a fábrica de conexões do RabbitMQ para a criação de novas conexões;
+	
+	\item \lstinline$AMQPConnectionFactory$: É a classe raíz da hierarquia
+	de supervisão. Essa classe herda de \lstinline$AMQPSupervisor$ e
+	define o despachador para todos os atores que estarão direta ou indiretamente
+	sob supervisão. A classe possui ainda um objeto companheiro que define
+	métodos para a criação dos atores de canais e conexões;
+	
+	\item \lstinline$ConnectionSharePolicy$: É a enumeração que define a política
+	de compartilhamento de uma conexão. A enumeração possui apenas dois valores
+	que indicam se os canais de escrita e de leitura devem ser abertos na mesma
+	conexão, ou se em conexões diferentes. O uso de uma conexão por canal
+	permite que a alta atividade em um canal não impacte o outro.		
+\end{itemize}
+
+O módulo possui ainda diversas classes menores (\english{case classes}) que são utilizadas
+para definir as mensagens que cada ator aceita em sua função \lstinline$receive$,
+como por exemplo as mensagens \lstinline$RemoteServerSetup$ e \lstinline$ServerSetupInfo$ 
+utilizadas na listagem \ref{lst:amqp-server-bridge}. Um outro exemplo são as mensagens  
+\lstinline$RemoteClientSetup$ e \lstinline$ClientSetupInfo$ utilizadas 
+na listagem \ref{lst:amqp-client-bridge}.
+
+A figura \ref{fig:amqpbridge-classes-basic} mostra o relacionamento do módulo que define
+as pontes AMQP, o módulo auxiliar para definição de configurações
+(sub-seção \ref{sec:entidades-via-broker-amqp-bridges}) e o módulo para gerenciamento
+de conexões e canais descrito nesta sub-seção.
+
+\vspace{1ex}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.7]{amqpbridge-classes-basic} 
+  	\caption{Módulos de acesso ao broker AMQP.}
+  	\label{fig:amqpbridge-classes-basic}
+\end{figure}
+
+\subsection{O processo de criação dos objetos no \english{message broker}}
+\index{Estrutura!message broker amqp!criação dos objetos}
+\label{sec:entidades-via-broker-amqp-criacao-dos-objetos}
+
+A criação de objetos como filas e \english{exchanges} no \english{broker}
+é iniciado nas pontes AMQP. O método \lstinline$setup$ das classes \lstinline$ServerAMQPBridge$ e
+\lstinline$ClientAMQPBridge$ serve como ponto de entrada para a criação e configuração
+dos objetos no \english{broker}. A criação de uma ponte AMQP é feita via métodos definidos 
+no objeto \lstinline$AMQPBridge$ e depende da criação de uma conexão supervisionada. 
+
+A conexão supervisionada é criada pelo objeto \lstinline$AMQPConnectionFactory$. 
+Para que essa conexão seja criada, é necessário que os atores que encapsulam a conexão com 
+o \english{broker} e seus canais também sejam criados. A primeira instância a ser criada 
+é a do ator responsável pela conexão. Os passos para a criação do ator de conexão são 
+mostrados na figura \ref{fig:new-connection-actor}. Os quatro passos da figura indicam 
+a criação da instância e do ator, a ligação com o ator 
+supervisor\footnote{A classe \lstinline$AMQPConnectionFactory$ é o ator supervisor de todos os atores de conexão.}
+e o envio da mensagem para que o ator se conecte, o que faz com que o ator solicite uma nova
+conexão à fábrica de conexões do RabbitMQ. Dependendo do tipo de política definida para
+o compartilhamento da conexão entre os canais de leitura e escrita, o passo $4$ é executado
+duas vezes. Um outro passo que também é executado, porém não é mostrado na figura
+\ref{fig:new-connection-actor}, é o envio de uma mensagem para todos os atores que estejam
+sob supervisão do ator de conexão para que solicitem novos canais. Esse passo só
+faz sentido quando uma conexão foi desconectada e o ator foi reiniciado pelo supervisor.
+
+\vspace{1ex}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{new-connection-actor} 
+  	\caption{Passos para a criação do ator de conexão.}
+  	\label{fig:new-connection-actor}
+\end{figure}
+
+Uma vez que o ator de conexão foi criado, são criados os atores
+responsáveis pelo canal de leitura e pelo canal de escrita. 
+
+Os passos para a criação
+do ator responsável pelo canal de leitura são mostrado na figura \ref{fig:new-channel-actor}.
+Os cinco passos da figura indicam a criação da instância e do ator, a ligação com o ator
+supervisor, que neste caso é o ator de conexão recém criado, e o envio da mensagem
+para incialização do ator, o que faz com que o ator solicite um novo canal para o ator supervisor.
+O ator de conexão response a mensagem com um novo canal.
+O processo para criação do ator responsável pelo canal de escrita é bem semelhante,
+ com diferenças nas mensagens enviadas nos passos $3$ 
+(\lstinline$StartWriteChannel$) e $4$ (\lstinline$WriteChannelRequest$). 
+
+É importante destacar que todos os parâmetros de 
+configurações utilizados para a criação de uma conexão, como por exemplo a política
+de compartilhamento de conexões e o endereço do \english{broker}, são lidos de 
+um arquivo de propriedades. 
+
+\vspace{1ex}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{new-channel-actor} 
+  	\caption{Passos para a criação do ator do canal de leitura.}
+  	\label{fig:new-channel-actor}
+\end{figure}
+
+Uma vez que os atores de conexão e de canais foram criados, a ponte que está sendo
+criada tem seu método \lstinline$setup$ executado. A figura 
+\ref{fig:server-amqp-bridge-setup} mostra os
+passos executados durante a execução do método \lstinline$setup$ da classe
+\lstinline$ServerAMQPBridge$. Podemos notar que os passos são divididas entre os
+canais. O canal de leitura fica responsável por definir a fila e associar o consumidor
+padrão, algo que se torna mandatório por conta de podermos utilizar o consumidor 
+como único e exclusivo da fila.
+
+\vspace{1ex}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{server-amqp-bridge-setup} 
+  	\caption{Passos de configuração da classe ServerAMQPBridge.}
+  	\label{fig:server-amqp-bridge-setup}
+\end{figure}
+
+A figura \ref{fig:client-amqp-bridge-setup} mostra os passos da execução do método 
+\lstinline$setup$ da classe \lstinline$ClientAMQPBridge$. Cada ponte cliente cria uma fila de 
+saída para que a ponte servidora possa enviar mensagens de resposta às pontes cliente. 
+Notemos que as filas de saídas utilizam como nomeação o padrão \lstinline$actor.queue.out.<name>.<id>$, 
+onde \lstinline$<name>$ corresponde ao nome e \lstinline$<id>$ ao identificador. 
+Esses mesmos parâmetros são utilizados para compôr a chave de associação que liga a fila a 
+\english{exchange} definida previamente (passo $3$ da figura \ref{fig:server-amqp-bridge-setup}).
+
+\vspace{1ex}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{client-amqp-bridge-setup} 
+  	\caption{Passos de configuração da classe ClientAMQPBridge.}
+  	\label{fig:client-amqp-bridge-setup}
+\end{figure}
+
+Vale destacar que, segundo a específicação do padrão AMQP \cite{amqp}, as implementações 
+do \english{message broker} devem suportar ao menos $256$ filas por \english{virtual host}. 
+Contudo, a recomendação é que não hajam imposições de limites que não pela disponibilidade 
+de recursos. A especificação também menciona que o número mínimo de \english{exchanges} por
+\english{virtual host} é de $16$, e faz a mesma observação quanto a não imposição
+de limite que não seja pela disponiblidade de recursos. A implementação RabbitMQ,
+utilizada em nosso trabalho deixa as limitações a cargo da disponibilidade de recursos
+do sistema hospedeiro. 
+% discutir detalhes sobre limites em um capitulo de discussão dos resultados?
+
+A figura \ref{fig:bridges-broker-all-together} mostra a disposição dos objetos criados
+pelas pontes e com quais objetos as pontes interagem. Nessa figura podemos ver 
+que um \lstinline$ServerAMQPBridge$ cujo nome é \lstinline$node1$ define a 
+\english{exchange} que é utilizada como ponto central de envios de mensagens para 
+todas as entidades que possuam o nome \lstinline$node1$, 
+sejam elas com responsabilidades de entidade cliente ou de servidora. 
+O \english{binding} para a fila de entrada da entidade servidora utiliza o padrão 
+de nomeação \lstinline$to.server.<name>$, onde \lstinline$<name>$ é substituído pelo 
+nome da entidade durante a sua criação. Ambas a fila de entrada e a \english{exchange} 
+criadas pela entidade servidora seguem um padrão de nomeação semelhante, já que o nome 
+da ponte é utilizado como sufixo.
+
+\vspace{1ex}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.7]{bridges-broker-all-together} 
+  	\caption{Estrutura para troca de mensagens entre entidades remotas via broker AMQP.}
+  	\label{fig:bridges-broker-all-together}
+\end{figure}
+
+\subsection{Envio e recebimento de mensagens via pontes AMQP}
+\index{Estrutura!message broker amqp!envios e recebimentos via pontes}
+\label{sec:entidades-via-broker-amqp-envios-recebimentos}
+
+Com a estrutura de pontes criada, a interação com a biblioteca do RabbitMQ passou a 
+acontecer de forma indireta. Os passos executados durante o envio de mensagens de 
+uma \lstinline$ClientAMQPBridge$  para um \lstinline$ServerAMQPBridge$ são mostrados na 
+figura \ref{fig:bridge-send-message-flow}. 
+
+\vspace{1ex}
+\begin{figure}[hbtp]
+	\centering
+	\includegraphics[scale=0.5]{bridge-send-message-flow} 
+  	\caption{Passos do envio de mensagens de um cliente via pontes AMQP.}
+  	\label{fig:bridge-send-message-flow}
+\end{figure}
+
+A interação com a API do RabbitMQ acontece no passo $4$. A execução desse passo
+é similar ao exemplificado na listagem \ref{lst:producer} (sub-seção \ref{subsec:amqp-rabbit-api}).
+Contudo, o passo $4$ executa um envio mandatório porém consumo não imediato, ou seja, 
+a fila de destino deve obrigatoriamente existir no momento do envio, mas a mensagem não 
+precisa ser consumida no momento do depósito na fila. O trecho de código que executa o
+passo $4$ é mostrado na listagem \ref{lst:basic-publish}. Os valores para as variáveis
+\lstinline$mandatory$ e \lstinline$immediate$ são respectivamente \lstinline$true$ e 
+\lstinline$false$. Optamos por não forçar um consumo imediato para que não sobrecarregar 
+as implementações dos consumidores, minimizando a possibilidade de retornos de mensagens. 
+
+Caso uma mensagem seja retornada, o método 
+\lstinline$handleRejected$ do \lstinline$MessageHandler$ é invocado para que alguma ação 
+seja tomada com a mensagem rejeitada. Mensagens podem ser retornadas por diversos motivos,
+por exemplo: uma mensagem não pode ser roteada para uma fila pois a chave de roteamento
+utilizada no envio não está associada à \english{exchange}; uma mensagem foi depositada
+em alguma fila, porém a fila foi removida. Nesse caso, todas as mensagens são retornadas
+aos seus respectivos remetentes.
+
+\begin{lstlisting}[frame=tb, numbers=none, caption={Envio de mensagem mandatória e não imediata.}, label={lst:basic-publish}]
+... 
+case BasicPublish(exchange, routingKey, mandatory, immediate, message) => 
+{
+	channel.foreach {
+		ch => ch.basicPublish(exchange, routingKey, mandatory, immediate, null, message)
+	}
+}
+...
+\end{lstlisting}
+
+O processo de roteamento da mensagem acontece como já explicado na sessão 
+\ref{subsec:amqp-modelo-envios}. A mensagem é enviada
+para a \english{exchange} relacionada a \lstinline$ClientAMQPBridge$. 
+A chave de roteamento utilizada é o valor definido com base no nome da ponte 
+(listagem \ref{lst:amqp-bridge}). O identificador do remetente 
+(atributo \lstinline$id$ da listagem \ref{lst:amqp-client-bridge}) deve ser enviado
+como parte da mensagem e esse envio é de responsabilidade do criador da mensagem. 
+Essa identificação será utilizada caso haja uma mensagem de resposta, como argumento
+para o método \lstinline$sendMessage$.
+
+Os passos para o recebimento de uma mensagem por uma ponte servidora é ilustrado na figura 
+\ref{fig:bridge-message-flow}. Quando a mensagem é recebida na fila, o consumidor padrão
+que definimos é notificado via método \lstinline$handleDelivery$ (passo $2$). Esse método
+apenas delega o processamento para a implementação de \lstinline$MessageHandler$ definida
+durante a configuração da ponte. A execução do método \lstinline$handleReceived$ (passo $3$)
+deve retornar um valor boleano que indica que o recebimento deve ser confirmado com o 
+\english{broker} e a mensagem pode ser removida da fila.
+
+\vspace{1ex}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{bridge-message-flow} 
+  	\caption{Passos do recebimento de mensagens de um servidor via pontes AMQP.}
+  	\label{fig:bridge-message-flow}
+\end{figure}
+
+%% tratamento de exceptions?

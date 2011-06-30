@@ -504,7 +504,8 @@ class ReadChannelActor extends ChannelActor {
 }
 
 class SupervisedConnectionWrapper(connection: ActorRef, readChannel: ActorRef, writeChannel: ActorRef) extends ControlStructures{
-  @volatile private[this] var open = true
+  @volatile private[this] var open  = true
+  @volatile private[this] var setup = false
 
   def close =
     ifTrueOrException(open){
@@ -514,21 +515,23 @@ class SupervisedConnectionWrapper(connection: ActorRef, readChannel: ActorRef, w
 
 
   def clientSetup(setupInfo: RemoteClientSetup) {
-    ifTrueOrException(open){
+    ifTrueOrException(open && !setup){
       readChannel  !! setupInfo
       writeChannel !! setupInfo
+      setup = true
     }
   }
 
   def serverSetup(setupInfo: RemoteServerSetup) {
-    ifTrueOrException(open){
+    ifTrueOrException(open && !setup){
       writeChannel !! setupInfo
       readChannel  !! setupInfo
+      setup = true
     }
   }
 
   def publishTo(exchange: String, routingKey: String, message: Array[Byte]) {
-    ifTrueOrException(open){
+    ifTrueOrException(open && setup){
       writeChannel ! BasicPublish(exchange, routingKey, mandatory = true, immediate = false, message)
     }
   }

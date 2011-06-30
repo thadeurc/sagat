@@ -41,8 +41,8 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1233"
      inkscape:window-height="756"
-     inkscape:zoom="2.8284272"
-     inkscape:cx="88.459893"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="367.79885"
      inkscape:cy="918.27079"
      inkscape:window-x="8"
      inkscape:window-y="0"
@@ -579,26 +579,6 @@
          stdDeviation="3" />
     </filter>
   </defs>
-  <rect
-     id="rect4149"
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4151)"
-     y="54.862068"
-     x="312.09763"
-     ry="0"
-     rx="0"
-     height="253.00023"
-     width="324.90234"
-     transform="matrix(0.97845507,0,0,0.92885382,10.724123,-8.096773)" />
-  <rect
-     width="266.51022"
-     height="252.99998"
-     rx="0"
-     ry="0"
-     x="15.999992"
-     y="48.86219"
-     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4143)"
-     id="rect3258"
-     transform="matrix(0.97182013,0,0,0.94268775,-2.549122,-7.699606)" />
   <text
      sodipodi:linespacing="100%"
      xml:space="preserve"
@@ -728,7 +708,7 @@
      ry="0"
      x="308.09763"
      y="20.862068"
-     style="fill:#828282;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3.48976612000000008;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     style="fill:#828282;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3.48976612;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
      id="rect4306" />
   <rect
      y="30.362183"
@@ -1562,19 +1542,23 @@
   <text
      sodipodi:linespacing="125%"
      id="text11670"
-     y="286.42896"
-     x="-44.766762"
+     y="7.7609024"
+     x="313.26294"
      style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-     xml:space="preserve"
-     transform="matrix(0,-1,1,0,0,0)"><tspan
+     xml:space="preserve"><tspan
        id="tspan11674"
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
-       y="286.42896"
-       x="-44.766762"
+       y="7.7609024"
+       x="313.26294"
        sodipodi:role="line">3.transmite</tspan><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
-       y="296.42896"
-       x="-44.766762"
+       y="17.760902"
+       x="313.26294"
        sodipodi:role="line"
        id="tspan11678">a mensagem</tspan></text>
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 275,74.362183 5,-60 5,0"
+     id="path10668"
+     inkscape:connector-curvature="0" />
 </svg>

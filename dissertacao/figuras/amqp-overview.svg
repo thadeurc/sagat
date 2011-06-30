@@ -41,13 +41,13 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1280"
      inkscape:window-height="694"
-     inkscape:zoom="2"
+     inkscape:zoom="1"
      inkscape:cx="525.10082"
      inkscape:cy="916.26692"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:current-layer="svg2"
-     showgrid="false"
+     showgrid="true"
      inkscape:window-maximized="0"
      inkscape:object-paths="false">
     <sodipodi:guide
@@ -303,19 +303,58 @@
          id="feGaussianBlur5214"
          stdDeviation="3" />
     </filter>
+    <filter
+       id="filter4196"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur4198"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite4200"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter4202"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur4204"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite4206"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <filter
+       id="filter4208"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur4210"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite4212"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
   </defs>
   <rect
-     width="325.41138"
-     height="204.94008"
-     rx="0"
-     ry="0"
-     x="373.06015"
-     y="23.58131"
-     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4096)"
-     id="rect4094" />
-  <rect
      id="rect2069"
-     style="fill:#ffffff;stroke:#000000;stroke-width:1.76776778999999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.76776778999999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;"
      y="21.58131"
      x="373.06015"
      ry="0"
@@ -352,25 +391,9 @@
        x="535.61743"
        id="tspan8519"
        sodipodi:role="line" /></text>
-  <g
-     id="g4257"
-     transform="matrix(1.1373015,0,0,0.9563089,-39.579432,5.180463)">
-    <rect
-       id="rect4148"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4150)"
-       y="-334"
-       x="-114.36218"
-       ry="0"
-       rx="0"
-       height="108.20067"
-       width="63.477551"
-       transform="matrix(0,-1,-1,0,-68,-15.144454)"
-       inkscape:transform-center-x="54.813302"
-       inkscape:transform-center-y="-23.206892" />
-  </g>
   <rect
      id="rect7095"
-     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.63171256;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.63171255999999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;"
      y="-262.07812"
      x="-97.1427"
      ry="0"
@@ -384,16 +407,16 @@
      sodipodi:linespacing="100%"
      xml:space="preserve"
      id="text7097"
-     style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-     y="30.574381"
+     style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     y="24.574381"
      x="196.26773"
      inkscape:transform-center-x="33.267991"
      inkscape:transform-center-y="-38.932037"><tspan
-       style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
        id="tspan7099"
-       y="30.574381"
+       y="24.574381"
        x="196.26773">Cliente</tspan><tspan
-       y="43.574379"
+       y="38.574379"
        x="196.26773"
        id="tspan7101"
        sodipodi:role="line" /></text>
@@ -722,22 +745,6 @@
          style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
          id="tspan3980">f1</tspan></text>
   </g>
-  <g
-     transform="matrix(1.1373015,0,0,0.9563089,-39.579432,137.18046)"
-     id="g3988">
-    <rect
-       inkscape:transform-center-y="-23.206892"
-       inkscape:transform-center-x="54.813302"
-       transform="matrix(0,-1,-1,0,-68,-15.144454)"
-       width="63.477551"
-       height="108.20067"
-       rx="0"
-       ry="0"
-       x="-114.36218"
-       y="-334"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter4150)"
-       id="rect3990" />
-  </g>
   <rect
      inkscape:transform-center-y="-23.152378"
      inkscape:transform-center-x="66.558765"
@@ -748,25 +755,25 @@
      ry="0"
      x="-229.94815"
      y="-261.92545"
-     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.6307801;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.63078009999999995;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;"
      id="rect4166" />
   <text
      inkscape:transform-center-y="-38.932037"
      inkscape:transform-center-x="33.267991"
      x="196.19116"
-     y="163.37938"
-     style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     y="157.37938"
+     style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
      id="text4168"
      xml:space="preserve"
      sodipodi:linespacing="100%"><tspan
        x="196.19116"
-       y="163.37938"
+       y="157.37938"
        id="tspan4170"
-       style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">Cliente</tspan><tspan
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">Cliente</tspan><tspan
        sodipodi:role="line"
        id="tspan4172"
        x="196.19116"
-       y="176.37938" /></text>
+       y="171.37938" /></text>
   <g
      id="g3976"
      transform="translate(-11.667271,-5.7220459e-6)">

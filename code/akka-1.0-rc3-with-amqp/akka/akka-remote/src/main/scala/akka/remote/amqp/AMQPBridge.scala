@@ -55,20 +55,21 @@ abstract class AMQPBridge(val nodeName: String,
   require(nodeName != null)
   require(connection != null)
   private[amqp] val id: String
-  private[amqp] lazy val inboundExchangeName = "actor.exchange.in." + nodeName
-  private[amqp] lazy val inboundQueueName = "actor.queue.in."+ nodeName
-  private[amqp] lazy val outboundQueueName = "actor.queue.out."
-  private[amqp] lazy val routingKeyToServer = "to.server." + nodeName
+  private[amqp] lazy val inboundExchangeName = "actor.exchange.in.%s".format(nodeName)
+  private[amqp] lazy val inboundQueueName    = "actor.queue.in.%s".format(nodeName)
+  private[amqp] lazy val outboundQueueName   = "actor.queue.out.%s".format(nodeName)
+  private[amqp] lazy val routingKeyToServer  = "to.server.%s".format(nodeName)
+
   def sendMessageTo(message: Array[Byte], to: String): Unit
+
   def shutdown = {
     connection.close
   }
 }
 
 class ClientAMQPBridge(name: String, connection: SupervisedConnectionWrapper, idSuffix: String) extends AMQPBridge(name, connection) {
-  lazy val id = {
-    "client.%s.%s".format(nodeName, idSuffix)
-  }
+  lazy val id =  "client.%s.%s".format(nodeName, idSuffix)
+
 
   def setup(handler: MessageHandler, queueParams: QueueConfig.QueueParameters): ClientAMQPBridge = {
     connection.clientSetup(
@@ -88,7 +89,7 @@ class ClientAMQPBridge(name: String, connection: SupervisedConnectionWrapper, id
 }
 
 class ServerAMQPBridge(name: String, connection: SupervisedConnectionWrapper) extends AMQPBridge(name, connection){
-  private[amqp] lazy val id = "server." + nodeName
+  private[amqp] lazy val id = "server.%s".format(nodeName)
 
   def setup(handler: MessageHandler, exchangeParams: ExchangeConfig.ExchangeParameters,
             queueParams: QueueConfig.QueueParameters): ServerAMQPBridge = {
@@ -97,8 +98,8 @@ class ServerAMQPBridge(name: String, connection: SupervisedConnectionWrapper) ex
         ServerSetupInfo(exchangeParams,
                         queueParams,
                         exchangeName = inboundExchangeName,
-                        queueName = inboundQueueName,
-                        routingKey = routingKeyToServer))
+                        queueName    = inboundQueueName,
+                        routingKey   = routingKeyToServer))
     )
     this
   }
