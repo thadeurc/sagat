@@ -351,10 +351,7 @@ supervisor\footnote{A classe \lstinline$AMQPConnectionFactory$ é o ator supervis
 e o envio da mensagem para que o ator se conecte, o que faz com que o ator solicite uma nova
 conexão à fábrica de conexões do RabbitMQ. Dependendo do tipo de política definida para
 o compartilhamento da conexão entre os canais de leitura e escrita, o passo $4$ é executado
-duas vezes. Um outro passo que também é executado, porém não é mostrado na figura
-\ref{fig:new-connection-actor}, é o envio de uma mensagem para todos os atores que estejam
-sob supervisão do ator de conexão para que solicitem novos canais. Esse passo só
-faz sentido quando uma conexão foi desconectada e o ator foi reiniciado pelo supervisor.
+duas vezes.
 
 \vspace{1ex}
 \begin{figure}[!h]
@@ -375,7 +372,7 @@ para incialização do ator, o que faz com que o ator solicite um novo canal para 
 O ator de conexão response a mensagem com um novo canal.
 O processo para criação do ator responsável pelo canal de escrita é bem semelhante,
  com diferenças nas mensagens enviadas nos passos $3$ 
-(\lstinline$StartWriteChannel$) e $4$ (\lstinline$WriteChannelRequest$). 
+(\lstinline$StartWriteChannel$) e $4$ (\lstinline$WriteChannelRequest$).
 
 É importante destacar que todos os parâmetros de 
 configurações utilizados para a criação de uma conexão, como por exemplo a política

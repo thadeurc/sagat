@@ -1,0 +1,143 @@
+\chapter{Atores Remotos com o Padrão AMQP}
+\index{Atores Remotos com AMQP}
+\label{cap:atores_remotos_amqp}
+
+Apresentamos neste capítulo nossa implementação de atores remotos que utilizam
+o padrão AMQP como meio de transporte para troca de mensagens. Nossa 
+implementação utiliza a implementação de atores remotos do projeto Akka apresentada
+no capítulo \ref{cap:atores_akka}. 
+
+\section{Novos componentes}
+\index{Atores Remotos com AMQP!componentes}
+\label{Sec:atores_remotos_amqp:novos_componentes}
+
+A implementação de atores remotos do projeto Akka define uma camada intermediária
+que desacopla a definição dos componentes para transporte das mensagens a atores
+remotos, como apresentado na seção \ref{sec:atores_remotos_akka}. 
+
+Para que a envios remotos fosse possível com um \english{message broken} AMQP, tivemos
+que criar novos componentes para a camada de implementação com base nas classes
+e \english{traits} que definem a interface remota (figura \ref{fig:remote-actor-colaboracao}).
+Utilizamos a estrutura apresentada no capítulo \ref{cap:estrutura-troca-mensagens-amqp} 
+como suporte para a implementação dos novos componentes do Akka. 
+Os novos componentes são:
+
+\begin{itemize}
+	\item \lstinline$AMQPRemoteServer$: É uma classe utilizada no lado do servidor onde
+	estão os atores remotamente acessíveis. Essa classe implementa os métodos abstrados
+	de um \lstinline$MessageHandler$ e é responsável pelo recebimento de mensagens,
+	desseriação e encaminhamento para os atores que estão em seu registro. 
+	A classe também é responsável por enviar eventuais mensagens de resposta para os 
+	remetentes, seja como consequência de envios feitos via \lstinline$!!$ e \lstinline$!!!$, 
+	ou ainda mensagens para atores supervisores. Tanto no recebimento, como no envio de mensagens 
+	a classe utiliza um módulo separado para seriação e desseriação de mensagens. Existe um 
+	relacionamento bidirecional um para um entre um \lstinline$AMQPRemoteServer$ e uma ponte 
+	servidora;
+			
+	\item \lstinline$AMQPRemoteServerModule$: É uma \english{trait} que extende 
+	a \english{trait} \lstinline$RemoteServerModule$ e define um nó onde atores
+	são registrados para ficarem acessíveis remotamente. Essa implementação 
+	mantém o registro desses atores e possui uma relação 
+	bidirecional um para um com um \lstinline$AMQPRemoteServer$. As mensagens recebidas pelo 
+	\lstinline$AMQPRemoteServer$ são encaminhadas para os atores residentes nesse módulo;
+
+	\item \lstinline$AMQPRemoteClient$:	É uma classe utilizada no lado do cliente
+	onde ficam os \english{proxies} dos atores remotos. A classe mantém o registro de 
+	atores que são supervisores de atores remotos, além de também manter um registro para 
+	resultados futuros. Assim como a classe \lstinline$AMQPRemoteServer$, essa classe também 
+	implementa os métodos abstratos de um \lstinline$MessageHandler$ e é também é responsável
+	pelo recebimento de mensagens, desseriação e encaminhamento para os atores ou
+	resultados futuros que estão em seu registro. O principal papel da classe é
+	fazer o envio das mensagens após a seriação para o \english{message broker}. 
+	Existe uma relação bidirecional um para um entre um \lstinline$AMQPRemoteClient$
+	e uma ponte cliente. A classe ainda é responsável por manter um identificador
+	que deve ser único entre todos os clientes do mesmo servidor remoto. Esse identificador
+	é utilizado na criação da instância da ponte cliente;
+	
+	\item \lstinline$AMQPRemoteClientModule$: É uma \english{trait} que extende
+	a \english{trait} \lstinline$RemoteClientModule$. Essa é uma \english{trait}
+	que tem um papel complementar a \lstinline$AMQPRemoteServerModule$ e seu
+	papel principal é definir uma interface para envios de mensagens a atores
+	remotos via \lstinline$AMQPRemoteClient$. Ademais, a \english{trait}
+	mantém ainda um registro de \lstinline$AMQPRemoteClient$, que são utilizados
+	para enviar as mensagens para seus respectivos nós remotos, já que
+	uma aplicação cliente pode interagir com diversos atores em diferentes nós;
+
+	\item \lstinline$AMQPRemoteSupport$: É a implementação que tornamos acessível 
+	via \lstinline$Actor.remote$. Essa classe é responsável por concentrar as 
+	responsabilidades definidas nos módulos acima listados para prover o suporte
+	remoto via \english{message broker} AMQP.	
+\end{itemize}
+
+%% mostrar código aonde?!
+\begin{figure}[!h]
+ 		\centering
+	\includegraphics[scale=.60]{remote-actor-amqp-colaboracao} 
+ 		\caption{Relacionamento entre os componentes para atores remotos com AMQP.}
+  	\label{fig:atores-remotos-amqp-colaboracao}
+\end{figure}
+
+\section{Integração com o Akka}
+\index{Atores Remotos com AMQP!integração Akka}
+\label{Sec:atores_remotos_amqp:integracao_akka}
+
+Uma vez que definimos os componentes dentro da estrutura do Akka, é necessário que 
+a biblioteca do Akka faça uso deles, de modo que a instância referenciada por
+\lstinline$Actor.remote$ seja uma instância de \lstinline$AMQPRemoteSupport$.
+
+O arquivo \lstinline$akka.conf$ possui é o ponto de entrada para todas as configurações
+que são parametrizadas de todos os módulos do projeto Akka (o formato do arquivo difere
+dos arquivos para configurações de propriedades baseados em chaves e valores. O projeto
+Akka utiliza uma biblioteca chamada Configgy \cite{configgy} que define um formato
+mais idiomático para arquivos de configurações). Existe uma seção
+específica para as configurações correspondentes aos atores remotos. Na distribuição
+padrão, boa parte das propriedades para a configuração de atores remotos são relacionadas ao JBoss
+Netty, como por exemplo o tipo nível de compressão, tamanho da janela da mensagem e
+tempo limite de espera pelo cliente para se conectar. Contudo, existem algumas propriedades
+que são mais gerais, como por exemplo se a comunicação deve ser autenticada via \english{cookies}
+pré-definidos, qual o \english{cookie} de segurança a ser utilizado e ainda qual a classe que deve
+ser utilizada como implementação da camada de suporte para atores remotos.
+
+Além de alterar o valor para a camada de suporte para atores remotos, optamos por adicionar
+novas propriedades para a configuração do suporte que implementamos, como os dados
+para conexão com o \english{broker}, a política de armazenamento e de compartilhamento
+de conexões entre canais. Uma outra propriedade importante que adicionamos foi a 
+definição do identificador a ser utilizado na criação de diferentes 
+\lstinline$AMQPRemoteClient$s (e consequentemente de \lstinline$ClientAMQPBridge$s). 
+O novo valor para a camada de suporte para atores remotos e as novas propriedades são 
+listadas a seguir:
+
+\begin{lstlisting}[numbers=none]
+remote {
+	...
+	layer = "akka.remote.amqp.AMQPRemoteSupport"
+	amqp {
+		policy {
+			storage {        	 
+				mode = "EXCLUSIVE_PERSISTENT"
+				client_id {
+					suffix = "MYPLACE"
+        	 	}
+        	}
+        	connection {
+            	server = "ONE_CONN_PER_NODE"
+            	client = "ONE_CONN_PER_NODE"
+			}
+		}
+		broker {
+			host = "192.168.0.121"
+			virtualhost = "/actor_host"
+			username = "actor_admin"
+			password = "actor_admin"
+		}
+	}
+	...
+}
+\end{lstlisting}
+
+%% falar que o arquivo de configurações é por JVM e quais são os impactos causados por ele.
+
+
+\subsection{Alterações no protocolo}
+\subsection{Segurança}
+\subsection{Fluxo das mensagens}
