@@ -377,7 +377,7 @@ O processo para criação do ator responsável pelo canal de escrita é bem semelhan
 É importante destacar que todos os parâmetros de 
 configurações utilizados para a criação de uma conexão, como por exemplo a política
 de compartilhamento de conexões e o endereço do \english{broker}, são lidos de 
-um arquivo de propriedades. 
+um arquivo de propriedades (\ref{Sec:atores_remotos_amqp:integracao_akka}). 
 
 \vspace{1ex}
 \begin{figure}[!h]
@@ -449,6 +449,8 @@ da ponte é utilizado como sufixo.
   	\caption{Estrutura para troca de mensagens entre entidades remotas via broker AMQP.}
   	\label{fig:bridges-broker-all-together}
 \end{figure}
+
+%%% comentar de objetos existentes - o q acontece?!
 
 \subsection{Envio e recebimento de mensagens via pontes AMQP}
 \index{Estrutura!message broker amqp!envios e recebimentos via pontes}

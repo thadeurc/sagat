@@ -13,7 +13,7 @@ trait MessageHandler {
 object AMQPBridge extends Logging {
 
   def newServerBridge(name: String, handler: MessageHandler): ServerAMQPBridge = {
-    newServerBridge(name, handler,  EXCLUSIVE_TRANSIENT, ONE_CONN_PER_NODE)
+    newServerBridge(name, handler,  EXCLUSIVE_AUTODELETE , ONE_CONN_PER_NODE)
   }
 
   def newServerBridge(name: String, handler: MessageHandler, messageStorePolicy: MessageStorageAndConsumptionPolicyParams): ServerAMQPBridge = {
@@ -21,7 +21,7 @@ object AMQPBridge extends Logging {
   }
 
   def newServerBridge(name: String, handler: MessageHandler, policy: ConnectionSharePolicyParams): AMQPBridge = {
-    newServerBridge(name, handler, EXCLUSIVE_TRANSIENT, policy)
+    newServerBridge(name, handler, EXCLUSIVE_AUTODELETE , policy)
   }
 
   def newServerBridge(name: String, handler: MessageHandler, messageStorePolicy: MessageStorageAndConsumptionPolicyParams,
@@ -35,7 +35,7 @@ object AMQPBridge extends Logging {
   }
 
   def newClientBridge(name: String, handler: MessageHandler, policy: ConnectionSharePolicyParams, idSuffix: String): ClientAMQPBridge = {
-    newClientBridge(name, handler,  EXCLUSIVE_TRANSIENT, policy, idSuffix)
+    newClientBridge(name, handler,  EXCLUSIVE_AUTODELETE , policy, idSuffix)
   }
 
   def newClientBridge(name: String, handler: MessageHandler, messageStorePolicy: MessageStorageAndConsumptionPolicyParams,

@@ -48,7 +48,7 @@
 	\begin{itemize}
 		\item Servidor: É o processo,  conhecido também como \english{broker}, que 
 		aceita conexões de clientes e implementa as funções de filas de mensagens e 
-		roteamento.
+		roteamento;
 		  
 		\item Filas: São entidades internas do servidor que armazenam as mensagens, 
 		tanto em memória quanto em disco, até que elas sejam enviadas em sequência para 
@@ -62,7 +62,7 @@
 		consumidores na forma \english{round-robin}, fila temporária para resposta, que 
 		armazena as mensagens e as encaminha para um  único consumidor; e fila \english{pub-sub}, 
 		que armazena mensagens provenientes de vários produtores e as envia para um único 
-		consumidor.
+		consumidor;
 		  
 		\item \english{Exchanges}: São entidades internas do servidor que recebem e roteiam 
 		as mensagens das aplicações produtoras para as filas, levando em conta critérios 
@@ -79,10 +79,10 @@
 		A chave de roteamento deve ser formada por palavras e pontos. Por exemplo, 
 		o padrão *.stock.\# casa com usd.stock e eur.stock.db, nas não com stock.nasdaq; 
 		e \english{fanout}, onde o roteamento acontece para todas as filas 
-		associadas a \english{exchange}, indepententemente da chave de roteamento.
+		associadas a \english{exchange}, indepententemente da chave de roteamento;
 		  
 		\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas. 
-		Esses relacionamentos definem como deverá ser feito o roteamento das mensagens.
+		Esses relacionamentos definem como deverá ser feito o roteamento das mensagens;
 		
 		  
 		\item \english{Virtual hosts}: São coleções de \english{exchanges}, filas e 

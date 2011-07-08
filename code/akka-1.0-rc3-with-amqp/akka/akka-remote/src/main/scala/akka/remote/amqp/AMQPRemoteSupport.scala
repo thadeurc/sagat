@@ -35,7 +35,7 @@ object AMQPUtil {
 
   private[akka] lazy val storagePolicy = {
     var param = AMQPSettings.STORAGE_AND_CONSUME_POLICY
-    var result = EXCLUSIVE_TRANSIENT_AUTODELETE
+    var result = EXCLUSIVE_AUTODELETE
     try{
       result = StorageAndConsumptionPolicy.withName(param).asInstanceOf[MessageStorageAndConsumptionPolicyParams]
     }catch {
@@ -204,6 +204,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
   import AMQPBridge._
   import AMQPUtil._
   import RemoteClientSettings.AMQP._
+  import RemoteClientSettings._
 
   loader.foreach(MessageSerializer.setClassLoader(_))
 
@@ -267,7 +268,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
         senderOption,
         typedActorInfo,
         actorType,
-        None,
+        SECURE_COOKIE,
         Some(amqpClientBridge.id)
       ).build, senderFuture)
   }
@@ -560,9 +561,20 @@ class AMQPRemoteServer(val serverModule: AMQPRemoteServerModule, val nodeName: S
       throw new IllegalStateException("Received null message in AMQP Remote Server")
     }
     else {
-      handleRemoteMessageProtocol(RemoteMessageProtocol.parseFrom(message))
+      val request = RemoteMessageProtocol.parseFrom(message)
+      authenticateRemoteClient(request)
+      handleRemoteMessageProtocol(request)
       true
     }
+  }
+
+  private def authenticateRemoteClient(request: RemoteMessageProtocol) = {
+    val clientAddress = request.getRemoteClientId
+    if (!request.hasCookie) throw new SecurityException(
+      "The remote client [" + clientAddress + "] does not have a secure cookie.")
+    if (!(request.getCookie == SECURE_COOKIE.get)) throw new SecurityException(
+      "The remote client [" + clientAddress + "] secure cookie is not the same as remote server secure cookie")
+    log.slf4j.info("Remote client [{}] successfully authenticated using secure cookie", clientAddress)
   }
 
   private def handleRemoteMessageProtocol(request: RemoteMessageProtocol) = {

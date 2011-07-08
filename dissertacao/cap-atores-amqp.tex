@@ -5,11 +5,14 @@
 Apresentamos neste capítulo nossa implementação de atores remotos que utilizam
 o padrão AMQP como meio de transporte para troca de mensagens. Nossa 
 implementação utiliza a implementação de atores remotos do projeto Akka apresentada
-no capítulo \ref{cap:atores_akka}. 
+no capítulo \ref{cap:atores_akka}. Na seção \ref{sec:atores_remotos_amqp:novos_componentes}
+apresentamos os novos componentes que criamos dentro da estrutura do Akka e
+na seção \ref{sec:atores_remotos_amqp:integracao_akka} como fizemos a integração dos
+novos componentes com a implementação existente.
 
 \section{Novos componentes}
 \index{Atores Remotos com AMQP!componentes}
-\label{Sec:atores_remotos_amqp:novos_componentes}
+\label{sec:atores_remotos_amqp:novos_componentes}
 
 A implementação de atores remotos do projeto Akka define uma camada intermediária
 que desacopla a definição dos componentes para transporte das mensagens a atores
@@ -66,7 +69,7 @@ Os novos componentes são:
 	\item \lstinline$AMQPRemoteSupport$: É a implementação que tornamos acessível 
 	via \lstinline$Actor.remote$. Essa classe é responsável por concentrar as 
 	responsabilidades definidas nos módulos acima listados para prover o suporte
-	remoto via \english{message broker} AMQP.	
+	remoto via \english{message broker} AMQP.
 \end{itemize}
 
 %% mostrar código aonde?!
@@ -77,9 +80,27 @@ Os novos componentes são:
   	\label{fig:atores-remotos-amqp-colaboracao}
 \end{figure}
 
+A definição das \english{traits} para suporte a atores remotos do Akka define assinaturas
+de métodos baseadas em \english{host} e porta. Para não quebrar a compatibilidade em nossas
+implementações e nem alterar a interface dos métodos, optamos por criar internamente 
+o nome do nó com base nos valores informados para \english{host} e porta. O padrão
+utilizado é \lstinline$host@porta$. 
+
+Como mencionado seção \ref{sec:atores_locais}, \lstilnine$ActorRef$s
+guardam o endereço do local onde o ator foi criado. Pelo fato de não haver associação
+entre o endereço definido e uma \english{socket}, e de os valores para \english{host}
+e porta serem recebidos no construtor da classe, optamos por manter a compatibilidade e
+não mudar nem o construtor e nem o atributo. Em nossa implementação, o valor
+do atributo \lstinline$homeAddress$ não é utilizado.
+
+Pelo fato do projeto Akka possui um desenvolvimento ativo, acreditamos que existe
+uma grande possibilidade de haver uma mudança na interface dos componentes
+do módulo de atores remotos, de modo que haja um desacomplamento entre sua interface
+e as implementações da camada de transporte.
+
 \section{Integração com o Akka}
 \index{Atores Remotos com AMQP!integração Akka}
-\label{Sec:atores_remotos_amqp:integracao_akka}
+\label{sec:atores_remotos_amqp:integracao_akka}
 
 Uma vez que definimos os componentes dentro da estrutura do Akka, é necessário que 
 a biblioteca do Akka faça uso deles, de modo que a instância referenciada por
@@ -98,6 +119,16 @@ que são mais gerais, como por exemplo se a comunicação deve ser autenticada via 
 pré-definidos, qual o \english{cookie} de segurança a ser utilizado e ainda qual a classe que deve
 ser utilizada como implementação da camada de suporte para atores remotos.
 
+Os dados informados no arquivo \lstinline$akka.conf$, uma vez que foram lidos ficam acessíveis
+em objetos de acordo com o contexto que fazem parte. Por exemplo, as propriedades relacionadas
+aos atores remotos estão organizadas em objetos dentro do módulo \lstinline$RemoteShared$.
+Existe ainda uma classe auxíliar que é utilizada para acessar os módulos dos sub-projetos
+do Akka via reflexão chamada de \lstinline$ReflectiveAccess$. Nossa nova camada de
+implementação para o transporte de mensagens entre atores remotos é instanciada nessa
+classe.
+
+\subsection{Alterações no arquivo de akka.conf}
+
 Além de alterar o valor para a camada de suporte para atores remotos, optamos por adicionar
 novas propriedades para a configuração do suporte que implementamos, como os dados
 para conexão com o \english{broker}, a política de armazenamento e de compartilhamento
@@ -107,7 +138,7 @@ definição do identificador a ser utilizado na criação de diferentes
 O novo valor para a camada de suporte para atores remotos e as novas propriedades são 
 listadas a seguir:
 
-\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[frame=none, numbers=none]
 remote {
 	...
 	layer = "akka.remote.amqp.AMQPRemoteSupport"
@@ -135,9 +166,130 @@ remote {
 }
 \end{lstlisting}
 
-%% falar que o arquivo de configurações é por JVM e quais são os impactos causados por ele.
 
+Pelo fato arquivo \lstinline$akka.conf$ ser único por JVM, a maneira pelo qual
+é feita a configuração das propriedades remotas impõe algumas restrições.
+Com o Akka em execução em uma JVM, podemos criar diversos servidores remotos,
+cada um com um nome de nó diferente. Também podemos criar clientes
+remotos, um para cada servidor remoto. Poderiamos ainda ter em uma JVM
+uma combinação dos dois cenários, com servidores remotos e clientes para
+servidores remotos. 
+
+\subsubsection{Restrições}
+
+Todos os clientes remotos que forem criados na JVM, independente
+do nome do servidor remoto utilizam o mesmo identificador de cliente.
+Contudo, essa restrição não impedimende a criação dos objetos
+no \english{message broker}. Para exemplificar, podemos analizar o
+caso onde dois clientes remotos são criados em uma JVM para os
+servidores remotos cujos nomes são \lstinline$node1$ e \lstinline$node2$.
+Os objetos criados pelos primeiro cliente remoto terão o sufixo
+\lstinline$client.node1.<id>$ e \lstinline$client.node2.<id>$.	
+Um outro detalhe importante é que, pelo fato de classe 
+\lstinline$AMQPRemoteClientModule$ manter um registro dos clientes remotos, 
+não há a possibilidade de na mesma JVM ser criado mais de uma instância de 
+\lstinline$AMQPRemoteClient$ para um mesmo servidor remoto.
+
+As propriedades para configuração da política de armazenamento
+são utilizadas para ambos os servidores e clientes remotos. Configurações 
+divergentes entre JVMs podem levar aos seguintes cenários:
+
+\begin{enumerate}
+	\item A JVM onde foi iniciado um servidor remoto utiliza uma configuração
+	persistente e alguma das JVMs com um cliente remoto define uma configuração
+	transiente: Esse não é um caso muito problemático, já que os objetos criados
+	pelo servidor não dependem dos objetos criados pelos clientes. Como os objetos 
+	definidos como transientes só são removidos quando o \english{message broker}
+	é desligado, o problema se limita a perda de eventuais mensagens que 
+	ainda não haviam sido consumidas e estavam na fila;
+	
+	\item Um cenário oposto ao anterior, onde o servidor remoto possui uma configuração
+	transiente e algum de seus clientes uma configuração persistente: Esse é 
+	um cenário mais problemático, já que quando a \english{exchange} do servidor
+	é removida todas as suas associações também são removidas, porém as filas persistentes
+	não. Esse cenário ter duas ópticas diferentes. Pela óptica da criação dos objetos,
+	a biblioteca Java do RabbitMQ faz uma verificação da existência de um objeto
+	antes de tentar fazer a sua criação (\ref{sec:entidades-via-broker-amqp-gerenciamento-conexoes}),
+	logo não há problemas, já que a associação da fila persistente com a \english{exchange}
+	recém criada acontecerá durante a execução da inicialização do módulo do cliente remoto.
+	A segunda óptica é a da aplicação. Eventuais mensagens não consumidas pelo servidor
+	remoto serão perdidas.	
+\end{enumerate}
+
+As configurações relacionadas ao compartilhamento da conexão entre os canais de leitura e
+escrita são definidas separadamente para os clientes e servidores remotos. A divergência
+nas configurações entre um cliente remoto em um nó e um servidor remoto em outro nó
+pode acontecer sem problemas, já que o impacto será no volume de dados trafegado
+na conexão.
+
+\subsection{Segurança}
+
+Com o intuito de previnir conexões em servidores remotos de clientes não autorizados,
+na implementação com o JBoss Netty, existe a possibilidade de se exigir que seja enviado
+um valor para que o cliente que está tentando se conectar seja autorizado a interagir com
+os atores. Esse valor é chamado de \english{secure cookie} e é definido no arquivo 
+\lstinline$akka.conf$ na seção \lstinline$remote$. O mecanismo utilizado para 
+autorização é parte do Akka e não possui relação com o JBoss Netty. Habilitar o uso de 
+autorização é algo opcional e deve ser exigido pelo servidor remoto. A propriedade
+utilizada para forçar o uso de \english{cookie} na comunicação é definida dentro de
+\lstinline$remote { server { ... } }$.
+
+O valor do \english{cookie} é parte do protocolo remoto definido no Akka, mostrado
+na listagem \ref{lst:proto-remote-message} no capítulo \ref{cap:atores_akka}. Pelo
+fato de o uso do \english{cookie} ser definido no protocolo remoto, podemos 
+continuar fazendo seu uso em nossa implementação. Mensagens oriundas de clientes
+que não possuem autorização nos servidores remotos, não são processadas e o
+cliente remoto remetente recebe uma mensagem de resposta com indicando a falta
+de autorização.
+
+Com o uso das filas definidas no \english{message broker} como repositório 
+intermediário das mensagens, caso não se esteje utilizando filas com acesso
+exclusivo, qualquer entidade que possua os dados necessários para acessar
+o \english{virtual host} onde estão criadas as filas pode registrar outros
+consumidores. Uma fila com mais de um consumidor pode ser interessante
+quando se deseja fazer um monitoramento do volume ou até do conteúdo das
+mensagens. No caso de haver mais de um consumidor em uma fila, uma cópia da mensagem
+é entregue a cada consumidor. Não é possível, portanto, um consumidor
+mal intencionado ``roubar'' ou mesmo alterar a integride das mensagens.
+
+Com o uso de um \english{message broker} AMQP, a segurança depende muito de 
+quem possui as informações para acesso ao \english{virtual host} onde
+estão criadas as filas e \english{exchanges}.
 
 \subsection{Alterações no protocolo}
-\subsection{Segurança}
-\subsection{Fluxo das mensagens}
+
+Para que o servidor remoto pudesse identificar qual o remetente de uma mensagem recebida,
+foi necessária uma pequena alteração no protocolo remoto. A implementação de transporte
+feita com o JBoss Netty consegue identificar na \english{socket} qual o endereço
+do a entidade remota que está se conectada. O protocolo utilizado para definir uma mensagem
+remota passa a incluir um parâmetro não mandatório para que o identificador do cliente
+possa ser identificado. O protocolo com a alteração é mostrado na listagem 
+\ref{lst:proto-remote-message-amqp}. Essa alteração implicou em
+alterações no objeto \ref{RemoteActorSerialization}. Esse objeto é o responsável por 
+fabricar uma instância com as informações a serem seriadas. O método 
+\lstinline$createRemoteMessageProtocolBuilder$ foi sobrecarregado e passou
+a receber o identificador do cliente como parâmetro. 
+
+A alteração apresentada na listagem \ref{lst:proto-remote-message-amqp} não seria 
+necessária caso o protocolo definisse um identificador para o nó remoto responsável 
+pelo envio da mensagem. 
+
+\begin{lstlisting}[frame=tb, caption={Protocolo para mensagens remotas com identificador do cliente.}, 
+label={lst:proto-remote-message-amqp}]
+message RemoteMessageProtocol {
+  required UuidProtocol uuid = 1;
+  required ActorInfoProtocol actorInfo = 2;
+  required bool oneWay = 3;
+  optional MessageProtocol message = 4;
+  optional ExceptionProtocol exception = 5;
+  optional UuidProtocol supervisorUuid = 6;
+  optional RemoteActorRefProtocol sender = 7;
+  repeated MetadataEntryProtocol metadata = 8;
+  optional string cookie = 9;
+  optional string remoteClientId = 10; // identificador do cliente
+}
+\end{lstlisting}
+
+
+\section{Fluxo das mensagens}
+

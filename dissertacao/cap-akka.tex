@@ -20,10 +20,10 @@ A definição de atores locais acontece por meio de extensões da
 \english{trait} \lstinline$akka.actor.Actor$, onde deve-se prover uma implementação para o 
 método \lstinline$receive$ como mostrado na listagem \ref{lst:def-actor}. 
 A definição de um ator descreve o comportamento inicial que o
-ator terá. A ator propriamente dito (aquele que possui as funcionalidades providas
+ator terá. O ator propriamente dito (aquele que possui as funcionalidades providas
 pelo arcabouço) é uma instância de \lstinline$akka.actor.ActorRef$. \lstinline$ActorRef$s
-são imutáveis, seriáveis, identificáveis e possuem um relacionamento único com a 
-definição do ator. 
+são imutáveis, seriáveis, identificáveis, possuem um relacionamento único com a 
+definição do ator e armazenam informação do \english{host} e porta onde foram criadas. 
 
 A \english{trait} \lstinline$Actor$ possui em sua declaração uma referência para o seu 
 \lstinline$ActorRef$ definida como \lstinline$self$. No caso de
@@ -331,8 +331,7 @@ de atores remotos utiliza os seguintes elementos:
 	módulos remotos do cliente e do servidor e ser um ponto único de suporte remoto;
 
 	\item \lstinline$RemoteActorRef$: É uma classe equivalente a \lstinline$LocalActorRef$, porém
-	utiliza o suporte remoto para fazer envio das mensagens.		
-	
+	utiliza o suporte remoto para fazer envio das mensagens.
 \end{itemize}
 
 A implementação de atores remotos do Akka, implementa os componentes de suporte remoto com o
