@@ -127,6 +127,7 @@ trait AMQPSupervisor {
 
 object AMQPConnectionFactory extends AMQPSupervisor {
   lazy val AMQPDISPATCHER = Dispatchers.newExecutorBasedEventDrivenDispatcher("amqp-internal-connection-dispatcher").build
+
 }
 
 class AMQPConnectionFactory extends Actor {

@@ -86,7 +86,7 @@ implementações e nem alterar a interface dos métodos, optamos por criar internam
 o nome do nó com base nos valores informados para \english{host} e porta. O padrão
 utilizado é \lstinline$host@porta$. 
 
-Como mencionado seção \ref{sec:atores_locais}, \lstilnine$ActorRef$s
+Como mencionado seção \ref{sec:atores_locais}, \lstinline$ActorRef$s
 guardam o endereço do local onde o ator foi criado. Pelo fato de não haver associação
 entre o endereço definido e uma \english{socket}, e de os valores para \english{host}
 e porta serem recebidos no construtor da classe, optamos por manter a compatibilidade e
@@ -293,3 +293,11 @@ message RemoteMessageProtocol {
 
 \section{Fluxo das mensagens}
 
+O fluxo é mostrado na figura \ref{fig:remote-actor-message-flow-amqp}.
+
+\begin{figure}[!h]
+% 		\centering
+		\includegraphics[scale=.80]{remote-actor-message-flow-amqp} 
+ 		\caption{Fluxo de um envio assíncrono de mensagem entre atores com AMQP.}
+  		\label{fig:remote-actor-message-flow-amqp}
+\end{figure}

@@ -481,9 +481,6 @@ de dados, como por exemplo números, textos, boleanos e vetores de dados. Ademais
 definir a obrigatoriedade dos valores para alguns atributos com as palavras-chaves
 \lstinline$optional$ e \lstinline$required$.
 
-O protocolo para endereços remotos é apresentado na listagem 
-\ref{lst:proto-remote-address}. Endereços remotos são utilizados por referências remotas 
-para identificar, por exemplo, onde o ator remoto foi criado. 
 O protocolo para referências de atores remotos é apresentado na listagem 
 \ref{lst:proto-remote-actor}. As mensagens para atores remotos são definidas com 
 base no tipo de seriação que foi definido na JVM que fez o envio. Para que a JVM 
@@ -494,45 +491,11 @@ respectivamente. Por fim, o protocolo utilizado para as mensagens remotas que é 
 outros protocolos menores, pelo protocolo para mensagens e pelo protocolo para referências remotas,
 é apresentado na listagem \ref{lst:proto-remote-message}.
 
-Optamos por não detalhar os demais protocolos utilizados para compor o protocolo para
+Optamos por não detalhar os demais sub-protocolos utilizados para compor o protocolo para
 mensagens remotas pois, apesar de serem importantes para o suporte a atores remotos, 
 eles não possuem grande relevância para o desenvolvimento deste trabalho.
 
-\begin{lstlisting}[frame=tb, caption={Protocolo para endereços remotos.}, label={lst:proto-remote-address}]
-message AddressProtocol {
-  required string hostname = 1;
-  optional uint32 port = 2;
-}
-\end{lstlisting}
-
-\begin{lstlisting}[frame=tb, caption={Protocolo para referências de atores remotos.}, label={lst:proto-remote-actor}]
-message RemoteActorRefProtocol {
-  required string classOrServiceName = 1;
-  required string actorClassname = 2;
-  required AddressProtocol homeAddress = 3;
-  optional uint64 timeout = 4;
-}
-\end{lstlisting}
-
-\begin{lstlisting}[frame=tb, caption={Enumeração com tipos de seriação suportados.}, label={lst:proto-enum-serial}]
-enum SerializationSchemeType {
-  JAVA = 1;
-  SBINARY = 2;
-  SCALA_JSON = 3;
-  JAVA_JSON = 4;
-  PROTOBUF = 5;
-}
-\end{lstlisting}  
-
-\begin{lstlisting}[frame=tb, caption={Protocolo para mensagens.}, label={lst:proto-message}]
-message MessageProtocol {
-  required SerializationSchemeType serializationScheme = 1;
-  required bytes message = 2;
-  optional bytes messageManifest = 3;
-}
-\end{lstlisting}
-
-\begin{lstlisting}[frame=tb, caption={Protocolo para mensagens remotas.}, label={lst:proto-remote-message}]
+\begin{lstlisting}[frame=tb, caption={Protocolo para envios de mensagens remotas.}, label={lst:proto-remote-message}]
 message RemoteMessageProtocol {
   required UuidProtocol uuid = 1;
   required ActorInfoProtocol actorInfo = 2;
@@ -546,3 +509,53 @@ message RemoteMessageProtocol {
 }
 \end{lstlisting}
 
+\begin{lstlisting}[frame=tb, caption={Protocolo para referências de atores remotos.}, label={lst:proto-remote-actor}]
+message RemoteActorRefProtocol {
+  required string classOrServiceName = 1;
+  required string actorClassname = 2;
+  required AddressProtocol homeAddress = 3;
+  optional uint64 timeout = 4;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb, caption={Protocolo para mensagens.}, label={lst:proto-message}]
+message MessageProtocol {
+  required SerializationSchemeType serializationScheme = 1;
+  required bytes message = 2;
+  optional bytes messageManifest = 3;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb, caption={Enumeração com tipos de seriação suportados.}, label={lst:proto-enum-serial}]
+enum SerializationSchemeType {
+  JAVA = 1;
+  SBINARY = 2;
+  SCALA_JSON = 3;
+  JAVA_JSON = 4;
+  PROTOBUF = 5;
+}
+\end{lstlisting}  
+
+
+\subsection{Seriação de mensagens e de referências remotas}
+\index{Akka!atores remotos!seriação}
+\label{sec:atores_remotos_akka_seriacao}
+
+Os diferentes tipos de seriação suportados pelo projeto Akka são utilizados na seriação
+da mensagem (listagem \ref{lst:proto-message}) e opcionalmente na seriação da referência
+remota (listagem \ref{lst:proto-remote-actor}). O módulo \lstinline$Serializable$ define 
+um conjunto de \english{traits} que podem ser utilizadas para trocar a seriação Java 
+padrão por algum dos outros formatos suportados.
+
+O módulo \lstinline$Serializer$ define um objeto chamado de \lstinline$MessageSerializer$
+que é o responsável para seriação e desseriação das mensagens. A seriação das mensagens
+acontece com base no tipo da mensagem. Por exemplo, se a instância utilizada como
+argumento para os métodos de envio de mensagens implementar a \english{trait}
+\lstinline$ScalaJSON$, o conteúdo binário da mensagem estará no formato JSON.
+
+A seriação de \lstinline$RemoteActorRef$s é suportada por padrão e é utilizada
+no envio implícito do ator remetente (quando existe um ator remetente) junto
+à mensagem. Contudo, a seriação do estado ou mesmo da definição do ator 
+(chamada de \english{deep serialization}) deve, quando necessária, ser implementada pelo
+usuário da biblioteca. A seriação completa do ator é útil, por exemplo, 
+quando desejamos realocar o ator em um nó diferente do atual. 

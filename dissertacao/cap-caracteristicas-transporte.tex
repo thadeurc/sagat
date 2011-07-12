@@ -215,15 +215,27 @@ class ClientAMQPBridge(name: String,
 Definimos também um módulo auxiliar chamado \lstinline$AMQP$. Esse módulo possui algumas 
 classes com configurações pré-definidas para os objetos a serem criados no \english{broker}. 
 A enumeração \lstinline$StorageAndConsumptionPolicy$ define um 
-conjunto de valores que definem políticas de armazenamento e de consumo. A enumeração é composta pela 
-combinação de outras duas enumerações: \lstinline$QueueConfig$ e \lstinline$ExchangeConfig$. 
-Essas duas enumerações definem as configurações específicas e detalhadas para 
-filas e \english{exchanges}. A combinação dos seus valores dão semântica às 
-políticas de configuração. Por exemplo, a configuração \lstinline$EXCLUSIVE_PERSISTENT$ 
-presente em \lstinline$StorageAndConsumptionPolicy$ é uma combinação de 
-\lstinline$ExchangeConfig.exchangeDurable$ e \lstinline$QueueConfig.exclusiveQueueDurable$, 
-e contém informações suficientes para a criação de uma \english{exchange} durável e uma fila 
-também durável, com um único consumidor.
+conjunto de valores que definem políticas de armazenamento e de consumo. 
+A enumeração é composta pela combinação de outras duas enumerações: \lstinline$QueueConfig$ 
+e \lstinline$ExchangeConfig$. Essas duas enumerações definem as configurações específicas 
+e detalhadas para filas e \english{exchanges}. A combinação dos seus valores dão semântica às 
+políticas de configuração. Os três valores da enumeração \lstinline$StorageAndConsumptionPolicy$ 
+são:
+
+\begin{enumerate}
+	\item \lstinline$DURABLE$: Define uma configuração onde os objetos criados são duráveis,
+	ou seja, continuam a existir caso o \english{message broker} seja reiniciado;
+	
+	\item \lstinline$NOT_DURABLE$: Define uma configuração onde os objetos criados não são duráveis,
+	ou seja, deixam de existir caso o \english{message broker} ser reiniciado;
+	
+	\item \lstinline$EXCLUSIVE_AUTODELETE$: Define uma configuração onde os objetos estão
+	atrelados ao ciclo de vida da aplicação que os criou. Os objetos são removidos
+	pelo \english{message broker} quando a conexão por onde os objetos foram criados
+	é fechada. Ademais, as filas criadas por essa configuração possuem acesso exclusivo
+	a um único consumidor. O consumidor deve estar atrelado ao canal por onde a criação da 
+	fila ocorreu.
+\end{enumerate}
 
 \subsection{Gerenciamento de conexões e canais}
 \index{Estrutura!message broker amqp!gerenciamento de conexões}
@@ -364,8 +376,8 @@ duas vezes.
 Uma vez que o ator de conexão foi criado, são criados os atores
 responsáveis pelo canal de leitura e pelo canal de escrita. 
 
-Os passos para a criação
-do ator responsável pelo canal de leitura são mostrado na figura \ref{fig:new-channel-actor}.
+Os passos para a criação do ator responsável pelo canal de leitura são mostrado na 
+figura \ref{fig:new-channel-actor}.
 Os cinco passos da figura indicam a criação da instância e do ator, a ligação com o ator
 supervisor, que neste caso é o ator de conexão recém criado, e o envio da mensagem
 para incialização do ator, o que faz com que o ator solicite um novo canal para o ator supervisor.
@@ -396,6 +408,14 @@ canais. O canal de leitura fica responsável por definir a fila e associar o cons
 padrão, algo que se torna mandatório por conta de podermos utilizar o consumidor 
 como único e exclusivo da fila.
 
+O Akka mantém um registro de atores, por onde é possível procurar por atores ou até mesmo
+interromper a execução de todos os atores do registro. Para evitar efeitos colaterais entre
+interações do registro de atores do Akka com a nossa implementação, optamos por remover
+a hierarquia que definimos do registro do Akka. Isso acontece após a incialização de cada
+ator via método \lstinline$Actor.registry.unregister(actor)$. Nossa hierarquia de
+atores, por sua vez, pode ter sua execução interrompida via método 
+\lstinline$AMQPConnectionFactory.shutdownAll$.
+
 \vspace{1ex}
 \begin{figure}[!h]
 	\centering
@@ -420,7 +440,12 @@ Esses mesmos parâmetros são utilizados para compôr a chave de associação que lig
   	\label{fig:client-amqp-bridge-setup}
 \end{figure}
 
-Vale destacar que, segundo a específicação do padrão AMQP \cite{amqp}, as implementações 
+Vale lembrar que a criação de \english{exchanges} e filas pela biblioteca Java do RabbitMQ
+verifica a existência do objeto antes de sua criação. Caso já exista um objeto de mesmo
+nome e com as mesmas características, o objeto não é recriado e a execução prossegue
+normalmente.
+
+Segundo a específicação do padrão AMQP \cite{amqp}, as implementações 
 do \english{message broker} devem suportar ao menos $256$ filas por \english{virtual host}. 
 Contudo, a recomendação é que não hajam imposições de limites que não pela disponibilidade 
 de recursos. A especificação também menciona que o número mínimo de \english{exchanges} por
@@ -450,7 +475,6 @@ da ponte é utilizado como sufixo.
   	\label{fig:bridges-broker-all-together}
 \end{figure}
 
-%%% comentar de objetos existentes - o q acontece?!
 
 \subsection{Envio e recebimento de mensagens via pontes AMQP}
 \index{Estrutura!message broker amqp!envios e recebimentos via pontes}

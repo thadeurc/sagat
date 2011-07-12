@@ -279,6 +279,8 @@
 		de sistemas distribuídos e concorrentes \cite{erlang:97}.
 		
 		\item Possuir ferramentas para administração e monitoramento.
+		
+		%% falar de cloud?!
 	\end{itemize}
 	
 	Apresentamos a seguir uma visão geral de alguns dos principais componentes da biblioteca
@@ -309,6 +311,15 @@
 	\lstinline$com.rabbitmq.client.Consumer$. Os consumidores são registrados nos canais
 	e podem receber as mensagens assincronamente através do método 
 	\lstinline$handleDelivery$.
+	
+	Um detalhe importante sobre a biblioteca para clientes Java do RabbitMQ, é a verificação
+	da existênca de um objeto antes da criação efetiva do objeto. Por exemplo, criamos 
+	uma fila durável $F_1$. Caso tentássemos criar uma nova fila durável $F_1$, a fila não seria
+	recriada e a execução seguiria normalmente. Eventuais mensagens em $F_1$ não sofreriam 
+	alterações. Contudo, caso estivéssemos tentando recriar $F_1$ como não durável, uma exceção
+	seria lançada e o canal utilizado para executar o comando de criação seria fechado. A regra
+	também vale para \english{exchanges}. O procedimento correto é remover, seja via código ou
+	via alguma aplicação administrativa do RabbitMQ.
 			
 	A figura \ref{fig:rabbitmq-colaboracao} mostra como uma fábrica de conexões, 
 	uma conexão, um canal e um consumidor se relacionam.
