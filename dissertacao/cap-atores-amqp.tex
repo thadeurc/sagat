@@ -293,10 +293,32 @@ message RemoteMessageProtocol {
 
 \section{Fluxo das mensagens}
 
-O fluxo é mostrado na figura \ref{fig:remote-actor-message-flow-amqp}.
+Parte do fluxo de um envio de uma mensagem a um ator remoto com a nova camada de transporte
+continua como descrito na sub-seção \ref{sec:atores_remotos_akka_fluxo} e é mostrado na figura
+\ref{fig:remote-actor-message-flow-amqp}.
+
+O processo de envio começa com o \english{proxy} local 
+embrulhando a mensagem e adicionando a ela informações de cabeçalho necessárias para 
+o envio e posterior processamento. A principal diferença está em adicionar o identificador
+do cliente na mensagem (campo na linha $11$ da listagem \ref{lst:proto-remote-message-amqp}).
+
+O seriador continua sendo o responsável por converter a informação 
+recebida em um vetor de \english{bytes} para que o transporte possa ocorrer. Uma vez que a 
+informação esteja no formato a ser transportado, o \english{proxy} usa uma 
+implementação de \lstinline$RemoteSupport$ (que na figura \ref{fig:remote-actor-message-flow-amqp} é 
+uma instância de \lstinline$AMQPRemoteSupport$) para enviar a mensagem ao \lstinline$RemoteSupport$ 
+que está no lado do servidor.
+
+Pelo fato de utilizarmos as pontes AMQP definidas no capítulo \ref{cap:estrutura-troca-mensagens-amqp},
+o envio se resume no envio das mensagens para a \english{exchange} associada a ponte. O
+\english{message broker} faz o roteamento da mensagem para a fila que foi criada pela
+ponte servidora. Apesar de o \english{broker} tentar entregar a mensagem para o consumidor
+da fila o quanto antes, a mensagem pode ficar armazenada caso o consumidor não esteja pronto
+para fazer o recebimento da mensagem. Vale lembrar que após o recebimento de um mensagem
+remota, ocorre um envio exatamente igual a um envio local. O envio local de uma mensagem
+leva tempo $O(1)$, que é o tempo gasto para colocar uma mensagem na fila de um ator.
 
 \begin{figure}[!h]
-% 		\centering
 		\includegraphics[scale=.80]{remote-actor-message-flow-amqp} 
  		\caption{Fluxo de um envio assíncrono de mensagem entre atores com AMQP.}
   		\label{fig:remote-actor-message-flow-amqp}
