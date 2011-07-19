@@ -591,5 +591,77 @@
          x="298.71429"
          id="tspan11811"
          sodipodi:role="line">Ator A'</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       x="59.497349"
+       y="40.505039"
+       id="text4249"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4251"
+         x="59.497349"
+         y="40.505039">1. retira a</tspan><tspan
+         sodipodi:role="line"
+         x="59.497349"
+         y="50.505039"
+         id="tspan4253">mensagem</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4255"
+       y="74.505035"
+       x="23.497349"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         id="tspan4259"
+         y="74.505035"
+         x="24.770786"
+         sodipodi:role="line">2. cria </tspan><tspan
+         y="84.505035"
+         x="24.770786"
+         sodipodi:role="line"
+         id="tspan4263">novo </tspan><tspan
+         y="94.505035"
+         x="23.497349"
+         sodipodi:role="line"
+         id="tspan4265">ator A'</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       x="87.497345"
+       y="142.50504"
+       id="text4267"
+       sodipodi:linespacing="125%"><tspan
+         id="tspan4273"
+         sodipodi:role="line"
+         x="87.497345"
+         y="142.50504">3. envia</tspan><tspan
+         sodipodi:role="line"
+         x="88.770782"
+         y="152.50504"
+         id="tspan4280">m1' para </tspan><tspan
+         sodipodi:role="line"
+         x="87.497345"
+         y="162.50504"
+         id="tspan4282">ator A'</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4288"
+       y="148.50504"
+       x="153.49734"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         y="148.50504"
+         x="153.49734"
+         sodipodi:role="line"
+         id="tspan4290">4. define</tspan><tspan
+         id="tspan4292"
+         y="158.50504"
+         x="154.77078"
+         sodipodi:role="line">comportamento </tspan><tspan
+         id="tspan4294"
+         y="168.50504"
+         x="153.49734"
+         sodipodi:role="line">substituto</tspan></text>
   </g>
 </svg>

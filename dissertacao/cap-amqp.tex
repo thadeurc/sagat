@@ -25,21 +25,22 @@
 	  	\label{fig:protocol_overview}
 	\end{figure}
 	
-	Nas seções seguintes descrevemos as camadas do padrão AMQP.
-	A camada de modelo, que é a camada que define o conjunto de objetos que 
-	utilizamos em nosso trabalho, a camada de sessão que age como intermediária
-	entre as camadas de modelo e transporte, e comentamos brevemente sobre a 
-	camada de transporte. Os detalhes dessa camada não se enquadram no escopo 
-	deste trabalho. Apresentamos também algumas das implementações 
-	disponíveis do padrão e qual implementação escolhemos para desenvolver
-	este trabalho.
+	Na seção \ref{sec:amqp-modelo} descrevemos a camada de modelo, que é a camada onde 
+	é definido o conjunto de objetos que utilizamos em nosso trabalho.	
+	Na seção \ref{sec:amqp-sessao} descrevemos camada de sessão que 
+	age como intermediária entre as camadas de modelo e transporte. 
+	Comentamos brevemente na seção \ref{sec:amqp-transporte} sobre a camada de 
+	transporte. Os detalhes dessa camada não se enquadram no escopo 
+	deste trabalho. Por fim, apresentamos na seção \ref{sec:amqp-implementacoes} 
+	algumas das implementações disponíveis do padrão e qual implementação escolhemos 
+	para o desenvolvimento deste trabalho.
 
 \section{A camada de modelo}		
 	\label{sec:amqp-modelo}
 	\index{AMQP!padrão!modelo}
-	A camada de modelo é a camada responsável pela definição do conjunto de comandos
-	e dos objetos que as aplicações podem utilizar, como por exemplo a criação de filas. 
-	A especificação dos requisítos para essa camada possui, entre outros itens: 
+	A camada de modelo é a camada onde está definido o conjunto de comandos
+	e dos objetos que as aplicações podem utilizar. 
+	A especificação dos requisitos dessa camada inclui, entre outros itens: 
 	garantir a interoperabilidade das implementações, prover controle explícito
 	sobre a qualidade do serviço, proporcionar um mapeamento fácil entre os 
 	comandos e as bibliotecas de nível de aplicação e ter clareza, de modo 
@@ -169,8 +170,8 @@
 
 	A camada de sessão age como uma intermediária entre as camadas de modelo
 	e transporte, proporcionando confiabilidade para a transmissão de comandos
-	à aplicação servidora. É parte das suas responsabilidades dar confiabilidade
-	às interações entre as aplicações cliente e a aplicação servidora.
+	ao \english{broker}. É parte das suas responsabilidades dar confiabilidade
+	às interações entre as aplicações cliente e o \english{broker}.
 	
 	Sessões são interações nomeadas entre um cliente e um servidor AMQP
 	(também chamados de pares (\english{peers})). Todos os comandos,
@@ -188,7 +189,7 @@
 		e o retorno de resultados assíncronos. O identificador do comando é disponibilizado
 		para a camada de modelo e, quando um resultado é retornado para um comando, o
 		identificador desse comando é utilizado para estabelecer a correlação entre o
-		comando e o resultado.
+		comando e o resultado;
 		
 		\item Confirmação que comandos serão executados: É utilizado para que o par 
 		solicitante possa, seguramente descartar o estado associado a um comando
@@ -197,16 +198,16 @@
 		na sessão corrente. O estado da sessão é importante para que o sistema possa se
 		recuperar no caso de falhas temporárias em um dos pares. As confirmações podem
 		ser entregues em lotes ou mesmo serem deferidas indefinidamente, no caso do par
-		solicitante não requerer a confirmação de que o comando será executado.
+		solicitante não requerer a confirmação de que o comando será executado;
 		
 		\item Notificação de comandos completados: Diferente do conceito de confirmação,
-		esse serviço informa o par que solicitou a execução de um comando que esse foi
+		este serviço notifica o par que solicitou a execução de um comando que o comando foi
 		executado por completo. As notificações de comandos completados tem como motivação
-		a sincronização e a garantia de ordem de execução entre diferentes sessões. Quando
+		a sincronização e a garantia da ordem de execução entre diferentes sessões. Quando
 		o par que solicitou a execução do comando não exige confirmação imediata, as 
-		confirmações podem ser acumuladas e enviadas em lotes, reduzindo o tráfego de rede.
+		confirmações podem ser acumuladas e enviadas em lotes, reduzindo o tráfego de rede;
 		
-		\item Reenvio e recuperação em caso de falhas de rede: Para que o sistema possa
+		\item Reenvio e recuperação no caso de falhas de rede: Para que o sistema possa
 		se recuperar no caso de falhas de rede, a sessão deve ser capaz de reenviar comandos
 		cujos recebimentos pelo outro par são duvidosos. A camada de sessão provê as
 		ferramentas necessárias para identificar o conjunto com os comandos rotulados
@@ -241,7 +242,7 @@
 	O projeto Apache Qpid é uma implementação de código
 	aberto com uma distribuição escrita em Java e uma outra escrita em C++. 
 	A implementação está disponível sob a licença Apache $2.0$ \cite{apache-lic} e
-	possui bibliotecas para aplicações cliente em diversas linguagens, como por exemplo, 
+	possui bibliotecas para aplicações cliente em diversas linguagens, como 
 	Java, C++, Ruby, Python e C\#.Net.  A implementação da biblioteca cliente para Java é 
 	compatível com o a versão $1.1$ do padrão Java \english{Message Service} \cite{jms}.
 	
@@ -263,20 +264,20 @@
 	nossa decisão alguns fatores, a destacar:
 	
 	\begin{itemize}
-		\item Grande quantidade de atividade na comunidade de usuários e desenvolvedores.
+		\item Grande quantidade de atividade na comunidade de usuários e desenvolvedores;
 		
 		\item Facilidade para se obter informações, seja via tutoriais ou em listas 
-		de discussões.
+		de discussões;
 		
-		\item Possuir código aberto.
+		\item Possuir código aberto;
 		
-		\item Biblioteca para clientes Java independente de plataforma.
+		\item Biblioteca para clientes Java independente de plataforma;
 		
 		\item Se tratar não só de um projeto, mas sim de um produto\footnote{
-			A empresa responsável pelo suporte é a Spring Source, uma divisão da VMware}.			
+			A empresa responsável pelo suporte é a Spring Source, uma divisão da VMware};
 		
 		\item Ter sido escrito em Erlang, uma linguagem desenvolvida para o desenvolvimento
-		de sistemas distribuídos e concorrentes \cite{erlang:97}.
+		de sistemas distribuídos e concorrentes \cite{erlang:97};
 		
 		\item Possuir ferramentas para administração e monitoramento.
 		
@@ -288,194 +289,88 @@
 	uma aplicação produtor/consumidor de exemplo escrita na linguagem Scala.
 	
 	\subsection{RabbitMQ - Biblioteca para clientes Java}
-		\label{subsec:amqp-rabbit-api}
-		\index{AMQP!exemplo}
+	\label{subsec:amqp-rabbit-api}
+	\index{AMQP!exemplo}
 	
-	A biblioteca \cite{rabbit-api} para clientes Java disponibilizada pelo projeto 
-	RabbitMQ define diversas classes para que seja possível a interação 
+	A biblioteca para clientes Java disponibilizada pelo projeto 
+	RabbitMQ \cite{rabbit-api} define diversas classes para que seja possível a interação 
 	com o \english{broker}. A conexão acontece com uma instância de 
-	\lstinline$com.rabbitmq.client.Connection$, que pode ser obtida pelo objeto 
-	\lstinline$com.rabbitmq.client.ConnectionFactory$, através do método \lstinline$newConnection$.
-	Na implementação, as conexões têm como papel principal estabelecer a comunicação da
+	\lstinline$com.rabbitmq.client.Connection$, que pode ser obtida pela classe
+	\lstinline$com.rabbitmq.client.ConnectionFactory$, via método \lstinline$newConnection$.
+	É na classe \lstinline$ConnectionFactory$ que informamos os valores dos parâmetros necessários
+	para conexão com o \english{broker} (listagem \ref{lst:conn-factory}).
+	
+\begin{lstlisting}[frame=tb, caption={Configuração e uso de uma ConnectionFactory.}, label={lst:conn-factory}]
+val factory = new ConnectionFactory()
+factory.setHost(...)
+factory.setPort(...)
+factory.setUsername(...)
+factory.setPassword(...)
+factory.setVirtualHost(...)
+val connection = factory.newConnection
+\end{lstlisting}
+	
+	As conexões têm como papel principal estabelecer a comunicação da
 	aplicação cliente com o \english{broker}. Conexões podem ser vistas como sendo
 	a implementação de uma parte considerável da camada de transporte do padrão AMQP.
-	
 	Como descrito na seção \ref{sec:amqp-transporte}, a camada de transporte deve ser
 	capaz de prover a multiplexação de canais. A classe \lstinline$Connection$ provê,
 	dentre outros métodos, o método \lstinline$createChannel$. A invocação desse método resulta em
-	uma instância de \lstinline$com.rabbitmq.client.Channel$ e através desta instância,
-	podemos executar os comandos definidos na camada de sessão, como por exemplo a 
-	criação de filas (\lstinline$queueDeclare$) ou o envio (\lstinline$basicPublish$) e 
-	recebimento de mensagens (\lstinline$basicConsume$). O recebimento das mensagens 
-	é feito com o uso de consumidores que são instâncias de 
+	uma instância de \lstinline$com.rabbitmq.client.Channel$ por onde
+	podemos executar os comandos definidos na camada de sessão (listagem \ref{lst:channels}). 
+	Por exemplo a criação de filas (\lstinline$queueDeclare$) ou o envio (\lstinline$basicPublish$) e 
+	recebimento de mensagens (\lstinline$basicConsume$).
+	
+\begin{lstlisting}[frame=tb, caption={Criação e uso de canais.}, label={lst:channels}]
+val channel = connection.createChannel
+channel.exchangeDeclare(...)
+channel.queueDeclare(...)
+channel.queueBind(...)
+channel.basicPublish(...)
+\end{lstlisting}
+
+	O recebimento das mensagens é feito com o uso de consumidores que são instâncias de 
 	\lstinline$com.rabbitmq.client.Consumer$. Os consumidores são registrados nos canais
 	e podem receber as mensagens assincronamente através do método 
-	\lstinline$handleDelivery$.
-	
+	\lstinline$handleDelivery$ (listagem \ref{lst:sample-consumer}). 	
+
+	A figura \ref{fig:rabbitmq-colaboracao} mostra como 
+	uma fábrica de conexões, uma conexão, um canal e um consumidor se relacionam. 
+	Um exemplo completo de uma aplicação produtora e de uma aplicação consumidora com a biblioteca
+	Java do RabbitMQ é apresentado no apêndice \ref{ape:sample-amqp}.
+		
 	Um detalhe importante sobre a biblioteca para clientes Java do RabbitMQ, é a verificação
-	da existênca de um objeto antes da criação efetiva do objeto. Por exemplo, criamos 
-	uma fila durável $F_1$. Caso tentássemos criar uma nova fila durável $F_1$, a fila não seria
+	da existênca de um objeto antes da criação efetiva do objeto. Por exemplo, se tivéssemos
+	criado uma fila durável $F_1$, e tentássemos criar uma nova fila durável $F_1$, a fila não seria
 	recriada e a execução seguiria normalmente. Eventuais mensagens em $F_1$ não sofreriam 
 	alterações. Contudo, caso estivéssemos tentando recriar $F_1$ como não durável, uma exceção
 	seria lançada e o canal utilizado para executar o comando de criação seria fechado. A regra
 	também vale para \english{exchanges}. O procedimento correto é remover, seja via código ou
-	via alguma aplicação administrativa do RabbitMQ.
-			
-	A figura \ref{fig:rabbitmq-colaboracao} mostra como uma fábrica de conexões, 
-	uma conexão, um canal e um consumidor se relacionam.
-	
+	via alguma aplicação administrativa do RabbitMQ, para depois fazer a criação.
+
+\begin{lstlisting}[frame=tb, caption={Registro de um consumidor.}, label={lst:sample-consumer}]		
+class MyConsumer(channel: Channel) extends Consumer{
+...
+	def registerConsumer(queue: String, autoAck: Boolean): Unit = {
+	    channel.basicConsume(queue, autoAck, this)
+	}
+	@Override
+	def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties,
+                   message: Array[Byte]): Unit = {
+		// processamento da mensagem                   	
+	}	
+...
+}
+\end{lstlisting}
+				
 	\vspace{1ex}
 	\begin{figure}[hbtp]
 	  \centering
 	  \includegraphics[scale=.6]{rabbitmq-colaboracao}
 	  \caption{RabbitMQ Java API -- Relacionamento entre classes de transporte e sessão.}
 	  \label{fig:rabbitmq-colaboracao}
-	\end{figure} 
-	
-	A listagem \ref{lst:common-amqp} mostra a configuração da fábrica de conexões e alguns
-	valores, como nome dos objetos e suas configurações, que são compartilhados entre as 
-	implementações de produtor e consumidor de mensagens.
+	\end{figure} 	
 		
-	\begin{lstlisting}[frame=tb, caption={Trait CommonAMQP}, label={lst:common-amqp}]
-trait CommonAMQP {
-
-  val EXCHANGE_NAME  = "sample.exchange"
-  val QUEUE_NAME     = "sample.queue"
-  val BINDING_KEY    = "key.to.sample.queue"
-  val EXCHANGE_TYPE  = "direct"
-  val AUTO_ACK       = true
-  val NOT_EXCLUSIVE  = false
-  val NOT_DURABLE    = false
-  val NOT_AUTODELETE = false
-  val QUEUE_ARGS     = null
-  val BASIC_PROPS    = null
-
-  private lazy val factory = {
-    val _factory = new ConnectionFactory()
-    _factory.setHost("localhost")
-    _factory.setPort(5672)
-    _factory.setUsername("anUser")
-    _factory.setPassword("t0psecr3t")
-    _factory.setVirtualHost("/amqp-sample")
-    _factory
-  }
-
-  def connect: Connection = {
-    factory.newConnection
-  }
-}		
-	\end{lstlisting}
-	
-	Para o nosso exemplo optamos por criar a classe \lstinline$SampleProducer$ para 
-	encapsular a criação dos objetos no \english{broker} e o envio das mensagens. 
-	A classe é apresentada na listagem \ref{lst:producer}. O método \lstinline$startProducer$
-	se conecta ao servidor AMQP na linha $6$, e abre um canal na linha $7$ para interagir 
-	com a camada de sessão. Nas linhas seguintes, o método declara uma \english{exhange}\footnote{
-	Caso o objeto já exista, um novo não será criado. Caso o objeto existente possua 
-	uma configuração diferente, uma exceção é lançada.} direta e transiente, uma fila pública, 
-	transiente e temporária e faz o \english{binding} de ambos. O método \lstinline$publish$ por 
-	sua vez, verifica logo na sua primeira linha se o estado da instância é válido, e em 
-	seguida itera na sequência de mensagens fazendo o envio. Para esse exemplo em particular, 
-	omitimos as propriedades adicionais (\lstinline$BASIC_PROPS$) que podem ser utilizadas no 
-	envio. Exemplos dessas propriedades são definir a prioridade da mensagem, especificar um 
-	remetente diferente para resposta (\english{replyTo}) e definir uma data para expiração 
-	da mensagem.
-		
-	\begin{lstlisting}[frame=tb, caption={Classe SampleProducer}, label={lst:producer}]
-class SampleProducer extends CommonAMQP {
-  private var connection: Connection = _
-  private var channel: Channel = _
-
-  def startProducer: SampleProducer = {
-    connection = this.connect
-    channel = connection.createChannel
-    channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE)
-    channel.queueDeclare(QUEUE_NAME, NOT_DURABLE, NOT_EXCLUSIVE, NOT_AUTODELETE, QUEUE_ARGS)
-    channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, BINDING_KEY)
-    this
-  }
-
-  def publish(messages: Seq[String]) = {
-    require(channel != null)
-    messages.foreach{
-      message => channel.basicPublish(EXCHANGE_NAME, BINDING_KEY, BASIC_PROPS, message.getBytes)
-    }
-  }
-
-  def stopProducer = {    
-    connection.close
-  }
-}	 
-	\end{lstlisting}
-	
-	A listagem \ref{lst:producer-app} mostra a aplicação que faz uso da classe 
-	\lstinline$SampleProducer$. Nessa listagem fazemos a instanciação e a inicialização
-	de um \lstinline$producer$, geramos uma sequência com $100$ mensagens e as
-	repassamos para o envio. Por fim, encerramos a conexão e implicitamente canais que 
-	tenham sido abertos junto a ela.
-	
-	\begin{lstlisting}[frame=tb, caption={Aplicação SampleProducerApplication}, label={lst:producer-app}]
-object SampleProducerApplication  extends Application {
-  val producer = new SampleProducer
-  println("Inicializando SampleProducer")
-  producer.startProducer
-  val messages = for(i <- 1 to 100) yield "A string message #%d".format(i)
-  println("Enviando mensagens")
-  producer.publish {
-    messages
-  }
-  println("Mensagens enviadas com sucesso")
-  producer.stopProducer
-}
-   	\end{lstlisting}
-
-	A abordagem tomada para exemplificar o recebimento das mensagens foi a mesma tomada para o
-	envio. Criamos a classe \lstinline$SampleConsumer$ para encapsular o recebimento, a 
-	confirmação e tratamento das mensagens, como mostrado na listagem \ref{lst:consumer}.
-	O método \lstinline$startConsumer$, assim como o método \lstinline$startProducer$ mostrado
-	na listagem \ref{lst:producer}, se conecta ao servidor AMQP e abre um canal para interagir
-	com a camada de sessão. Em seguida, ele registra a instância corrente como um consumidor
-	na fila previamente criada com confirmação implícita de recebimento. O método 
-	\lstinline$handleDelivery$ é o método invocado a cada mensagem recebida. Podemos
-	notar que o método, além de receber o corpo da mensagem, ainda recebe algumas informações sobre
-	o envio. Os demais métodos são herdados da interface \lstinline$com.rabbitmq.client.Consumer$
-	e servem como notificadores para outros eventos, como registro 
-	(\lstinline$handleConsumerOk$) ou cancelamento (\lstinline$handleCancelOk$) de um 
-	consumidor na fila. Mais detalhes sobre a interface \lstinline$com.rabbitmq.client.Consumer$
-	e de suas implementações podem ser encontradas em \cite{rabbit-api}.
-	
-	\begin{lstlisting}[frame=tb, caption={Classe SampleConsumer}, label={lst:consumer}]
-class SampleConsumer extends Consumer with CommonAMQP {
-
-  def startConsumer = {
-    val connection = this.connect
-    val channel = connection.createChannel
-    channel.basicConsume(QUEUE_NAME, AUTO_ACK, this)
-  }
-
-  def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties,
-                     message: Array[Byte]): Unit = {
-    println("Mensagem recebida: %s".format(new String(message)))
-  }
-
-  def handleShutdownSignal(consumerTag: String, ex: ShutdownSignalException): Unit = {}
-  def handleRecoverOk: Unit = {}
-  def handleConsumeOk(consumerTag: String): Unit = {}
-  def handleCancelOk(consumerTag: String): Unit = {}
-}
-	\end{lstlisting}
-	
-	A listagem \ref{lst:consumer-app} mostra a aplicação que faz uso da classe 
-	\lstinline$SampleConsumer$. 
-	
-	\begin{lstlisting}[frame=tb, caption={Aplicação SampleConsumerApplication}, label={lst:consumer-app}]
-object SampleConsumerApplication extends Application {
-  val consumer = new SampleConsumer
-  println("Inicializando SampleConsumer e recebendo mensagens")
-  consumer.startConsumer
-}
-	\end{lstlisting}
-	
 	Para finalizar este capítulo, é importante destacar que a implementação de canais 
 	\cite{rabbit-channels} não é uma segura para acesso concorrente (\english{thread safe}), 
 	de modo que é de responsabilidade da aplicação fazer a devida proteção para 
@@ -485,6 +380,7 @@ object SampleConsumerApplication extends Application {
 	aos seus respectivos destinatários. Em situações como essas, o corpo da mensagem e algumas
 	informações do envio, como o nome da \english{exchange}, a chave de roteamento e 
 	o código de rejeição, são repassados para o tratador de erros que foi registrado no canal.
-	A aplicação produtora passa a ter autonomia de fazer fazer o tratamento apropriado.
+	A aplicação produtora passa a ter autonomia para fazer o tratamento apropriado.
 	
+
 	

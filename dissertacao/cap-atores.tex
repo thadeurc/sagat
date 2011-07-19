@@ -4,10 +4,10 @@
 \label{cap:atores}
 
 Apresentamos neste capítulo o modelo de atores. Na seção \ref{sec:atores-modelo} 
-apresentamos a semântica do modelo de atores, na seção \ref{sec:atores-historico} 
-apresentamos um breve histórico com alguns estudos relacionados ao modelo. Por fim, 
-apresentamos na seção \ref{sec:atores-implementacoes} algumas linguagens baseadas no modelo 
-de atores e algumas bibliotecas desenvolvidas em linguagens mais gerais.
+apresentamos a semântica do modelo de atores. Na seção \ref{sec:atores-historico} 
+apresentamos um breve histórico com alguns estudos relacionados ao modelo. Por fim
+na seção \ref{sec:atores-implementacoes}, apresentamos algumas das implementações
+do modelo.
 
 \section{Modelo}
 \label{sec:atores-modelo}
@@ -48,14 +48,14 @@ encapsulados em tarefas. Uma tarefa é uma $3$-tupla que consiste em um identific
 de um sistema de atores é definida pelos atores que o sistema contém e pelo conjunto
 de tarefas não processadas. É importante ressaltar que o endereço da fila de mensagens 
 na tarefa deve ser válido, ou seja, ele deve ter sido previamente
-comunicado. Há três maneiras de um ator ao, receber uma mensagem \emph{m}, passar
+comunicado. Há três maneiras de um ator ao receber uma mensagem \emph{m}, passar
 a conhecer um destinatário no qual o ator pode enviar mensagens:
 
 \begin{enumerate}
 	\item O ator já conhecia o endereço da fila do destinatário antes
 		do recebimento da mensagem \emph{m};
 
-	\item O endereço fila estava presente na mensagem \emph{m};
+	\item O endereço da fila estava presente na mensagem \emph{m};
 	
 	\item Um novo ator foi criado como resultado do processamento da mensagem \emph{m}.
 \end{enumerate}
@@ -67,13 +67,13 @@ No contexto de atores, garantia de entrega significa que
 uma mensagem que foi depositada na fila de mensagens de um ator, não deve ficar armazenada
 indefinidamente sem ser eventualmente repassada para o ator fazer o seu processamento. 
 A ordem de chegada de mensagens obedece uma ordem linear, e fica a cargo da implementação
-do modelo arbitrar em casos de conflito onde duas mensagens sejam recebidas no mesmo momento.
+do modelo arbitrar no caso de conflitos, caso duas mensagens sejam recebidas no mesmo momento.
 O modelo assume uma entrega eventual, pois podem ocorrer casos onde o ator esteja em um estado 
 não propício a receber novas mensagens, como por exemplo, estar executando um laço infinito ou
 alguma operação ilegal. A garantia de entrega de mensagens não assume que 
 as mensagens entregues tenham um processamento semanticamente significativo. O processamento de 
 uma mensagem depende do comportamento definido no ator. 
-Alguns atores poderiam, por exemplo, optar por descartar todas as mensagens recebidas. 
+Por exemplo, um tipo de atores poderia optar por descartar todas as mensagens recebidas. 
 
 Gul Agha, em sua definição da semântica do modelo de atores \cite{Agha86}, 
 afirma que ``em qualquer rede real de agentes computacionais, não é possível prever quando uma 
@@ -89,7 +89,7 @@ Ao processar uma mensagem, o ator deve definir o comportamento substituto que se
 processar a próxima mensagem que lhe for entregue. Mostramos na figura \ref{fig:atores-estado}
 a máquina de estados de um ator processando uma mensagem recebida e definindo seu novo 
 comportamento. Nessa figura, o ator $A$ com comportamento inicial $B_1$ retira a mensagem 
-$m_1$ de sua fila e faz o processamento da mensagem. Para esse exemplo, o processamento da 
+$m_1$ de sua fila e a processa. Para esse exemplo, o processamento da 
 mensagem $m_1$ resultou na criação de um novo ator $A'$, com comportamento inicial $B_{1'}$, 
 e no envio da mensagem $m_{1'}$ do ator $A$ para o ator $A'$. O ator $A$ passa a ter o 
 comportamento $B_2$, que será usado no processamento da mensagem $m_2$. Vale ressaltar que o 
@@ -108,23 +108,24 @@ No modelo de atores, a real localização de um ator não afeta a interação com out
 Os atores que um ator conhece podem estar distribuídos em diferentes núcleos de um processador,
 ou mesmo em diferentes nós de uma rede de computadores. A transparência da localidade
 abstrai a infra-estrutura e permite que programas sejam desenvolvidos de modo distribuído,
-ou seja, sem que a real localização de seus atores seja conhecida. Duas consequências diretas da  
+sem que a real localização de seus atores seja conhecida. Duas consequências diretas da  
 transparência da localidade são o encapsulamento do estado do ator e
 a capacidade de se mover atores entre os diferentes nós de uma rede de computadores. 
 
-Apesar de o modelo ser bem explícito e claro em relação a interação ser via troca de mensagens, e
+Apesar de o modelo ser bem explícito e claro em relação a interação ser via troca de mensagens e
 dizer que o estado de um ator não deve ser compartilhado, implementações 
 poderiam permitir que o estado interno de um ator fosse acessado diretamente por outro ator. 
 Por exemplo, um ator em sua pilha de execução fazer a invocação de algum método de outro ator. 
 Mesmo que a interface de um ator não permita o compartilhamento do seu estado interno que não
-seja via troca de mensagens, as mensagens enviadas podem expor um compartilhamento indesejado
-caso não sejam imutáveis e passadas por cópia. 
+seja via troca de mensagens, mensagens enviadas poderiam expor um compartilhamento indesejado
+de estado. O uso de mensagens imutáveis e passadas via cópia é uma abordagem mais apropriada
+para evitar um compartilhamento indesejado de memória.
 
 Mobilidade é definida como a habilidade de se poder mover uma computação de um nó para outro,
 e pode ser classificada como mobilidade fraca ou mobilidade forte. Mobilidade fraca é a 
 habilidade de se transferir código entre nós, enquanto que mobilidade forte é definida como a 
 habilidade de se transferir ambos o código e o estado da execução \cite{Fuggetta:1998}. Em um
-sistema baseado em atores, mobilidade fraca permite que atores que não tenham mensagens em suas
+sistema baseado em atores, mobilidade fraca permite que atores que não possuem mensagens em suas
 filas e não estão fazendo processamento algum sejam transferidos para outros nós.
 
 Pelo fato de o modelo de atores prover transparência de localidade e encapsulamento, a mobilidade
@@ -144,13 +145,13 @@ precisem de escalabilidade \cite{Kim95}.
 O modelo de atores foi originalmente proposto por Carl Hewitt em $1971$ \cite{hewitt:71}. 
 O termo ator foi originalmente utilizado para descrever entidades ativas que analizavam 
 padrões para iniciar atividades. O conceito de atores passou então a ser explorado pela 
-comunidade científica e, em $1973$, a noção de atores se aproximou do conceito de agentes existente
+comunidade científica e em $1973$, a noção de atores se aproximou do conceito de agentes existente
 na área de inteligência artificial distribuída, por possuírem intenções, recursos,
 monitores de mensagens e um agendador \cite{Hewitt:1973}.
 
 Em $1975$, Irene Greif desenvolveu um modelo abstrato de atores orientado 
-a eventos, onde cada ator armazenava os eventos locais para que fosse possível analizar 
-a relação causal entre os eventos. Baker e Hewitt formalizaram um conjunto
+a eventos onde cada ator guardava um histórico dos seus eventos. O objetivo do estudo
+era analizar a relação causal entre os eventos. Baker e Hewitt formalizaram um conjunto
 de axiomas para computação concorrente em $1977$. Desse estudo surgiu uma propriedade 
 importante: a ordem em que eventos são gerados deve ser obedecida a fim de prever 
 violações de causalidade. No mesmo ano, Hewitt apresentou um estudo sobre como o 
@@ -168,7 +169,7 @@ por condições que permitam que processos em espera possam voltar a ser executado
 Em $1987$, Henry Lieberman implementou em Lisp a linguagem Act1 \cite{Lieberman:1987}, 
 uma linguagem de atores com guardiões, seriadores e atores chamados de ``trapaceiros'' 
 (\english{rock-bottom}). Atores trapaceiros são atores que podem burlar as regras do modelo
-de atores para, por exemplo, usar dados primitivos e funções da linguagem usada em sua
+de atores para, por exemplo, fazer uso dados primitivos e funções da linguagem usada em sua
 implementação.
 
 Gul Agha definiu em $1986$ um sistema simples de transição para atores. Em seu trabalho foi
@@ -185,10 +186,11 @@ por Carl Manning em $1987$, e na linguagem Rosette por Tomlinson e outros em $19
 
 O suporte ao modelo de atores pode estar disponível em uma linguagem de programação, seja 
 fazendo parte da estrutura da linguagem, como uma biblioteca embutida em sua distribuição ou 
-ainda como uma biblioteca separada da distribuição padrão. Apresentamos a seguir algumas
-linguagens de programação baseadas no modelo de atores, e que possuem primitivas que facilitam
-a criação de sistemas baseados em atores. Apresentamos também algumas bibliotecas que adicionam
-o suporte ao modelo de atores a linguagens mais gerais.
+ainda como uma biblioteca separada da distribuição padrão. Apresentamos na sub-seção 
+\ref{sec:atores-linguagens}  algumas linguagens de programação baseadas no modelo de atores, 
+e que possuem primitivas que facilitam a criação de sistemas baseados em atores. 
+Apresentamos na sub-seção \ref{sec:atores-bibliotecas} algumas bibliotecas que adicionam o 
+suporte ao modelo de atores a linguagens mais gerais.
 
 \subsection{Linguagens}
 \index{Atores!implementações!linguagens}
@@ -201,15 +203,15 @@ de atores. Nessas linguagens, o suporte é dado via primitivas na estrutura da li
 \subsubsection{Axum}
 \index{Atores!implementações!linguagens!Axum}
 
-Axum (anteriormente conhecida como Maestro) é uma linguagem experimental orientada a objetos
-\footnote{O projeto está em uma encubadora de projetos.} criada pela Microsoft 
+Axum (anteriormente conhecida como Maestro) é uma linguagem experimental orientada a 
+objetos\footnote{O projeto está em uma encubadora de projetos.} criada pela Microsoft 
 Corporation para o desenvolvimento de sistemas concorrentes na plataforma .Net \cite{axum-lang-overview}. 
-A criação da linguagem teve como motivação permitir que sistemas que fossem modelados como 
+A criação da linguagem teve como motivação permitir que sistemas modelados como 
 componentes que interajem entre si, pudessem ser traduzidos naturalmente para código.
 Pelo fato de ser uma linguagem da plataforma .Net, Axum pode interagir com outras linguagens 
 da plataforma, como VB.Net, C\# e F\#.
 
-Em Axum, o termo ator é substituído pelo termo agente (\english{agent}). Agentes
+Em Axum, o termo ``ator'' é substituído pelo termo ``agente'' (\english{agent}). Agentes
 são executados como \english{threads} dentro da CLR (\english{Common Language Runtime}) 
 e são definidos com o uso da palavra-chave \lstinline$agent$. A troca de
 mensagens é feita via canais. Os canais são responsáveis por definir os tipos de dados
@@ -233,11 +235,11 @@ para as linguagens C\# e Visual Basic \cite{axum}.
 \index{Atores!implementações!linguagens!SALSA}
 
 SALSA (\english{Simple Actor Language System and Architecture}) é uma linguagem que foi criada
-em meados de $2001$ no \english{Rensselaer Poytechnic Institute} para facilitar o desenvolvimento 
+em meados de $2001$ no \english{Rensselaer Polytechnic Institute} para facilitar o desenvolvimento 
 de sistemas abertos dinamicamente reconfiguráveis. SALSA é uma linguagem
 concorrente e orientada a objetos que implementa a semântica do modelo de atores. A linguagem
 possui um pré-processador que converte o código fonte escrito em SALSA para código fonte Java. Esse
-que por sua vez pode ser, com a biblioteca de atores SALSA, compilado para \english{bytecode}
+que por sua vez pode ser compilado para \english{bytecode}
 e ser executado sobre a JVM.
 
 A linguagem possui algumas primitivas para a criação, uso e organização dos atores. A primitiva
@@ -252,7 +254,7 @@ para enviar uma mensagem a um ator.
 A implementação de atores da linguagem utiliza o objeto \lstinline$salsa.language.Actor$
 como ator base que extende \lstinline$java.lang.Thread$, criando uma relação onde 
 cada ator executa em uma \english{thread}. Cada ator possui uma fila de mensagens onde
-as mensagens enviadas ficam armazenadas até que o método \lstinline$run$ as retire
+as mensagens recebidas ficam armazenadas até que o método \lstinline$run$ as retire
 para que o método correspondente seja executado via reflexão. 
 
 Além de prover a implementação da semântica do modelo de atores, a 
@@ -261,7 +263,7 @@ assíncronas entre os atores:
 
 \begin{enumerate}
 	\item Continuações com passagem de \english{token} (\english{Token-passing continuations}): 
-	envios de mensagens para atores resultam em invocações de métodos. Esses métodos podem retornar
+	Envios de mensagens para atores resultam em invocações de métodos. Esses métodos podem retornar
 	valores que precisarão ser repassados a outros atores. Os valores de retorno são definidos como
 	\english{tokens}. Essa abstração permite que uma mensagem enviada a um ator contenha uma 
 	referência para o ator que irá consumir o \english{token}, como mostrado no exemplo a seguir:
@@ -273,14 +275,13 @@ assíncronas entre os atores:
 	
 	Nesse exemplo, \lstinline$gerente$ processa a mensagem \lstinline$aprovacao1(500)$ e seu retorno,
 	quando computado, é passado como \lstinline$token$ no envio da mensagem para o ator
-	\lstinline$gerente2$. Apesar de \lstinline$diretor$ também receber como argumento
-	da ação a lhe ser enviada o \english{token}, o valor recebido será o resultado da
-	computação do \lstinline$gerente2$. A palavra \english{token} é uma palavra-chave e seu valor
-	é associado no contexto do último \english{token} passado. Ainda nesse exemplo, utilizamos
+	\lstinline$gerente2$. A palavra \english{token} é uma palavra-chave e seu valor é associado 
+	no contexto do último \english{token} passado. O ator \lstinline$diretor$ recebe como argumento
+	o resultado da computação do ator \lstinline$gerente2$. Ainda nesse exemplo, utilizamos
 	a primitiva \lstinline$@$ para indicar que desejamos utilizar a continuação com passagem
-	de \english{token}.
+	de \english{token};
 				
-	\item Continuações de junção (\english{Join continuations}): atores podem receber vetores
+	\item Continuações de junção (\english{Join continuations}): Atores podem receber vetores
 	com \english{tokens} recebidos de diversos atores. Essa abstração permite que os 
 	\english{tokens} sejam agrupados para que o ator que os está recebendo só execute mediante
 	a todos os \english{tokens} aguardados terem sido recebidos. Por exemplo:
@@ -292,9 +293,9 @@ assíncronas entre os atores:
 	
 	Nesse exemplo, os dois atores \lstinline$gerente1$ e \lstinline$gerente2$ fazem suas aprovações
 	em paralelo e, somente quando os dois tiverem dado suas aprovações, o ator \lstinline$diretor$
-	irá receber a mensagem de \lstinline$aprovacaoFinal$. 
+	irá receber a mensagem de \lstinline$aprovacaoFinal$;
 
-	\item Continuações de primeira classe (\english{First-class continuations}): essa abstração
+	\item Continuações de primeira classe (\english{First-class continuations}): Essa abstração
 	é análoga à funções de ordem superior, onde funções podem receber outras funções. No caso
 	da linguagem SALSA, a abstração permite que continuações sejam passadas como parâmetro
 	para outras continuações. O processamento da mensagem pode optar por delegar o restante do 
@@ -389,16 +390,17 @@ e analizadas para o desenvolvimento do nosso trabalho.
 
 \subsubsection{A biblioteca de atores de Scala}
 
-A distribuição de Scala inclui uma biblioteca de atores inspirada pelo suporte a atores em  
-Erlang. A biblioteca Scala Actors oferece basicamente as funcionalidades já descritas na 
-seção \ref{sec:atores-linguagens-erlang}.
+A distribuição de Scala inclui uma biblioteca de atores inspirada pelo suporte a atores de  
+Erlang. 
 
-Atores foram projetados como objetos baseados em \english{threads} Java e possuem métodos 
-como \lstinline$send$, \lstinline$!$, \lstinline$receive$, além de outros métodos como 
-\lstinline$act$ e \lstinline$react$. Cada ator possui uma caixa de correio para o recebimento e 
-armazenamento temporário das mensagens. O processamento de uma mensagem é feito por um bloco 
-\lstinline$receive$ declarado dentro do método \lstinline$act$. No método \lstinline$receive$ são 
-definidos os padrões a serem casados com as mensagens que o ator processa e as ações associadas. 
+Nesta biblioteca os atores foram projetados como objetos baseados em \english{threads} 
+Java e possuem métodos como \lstinline$send$, \lstinline$!$, \lstinline$receive$, além de 
+outros métodos como \lstinline$act$ e \lstinline$react$. Cada ator possui uma caixa de correio 
+para o recebimento e armazenamento temporário das mensagens. O processamento de uma mensagem 
+é feito por um bloco \lstinline$receive$ declarado dentro do método \lstinline$act$. 
+
+No método \lstinline$receive$ são definidos os padrões a serem casados com as mensagens 
+que o ator processa e as ações associadas. 
 A primeira mensagem que casar com qualquer dos padrões é removida da caixa de correio e a 
 ação correspondente é executada. Caso não haja casamento com nenhum dos padrões, o ator é suspenso.
 
@@ -411,8 +413,8 @@ de atores pelo número de \english{threads} que podem ser criadas. É recomendado 
 que não está em execução cede sua \english{thread} para que ela execute outro ator.
 Do ponto de vista de funcionalidade, o método \lstinline$receive$ é bloqueante e pode retornar 
 valores, enquanto que o método \lstinline$react$, além de não retornar valores, faz com que o ator
-passe a reagir aos eventos (recebimentos de mensagens). As implicações práticas do uso do 
-\lstinline$react$ em relação ao \lstinline$receive$, da perspectiva de codificação,
+passe a reagir aos eventos (recebimentos de mensagens). As implicações práticas no uso de 
+\lstinline$react$ em relação ao \lstinline$receive$ da perspectiva de codificação
 são: o uso da estrutura de controle \lstinline$loop$ ao invés de laços tradicionais, 
 para indicar que o ator deve continuar reagindo após o processamento de 
 uma mensagem (o uso dos laços tradicionais bloqueariam a \english{thread}); o ator
@@ -426,10 +428,11 @@ dentro de um tempo limite especificado; \lstinline$!!$ faz o envio assíncrono da
 mensagem e recebe um resultado futuro correspondente a uma resposta. 
         
 O suporte a atores remotos faz parte da biblioteca, porém com algumas restrições em comparação 
-com os atores de Erlang. Em Scala não é possível a criação de um ator em um nó que não seja o 
-local, ou seja, \english{remote spawns} não são possíveis. Atores são acessíveis remotamente 
+com os atores de Erlang. Nesta biblioteca, atores remotos são atores remotamente acessíveis.
+já que não é possível a criação de um ator em um nó que não seja o local, ou seja, 
+\english{remote spawns} não são possíveis. Os atores são acessíveis remotamente 
 via \english{proxies}. Para obter uma referência a um ator remoto, um cliente faz uma busca  
-em um determinado nó (uma JVM identificada por um par hospedeiro e porta), utilizando 
+em um determinado nó (uma JVM identificada por um par com endereço do hospedeiro e a porta), utilizando 
 como chave o nome sob o qual o ator foi registrado. Esta abordagem, apesar de soar restritiva, 
 evita um problema importante que é a necessidade de carga remota da classe do ator 
 (\english{remote class loading}) e torna desnecessário o uso de interfaces remotas como em 
@@ -437,8 +440,8 @@ Java RMI. O tráfego das mensagens é feito via seriação padrão Java através de \e
 
 \subsubsection{O projeto Akka}
 
-O projeto Akka é composto por um conjunto de módulos escritos em Scala
-\footnote{O projeto disponibiliza também uma versão de suas APIs voltada para aplicações Java.}, 
+O projeto Akka é composto por um conjunto de módulos escritos em 
+Scala\footnote{O projeto disponibiliza também uma versão de suas APIs voltada para aplicações Java.}, 
 que implementam uma plataforma voltada para o desenvolvimento de aplicações escaláveis 
 e tolerantes a falhas. Na versão $1.0$, suas principais características são: 
 uma nova biblioteca de atores locais e remotos, suporte a STM, hierarquias de supervisão e 
@@ -462,7 +465,7 @@ futuro ao remetente.
 
 No que diz respeito à seriação das mensagens para um ator remoto, o Akka oferece as 
 seguintes opções: JSON \cite{json}, Protobuf \cite{protobuf}, SBinary \cite{sbinary} e seriação
-Java padrão. O transporte das mensagens é feito via TCP/IP, com o auxílio do JBoss 
+Java padrão. O transporte das mensagens é feito via \english{sockets} TCP, com o auxílio do JBoss 
 Netty \cite{jboss-netty}, um arcabouço para comunicação assíncrona dirigido a eventos e baseado 
 em \english{sockets}. Esse arcabouço oferece facilidades para compressão de mensagens, 
 que são utilizados pelo Akka.
