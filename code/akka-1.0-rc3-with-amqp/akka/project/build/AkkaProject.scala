@@ -155,7 +155,7 @@ class AkkaParentProject(info: ProjectInfo) extends DefaultProject(info) with Ide
     lazy val jetty_xml     = "org.eclipse.jetty" % "jetty-xml"     % JETTY_VERSION % "compile" //Eclipse license
     lazy val jetty_servlet = "org.eclipse.jetty" % "jetty-servlet" % JETTY_VERSION % "compile" //Eclipse license
 
-    lazy val uuid       = "com.eaio" % "uuid" % "3.2" % "compile" //MIT license
+      lazy val uuid       = "com.eaio" % "uuid" % "3.2" % "compile" //MIT license
 
     lazy val guicey = "org.guiceyfruit" % "guice-all" % "2.0" % "compile" //ApacheV2
 
