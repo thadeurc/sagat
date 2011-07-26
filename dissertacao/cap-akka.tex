@@ -550,8 +550,29 @@ o intervalo máximo em que o cliente deve tentar se conectar. Além dessas opções,
 Netty fornece ainda a possibilidade de compactação das mensagens durante o envio. O Akka
 faz uso de todas as opções listadas, permitindo que os usuários da biblioteca definam
 os valores desejados. As configurações de todos os módulos do Akka são feitas no 
-arquivo \lstinline$akka.conf$. A seção para se informar as configurações do módulo de atores 
-remotos é mostrada na listagem \ref{lst:akka-conf-vanilla}.
+arquivo \lstinline$akka.conf$. 
+
+O arquivo \lstinline$akka.conf$ possui é o ponto de entrada para todas as configurações
+que são parametrizadas de todos os módulos do projeto Akka (o formato do arquivo difere
+dos arquivos para configurações de propriedades baseados em chaves e valores. O projeto
+Akka utiliza uma biblioteca chamada Configgy \cite{configgy} que define um formato
+mais idiomático para arquivos de configurações). Existe uma seção
+específica para as configurações correspondentes aos atores remotos. Na distribuição
+padrão, boa parte das propriedades para a configuração de atores remotos são relacionadas ao JBoss
+Netty, como por exemplo o tipo nível de compressão, tamanho da janela da mensagem e
+tempo limite de espera pelo cliente para se conectar. Contudo, existem algumas propriedades
+que são mais gerais, como por exemplo se a comunicação deve ser autenticada via \english{cookies}
+pré-definidos, qual o \english{cookie} de segurança a ser utilizado e ainda qual a classe que deve
+ser utilizada como implementação da camada de suporte para atores remotos.
+
+Os dados informados no arquivo \lstinline$akka.conf$, uma vez que foram lidos ficam acessíveis
+em objetos de acordo com o contexto que fazem parte. Por exemplo, as propriedades relacionadas
+aos atores remotos estão organizadas em objetos dentro do módulo \lstinline$RemoteShared$.
+Existe ainda uma classe auxíliar que é utilizada para acessar os módulos dos sub-projetos
+do Akka via reflexão chamada de \lstinline$ReflectiveAccess$. 
+A camada de implementação para o transporte de mensagens entre atores remotos é instanciada nessa
+classe. A seção para se informar as 
+configurações do módulo de atores remotos é mostrada na listagem \ref{lst:akka-conf-vanilla}.
 
 \begin{lstlisting}[frame=tb, caption={Seção remote do arquivo akka.conf.}, label={lst:akka-conf-vanilla}]
 ...

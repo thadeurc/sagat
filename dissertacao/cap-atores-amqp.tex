@@ -18,7 +18,7 @@ A implementação de atores remotos do projeto Akka define uma camada intermediári
 que desacopla a definição dos componentes para transporte das mensagens a atores
 remotos, como apresentado na seção \ref{sec:atores_remotos_akka}. 
 
-Para que a envios remotos fosse possível com um \english{message broken} AMQP, tivemos
+Para viabilizar o envio de mensagens remotas via \english{broker} AMQP, tivemos
 que criar novos componentes para a camada de implementação com base nas classes
 e \english{traits} que definem a interface remota (figura \ref{fig:remote-actor-colaboracao}).
 Utilizamos a estrutura apresentada no capítulo \ref{cap:estrutura-troca-mensagens-amqp} 
@@ -28,11 +28,11 @@ Os novos componentes são:
 \begin{itemize}
 	\item \lstinline$AMQPRemoteServer$: É uma classe utilizada no lado do servidor onde
 	estão os atores remotamente acessíveis. Essa classe implementa os métodos abstrados
-	de um \lstinline$MessageHandler$ e é responsável pelo recebimento de mensagens,
-	desseriação e encaminhamento para os atores que estão em seu registro. 
+	de um \lstinline$MessageHandler$ e é responsável pelo recebimento,
+	desseriação e encaminhamento das mensagens para os atores que estão em seu registro. 
 	A classe também é responsável por enviar eventuais mensagens de resposta para os 
 	remetentes, seja como consequência de envios feitos via \lstinline$!!$ e \lstinline$!!!$, 
-	ou ainda mensagens para atores supervisores. Tanto no recebimento, como no envio de mensagens 
+	ou ainda mensagens para atores supervisores. Tanto no recebimento como no envio de mensagens 
 	a classe utiliza um módulo separado para seriação e desseriação de mensagens. Existe um 
 	relacionamento bidirecional um para um entre um \lstinline$AMQPRemoteServer$ e uma ponte 
 	servidora;
@@ -47,11 +47,11 @@ Os novos componentes são:
 	\item \lstinline$AMQPRemoteClient$:	É uma classe utilizada no lado do cliente
 	onde ficam os \english{proxies} dos atores remotos. A classe mantém o registro de 
 	atores que são supervisores de atores remotos, além de também manter um registro para 
-	resultados futuros. Assim como a classe \lstinline$AMQPRemoteServer$, essa classe também 
+	resultados futuros. Tal como a classe \lstinline$AMQPRemoteServer$, essa classe também 
 	implementa os métodos abstratos de um \lstinline$MessageHandler$ e é também é responsável
-	pelo recebimento de mensagens, desseriação e encaminhamento para os atores ou
+	pelo recebimento, desseriação e encaminhamento das mensagens para os atores ou
 	resultados futuros que estão em seu registro. O principal papel da classe é
-	fazer o envio das mensagens após a seriação para o \english{message broker}. 
+	fazer o envio das mensagens para o \english{broker} AMQP. 
 	Existe uma relação bidirecional um para um entre um \lstinline$AMQPRemoteClient$
 	e uma ponte cliente. A classe ainda é responsável por manter um identificador
 	que deve ser único entre todos os clientes do mesmo servidor remoto. Esse identificador
@@ -69,14 +69,17 @@ Os novos componentes são:
 	\item \lstinline$AMQPRemoteSupport$: É a implementação que tornamos acessível 
 	via \lstinline$Actor.remote$. Essa classe é responsável por concentrar as 
 	responsabilidades definidas nos módulos acima listados para prover o suporte
-	remoto via \english{message broker} AMQP.
+	remoto via \english{broker} AMQP.
 \end{itemize}
+
+O relacionamento entre os novos componentes com as pontes AMQP e com as classes do
+Akka são mostrados na figura \ref{fig:atores-remotos-amqp-colaboracao}.
 
 %% mostrar código aonde?!
 \begin{figure}[!h]
- 		\centering
+	\centering
 	\includegraphics[scale=.60]{remote-actor-amqp-colaboracao} 
- 		\caption{Relacionamento entre os componentes para atores remotos com AMQP.}
+ 	\caption{Relacionamento entre os componentes para atores remotos com AMQP.}
   	\label{fig:atores-remotos-amqp-colaboracao}
 \end{figure}
 
@@ -93,7 +96,7 @@ e porta serem recebidos no construtor da classe, optamos por manter a compatibil
 não mudar nem o construtor e nem o atributo. Em nossa implementação, o valor
 do atributo \lstinline$homeAddress$ não é utilizado.
 
-Pelo fato do projeto Akka possui um desenvolvimento ativo, acreditamos que existe
+Pelo fato do projeto Akka possuir um desenvolvimento ativo, acreditamos que existe
 uma grande possibilidade de haver uma mudança na interface dos componentes
 do módulo de atores remotos, de modo que haja um desacomplamento entre sua interface
 e as implementações da camada de transporte.
@@ -102,35 +105,15 @@ e as implementações da camada de transporte.
 \index{Atores Remotos com AMQP!integração Akka}
 \label{sec:atores_remotos_amqp:integracao_akka}
 
-Uma vez que definimos os componentes dentro da estrutura do Akka, é necessário que 
+Uma vez definidos os componentes dentro da estrutura do Akka, é necessário que 
 a biblioteca do Akka faça uso deles, de modo que a instância referenciada por
 \lstinline$Actor.remote$ seja uma instância de \lstinline$AMQPRemoteSupport$.
 
-O arquivo \lstinline$akka.conf$ possui é o ponto de entrada para todas as configurações
-que são parametrizadas de todos os módulos do projeto Akka (o formato do arquivo difere
-dos arquivos para configurações de propriedades baseados em chaves e valores. O projeto
-Akka utiliza uma biblioteca chamada Configgy \cite{configgy} que define um formato
-mais idiomático para arquivos de configurações). Existe uma seção
-específica para as configurações correspondentes aos atores remotos. Na distribuição
-padrão, boa parte das propriedades para a configuração de atores remotos são relacionadas ao JBoss
-Netty, como por exemplo o tipo nível de compressão, tamanho da janela da mensagem e
-tempo limite de espera pelo cliente para se conectar. Contudo, existem algumas propriedades
-que são mais gerais, como por exemplo se a comunicação deve ser autenticada via \english{cookies}
-pré-definidos, qual o \english{cookie} de segurança a ser utilizado e ainda qual a classe que deve
-ser utilizada como implementação da camada de suporte para atores remotos.
+\subsection{Alterações no arquivo akka.conf}
 
-Os dados informados no arquivo \lstinline$akka.conf$, uma vez que foram lidos ficam acessíveis
-em objetos de acordo com o contexto que fazem parte. Por exemplo, as propriedades relacionadas
-aos atores remotos estão organizadas em objetos dentro do módulo \lstinline$RemoteShared$.
-Existe ainda uma classe auxíliar que é utilizada para acessar os módulos dos sub-projetos
-do Akka via reflexão chamada de \lstinline$ReflectiveAccess$. Nossa nova camada de
-implementação para o transporte de mensagens entre atores remotos é instanciada nessa
-classe.
-
-\subsection{Alterações no arquivo de akka.conf}
-
-Além de alterar o valor para a camada de suporte para atores remotos, optamos por adicionar
-novas propriedades para a configuração do suporte que implementamos, como os dados
+Além de alterar o valor para a camada de suporte para atores remotos no arquivo 
+\lstinline$akka.conf$, optamos por adicionar novas propriedades para a configuração do 
+suporte que implementamos, como os dados
 para conexão com o \english{broker}, a política de armazenamento e de compartilhamento
 de conexões entre canais. Uma outra propriedade importante que adicionamos foi a 
 definição do identificador a ser utilizado na criação de diferentes 
@@ -166,21 +149,20 @@ remote {
 }
 \end{lstlisting}
 
+\subsubsection{Restrições}
 
 Pelo fato arquivo \lstinline$akka.conf$ ser único por JVM, a maneira pelo qual
 é feita a configuração das propriedades remotas impõe algumas restrições.
 Com o Akka em execução em uma JVM, podemos criar diversos servidores remotos,
 cada um com um nome de nó diferente. Também podemos criar clientes
-remotos, um para cada servidor remoto. Poderiamos ainda ter em uma JVM
+remotos, um para cada servidor remoto. Poderíamos ainda ter em uma JVM
 uma combinação dos dois cenários, com servidores remotos e clientes para
 servidores remotos. 
-
-\subsubsection{Restrições}
 
 Todos os clientes remotos que forem criados na JVM, independente
 do nome do servidor remoto utilizam o mesmo identificador de cliente.
 Contudo, essa restrição não impedimende a criação dos objetos
-no \english{message broker}. Para exemplificar, podemos analizar o
+no \english{broker}. Para exemplificar, podemos analizar o
 caso onde dois clientes remotos são criados em uma JVM para os
 servidores remotos cujos nomes são \lstinline$node1$ e \lstinline$node2$.
 Os objetos criados pelos primeiro cliente remoto terão o sufixo
@@ -201,19 +183,20 @@ divergentes entre JVMs podem levar aos seguintes cenários:
 	pelo servidor não dependem dos objetos criados pelos clientes. Como os objetos 
 	definidos como transientes só são removidos quando o \english{message broker}
 	é desligado, o problema se limita a perda de eventuais mensagens que 
-	ainda não haviam sido consumidas e estavam na fila;
+	ainda não foram consumidas e estavam na fila;
 	
 	\item Um cenário oposto ao anterior, onde o servidor remoto possui uma configuração
 	transiente e algum de seus clientes uma configuração persistente: Esse é 
 	um cenário mais problemático, já que quando a \english{exchange} do servidor
 	é removida todas as suas associações também são removidas, porém as filas persistentes
-	não. Esse cenário ter duas ópticas diferentes. Pela óptica da criação dos objetos,
-	a biblioteca Java do RabbitMQ faz uma verificação da existência de um objeto
+	não. Esse cenário deve ser analizado de duas ópticas diferentes: \entry{(i)} 
+	Óptica da criação dos objetos:
+	como a biblioteca Java do RabbitMQ faz uma verificação da existência de um objeto
 	antes de tentar fazer a sua criação (\ref{sec:entidades-via-broker-amqp-gerenciamento-conexoes}),
-	logo não há problemas, já que a associação da fila persistente com a \english{exchange}
-	recém criada acontecerá durante a execução da inicialização do módulo do cliente remoto.
-	A segunda óptica é a da aplicação. Eventuais mensagens não consumidas pelo servidor
-	remoto serão perdidas.	
+	logo não há problemas. A associação da fila persistente com a \english{exchange}
+	recém criada acontecerá durante a execução da inicialização do módulo do cliente remoto;
+	\entry{(ii)} Óptica é a da aplicação: Eventuais mensagens não consumidas pelo servidor
+	remoto são perdidas.	
 \end{enumerate}
 
 As configurações relacionadas ao compartilhamento da conexão entre os canais de leitura e
@@ -225,34 +208,32 @@ na conexão.
 \subsection{Segurança}
 
 Com o intuito de previnir conexões em servidores remotos de clientes não autorizados,
-na implementação com o JBoss Netty, existe a possibilidade de se exigir que seja enviado
-um valor para que o cliente que está tentando se conectar seja autorizado a interagir com
-os atores. Esse valor é chamado de \english{secure cookie} e é definido no arquivo 
-\lstinline$akka.conf$ na seção \lstinline$remote$. O mecanismo utilizado para 
-autorização é parte do Akka e não possui relação com o JBoss Netty. Habilitar o uso de 
-autorização é algo opcional e deve ser exigido pelo servidor remoto. A propriedade
+o Akka deixa como opção de configuração exigir que somente clientes autenticados
+possam interagir com os atores. A autenticação é feita via \english{secure cookie}. O \english{secure cookie}
+é definido no arquivo \lstinline$akka.conf$ na seção \lstinline$remote$. O uso de 
+autenticação é opcional e deve ser exigido, quando necessário, pelo servidor remoto. A propriedade
 utilizada para forçar o uso de \english{cookie} na comunicação é definida dentro de
 \lstinline$remote { server { ... } }$.
 
 O valor do \english{cookie} é parte do protocolo remoto definido no Akka, mostrado
-na listagem \ref{lst:proto-remote-message} no capítulo \ref{cap:atores_akka}. Pelo
-fato de o uso do \english{cookie} ser definido no protocolo remoto, podemos 
-continuar fazendo seu uso em nossa implementação. Mensagens oriundas de clientes
-que não possuem autorização nos servidores remotos, não são processadas e o
-cliente remoto remetente recebe uma mensagem de resposta com indicando a falta
-de autorização.
+na listagem \ref{lst:proto-remote-message} no capítulo \ref{cap:atores_akka}. Como
+o uso do \english{cookie} é definido no protocolo remoto, 
+mantemos o suporte na nossa implementação. Mensagens oriundas de clientes
+que não se autenticarem nos servidores remotos, não são processadas e o
+cliente remoto remetente recebe uma mensagem de resposta com indicando a 
+necessidade a autenticação.
 
-Com o uso das filas definidas no \english{message broker} como repositório 
-intermediário das mensagens, caso não se esteje utilizando filas com acesso
-exclusivo, qualquer entidade que possua os dados necessários para acessar
+Com o uso das filas definidas no \english{broker} como repositório 
+intermediário das mensagens (salvo no caso de filas com acesso
+exclusivo), qualquer entidade que possua os dados necessários para acessar
 o \english{virtual host} onde estão criadas as filas pode registrar outros
 consumidores. Uma fila com mais de um consumidor pode ser interessante
 quando se deseja fazer um monitoramento do volume ou até do conteúdo das
 mensagens. No caso de haver mais de um consumidor em uma fila, uma cópia da mensagem
 é entregue a cada consumidor. Não é possível, portanto, um consumidor
-mal intencionado ``roubar'' ou mesmo alterar a integride das mensagens.
+mal intencionado ``roubar'' ou mesmo alterar a integridade das mensagens.
 
-Com o uso de um \english{message broker} AMQP, a segurança depende muito de 
+Com o uso de um \english{broker} AMQP, a segurança depende muito de 
 quem possui as informações para acesso ao \english{virtual host} onde
 estão criadas as filas e \english{exchanges}.
 
@@ -265,7 +246,7 @@ do a entidade remota que está se conectada. O protocolo utilizado para definir u
 remota passa a incluir um parâmetro não mandatório para que o identificador do cliente
 possa ser identificado. O protocolo com a alteração é mostrado na listagem 
 \ref{lst:proto-remote-message-amqp}. Essa alteração implicou em
-alterações no objeto \ref{RemoteActorSerialization}. Esse objeto é o responsável por 
+alterações no objeto \lstinline$RemoteActorSerialization$. Esse objeto é o responsável por 
 fabricar uma instância com as informações a serem seriadas. O método 
 \lstinline$createRemoteMessageProtocolBuilder$ foi sobrecarregado e passou
 a receber o identificador do cliente como parâmetro. 
@@ -291,16 +272,17 @@ message RemoteMessageProtocol {
 \end{lstlisting}
 
 
-\section{Fluxo das mensagens}
+\section{Fluxo de envio das mensagens}
 
 Parte do fluxo de um envio de uma mensagem a um ator remoto com a nova camada de transporte
-continua como descrito na sub-seção \ref{sec:atores_remotos_akka_fluxo} e é mostrado na figura
-\ref{fig:remote-actor-message-flow-amqp}.
-
+continua acontecendo em sete passos, como descrito na sub-seção \ref{sec:atores_remotos_akka_fluxo}.
 O processo de envio começa com o \english{proxy} local 
 embrulhando a mensagem e adicionando a ela informações de cabeçalho necessárias para 
-o envio e posterior processamento. A principal diferença está em adicionar o identificador
-do cliente na mensagem (campo na linha $11$ da listagem \ref{lst:proto-remote-message-amqp}).
+o envio e posterior processamento. 
+
+Antes da mensagem ser repassada para o seriador, o \lstinline$AMQPRemoteSupport$ 
+adiciona o identificador do cliente na mensagem (campo na linha $11$ 
+da listagem \ref{lst:proto-remote-message-amqp}). 
 
 O seriador continua sendo o responsável por converter a informação 
 recebida em um vetor de \english{bytes} para que o transporte possa ocorrer. Uma vez que a 
@@ -309,17 +291,42 @@ implementação de \lstinline$RemoteSupport$ (que na figura \ref{fig:remote-actor-
 uma instância de \lstinline$AMQPRemoteSupport$) para enviar a mensagem ao \lstinline$RemoteSupport$ 
 que está no lado do servidor.
 
+Os passos $3$ (transporte da mensagem do \lstinline$ClientBootstrap$ para
+o \lstinline$ServerBootstrap$) e $4$ (recebimento da mensagem pelo \lstinline$ServerBootstrap$ e 
+repasse para o \english{handler}) acontecem de modo diferente em relação a implementação com JBoss 
+Netty. 
+
 Pelo fato de utilizarmos as pontes AMQP definidas no capítulo \ref{cap:estrutura-troca-mensagens-amqp},
-o envio se resume no envio das mensagens para a \english{exchange} associada a ponte. O
-\english{message broker} faz o roteamento da mensagem para a fila que foi criada pela
-ponte servidora. Apesar de o \english{broker} tentar entregar a mensagem para o consumidor
-da fila o quanto antes, a mensagem pode ficar armazenada caso o consumidor não esteja pronto
-para fazer o recebimento da mensagem. Vale lembrar que após o recebimento de um mensagem
-remota, ocorre um envio exatamente igual a um envio local. O envio local de uma mensagem
-leva tempo $O(1)$, que é o tempo gasto para colocar uma mensagem na fila de um ator.
+o passo $3$ se resume em enviar uma mensagem à \english{exchange} associada a ponte utilizando
+o a chave de roteamento da ponte servidora. O \english{broker} roteia a mensagem para 
+a fila criada pela ponte servidora. Apesar de o \english{broker} tentar entregar a mensagem para o 
+consumidor da fila o quanto antes, a mensagem pode ficar armazenada caso o consumidor não esteja pronto
+para fazer o recebimento da mensagem. O passo $4$ se resume no consumo da mensagem enviada
+e no seu repasse para a implementação de \lstinline$MessageHandler$ utilizada na ponte servidora.
+
+Vale lembrar que após o recebimento de um mensagem remota, ocorre um envio exatamente igual a 
+um envio local. O envio local de uma mensagem leva tempo $O(1)$, que essa é a ordem do tempo 
+gasto para colocar uma mensagem na fila de um ator.
 
 \begin{figure}[!h]
 		\includegraphics[scale=.80]{remote-actor-message-flow-amqp} 
  		\caption{Fluxo de um envio assíncrono de mensagem entre atores com AMQP.}
   		\label{fig:remote-actor-message-flow-amqp}
 \end{figure}
+
+Assim como na implementação com JBoss Netty, os envios feitos via métodos \lstinline$!!$ e 
+\lstinline$!!!$ possuem um passo a mais do que os mostrados na figura 
+\ref{fig:remote-actor-message-flow-amqp}. Entre os passos $2$ e $3$,
+uma cópia da referência para instância de resultado futuro que é retornada é colocada 
+no mapa de resultados futuros.
+
+As mensagem de resposta para envios feitos via \lstinline$!!$ e \lstinline$!!!$, ou para notificar 
+atores supervisores sobre atores supervisionados fazer o caminho inverso. Essas mensagens
+são enviadas para a mesma \english{exchange} que a ponte cliente fez o envio, porém utilizando
+como chave de roteamento o valor que utiliza o identificador do cliente. Assim o \english{broker}
+fará o roteamento da mensagem para a fila do cliente.
+
+Devemos lembrar que, caso a mensagem que foi enviada pelo servidor seja o resultado de um 
+envio com \lstinline$!!$ ou \lstinline$!!!$, o conteúdo da mensagem
+(seja um resultado de sucesso ou uma exceção) é utilizado para completar a instância cujo a
+referência havia sido colocada no mapa de resultados futuros.
