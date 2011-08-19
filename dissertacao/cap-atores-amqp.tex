@@ -271,6 +271,12 @@ message RemoteMessageProtocol {
 }
 \end{lstlisting}
 
+Devemos nos lembrar que o protocolo que descreve as referências de atores remotos, mostrado
+na listagem \ref{lst:proto-remote-actor}, define um campo para armazenar o endereço de 
+onde o ator remoto foi criado. Esse campo é composto pelo endereço do hospedeiro e porta
+do nó. Pelo fato de não haver uma associação entre o endereço do ator remoto e uma 
+\english{socket} e do valor não ser utilizado no envio de mensagens e nem no envio
+de respostas, optamos por não fazer alterações na sua definição.
 
 \section{Fluxo de envio das mensagens}
 

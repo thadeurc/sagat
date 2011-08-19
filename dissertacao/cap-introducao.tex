@@ -1,65 +1,190 @@
-%% ------------------------------------------------------------------------- %%
 \chapter{Introdução}
-\label{cap:introducao}
+\label{cap:introducao}        
 
-Escrever bem é uma arte que exige muita técnica e dedicação. Há vários bons livros
-sobre como escrever uma boa dissertação ou tese. Um dos trabalhos pioneiros e mais
-conhecidos nesse sentido é o livro de Umberto Eco \cite{eco:09} intitulado 
-\emph{Como se faz uma tese}; é uma leitura bem interessante mas, como foi escrito 
-em 1977 e é voltado para teses de graduação na Itália, não se aplica tanto a nós.
+A proposta deste trabalho é explorar a potencial sinergia entre duas classes de sistemas 
+de \english{software} baseados em troca de mensagens. A primeira classe, usada em ambientes 
+corporativos, compreende os sistemas de \english{middleware} orientados a mensagens (MOMs)
+e os \english{message brokers}. A segunda, voltada para a criação de programas concorrentes,
+é composta pelas implementações do modelo de atores.
 
-Para a escrita de textos em Ciência da Computação, o livro de Justin Zobel, 
-\emph{Writing for Computer Science} \cite{zobel:04} é uma leitura obrigatória. 
-O livro \emph{Metodologia de Pesquisa para Ciência da Computação} de 
-Raul Sidnei Wazlawick \cite{waz:09} também merece uma boa lida.
-Já para a área de Matemática, dois livros recomendados são o de Nicholas Higham,
-\emph{Handbook of Writing for Mathematical Sciences} \cite{Higham:98} e o do criador
-do \TeX, Donald Knuth, juntamente com Tracy Larrabee e Paul Roberts, 
-\emph{Mathematical Writing} \cite{Knuth:96}.
+\section{Troca de mensagens em ambientes corporativos}
 
-O uso desnecessário de termos em lingua estrangeira deve ser evitado. No entanto,
-quando isso for necessário, os termos devem aparecer \emph{em itálico}.
+Sistemas de \english{middleware} orientados a mensagem
+trabalham com troca assíncrona de mensagens. As mensagens enviadas são armazenadas 
+e mantidas em filas até que o destinatário esteja pronto para fazer o recebimento e 
+processamento. Em todo envio de mensagem há uma entidade que desempenha o papel de 
+produtor (remetente) e outra que desempenha o papel de consumidor (destinatário) da mensagem. 
+Não existe vínculo entre esses papéis e os papéis de cliente (usuário de um serviço) 
+e servidor (provedor de um serviço), tradicionalmente usados em sistemas baseados 
+em \english{remote procedure call} (RPC). A diferença entre cliente e servidor é conceitual 
+e somente pode ser definida por humanos que conheçam a semântica das trocas de mensagens. 
 
-\begin{small}
-\begin{verbatim}
-Modos de citação:
-indesejável: [AF83] introduziu o algoritmo ótimo.
-indesejável: (Andrew e Foster, 1983) introduziram o algoritmo ótimo.
-certo : Andrew e Foster introduziram o algoritmo ótimo [AF83].
-certo : Andrew e Foster introduziram o algoritmo ótimo (Andrew e Foster, 1983).
-certo : Andrew e Foster (1983) introduziram o algoritmo ótimo.
-\end{verbatim}
-\end{small}
+MOMs formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite 
+interoperabilidade com baixo acoplamento e provê suporte para o tratamento robusto de 
+erros em caso de falhas. Eles são frequentemente apresentados como uma tecnologia que pode 
+mudar a maneira com que sistemas distribuídos são construídos \cite{alonso}. 
 
-Uma prática recomendável na escrita de textos é descrever as legendas das
-figuras e tabelas em forma auto-contida: as legendas devem ser razoavelmente
-completas, de modo que o leitor possa entender a figura sem ler o texto onde a
-figura ou tabela é citada.  
+A garantia da entrega de mensagens é uma das características mais importantes dos MOMs.
+Filas transacionais são uma abstração usada para garantir que toda mensagem recebida pelo 
+MOM seja salva, de modo persistente, e que a remoção da mensagem ocorra somente após a 
+confirmação do recebimento pelo destinatário. Em caso de queda do sistema, quando ele for 
+reiniciado, ocorrerá a entrega das mensagens que foram salvas de modo persistente e cujo 
+recebimento não foi confirmado. A retirada de uma mensagem de uma fila 
+transacional ocorre como parte de uma transação atômica que pode inclui também outras
+operações, como envios de mensagens e atualizações em bancos de dados, bem 
+como outras retiradas de mensagens.
 
-% \emph{Thesis are random access. Do NOT feel obliged to read a thesis from beginning to end.}
+MOMs tradicionalmente estabelecem ligações ponto-a-ponto entre sistemas,
+sendo um tanto inflexíveis no que diz respeito ao roteamento e filtragem de mensagens. 
+\english{Message brokers} são descendentes diretos de MOMs que endereçam essas limitações. 
+Eles agem como intermediários e provêm maior flexibilidade para roteamento e filtragem, 
+além de permitirem que se adicione lógica de negócios para o processamento
+de mensagens no nível do próprio \english{middleware}. 
 
+Os protocolos usados por \english{message brokers} variam de produto para produto.
+A especificação de Java \english{Messaging Service} (JMS) define uma API padrão 
+para que programas Java possam interagir com \english{message brokers}. Boa parte dos 
+\english{message brokers} têm implementações do padrão JMS. Dentre os mais conhecidos, podemos 
+destacar JBoss Messaging \cite{jboss-messaging}, IBM Websphere MQ \cite{ibm-mqseries} 
+(mais conhecido como MQ Series) e Apache Active MQ\cite{apache-activemq}. 
 
+A especificação AMQP (\english{Advanced Message Queuing Protocol}) é uma proposta recente 
+de padronização de um protocolo para \english{message brokers}. Foi criada por um conjunto de 
+empresas (Red Hat, JPMorgan Chase, Cisco Systems, entre outras), com o objetivo de viabilizar 
+tanto o desenvolvimento quanto a disseminação de um protocolo padrão para esse tipo de sistema.
 
-%% ------------------------------------------------------------------------- %%
-\section{Considerações Preliminares}
-\label{sec:consideracoes_preliminares}
+\section{Modelos não convencionais de programação concorrente}
+Nos últimos anos, o aumento da velocidade de \english{clock} passou a
+não acompanhar mais o aumento de transistores em processadores por questões físicas, 
+como aquecimento e dissipação, alto consumo de energia e vazamento de corrente elétrica. 
+Por conta dessas e de outras limitações, a busca por ganhos de capacidade de processamento 
+levou à construção de processadores com múltiplos núcleos (\english{multicore}).
 
-Considerações preliminares\footnote{Nota de rodapé (não abuse).}\index{genoma!projetos}.
-% index permite acrescentar um item no indice remissivo
-Texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto.
- 
+Um dos principais impactos que processadores \english{multicore} causam no desenvolvimento 
+de programas está relacionado com o modo com que programas são escritos. Para usufruir ganhos 
+de desempenho com esses processadores, programas precisam ser escritos de forma 
+concorrente \cite{sutter-free-lunch-is-over}, uma tarefa que não é simples. A maioria das 
+linguagens de programação e dos ambientes de desenvolvimento não são
+adequados para a criação de programas concorrentes \cite{sutter-concurrent-revolution}.
 
-%% ------------------------------------------------------------------------- %%
+A abordagem convencional ao desenvolvimento de programas concorrentes é baseada
+em travas e variáveis condicionais. Em linguagens orientadas a objetos, como Java e C\#, 
+cada instância implicitamente possui sua própria trava, e travamentos podem acontecer em 
+blocos de código marcados como sincronizados. Essa abordagem não permite a componibilidade 
+de travas de maneira segura, criando situações propensas a bloqueios e 
+impasses (\english{deadlocks}). A componibilidade de travas seria necessária quando houver 
+mais de uma instância envolvida na ação a ser executada de modo exclusivo. Existem ainda 
+outras dificuldades no uso de travas, como esquecimento de se obter a trava de alguma 
+instância, obtenção excessiva de travas, obtenção de travas de instâncias	 
+erradas, obtenção de travas em ordem errada, manutenção da consistência do sistema na 
+presença de erros, esquecimento de sinalização em variáveis de condição ou de se testar 
+novamente uma condição após o despertar de um estado de espera \cite{sj:bc}. Essas 
+dificuldades mostram que a abordagem convencional, baseada em travas,
+é inviável para uma programação concorrente modular, ou seja, para a criação de grandes 
+programas concorrentes compostos por programas menores. Elas impulsionaram a pesquisa em 
+abordagens alternativas à programação concorrente convencional.
+
+Dois modelos de programação concorrente não convencionais vem ganhando espaço recentemente. 
+O primeiro deles é a memória transacional implementada por \english{software} 
+(\english{software transactional memory}, ou STM) \cite{STM}, um mecanismo de controle 
+de concorrência análogo às transações de bancos de dados. O controle de acesso à memória 
+compartilhada é responsabilidade da STM. Cada transação é um trecho de código que executa 
+uma série atômica de operações de leitura e escrita na memória compartilhada.		
+
+O segundo modelo não convencional de programação concorrente é o modelo de atores. 
+Atores \cite{Agha86} são definidos como agentes computacionais que possuem uma caixa de
+correio e um comportamento. Uma vez que o endereço da caixa de correio de um ator é conhecido, 
+mensagens podem ser adicionadas à caixa para processamento assíncrono, ou seja, 
+o envio de uma mensagem é desacoplado do processamento da mensagem pelo ator.
+
+\section{O projeto Akka}
+
+O projeto Akka \cite{akka} é composto por um conjunto de módulos escritos em 
+Scala\footnote{O projeto disponibiliza também uma versão de suas APIs voltada para aplicações Java.}, 
+que implementam uma plataforma voltada para o desenvolvimento de aplicações escaláveis 
+e tolerantes a falhas. Suas principais características são: uma biblioteca de atores 
+locais e remotos, suporte a STM, hierarquias de supervisão e uma combinação entre atores 
+e STM (\english{``transactors''}) que da suporte a fluxos de mensagens baseados em eventos 
+transacionais, assíncronos e componíveis. Akka oferece, ainda, uma série de módulos
+adicionais para integração com outras tecnologias.
+
+\section{A linguagem Scala}
+
+Scala \cite{scala-overview} é uma linguagem moderna, com tipagem estática, inferência de tipo
+e que unifica os paradigmas de programação funcional e orientado a objetos. Vem sendo desenvolvida desde 
+$2001$ no laboratório de métodos de programação da EPFL (\english{École Polytechnique Fédérale de Lausanne}). 
+O código escrito em Scala pode ser compilado para execução tanto na JVM 
+(\english{Java Virtual Machine}) quanto na CLR (\english{Common Language Runtime}).
+A criação da linguagem Scala foi impulsionada pela necessidade de um bom suporte
+para o desenvolvimento de sistemas componentizados e escaláveis. 
+
+A linguagem foi desenvolvida para interoperar bem tanto com Java quanto com C\#, e adota
+parte da sintaxe dessas linguagens, além de compartilhar
+a maioria dos operadores básicos, tipos de dados e estruturas de controle. 
+Contudo, para atingir seus objetivos, Scala abre mão de algumas convenções enquanto 
+adiciona novos conceitos. Algumas de suas principais características são:
+
+\begin{itemize}
+	\item Scala possui certa semelhança com Java e C\#, de modo que tanto programas
+	escritos em Scala podem utilizar bibliotecas escritas em Java e C\#, quanto o
+	inverso;
+	
+	\item Scala possui um modelo uniforme para objetos, onde todo valor é um objeto
+	e toda operação é um método;
+	
+	\item Scala é uma linguagem funcional e todas as funções são valores de
+	primeira classe. No contexto de linguagens de programação, valores de primeira
+	classe são entidades que podem ser criadas em tempo de execução, utilizadas 
+	como parâmetro, retornadas por uma função, ou ainda atribuídas a variáveis;
+	
+	\item Scala permite construções via composição de classes e
+	\english{traits}. \english{Traits} possuem definições de métodos e campos assim
+	como uma classe abstrata, porém não definem construtores.  \english{Traits} são
+	importantes unidades para reuso de código em Scala já que classes ou objetos podem
+	ser compostos (\english{mixin}) por diversas \english{traits};
+	
+	\item Scala permite a decomposição de objetos via casamento de padrões;
+	
+	\item Scala possui suporte ao tratamento de XML (\english{Extended Markup Language}) 
+	na própria sintaxe da linguagem;
+	
+	\item Scala não possui o conceito de membros de classes estáticos. A linguagem
+	possui o conceito de \english{singleton objects}, que representa uma instância
+	única de uma classe. \english{Singleton objects} são definidos com a palavra-chave
+	\lstinline$object$ ao invés de \lstinline$class$. \english{Singleton objects} que
+	possuem uma classe definida com o mesmo nome são chamados de objeto acompanhante 
+	(\english{companion object});
+	
+	\item Scala possui suporte a \english{currying} que, junto com as funções de ordem
+	superior, permite a criação de novas estruturas de controle.
+\end{itemize}
+
+Optamos por desenvolver este trabalho em Scala pelos fatores a seguir:
+
+\begin{itemize}
+	\item A linguagem é compilável para \english{bytecode} e pode ser executada
+	na JVM;
+	
+	\item A linguagem interopera naturalmente com bibliotecas Java;
+	
+	\item Além das abstrações do paradigma de orientação a objetos, a linguagem implementa 
+	também abstrações do paradigma funcional. Essas abstrações
+	auxiliam na construção de um código mais enxuto e com menos verbosidade;
+	
+	\item O projeto Akka é primariamente escrito em Scala;
+	
+	\item A linguagem ter sido criada objetivando um melhor suporte para o
+	desenvolvimento de sistemas modulares e escaláveis.	
+\end{itemize}
+
 \section{Objetivos}
 \label{sec:objetivo}
 
-Texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto.
+Nosso propósito é criar uma implementação em Scala do modelo de atores que use 
+o padrão AMQP para o transporte de mensagens entre atores remotos. Geraremos um protótipo 
+baseado na implementação do modelo de atores do projeto Akka. A idéia é substituir o mecanismo 
+atualmente usado pelo Akka por um \english{message broker} AMQP. 
 
-%% ------------------------------------------------------------------------- %%
 \section{Contribuições}
 \label{sec:contribucoes}
 
@@ -74,11 +199,15 @@ As principais contribuições deste trabalho são as seguintes:
 
 \end{itemize}
 
-%% ------------------------------------------------------------------------- %%
 \section{Organização do Trabalho}
 \label{sec:organizacao_trabalho}
 
-No Capítulo~\ref{cap:conceitos}, apresentamos os conceitos ... Finalmente, no
+%% fazer em formato de lista
+No Capítulo \ref{cap:atores}, apresentamos o modelo de atores, sua semântica e algumas
+das implementações do modelo. No Capítulo \ref{cap:atores_akka} analisamos uma 
+implementação do modelo de atores com mais detalhes
+
+ ... Finalmente, no
 Capítulo~\ref{cap:conclusoes} discutimos algumas conclusões obtidas neste
 trabalho. Analisamos as vantagens e desvantagens do método proposto ... 
 
