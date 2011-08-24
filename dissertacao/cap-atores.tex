@@ -328,7 +328,8 @@ utilizam o termo ``ator'' (\english{actor}), mas sim o termo ``processo'' (\engl
 A criação, destruição e troca de mensagens entre atores é extremamente rápida. Num teste feito 
 em um computador com $512MB$ de memória, com um processador de $2.4GHz$  Intel Celeron rodando 
 Ubuntu Linux, a criação de $20000$ processos levou em média $3.5\mu s$ de tempo de CPU por 
-ator e $9.2\mu s$ de tempo de relógio por ator \cite{PROG_ERLANG07}.
+ator e $9.2\mu s$ de tempo de relógio por ator \cite{PROG_ERLANG07}. Esses números mostram que
+a criação dos atores é rápida e que com pouca memória, muitos atores podem ser criados.
 
 Com a possibilidade de se criar uma quantidade considerável de atores, o uso de uma hierarquia 
 de supervisão torna-se extremamente importante. No que diz respeito ao tratamento de erros em 
@@ -469,3 +470,32 @@ Java padrão. O transporte das mensagens é feito via \english{sockets} TCP, com o
 Netty \cite{jboss-netty}, um arcabouço para comunicação assíncrona dirigido a eventos e baseado 
 em \english{sockets}. Esse arcabouço oferece facilidades para compressão de mensagens, 
 que são utilizados pelo Akka.
+
+Optamos por utilizar a implementação de atores do projeto Akka para o desenvolvimento deste
+trabalho. Tomamos como base a versão $1.0$ do Akka por ser a última versão estável 
+disponível quando iniciamos o desenvolvimento. Nossa escolha pela implementação de atores
+do projeto Akka foi motivada pelos fatores a seguir:
+
+\begin{itemize}
+	\item Ter código aberto;
+	
+	\item Ser escrito em Scala;
+	
+	\item Possuir uma implementação mais completa de atores remotos em relação
+	às demais implementações que observamos; 
+	
+	\item A implementação de atores remotos possuir certa disposição para novas 
+	implementações de transportes;
+	
+	\item Ter grande volume de atividade na comunidade de usuários e de desenvolvedores;
+
+	\item Estar com desenvolvimento ativo;
+	
+	\item Ser não apenas um projeto, mas sim de um produto que foi criado
+	com objetivos comerciais\footnote{
+	A distribuição do Akka faz parte da \english{Typesafe Stack}, uma plataforma
+	para desenvolvimento de sistemas concorrentes e escaláveis da empresa Typesafe}.
+\end{itemize}
+
+Os principais detalhes da implementação da biblioteca de atores feita no projeto são apresentados no 
+capítulo \ref{cap:atores_akka}.

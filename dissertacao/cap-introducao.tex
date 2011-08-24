@@ -17,7 +17,8 @@ produtor (remetente) e outra que desempenha o papel de consumidor (destinatário)
 Não existe vínculo entre esses papéis e os papéis de cliente (usuário de um serviço) 
 e servidor (provedor de um serviço), tradicionalmente usados em sistemas baseados 
 em \english{remote procedure call} (RPC). A diferença entre cliente e servidor é conceitual 
-e somente pode ser definida por humanos que conheçam a semântica das trocas de mensagens. 
+e somente pode ser definida por humanos que conheçam a semântica das trocas de mensagens.
+%% definir conceitualmente o que eh servidor e cliente
 
 MOMs formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite 
 interoperabilidade com baixo acoplamento e provê suporte para o tratamento robusto de 
@@ -30,13 +31,13 @@ MOM seja salva, de modo persistente, e que a remoção da mensagem ocorra somente 
 confirmação do recebimento pelo destinatário. Em caso de queda do sistema, quando ele for 
 reiniciado, ocorrerá a entrega das mensagens que foram salvas de modo persistente e cujo 
 recebimento não foi confirmado. A retirada de uma mensagem de uma fila 
-transacional ocorre como parte de uma transação atômica que pode inclui também outras
+transacional ocorre como parte de uma transação atômica que pode incluir também outras
 operações, como envios de mensagens e atualizações em bancos de dados, bem 
 como outras retiradas de mensagens.
 
 MOMs tradicionalmente estabelecem ligações ponto-a-ponto entre sistemas,
 sendo um tanto inflexíveis no que diz respeito ao roteamento e filtragem de mensagens. 
-\english{Message brokers} são descendentes diretos de MOMs que endereçam essas limitações. 
+\english{Message brokers} são descendentes diretos de MOMs que eliminam essas limitações. 
 Eles agem como intermediários e provêm maior flexibilidade para roteamento e filtragem, 
 além de permitirem que se adicione lógica de negócios para o processamento
 de mensagens no nível do próprio \english{middleware}. 
@@ -48,7 +49,7 @@ para que programas Java possam interagir com \english{message brokers}. Boa part
 destacar JBoss Messaging \cite{jboss-messaging}, IBM Websphere MQ \cite{ibm-mqseries} 
 (mais conhecido como MQ Series) e Apache Active MQ\cite{apache-activemq}. 
 
-A especificação AMQP (\english{Advanced Message Queuing Protocol}) é uma proposta recente 
+O protocolo AMQP (\english{Advanced Message Queuing Protocol}) é uma proposta recente 
 de padronização de um protocolo para \english{message brokers}. Foi criada por um conjunto de 
 empresas (Red Hat, JPMorgan Chase, Cisco Systems, entre outras), com o objetivo de viabilizar 
 tanto o desenvolvimento quanto a disseminação de um protocolo padrão para esse tipo de sistema.
@@ -61,7 +62,7 @@ Por conta dessas e de outras limitações, a busca por ganhos de capacidade de pro
 levou à construção de processadores com múltiplos núcleos (\english{multicore}).
 
 Um dos principais impactos que processadores \english{multicore} causam no desenvolvimento 
-de programas está relacionado com o modo com que programas são escritos. Para usufruir ganhos 
+de programas está relacionado com o modo com que programas são escritos. Para usufruir de ganhos 
 de desempenho com esses processadores, programas precisam ser escritos de forma 
 concorrente \cite{sutter-free-lunch-is-over}, uma tarefa que não é simples. A maioria das 
 linguagens de programação e dos ambientes de desenvolvimento não são
@@ -70,9 +71,9 @@ adequados para a criação de programas concorrentes \cite{sutter-concurrent-revol
 A abordagem convencional ao desenvolvimento de programas concorrentes é baseada
 em travas e variáveis condicionais. Em linguagens orientadas a objetos, como Java e C\#, 
 cada instância implicitamente possui sua própria trava, e travamentos podem acontecer em 
-blocos de código marcados como sincronizados. Essa abordagem não permite a componibilidade 
-de travas de maneira segura, criando situações propensas a bloqueios e 
-impasses (\english{deadlocks}). A componibilidade de travas seria necessária quando houver 
+blocos de código marcados como sincronizados. Essa abordagem não permite que travas sejam
+compostas de maneira segura, criando situações propensas a bloqueios e 
+impasses (\english{deadlocks}). A composição de travas é necessária quando há
 mais de uma instância envolvida na ação a ser executada de modo exclusivo. Existem ainda 
 outras dificuldades no uso de travas, como esquecimento de se obter a trava de alguma 
 instância, obtenção excessiva de travas, obtenção de travas de instâncias	 
@@ -97,23 +98,13 @@ correio e um comportamento. Uma vez que o endereço da caixa de correio de um ato
 mensagens podem ser adicionadas à caixa para processamento assíncrono, ou seja, 
 o envio de uma mensagem é desacoplado do processamento da mensagem pelo ator.
 
-\section{O projeto Akka}
-
-O projeto Akka \cite{akka} é composto por um conjunto de módulos escritos em 
-Scala\footnote{O projeto disponibiliza também uma versão de suas APIs voltada para aplicações Java.}, 
-que implementam uma plataforma voltada para o desenvolvimento de aplicações escaláveis 
-e tolerantes a falhas. Suas principais características são: uma biblioteca de atores 
-locais e remotos, suporte a STM, hierarquias de supervisão e uma combinação entre atores 
-e STM (\english{``transactors''}) que da suporte a fluxos de mensagens baseados em eventos 
-transacionais, assíncronos e componíveis. Akka oferece, ainda, uma série de módulos
-adicionais para integração com outras tecnologias.
-
 \section{A linguagem Scala}
 
 Scala \cite{scala-overview} é uma linguagem moderna, com tipagem estática, inferência de tipo
-e que unifica os paradigmas de programação funcional e orientado a objetos. Vem sendo desenvolvida desde 
-$2001$ no laboratório de métodos de programação da EPFL (\english{École Polytechnique Fédérale de Lausanne}). 
-O código escrito em Scala pode ser compilado para execução tanto na JVM 
+e que unifica os paradigmas de programação funcional e orientado a objetos. Vem sendo 
+desenvolvida desde $2001$ no laboratório de métodos de programação da EPFL 
+(\english{École Polytechnique Fédérale de Lausanne}). O código escrito em Scala pode ser 
+compilado para execução tanto na JVM 
 (\english{Java Virtual Machine}) quanto na CLR (\english{Common Language Runtime}).
 A criação da linguagem Scala foi impulsionada pela necessidade de um bom suporte
 para o desenvolvimento de sistemas componentizados e escaláveis. 
@@ -159,31 +150,17 @@ adiciona novos conceitos. Algumas de suas principais características são:
 	superior, permite a criação de novas estruturas de controle.
 \end{itemize}
 
-Optamos por desenvolver este trabalho em Scala pelos fatores a seguir:
-
-\begin{itemize}
-	\item A linguagem é compilável para \english{bytecode} e pode ser executada
-	na JVM;
-	
-	\item A linguagem interopera naturalmente com bibliotecas Java;
-	
-	\item Além das abstrações do paradigma de orientação a objetos, a linguagem implementa 
-	também abstrações do paradigma funcional. Essas abstrações
-	auxiliam na construção de um código mais enxuto e com menos verbosidade;
-	
-	\item O projeto Akka é primariamente escrito em Scala;
-	
-	\item A linguagem ter sido criada objetivando um melhor suporte para o
-	desenvolvimento de sistemas modulares e escaláveis.	
-\end{itemize}
+Optamos por desenvolver este trabalho em Scala tanto pela linguagem ser executável 
+na JVM e interoperar naturalmente com Java, como por suas características
+proverem facilidades para a implementação de atores.
 
 \section{Objetivos}
 \label{sec:objetivo}
 
 Nosso propósito é criar uma implementação em Scala do modelo de atores que use 
 o padrão AMQP para o transporte de mensagens entre atores remotos. Geraremos um protótipo 
-baseado na implementação do modelo de atores do projeto Akka. A idéia é substituir o mecanismo 
-atualmente usado pelo Akka por um \english{message broker} AMQP. 
+baseado na implementação do modelo de atores feito projeto Akka. Iremos substituir o mecanismo
+de transporte atualmente usado pelo Akka por um que utiliza um \english{message broker} AMQP. 
 
 \section{Contribuições}
 \label{sec:contribucoes}
@@ -202,13 +179,17 @@ As principais contribuições deste trabalho são as seguintes:
 \section{Organização do Trabalho}
 \label{sec:organizacao_trabalho}
 
-%% fazer em formato de lista
 No Capítulo \ref{cap:atores}, apresentamos o modelo de atores, sua semântica e algumas
-das implementações do modelo. No Capítulo \ref{cap:atores_akka} analisamos uma 
-implementação do modelo de atores com mais detalhes
+das implementações do modelo. No Capítulo \ref{cap:atores_akka} analisamos em maiores 
+detalhes a implementação do modelo de atores feita no projeto Akka. No Capítulo
+\ref{cap:amqp} apresentamos o protocolo AMQP, suas camadas e algumas implementações
+de \english{message brokers} que implementam o protocolo. No 
+capítulo \ref{cap:estrutura-troca-mensagens-amqp} apresentamos uma estrutura
+para a troca de mensagens entre entidades remotas via \english{message broker}
+AMQP. No capítulo \ref{cap:atores_remotos_amqp} apresentamos nossa implementação 
+de atores remotos que utiliza a estrutura que definimos do capítulo 
+\ref{cap:estrutura-troca-mensagens-amqp}.
 
- ... Finalmente, no
-Capítulo~\ref{cap:conclusoes} discutimos algumas conclusões obtidas neste
+Finalmente, no Capítulo \ref{cap:conclusoes} discutimos algumas conclusões obtidas neste
 trabalho. Analisamos as vantagens e desvantagens do método proposto ... 
 
-As sequências testadas no trabalho estão disponíveis no Apêndice \ref{ape:sequencias}.
