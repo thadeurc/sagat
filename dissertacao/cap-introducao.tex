@@ -16,9 +16,11 @@ processamento. Em todo envio de mensagem há uma entidade que desempenha o papel 
 produtor (remetente) e outra que desempenha o papel de consumidor (destinatário) da mensagem. 
 Não existe vínculo entre esses papéis e os papéis de cliente (usuário de um serviço) 
 e servidor (provedor de um serviço), tradicionalmente usados em sistemas baseados 
-em \english{remote procedure call} (RPC). A diferença entre cliente e servidor é conceitual 
-e somente pode ser definida por humanos que conheçam a semântica das trocas de mensagens.
-%% definir conceitualmente o que eh servidor e cliente
+em \english{remote procedure call} (RPC), já que ambos enviam e recebem mensagens. 
+No contexto de MOMs os papéis de servidor ou cliente são definidos pela semântica da
+troca de mensagens. Uma entidade pode estar atuando hora como provedora de um serviço, 
+hora como cliente de um serviço. Portanto, os termos ``cliente'' e ``servidor'' não são
+aplicáveis nesta classe de sistemas assim como são aplicáveis em sistemas baseados em RPC.
 
 MOMs formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite 
 interoperabilidade com baixo acoplamento e provê suporte para o tratamento robusto de 

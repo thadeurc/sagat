@@ -369,7 +369,7 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
 
 class AMQPRemoteSupport extends RemoteSupport with AMQPRemoteClientModule with AMQPRemoteServerModule{
   import AMQPUtil._
-  val optimizeLocal = new AtomicBoolean(true)
+  val optimizeLocal = new AtomicBoolean(false)
 
   def optimizeLocalScoped_?() = optimizeLocal.get
 

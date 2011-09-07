@@ -339,6 +339,19 @@ class AkkaParentProject(info: ProjectInfo) extends DefaultProject(info) with Ide
     val scalatest = Dependencies.scalatest
   }
 
+  class AkkaActorTest(info: ProjectInfo) extends AkkaDefaultProject(info, distPath) {
+    val uuid          = Dependencies.uuid
+    val configgy      = Dependencies.configgy
+    val hawtdispatch  = Dependencies.hawtdispatch
+    val jsr166x       = Dependencies.jsr166x
+    val logback       = Dependencies.logback
+
+    // testing
+    val junit           = Dependencies.junit
+    val scalatest       = Dependencies.scalatest
+    val multiverse_test = Dependencies.multiverse_test // StandardLatch
+  }
+
   // -------------------------------------------------------------------------------------------------------------------
   // akka-remote subproject
   // -------------------------------------------------------------------------------------------------------------------

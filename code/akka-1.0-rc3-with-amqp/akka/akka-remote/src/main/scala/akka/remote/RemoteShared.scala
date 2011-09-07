@@ -30,7 +30,7 @@ object AMQPSettings{
   lazy val BROKER_VIRTUAL_HOST        = config.getString("akka.remote.amqp.broker.virtualhost","/actor_host")
   lazy val BROKER_USERNAME            = config.getString("akka.remote.amqp.broker.username","actor_admin")
   lazy val BROKER_PASSWORD            = config.getString("akka.remote.amqp.broker.password","actor_admin")
-  lazy val STORAGE_AND_CONSUME_POLICY = config.getString("akka.remote.amqp.policy.storage.mode","EXCLUSIVE_TRANSIENT_AUTODELETE")
+  lazy val STORAGE_AND_CONSUME_POLICY = config.getString("akka.remote.amqp.policy.storage.mode","EXCLUSIVE_AUTODELETE")
 }
 
 object RemoteServerSettings {
