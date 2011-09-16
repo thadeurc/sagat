@@ -1,6 +1,4 @@
-package akka.performance.trading.remote
-
-
+package performance.trading.remote
 
 import org.junit.Test
 
@@ -8,11 +6,10 @@ import akka.actor.Actor._
 import akka.performance.trading.common.AkkaPerformanceTest
 import akka.performance.trading.common.Rsp
 import akka.performance.trading.domain._
-import akka.actor.{ActorRef}
-import java.util.concurrent.{TimeUnit, CountDownLatch}
-import performance.trading.remote.TwoWayMatchingEngine
+import akka.actor.ActorRef
+import akka.performance.trading.remote.RemoteTwoWayTradingSystem
 
-class RemoteTwoWayPerformanceTest extends AkkaPerformanceTest {
+class BaseRemoteTwoWayPerformanceTest extends AkkaPerformanceTest {
 
   override def remote_? = true
 
@@ -30,11 +27,5 @@ class RemoteTwoWayPerformanceTest extends AkkaPerformanceTest {
    override def placeOrder(orderReceiver: ActorRef, order: Order): Rsp = {
     (orderReceiver !! order).get.asInstanceOf[Rsp]
   }
-
-  // need this so that junit will detect this as a test case
-  @Test
-  def dummy {}
-
-  override def compareResultWith = None //Some("RspPerformanceTest")
 
 }

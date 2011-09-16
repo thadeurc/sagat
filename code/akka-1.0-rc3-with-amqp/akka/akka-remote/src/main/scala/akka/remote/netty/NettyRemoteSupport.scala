@@ -205,17 +205,20 @@ abstract class RemoteClient private[akka] (
       } else {
           val futureResult = if (senderFuture.isDefined) senderFuture.get
                              else new DefaultCompletableFuture[T](request.getActorInfo.getTimeout)
-
-          currentChannel.write(request).addListener(new ChannelFutureListener {
+          val futureUuid = uuidFrom(request.getUuid.getHigh, request.getUuid.getLow)
+        futures.put(futureUuid, futureResult)
+        log.slf4j.warn("High: "+request.getUuid.getHigh+" low: "+request.getUuid.getLow +" Adding future to map: {}", futureUuid)
+        currentChannel.write(request).addListener(new ChannelFutureListener {
             def operationComplete(future: ChannelFuture) {
               if (future.isCancelled) {
                 //We don't care about that right now
               } else if (!future.isSuccess) {
                 notifyListeners(RemoteClientWriteFailed(request, future.getCause, module, remoteAddress))
-              } else {
+              } /*else {
                 val futureUuid = uuidFrom(request.getUuid.getHigh, request.getUuid.getLow)
+                log.slf4j.warn("High: "+request.getUuid.getHigh+" low: "+request.getUuid.getLow +" Adding future to map: {}", futureUuid)
                 futures.put(futureUuid, futureResult)
-              }
+              } */
             }
           })
           Some(futureResult)
@@ -397,7 +400,7 @@ class ActiveRemoteClientHandler(
         case reply: RemoteMessageProtocol =>
           val replyUuid = uuidFrom(reply.getActorInfo.getUuid.getHigh, reply.getActorInfo.getUuid.getLow)
           log.slf4j.debug("Remote client received RemoteMessageProtocol[\n{}]",reply)
-          log.slf4j.debug("Trying to map back to future: {}",replyUuid)
+          log.slf4j.warn("High: "+reply.getActorInfo.getUuid.getHigh+" low: "+reply.getActorInfo.getUuid.getLow +" Trying to map back to future: {}",replyUuid)
           val future = futures.remove(replyUuid).asInstanceOf[CompletableFuture[Any]]
 
           if (reply.hasMessage) {
@@ -472,7 +475,13 @@ class ActiveRemoteClientHandler(
     else
       log.slf4j.error("Unexpected exception from downstream in remote client: {}", event)
 
-    event.getChannel.close
+    if(event.getChannel != null && event.getChannel.isOpen && event.getChannel.isConnected) {
+      try{
+        event.getChannel.close
+      } catch{
+        case e => {}
+      }
+    }
   }
 
   private def parseException(reply: RemoteMessageProtocol, loader: Option[ClassLoader]): Throwable = {
@@ -498,7 +507,7 @@ class ActiveRemoteClientHandler(
  */
 class NettyRemoteSupport extends RemoteSupport with NettyRemoteServerModule with NettyRemoteClientModule {
   //Needed for remote testing and switching on/off under run
-  val optimizeLocal = new AtomicBoolean(true)
+  val optimizeLocal = new AtomicBoolean(false)
 
   def optimizeLocalScoped_?() = optimizeLocal.get
 
@@ -892,7 +901,13 @@ class RemoteServerHandler(
 
   override def exceptionCaught(ctx: ChannelHandlerContext, event: ExceptionEvent) = {
     log.slf4j.error("Unexpected exception from remote downstream", event.getCause)
-    event.getChannel.close
+    if(event.getChannel != null && event.getChannel.isOpen) {
+      try{
+        event.getChannel.close
+      } catch {
+        case e => {}
+      }
+    }
     server.notifyListeners(RemoteServerError(event.getCause, server))
   }
 

@@ -1,19 +1,21 @@
 package akka.performance.trading.remote
 
 import akka.actor.Actor._
-import akka.performance.trading.oneway.{OneWayOrderReceiver}
 import akka.actor.ActorRef
-import akka.performance.trading.common.{Rsp, AkkaTradingSystem}
-import akka.performance.trading.domain.Order
+import akka.performance.trading.common.{AkkaTradingSystem}
+import RemoteSettings._
 
 class RemoteTwoWayTradingSystem extends AkkaTradingSystem {
 
   override def useStandByEngines = false
 
   override def createOrderReceivers: List[ActorRef] = {
-    val refs = (1 to 10).toList map (i ⇒ createOrderReceiver())
+    (1 to 10).toList map (i ⇒ createOrderReceiver())
+  }
+
+  override def createRemoteOrderReceivers: List[ActorRef] = {
     val names = (1 to 10).toList map(n => "order-receiver-" + n)
-    names.zip(refs).foreach {
+    names.zip(localOrderReceivers).foreach {
       p => {
           if(remote.findActorById(p._1) != null) {
             remote.unregister(p._1)
@@ -22,6 +24,6 @@ class RemoteTwoWayTradingSystem extends AkkaTradingSystem {
           remote.register(p._1, p._2)
       }
     }
-    names.map(remote.findActorById(_))
+    names.map(remote.actorFor(_,host, port))
   }
 }

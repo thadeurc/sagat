@@ -284,9 +284,10 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
       } else {
           val futureResult = if (senderFuture.isDefined) senderFuture.get
                              else new DefaultCompletableFuture[T](request.getActorInfo.getTimeout)
-          amqpClientBridge.sendMessageToServer(request.toByteArray)
           val futureUuid = uuidFrom(request.getUuid.getHigh, request.getUuid.getLow)
+          log.slf4j.warn("High: "+request.getUuid.getHigh+" low: "+request.getUuid.getLow +" Adding future to map: {}", futureUuid)
           futures.put(futureUuid, futureResult)
+          amqpClientBridge.sendMessageToServer(request.toByteArray)
           Some(futureResult)
       }
     } else {
@@ -313,10 +314,20 @@ class AMQPRemoteClient(clientModule: AMQPRemoteClientModule, val nodeName: Strin
       val reply = RemoteMessageProtocol.parseFrom(message)
       val replyUuid = uuidFrom(reply.getActorInfo.getUuid.getHigh, reply.getActorInfo.getUuid.getLow)
         log.slf4j.debug("Remote client received RemoteMessageProtocol[\n{}]",reply)
-        log.slf4j.debug("Trying to map back to future: {}",replyUuid)
+        log.slf4j.warn("High: "+reply.getActorInfo.getUuid.getHigh+" low: "+reply.getActorInfo.getUuid.getLow +" Trying to map back to future: {}",replyUuid)
         val future = futures.remove(replyUuid).asInstanceOf[CompletableFuture[Any]]
         if (reply.hasMessage) {
-          if (future eq null) throw new IllegalActorStateException("Future mapped to UUID " + replyUuid + " does not exist")
+          if (future eq null) {
+            log.slf4j.warn("Mapa: " + futures.toString)
+            val it = futures.keySet.iterator
+            while(it.hasNext){
+              val v = it.next
+              log.slf4j.warn("testing " + v)
+              log.slf4j.warn("testing ==: " + (replyUuid == v) + " equals: " + (replyUuid.equals(v)))
+              log.slf4j.warn("testing hashCode: " + replyUuid.hashCode + " hashCode: " + v.hashCode)
+            }
+            throw new IllegalActorStateException("Future mapped to UUID " + replyUuid + " does not exist")
+          }
           val message = MessageSerializer.deserialize(reply.getMessage)
           future.completeWithResult(message)
         } else {
