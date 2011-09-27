@@ -1,6 +1,5 @@
 package performance.trading.remote
 
-import org.junit.Test
 
 import akka.actor.Actor._
 import akka.performance.trading.common.AkkaPerformanceTest
@@ -8,8 +7,10 @@ import akka.performance.trading.common.Rsp
 import akka.performance.trading.domain._
 import akka.actor.ActorRef
 import akka.performance.trading.remote.RemoteTwoWayTradingSystem
+import akka.performance.trading.remote.RemoteSettings._
 
 class BaseRemoteTwoWayPerformanceTest extends AkkaPerformanceTest {
+
 
   override def remote_? = true
 
@@ -24,7 +25,12 @@ class BaseRemoteTwoWayPerformanceTest extends AkkaPerformanceTest {
     }
   }
 
-   override def placeOrder(orderReceiver: ActorRef, order: Order): Rsp = {
+  override def lookupRemoteTradingSystem: ActorRef = {
+    remote.actorFor(serviceName, host, port)
+
+  }
+
+  override def placeOrder(orderReceiver: ActorRef, order: Order): Rsp = {
     (orderReceiver !! order).get.asInstanceOf[Rsp]
   }
 

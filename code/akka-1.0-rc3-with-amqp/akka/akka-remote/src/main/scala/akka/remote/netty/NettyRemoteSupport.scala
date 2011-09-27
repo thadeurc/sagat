@@ -507,7 +507,7 @@ class ActiveRemoteClientHandler(
  */
 class NettyRemoteSupport extends RemoteSupport with NettyRemoteServerModule with NettyRemoteClientModule {
   //Needed for remote testing and switching on/off under run
-  val optimizeLocal = new AtomicBoolean(false)
+  val optimizeLocal = new AtomicBoolean(true)
 
   def optimizeLocalScoped_?() = optimizeLocal.get
 
