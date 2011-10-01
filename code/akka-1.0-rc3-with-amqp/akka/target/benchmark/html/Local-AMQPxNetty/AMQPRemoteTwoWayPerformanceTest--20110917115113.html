@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>AMQPRemoteTwoWayPerformanceTest 2011-09-17 11:51</title>
+</head>
+<body>
+<h1>AMQPRemoteTwoWayPerformanceTest 2011-09-17 11:51</h1>
+<pre>
+
+==============================================================================================================================
+Scenario                       	clients	TPS	mean	5%  	25% 	50% 	75% 	95% 	Durat.	N
+                               	       	   	(us)	(us)	(us)	(us)	(us)	(us)	(s)   	 
+------------------------------------------------------------------------------------------------------------------------------
+AMQPRemoteTwoWayPerformanceTest	1	603	1653	1257	1293	1369	1678	2656	50	30000
+AMQPRemoteTwoWayPerformanceTest	2	963	2072	1637	1725	1846	2013	4146	31	30000
+AMQPRemoteTwoWayPerformanceTest	4	1093	3653	2572	3050	3339	3782	6199	27	30000
+AMQPRemoteTwoWayPerformanceTest	6	1121	5338	3791	4508	4985	5694	8082	27	30000
+AMQPRemoteTwoWayPerformanceTest	8	1117	7155	5327	6156	6710	8036	10019	27	30000
+AMQPRemoteTwoWayPerformanceTest	10	1119	8928	6855	7767	8416	10279	11884	27	30000
+AMQPRemoteTwoWayPerformanceTest	20	1127	17723	14884	16204	18074	19007	20284	27	30000
+AMQPRemoteTwoWayPerformanceTest	30	1114	26739	23716	26107	26880	27703	29275	27	30000
+AMQPRemoteTwoWayPerformanceTest	40	1123	35540	32599	34088	35067	36964	39511	27	30000
+AMQPRemoteTwoWayPerformanceTest	60	1121	52685	43604	52455	53527	54535	56347	27	30000
+AMQPRemoteTwoWayPerformanceTest	80	1115	70148	53351	69593	71757	73484	76076	27	30000
+AMQPRemoteTwoWayPerformanceTest	100	1103	90311	84834	88857	90199	92195	95811	27	30000
+------------------------------------------------------------------------------------------------------------------------------
+
+</pre>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,17553,90311.0,90199&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=1+clients|2+clients|4+clients|6+clients|8+clients|10+clients|20+clients|30+clients|40+clients|60+clients|80+clients|100+clients&chbh=a,4,20&chco=A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,90AA94,3D7930&chd=t:1257,1293,1369,1678,2656,1653.00|1637,1725,1846,2013,4146,2072.00|2572,3050,3339,3782,6199,3653.00|3791,4508,4985,5694,8082,5338.00|5327,6156,6710,8036,10019,7155.00|6855,7767,8416,10279,11884,8928.00|14884,16204,18074,19007,20284,17723.00|23716,26107,26880,27703,29275,26739.00|32599,34088,35067,36964,39511,35540.00|43604,52455,53527,54535,56347,52685.00|53351,69593,71757,73484,76076,70148.00|84834,88857,90199,92195,95811,90311.00&chxr=0,0,95811|2,0,95811&chds=0,95811&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=lxy&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+Latency+%28microseconds%29+and+Throughput+%28TPS%29&chxt=x,y,r,x,y,r&chxl=3:|clients|4:|Latency+(us)|5:|Throughput+(tps)&chxs=0,676767,11.5,0,lt,676767|1,676767,11.5,0,lt,676767|2,676767,11.5,0,lt,676767&chco=25B33B,3072F3,FF0000,37F0ED,FF9900&chdl=5th%20Percentile|Median|95th%20Percentile|Mean|Throughput&chdlp=b&chls=1|1|1&chls=1|1|1&chma=5,5,5,25&chm=o,25B33B,0,-1,7|o,3072F3,1,-1,7|o,FF0000,2,-1,7|o,37F0ED,3,-1,7|o,FF9900,4,-1,7&chd=t:1,2,4,6,8,10,20,30,40,60,80,100|1257,1637,2572,3791,5327,6855,14884,23716,32599,43604,53351,84834|1,2,4,6,8,10,20,30,40,60,80,100|1369,1846,3339,4985,6710,8416,18074,26880,35067,53527,71757,90199|1,2,4,6,8,10,20,30,40,60,80,100|2656,4146,6199,8082,10019,11884,20284,29275,39511,56347,76076,95811|1,2,4,6,8,10,20,30,40,60,80,100|1653.00,2072.00,3653.00,5338.00,7155.00,8928.00,17723.00,26739.00,35540.00,52685.00,70148.00,90311.00|1,2,4,6,8,10,20,30,40,60,80,100|602.53,963.19,1093.20,1120.93,1116.56,1119.02,1127.25,1113.53,1123.49,1120.76,1114.99,1103.47&chxr=0,1,100,4|1,0,95811|2,0,1127.25&chds=1,100,0,95811,1,100,0,95811,1,100,0,95811,1,100,0,95811.00,1,100,0,1127.25&chxp=3,50|4,100|5,100&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+1+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1188,1653.0,1369&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:711,740,778,993,2623,1116.00|1257,1293,1369,1678,2656,1653.00&chxr=0,0,2656|2,0,2656&chds=0,2656&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+2+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1231,2072.0,1846&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:1081,1123,1172,1288,3388,1499.00|1637,1725,1846,2013,4146,2072.00&chxr=0,0,4146|2,0,4146&chds=0,4146&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+4+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1276,3653.0,3339&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:1386,1752,2104,2444,5111,2468.00|2572,3050,3339,3782,6199,3653.00&chxr=0,0,6199|2,0,6199&chds=0,6199&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+6+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1266,5338.0,4985&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:2192,2627,3102,4103,6591,3588.00|3791,4508,4985,5694,8082,5338.00&chxr=0,0,8082|2,0,8082&chds=0,8082&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+8+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1432,7155.0,6710&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:3043,3568,4029,5702,7630,4610.00|5327,6156,6710,8036,10019,7155.00&chxr=0,0,10019|2,0,10019&chds=0,10019&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+10+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,2270,8928.0,8416&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:3883,4576,5027,7117,8684,5725.00|6855,7767,8416,10279,11884,8928.00&chxr=0,0,11884|2,0,11884&chds=0,11884&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+20+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,2437,17723.0,18074&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:8385,9488,11541,12140,13707,11106.00|14884,16204,18074,19007,20284,17723.00&chxr=0,0,20284|2,0,20284&chds=0,20284&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+30+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,5026,26739.0,26880&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:13311,15950,16478,16913,18677,16391.00|23716,26107,26880,27703,29275,26739.00&chxr=0,0,29275|2,0,29275&chds=0,29275&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+40+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,4136,35540.0,35067&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:18242,20780,21365,23299,26216,21948.00|32599,34088,35067,36964,39511,35540.00&chxr=0,0,39511|2,0,39511&chds=0,39511&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+60+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,9173,52685.0,53527&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:23927,32367,33217,33921,36537,32697.00|43604,52455,53527,54535,56347,52685.00&chxr=0,0,56347|2,0,56347&chds=0,56347&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+80+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,24011,70148.0,71757&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:28462,41716,43690,45849,51037,43007.00|53351,69593,71757,73484,76076,70148.00&chxr=0,0,76076|2,0,76076&chds=0,76076&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+vs.+NettyRemoteTwoWayPerformanceTest%2C+100+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,17553,90311.0,90199&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=NettyRemoteTwoWayPerformanceTest|AMQPRemoteTwoWayPerformanceTest&chbh=a,4,20&chco=90AA94,3D7930&chd=t:48523,54180,55324,57183,64586,55782.00|84834,88857,90199,92195,95811,90311.00&chxr=0,0,95811|2,0,95811&chds=0,95811&chg=0,10" border="0" width="750" height="400" />
+<hr/>
+<pre>
+Benchmark properties:
+Operating system: Mac OS X, x86_64, 10.7.1
+JVM: Java HotSpot(TM) 64-Bit Server VM Apple Inc. 20.1-b02-383
+Processors: 2
+Load average: 2.787109375
+Thread count: 160 (160)
+Heap: 84.69 (512.00 - 1019.88) MB
+Args:
+  -Xserver
+  -Xmx512M
+  -Xms512m
+  -Xmx1024m
+  -XX:+UseConcMarkSweepGC
+Akka version: 1.0
+Akka config:
+</pre>

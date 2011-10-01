@@ -166,7 +166,7 @@ abstract class RemoteClient private[akka] (
     isOneWay: Boolean,
     actorRef: ActorRef,
     typedActorInfo: Option[Tuple2[String, String]],
-    actorType: AkkaActorType): Option[CompletableFuture[T]] = synchronized { //TODO: find better strategy to prevent race
+    actorType: AkkaActorType): Option[CompletableFuture[T]] =  synchronized { //TODO: find better strategy to prevent race
 
     send(createRemoteMessageProtocolBuilder(
         Some(actorRef),
@@ -206,8 +206,11 @@ abstract class RemoteClient private[akka] (
           val futureResult = if (senderFuture.isDefined) senderFuture.get
                              else new DefaultCompletableFuture[T](request.getActorInfo.getTimeout)
           val futureUuid = uuidFrom(request.getUuid.getHigh, request.getUuid.getLow)
-        futures.put(futureUuid, futureResult)
-        log.slf4j.warn("High: "+request.getUuid.getHigh+" low: "+request.getUuid.getLow +" Adding future to map: {}", futureUuid)
+          futures.put(futureUuid, futureResult)
+	  if(!futures.containsKey(futureUuid)){
+		throw new RuntimeException("future " + futureUuid + " is should be in the map")	
+	  }
+        // log.slf4j.warn("High: "+request.getUuid.getHigh+" low: "+request.getUuid.getLow +" Adding future to map: {}", futureUuid)
         currentChannel.write(request).addListener(new ChannelFutureListener {
             def operationComplete(future: ChannelFuture) {
               if (future.isCancelled) {
@@ -385,6 +388,7 @@ class ActiveRemoteClientHandler(
   val timer: HashedWheelTimer,
   val client: ActiveRemoteClient)
   extends SimpleChannelUpstreamHandler with Logging {
+  var removed = new ConcurrentHashMap[Uuid, CompletableFuture[_]]
 
   override def handleUpstream(ctx: ChannelHandlerContext, event: ChannelEvent) = {
     if (event.isInstanceOf[ChannelStateEvent] &&
@@ -400,13 +404,23 @@ class ActiveRemoteClientHandler(
         case reply: RemoteMessageProtocol =>
           val replyUuid = uuidFrom(reply.getActorInfo.getUuid.getHigh, reply.getActorInfo.getUuid.getLow)
           log.slf4j.debug("Remote client received RemoteMessageProtocol[\n{}]",reply)
-          log.slf4j.warn("High: "+reply.getActorInfo.getUuid.getHigh+" low: "+reply.getActorInfo.getUuid.getLow +" Trying to map back to future: {}",replyUuid)
+          if(!futures.containsKey(replyUuid)){
+            log.slf4j.warn("High: "+reply.getActorInfo.getUuid.getHigh+" low: "+reply.getActorInfo.getUuid.getLow +" Trying to map back to future: {}",replyUuid)
+            println(">>>>" + futures)
+	    if(removed.containsKey(replyUuid)){
+		log.slf4j.warn(">>>>>>>>>ReplyUuid: " + replyUuid + "already removed");
+	    }
+          }
           val future = futures.remove(replyUuid).asInstanceOf[CompletableFuture[Any]]
-
           if (reply.hasMessage) {
-            if (future eq null) throw new IllegalActorStateException("Future mapped to UUID " + replyUuid + " does not exist")
+            if (future eq null) {
+              throw new IllegalActorStateException("Future mapped to UUID " + replyUuid + " does not exist")
+            }
+	    if(removed.size() >= 300000) removed = new ConcurrentHashMap[Uuid, CompletableFuture[_]];
+	    removed.put(replyUuid, future)
             val message = MessageSerializer.deserialize(reply.getMessage)
             future.completeWithResult(message)
+	    
           } else {
             val exception = parseException(reply, client.loader)
 
