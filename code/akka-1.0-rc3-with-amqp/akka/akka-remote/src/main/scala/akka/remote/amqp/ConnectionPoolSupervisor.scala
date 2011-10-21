@@ -30,6 +30,7 @@ abstract class AbstractConnectionFactory(policy: ConnectionSharePolicyParams) {
     cf.setUsername(BROKER_USERNAME)
     cf.setPassword(BROKER_PASSWORD)
     cf.setVirtualHost(BROKER_VIRTUAL_HOST)
+    //cf.setPort(5673)
     cf.setRequestedChannelMax(policy.channels)
     cf.setRequestedHeartbeat(15) /* to confirm the network is ok - value in seconds */
     cf
@@ -215,8 +216,16 @@ class ConnectionActor(myId: String, val policy: ConnectionSharePolicyParams) ext
             }
           }
         }catch {
-          case io: IOException => log.error("Could not connect [%s] to AMQP broker [%s]", self.id, readOrWriteConnFactory.toString)
-          throw io
+          case io: IOException => {
+            //log.error("Could not connect [%s] to AMQP broker [%s]", self.id, readOrWriteConnFactory.toString)
+            //throw io
+            io.printStackTrace()
+            if(io.getCause != null) io.getCause.printStackTrace()
+            if(io.getCause != null && io.getCause.getCause != null) io.getCause.getCause.printStackTrace()
+
+            log.error("Could not connect [%s] to AMQP broker [%s]", self.id, readAndWriteConnFactory.toString)
+            throw io
+          }
         }
       }
     }

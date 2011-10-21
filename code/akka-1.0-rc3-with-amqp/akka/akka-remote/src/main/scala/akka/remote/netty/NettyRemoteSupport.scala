@@ -207,11 +207,11 @@ abstract class RemoteClient private[akka] (
                              else new DefaultCompletableFuture[T](request.getActorInfo.getTimeout)
           val futureUuid = uuidFrom(request.getUuid.getHigh, request.getUuid.getLow)
           futures.put(futureUuid, futureResult)
-	  if(!futures.containsKey(futureUuid)){
-		throw new RuntimeException("future " + futureUuid + " is should be in the map")	
-	  }
-        // log.slf4j.warn("High: "+request.getUuid.getHigh+" low: "+request.getUuid.getLow +" Adding future to map: {}", futureUuid)
-        currentChannel.write(request).addListener(new ChannelFutureListener {
+	        if(!futures.containsKey(futureUuid)){
+		        throw new RuntimeException("future " + futureUuid + " is should be in the map")
+	        }
+          log.slf4j.warn("High: "+request.getUuid.getHigh+" low: "+request.getUuid.getLow +" Adding future to map: {}", futureUuid)
+          currentChannel.write(request).addListener(new ChannelFutureListener {
             def operationComplete(future: ChannelFuture) {
               if (future.isCancelled) {
                 //We don't care about that right now
@@ -407,17 +407,17 @@ class ActiveRemoteClientHandler(
           if(!futures.containsKey(replyUuid)){
             log.slf4j.warn("High: "+reply.getActorInfo.getUuid.getHigh+" low: "+reply.getActorInfo.getUuid.getLow +" Trying to map back to future: {}",replyUuid)
             println(">>>>" + futures)
-	    if(removed.containsKey(replyUuid)){
-		log.slf4j.warn(">>>>>>>>>ReplyUuid: " + replyUuid + "already removed");
-	    }
+	          if(removed.containsKey(replyUuid)){
+		          log.slf4j.warn(">>>>>>>>>ReplyUuid: " + replyUuid + "already removed");
+	          }
           }
           val future = futures.remove(replyUuid).asInstanceOf[CompletableFuture[Any]]
           if (reply.hasMessage) {
             if (future eq null) {
               throw new IllegalActorStateException("Future mapped to UUID " + replyUuid + " does not exist")
             }
-	    if(removed.size() >= 300000) removed = new ConcurrentHashMap[Uuid, CompletableFuture[_]];
-	    removed.put(replyUuid, future)
+	          //if(removed.size() >= 300000) removed = new ConcurrentHashMap[Uuid, CompletableFuture[_]];
+	          //removed.put(replyUuid, future)
             val message = MessageSerializer.deserialize(reply.getMessage)
             future.completeWithResult(message)
 	    

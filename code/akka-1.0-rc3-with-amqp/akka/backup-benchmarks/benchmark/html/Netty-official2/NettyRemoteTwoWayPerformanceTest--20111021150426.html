@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>NettyRemoteTwoWayPerformanceTest 2011-10-21 15:04</title>
+</head>
+<body>
+<h1>NettyRemoteTwoWayPerformanceTest 2011-10-21 15:04</h1>
+<pre>
+
+===============================================================================================================================
+Scenario                        	clients	TPS	mean	5%  	25% 	50% 	75% 	95% 	Durat.	N
+                                	       	   	(us)	(us)	(us)	(us)	(us)	(us)	(s)   	 
+-------------------------------------------------------------------------------------------------------------------------------
+NettyRemoteTwoWayPerformanceTest	2	881	2266	1647	1788	1818	1868	3327	34	30000
+NettyRemoteTwoWayPerformanceTest	1	496	2010	1324	1381	1467	1980	3134	60	30000
+NettyRemoteTwoWayPerformanceTest	1	496	2009	1307	1368	1431	2020	3144	60	30000
+NettyRemoteTwoWayPerformanceTest	2	878	2274	1614	1768	1807	1873	3314	34	30000
+NettyRemoteTwoWayPerformanceTest	4	1243	3212	1412	2070	2517	2726	4214	24	30000
+NettyRemoteTwoWayPerformanceTest	8	1476	5411	2579	3229	3772	4787	6308	20	30000
+NettyRemoteTwoWayPerformanceTest	10	1541	6484	3384	4005	4330	5704	7041	19	30000
+NettyRemoteTwoWayPerformanceTest	20	1565	12757	7419	8206	9646	10146	12015	19	30000
+NettyRemoteTwoWayPerformanceTest	40	1586	25176	16652	17616	18183	19436	21350	19	30000
+-------------------------------------------------------------------------------------------------------------------------------
+
+</pre>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1443,25176.0,18183&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=2+clients|1+clients|1+clients|2+clients|4+clients|8+clients|10+clients|20+clients|40+clients&chbh=a,4,20&chco=A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,90AA94,3D7930&chd=t:1647,1788,1818,1868,3327,2266.00|1324,1381,1467,1980,3134,2010.00|1307,1368,1431,2020,3144,2009.00|1614,1768,1807,1873,3314,2274.00|1412,2070,2517,2726,4214,3212.00|2579,3229,3772,4787,6308,5411.00|3384,4005,4330,5704,7041,6484.00|7419,8206,9646,10146,12015,12757.00|16652,17616,18183,19436,21350,25176.00&chxr=0,0,21350|2,0,21350&chds=0,21350&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=lxy&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+Latency+%28microseconds%29+and+Throughput+%28TPS%29&chxt=x,y,r,x,y,r&chxl=3:|clients|4:|Latency+(us)|5:|Throughput+(tps)&chxs=0,676767,11.5,0,lt,676767|1,676767,11.5,0,lt,676767|2,676767,11.5,0,lt,676767&chco=25B33B,3072F3,FF0000,37F0ED,FF9900&chdl=5th%20Percentile|Median|95th%20Percentile|Mean|Throughput&chdlp=b&chls=1|1|1&chls=1|1|1&chma=5,5,5,25&chm=o,25B33B,0,-1,7|o,3072F3,1,-1,7|o,FF0000,2,-1,7|o,37F0ED,3,-1,7|o,FF9900,4,-1,7&chd=t:2,1,1,2,4,8,10,20,40|1647,1324,1307,1614,1412,2579,3384,7419,16652|2,1,1,2,4,8,10,20,40|1818,1467,1431,1807,2517,3772,4330,9646,18183|2,1,1,2,4,8,10,20,40|3327,3134,3144,3314,4214,6308,7041,12015,21350|2,1,1,2,4,8,10,20,40|2266.00,2010.00,2009.00,2274.00,3212.00,5411.00,6484.00,12757.00,25176.00|2,1,1,2,4,8,10,20,40|880.85,496.14,496.22,877.50,1243.43,1476.05,1540.56,1565.06,1586.40&chxr=0,2,40,4|1,0,21350|2,0,1586.40&chds=2,40,0,21350,2,40,0,21350,2,40,0,21350,2,40,0,21350.00,2,40,0,1586.40&chxp=3,50|4,100|5,100&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+vs.+historical%2C+2+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1025,2266.0,1818&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=2011-10-21+15%3A01|2011-10-21+15%3A01&chbh=a,4,20&chco=90AA94,3D7930&chd=t:1647,1788,1818,1868,3327,2266.00|1647,1788,1818,1868,3327,2266.00&chxr=0,0,3327|2,0,3327&chds=0,3327&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+vs.+historical%2C+1+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1140,2010.0,1467&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=2011-10-21+15%3A01|2011-10-21+15%3A01&chbh=a,4,20&chco=90AA94,3D7930&chd=t:1324,1381,1467,1980,3134,2010.00|1324,1381,1467,1980,3134,2010.00&chxr=0,0,3134|2,0,3134&chds=0,3134&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+vs.+historical%2C+1+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1140,2010.0,1467&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=2011-10-21+15%3A01|2011-10-21+15%3A01&chbh=a,4,20&chco=90AA94,3D7930&chd=t:1324,1381,1467,1980,3134,2010.00|1324,1381,1467,1980,3134,2010.00&chxr=0,0,3134|2,0,3134&chds=0,3134&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+vs.+historical%2C+2+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1025,2266.0,1818&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=2011-10-21+15%3A01|2011-10-21+15%3A01&chbh=a,4,20&chco=90AA94,3D7930&chd=t:1647,1788,1818,1868,3327,2266.00|1647,1788,1818,1868,3327,2266.00&chxr=0,0,3327|2,0,3327&chds=0,3327&chg=0,10" border="0" width="750" height="400" />
+<hr/>
+<pre>
+Benchmark properties:
+Operating system: Linux, i386, 2.6.35-30-generic-pae
+JVM: OpenJDK Server VM Sun Microsystems Inc. 19.0-b09
+Processors: 4
+Load average: 1.19
+Thread count: 48 (48)
+Heap: 46.16 (512.00 - 1017.62) MB
+Args:
+  -Xmx512M
+  -Xms512m
+  -Xmx1024m
+  -XX:+UseConcMarkSweepGC
+Akka version: 1.0
+Akka config:
+</pre>

@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>AMQPRemoteTwoWayPerformanceTest 2011-10-20 14:06</title>
+</head>
+<body>
+<h1>AMQPRemoteTwoWayPerformanceTest 2011-10-20 14:06</h1>
+<pre>
+
+==============================================================================================================================
+Scenario                       	clients	TPS	mean	5%  	25% 	50% 	75% 	95% 	Durat.	N
+                               	       	   	(us)	(us)	(us)	(us)	(us)	(us)	(s)   	 
+------------------------------------------------------------------------------------------------------------------------------
+AMQPRemoteTwoWayPerformanceTest	1	368	2709	1843	1916	2013	2639	4050	81	30000
+AMQPRemoteTwoWayPerformanceTest	2	730	2735	2011	2194	2289	2401	3779	41	30000
+AMQPRemoteTwoWayPerformanceTest	4	1015	3936	2457	2767	3040	3500	4796	30	30000
+AMQPRemoteTwoWayPerformanceTest	6	1053	5685	3401	4107	4477	5101	6427	28	30000
+AMQPRemoteTwoWayPerformanceTest	8	961	8321	4752	5567	6106	7319	13241	31	30000
+AMQPRemoteTwoWayPerformanceTest	10	1085	9209	5886	6861	7311	7915	9521	28	30000
+AMQPRemoteTwoWayPerformanceTest	20	1095	18262	12920	14139	14733	15610	17476	27	30000
+AMQPRemoteTwoWayPerformanceTest	30	1093	27288	19380	21495	22298	23279	25603	27	30000
+AMQPRemoteTwoWayPerformanceTest	40	1092	36610	27339	29017	29911	30787	33452	27	30000
+AMQPRemoteTwoWayPerformanceTest	60	1088	54542	38431	44088	44948	45810	48820	28	30000
+AMQPRemoteTwoWayPerformanceTest	80	1088	67968	11796	47116	49310	59632	63212	28	30000
+AMQPRemoteTwoWayPerformanceTest	100	1082	92204	69540	73835	75150	76782	80305	28	30000
+------------------------------------------------------------------------------------------------------------------------------
+
+</pre>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,2477,92204.0,75150&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=1+clients|2+clients|4+clients|6+clients|8+clients|10+clients|20+clients|30+clients|40+clients|60+clients|80+clients|100+clients&chbh=a,4,20&chco=A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,A2C180,90AA94,3D7930&chd=t:1843,1916,2013,2639,4050,2709.00|2011,2194,2289,2401,3779,2735.00|2457,2767,3040,3500,4796,3936.00|3401,4107,4477,5101,6427,5685.00|4752,5567,6106,7319,13241,8321.00|5886,6861,7311,7915,9521,9209.00|12920,14139,14733,15610,17476,18262.00|19380,21495,22298,23279,25603,27288.00|27339,29017,29911,30787,33452,36610.00|38431,44088,44948,45810,48820,54542.00|11796,47116,49310,59632,63212,67968.00|69540,73835,75150,76782,80305,92204.00&chxr=0,0,80305|2,0,80305&chds=0,80305&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=lxy&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+Latency+%28microseconds%29+and+Throughput+%28TPS%29&chxt=x,y,r,x,y,r&chxl=3:|clients|4:|Latency+(us)|5:|Throughput+(tps)&chxs=0,676767,11.5,0,lt,676767|1,676767,11.5,0,lt,676767|2,676767,11.5,0,lt,676767&chco=25B33B,3072F3,FF0000,37F0ED,FF9900&chdl=5th%20Percentile|Median|95th%20Percentile|Mean|Throughput&chdlp=b&chls=1|1|1&chls=1|1|1&chma=5,5,5,25&chm=o,25B33B,0,-1,7|o,3072F3,1,-1,7|o,FF0000,2,-1,7|o,37F0ED,3,-1,7|o,FF9900,4,-1,7&chd=t:1,2,4,6,8,10,20,30,40,60,80,100|1843,2011,2457,3401,4752,5886,12920,19380,27339,38431,11796,69540|1,2,4,6,8,10,20,30,40,60,80,100|2013,2289,3040,4477,6106,7311,14733,22298,29911,44948,49310,75150|1,2,4,6,8,10,20,30,40,60,80,100|4050,3779,4796,6427,13241,9521,17476,25603,33452,48820,63212,80305|1,2,4,6,8,10,20,30,40,60,80,100|2709.00,2735.00,3936.00,5685.00,8321.00,9209.00,18262.00,27288.00,36610.00,54542.00,67968.00,92204.00|1,2,4,6,8,10,20,30,40,60,80,100|368.38,730.06,1014.99,1053.38,960.51,1085.28,1094.51,1093.10,1091.75,1087.63,1087.82,1081.94&chxr=0,1,100,4|1,0,80305|2,0,1094.51&chds=1,100,0,80305,1,100,0,80305,1,100,0,80305,1,100,0,80305.00,1,100,0,1094.51&chxp=3,50|4,100|5,100&chg=0,10" border="0" width="750" height="400" />
+<hr/>
+<pre>
+Benchmark properties:
+Operating system: Linux, i386, 2.6.35-30-generic-pae
+JVM: OpenJDK Server VM Sun Microsystems Inc. 19.0-b09
+Processors: 4
+Load average: 1.0
+Thread count: 126 (126)
+Heap: 51.67 (512.00 - 1017.62) MB
+Args:
+  -Xmx512M
+  -Xms512m
+  -Xmx1024m
+  -XX:+UseConcMarkSweepGC
+Akka version: 1.0
+Akka config:
+</pre>

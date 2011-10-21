@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>NettyRemoteTwoWayPerformanceTest 2011-10-21 14:22</title>
+</head>
+<body>
+<h1>NettyRemoteTwoWayPerformanceTest 2011-10-21 14:22</h1>
+<pre>
+
+===============================================================================================================================
+Scenario                        	clients	TPS	mean	5%  	25% 	50% 	75% 	95% 	Durat.	N
+                                	       	   	(us)	(us)	(us)	(us)	(us)	(us)	(s)   	 
+-------------------------------------------------------------------------------------------------------------------------------
+NettyRemoteTwoWayPerformanceTest	1	498	2003	1319	1373	1447	1987	3100	60	30000
+NettyRemoteTwoWayPerformanceTest	2	892	2238	1629	1770	1796	1836	3290	34	30000
+-------------------------------------------------------------------------------------------------------------------------------
+
+</pre>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1023,2238.0,1796&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=1+clients|2+clients&chbh=a,4,20&chco=90AA94,3D7930&chd=t:1319,1373,1447,1987,3100,2003.00|1629,1770,1796,1836,3290,2238.00&chxr=0,0,3290|2,0,3290&chds=0,3290&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=lxy&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+Latency+%28microseconds%29+and+Throughput+%28TPS%29&chxt=x,y,r,x,y,r&chxl=3:|clients|4:|Latency+(us)|5:|Throughput+(tps)&chxs=0,676767,11.5,0,lt,676767|1,676767,11.5,0,lt,676767|2,676767,11.5,0,lt,676767&chco=25B33B,3072F3,FF0000,37F0ED,FF9900&chdl=5th%20Percentile|Median|95th%20Percentile|Mean|Throughput&chdlp=b&chls=1|1|1&chls=1|1|1&chma=5,5,5,25&chm=o,25B33B,0,-1,7|o,3072F3,1,-1,7|o,FF0000,2,-1,7|o,37F0ED,3,-1,7|o,FF9900,4,-1,7&chd=t:1,2|1319,1629|1,2|1447,1796|1,2|3100,3290|1,2|2003.00,2238.00|1,2|497.84,892.07&chxr=0,1,2,4|1,0,3290|2,0,892.07&chds=1,2,0,3290,1,2,0,3290,1,2,0,3290,1,2,0,3290.00,1,2,0,892.07&chxp=3,50|4,100|5,100&chg=0,10" border="0" width="750" height="400" />
+<hr/>
+<pre>
+Benchmark properties:
+Operating system: Linux, i386, 2.6.35-30-generic-pae
+JVM: OpenJDK Server VM Sun Microsystems Inc. 19.0-b09
+Processors: 4
+Load average: 1.07
+Thread count: 10 (10)
+Heap: 90.91 (512.00 - 1017.62) MB
+Args:
+  -Xmx512M
+  -Xms512m
+  -Xmx1024m
+  -XX:+UseConcMarkSweepGC
+Akka version: 1.0
+Akka config:
+</pre>
