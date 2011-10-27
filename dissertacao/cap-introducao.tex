@@ -9,7 +9,7 @@ e os \english{message brokers}. A segunda, voltada para a criação de programas c
 
 \section{Troca de mensagens em ambientes corporativos}
 
-Sistemas de \english{middleware} orientados a mensagem
+Sistemas de \english{middleware} orientados a mensagens
 trabalham com troca assíncrona de mensagens. As mensagens enviadas são armazenadas 
 e mantidas em filas até que o destinatário esteja pronto para fazer o recebimento e 
 processamento. Em todo envio de mensagem há uma entidade que desempenha o papel de 
@@ -20,7 +20,7 @@ em \english{remote procedure call} (RPC), já que ambos enviam e recebem mensagen
 No contexto de MOMs os papéis de servidor ou cliente são definidos pela semântica da
 troca de mensagens. Uma entidade pode estar atuando hora como provedora de um serviço, 
 hora como cliente de um serviço. Portanto, os termos ``cliente'' e ``servidor'' não são
-aplicáveis nesta classe de sistemas assim como são aplicáveis em sistemas baseados em RPC.
+aplicáveis nesta classe de sistemas do mesmo modo como são aplicáveis em sistemas baseados em RPC.
 
 MOMs formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite 
 interoperabilidade com baixo acoplamento e provê suporte para o tratamento robusto de 
@@ -28,20 +28,20 @@ erros em caso de falhas. Eles são frequentemente apresentados como uma tecnologi
 mudar a maneira com que sistemas distribuídos são construídos \cite{alonso}. 
 
 A garantia da entrega de mensagens é uma das características mais importantes dos MOMs.
-Filas transacionais são uma abstração usada para garantir que toda mensagem recebida pelo 
-MOM seja salva, de modo persistente, e que a remoção da mensagem ocorra somente após a 
-confirmação do recebimento pelo destinatário. Em caso de queda do sistema, quando ele for 
-reiniciado, ocorrerá a entrega das mensagens que foram salvas de modo persistente e cujo 
-recebimento não foi confirmado. A retirada de uma mensagem de uma fila 
-transacional ocorre como parte de uma transação atômica que pode incluir também outras
-operações, como envios de mensagens e atualizações em bancos de dados, bem 
-como outras retiradas de mensagens.
+Filas transacionais são utilizadas para garantir que mensagens recebidas pelo 
+MOM sejam salvas de modo persistente. A a remoção de uma mensagem de uma fila transacional
+ocorre somente após a confirmação do seu recebimento pelo destinatário. 
+No caso de avarias no sistema, mensagens
+previamente salvas pelo MOM e que não tiveram seu recebimento confirmado não são perdidas.
+Uma vez que o sistema tenha sido restabelecido, essas mensagens podem ser entregues aos seus
+destinatários. A retirada de uma mensagem de uma fila transacional ocorre como parte de uma transação atômica que pode incluir também outras operações, como envios de mensagens e atualizações 
+em bancos de dados, bem como outras retiradas de mensagens.
 
 MOMs tradicionalmente estabelecem ligações ponto-a-ponto entre sistemas,
 sendo um tanto inflexíveis no que diz respeito ao roteamento e filtragem de mensagens. 
 \english{Message brokers} são descendentes diretos de MOMs que eliminam essas limitações. 
 Eles agem como intermediários e provêm maior flexibilidade para roteamento e filtragem, 
-além de permitirem que se adicione lógica de negócios para o processamento
+além de permitirem que se adicione lógica de negócios ao processamento
 de mensagens no nível do próprio \english{middleware}. 
 
 Os protocolos usados por \english{message brokers} variam de produto para produto.
@@ -49,9 +49,9 @@ A especificação de Java \english{Messaging Service} (JMS) define uma API padrão
 para que programas Java possam interagir com \english{message brokers}. Boa parte dos 
 \english{message brokers} têm implementações do padrão JMS. Dentre os mais conhecidos, podemos 
 destacar JBoss Messaging \cite{jboss-messaging}, IBM Websphere MQ \cite{ibm-mqseries} 
-(mais conhecido como MQ Series) e Apache Active MQ\cite{apache-activemq}. 
+(mais conhecido como MQ Series) e Apache Active MQ \cite{apache-activemq}. 
 
-O protocolo AMQP (\english{Advanced Message Queuing Protocol}) é uma proposta recente 
+O protocolo AMQP \cite{amqp} (\english{Advanced Message Queuing Protocol}) é uma proposta recente 
 de padronização de um protocolo para \english{message brokers}. Foi criada por um conjunto de 
 empresas (Red Hat, JPMorgan Chase, Cisco Systems, entre outras), com o objetivo de viabilizar 
 tanto o desenvolvimento quanto a disseminação de um protocolo padrão para esse tipo de sistema.
@@ -115,7 +115,7 @@ A linguagem foi desenvolvida para interoperar bem tanto com Java quanto com C\#,
 parte da sintaxe dessas linguagens, além de compartilhar
 a maioria dos operadores básicos, tipos de dados e estruturas de controle. 
 Contudo, para atingir seus objetivos, Scala abre mão de algumas convenções enquanto 
-adiciona novos conceitos. Algumas de suas principais características são:
+adiciona novos conceitos. Algumas de suas características são:
 
 \begin{itemize}
 	\item Scala possui certa semelhança com Java e C\#, de modo que tanto programas
@@ -128,22 +128,22 @@ adiciona novos conceitos. Algumas de suas principais características são:
 	\item Scala é uma linguagem funcional e todas as funções são valores de
 	primeira classe. No contexto de linguagens de programação, valores de primeira
 	classe são entidades que podem ser criadas em tempo de execução, utilizadas 
-	como parâmetro, retornadas por uma função, ou ainda atribuídas a variáveis;
+	como parâmetro, devolvidas por uma função, ou ainda atribuídas a variáveis;
 	
 	\item Scala permite construções via composição de classes e
 	\english{traits}. \english{Traits} possuem definições de métodos e campos assim
-	como uma classe abstrata, porém não definem construtores.  \english{Traits} são
+	como uma classe abstrata, porém não definem construtores. São
 	importantes unidades para reuso de código em Scala já que classes ou objetos podem
 	ser compostos (\english{mixin}) por diversas \english{traits};
 	
 	\item Scala permite a decomposição de objetos via casamento de padrões;
 	
-	\item Scala possui suporte ao tratamento de XML (\english{Extended Markup Language}) 
+	\item Scala possui suporte ao tratamento de XML (\english{extended markup language}) 
 	na própria sintaxe da linguagem;
 	
 	\item Scala não possui o conceito de membros de classes estáticos. A linguagem
 	possui o conceito de \english{singleton objects}, que representa uma instância
-	única de uma classe. \english{Singleton objects} são definidos com a palavra-chave
+	única de uma classe. São definidos com a construção
 	\lstinline$object$ ao invés de \lstinline$class$. \english{Singleton objects} que
 	possuem uma classe definida com o mesmo nome são chamados de objeto acompanhante 
 	(\english{companion object});
