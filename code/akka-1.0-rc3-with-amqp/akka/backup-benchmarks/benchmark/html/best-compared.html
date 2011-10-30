@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>Remote Trading System - Netty x AMQP</title>
+</head>
+<body>
+<h1>Remote Trading System - Netty x AMQP</h1>
+
+<pre>
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+	</tr>	
+	<tr>
+		<td>Netty</td><td>1</td><td>500</td><td>1995</td><td>1308</td><td>1364</td><td>1433</td><td>1968</td><td>3266</td><td>60</td><td>30000</td>
+	</tr>
+	<tr>
+		<td>AMQP</td><td>1</td><td>263</td><td>3797</td><td>3176</td><td>3283</td><td>3361</td><td>3537</td><td>4550</td><td>114</td><td>30000</td>
+	</tr>
+	<tr>								
+		<td colspan="2">Delta</td><td>-237 (-47.40%)</td><td>1802 (90.33%)</td><td>1868 (142.81%)</td><td>1919 (140.69%)</td><td>1928 (134.54%)</td><td>1569 (79.73%)</td><td>1284 (39.31%)</td><td>54 (90.00%)</td><td></td>
+	</tr>
+</table>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+1+client%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1164,1995.0,1433&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:3176,3283,3361,3537,4550,3797.00|1308,1364,1433,1968,3266,1995.00&chxr=0,0,4550|2,0,4550&chds=0,4550&chg=0,10" border="0" width="750" height="400" />
+
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+	</tr>	
+	<tr>
+		<td>Netty</td><td>2</td><td>892</td><td>2238</td><td>1629</td><td>1770</td><td>1796</td><td>1836</td><td>3290</td><td>34</td><td>30000</td>
+	</tr>
+	<tr>
+		<td>AMQP</td><td>2</td><td>527</td><td>3789</td><td>2987</td><td>3234</td><td>3359</td><td>3552</td><td>4208</td><td>57</td><td>30000</td>
+	</tr>
+	<tr>
+		<td colspan="2">Delta</td><td>-365 (-40.92%)</td><td>1551 (69.30%)</td><td>1358(83.36%)</td><td>1464 (82.71%)</td>
+		<td>1563 (87.03%)</td><td>1716 (93.46%)</td><td>918 (27.90%)</td><td>23 (67.65%)</td><td></td>
+	</tr>
+</table>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+2+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1023,2238.0,1796&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:2987,3234,3359,3552,4208,3789.00|1629,1770,1796,1836,3290,2238.00&chxr=0,0,4208|2,0,4208&chds=0,4208&chg=0,10" border="0" width="750" height="400" />
+
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+	</tr>	
+	<tr>
+		<td>Netty</td><td>4</td><td>1243</td><td>3212</td><td>1412</td><td>2070</td><td>2517</td><td>2726</td><td>4214</td><td>24</td><td>30000</td>
+		</tr>	
+	<tr>
+		<td>AMQP</td><td>4</td><td>905</td><td>4416</td><td>2804</td><td>3248</td><td>3614</td><td>4134</td><td>5088</td><td>33</td><td>30000</td>
+	</tr>
+	<tr>
+		<td colspan="2">Delta</td><td>-338 (-27.19%)</td><td>1204 (37.48%)</td><td>1392 (98.58%)</td><td>1178 (56.91%)</td>
+		<td>1097 (43.58%)</td><td>1408 (51.65%)</td><td>874(20.74%)</td><td>9 (37.50%)</td><td></td>
+	</tr>
+</table>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+4+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1081,3212.0,2517&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:2804,3248,3614,4134,5088,4416.00|1412,2070,2517,2726,4214,3212.00&chxr=0,0,5088|2,0,5088&chds=0,5088&chg=0,10" border="0" width="750" height="400" />
+
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+		</tr>		
+	<tr>
+		<td>Netty</td><td>8</td><td>1491</td><td>5353</td><td>2315</td><td>3274</td><td>3771</td><td>4745</td><td>6168</td><td>20</td><td>30000</td>
+	</tr>
+	<tr>
+		<td>AMQP</td><td>8</td><td>1388</td><td>5760</td><td>3140</td><td>3567</td><td>4149</td><td>5168</td><td>6425</td><td>22</td><td>30000</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2">Delta</td><td>-103 (-6.91%)</td><td>407 (7.60%)</td><td>825 (35.64%)</td><td>293 (8.95%)</td><td>378 (10.02%)</td><td>423 (8.91%)</td><td>257 (4.17%)</td><td>2 (10.00%)</td><td></td>
+	</tr>
+</table>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+8+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1281,5353.0,3771&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:3140,3567,4149,5168,6425,5760.00|2315,3274,3771,4745,6168,5353.00&chxr=0,0,6425|2,0,6425&chds=0,6425&chg=0,10" border="0" width="750" height="400" />
+
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+	</tr>	
+
+	<tr>
+		<td>Netty</td><td>10</td><td>1541</td><td>6484</td><td>3384</td><td>4005</td><td>4330</td><td>5704</td><td>7041</td><td>19</td><td>30000</td>
+	</tr>
+	<tr>
+		<td>AMQP</td><td>10</td><td>1423</td><td>7023</td><td>3847</td><td>4396</td><td>5107</td><td>6136</td><td>7610</td><td>21</td><td>30000</td>
+	</tr>
+	<tr>
+		<td colspan="2">Delta</td><td>-118 (-7.66%)</td><td>539 (8.31%)</td><td>463 (13.68%)</td><td>391 (9.76%)</td><td>777 (17.94%)</td><td>432 (7.57%)</td><td>569 (8.08%)</td><td>2 (10.53%)</td><td></td>
+	</tr>
+</table>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+10+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1499,6484.0,4330&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:3847,4396,5107,6136,7610,7023.00|3384,4005,4330,5704,7041,6484.00&chxr=0,0,7610|2,0,7610&chds=0,7610&chg=0,10" border="0" width="750" height="400" />
+
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+	</tr>	
+
+	<tr>
+		<td>Netty</td><td>20</td><td>1565</td><td>12757</td><td>7419</td><td>8206</td><td>9646</td><td>10146</td><td>12015</td><td>19</td><td>30000</td>
+	</tr>
+	<tr>
+		<td>AMQP</td><td>20</td><td>1502</td><td>13309</td><td>7082</td><td>8728</td><td>9964</td><td>10888</td><td>13430</td><td>20</td><td>30000</td>
+	</tr>
+	<tr>
+		<td colspan="2">Delta</td><td>-63 (-4.03%)</td><td>552 (4.33%)</td><td bgcolor="#ccffcc">-337 (-4.54%)</td><td>522 (6.36%)</td><td>318 (3.30%)</td><td>742 (7.31%)</td><td>1415 (11.78%)</td><td>1 (5.26%)</td><td></td>
+	</tr>
+</table>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+20+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1251,12757.0,9646&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:7082,8728,9964,10888,13430,13309.00|7419,8206,9646,10146,12015,12757.00&chxr=0,0,13430|2,0,13430&chds=0,13430&chg=0,10" border="0" width="750" height="400" />
+
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+	</tr>	
+
+	<tr>
+		<td>Netty</td><td>40</td><td>1586</td><td>25176</td><td>16652</td><td>17616</td><td>18183</td><td>19436</td><td>21350</td><td>19</td><td>30000</td>
+	</tr>
+	<tr>
+		<td>AMQP</td><td>40</td><td>1517</td><td>26345</td><td>15915</td><td>18496</td><td>19525</td><td>20842</td><td>23360</td><td>20</td><td>30000</td>
+	</tr>
+	<tr>
+		<td colspan="2">Delta</td><td>-69 (-4.35%)</td><td>1169 (4.64%)</td><td bgcolor="#ccffcc">-737 (-4.43%)</td><td>880 (5.00%)</td><td>1342 (7.38%)</td><td>1406 (7.23%)</td><td>2010 (9.41%)</td><td>1 (5.26%)</td><td></td>
+	</tr>
+</table>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+40+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1443,25176.0,18183&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:15915,18496,19525,20842,23360,26345.00|16652,17616,18183,19436,21350,25176.00&chxr=0,0,23360|2,0,23360&chds=0,23360&chg=0,10" border="0" width="750" height="400" />
+
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+	</tr>	
+
+	<tr>
+		<td>Netty</td><td>80</td><td>1591</td><td>49525</td><td>32925</td><td>35403</td><td>36541</td><td>37863</td><td>40041</td><td>19</td><td>30000</td>
+	</tr>
+	<tr>
+		<td>AMQP</td><td>80</td><td>1512</td><td>52122</td><td>33292</td><td>37915</td><td>39399</td><td>40943</td><td>43496</td><td>20</td><td>30000</td>
+	</tr>
+	<tr>
+		<td colspan="2">Delta</td><td>-79 (-4.97%)</td><td>2597 (5.24%)</td><td>367 (1.11%)</td><td>2512 (7.10%)</td><td>2858 (7.82%)</td><td>3080 (8.13%)</td><td>3455 (8.63%)</td><td>1 (5.26%)</td><td></td>
+	</tr>
+</table>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+80+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,3618,49525.0,36541&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:33292,37915,39399,40943,43496,52122.00|32925,35403,36541,37863,40041,49525.00&chxr=0,0,43496|2,0,43496&chds=0,43496&chg=0,10" border="0" width="750" height="400" />
+
+<table width="80%" border="1px">
+	<tr>
+		<td>Scenario</td>
+		<td>Clients</td>
+		<td>TPS</td>
+		<td>mean (us)</td>
+		<td>5% (us)</td>
+		<td>25% (us)</td>
+		<td>50% (us)</td>
+		<td>75% (us)</td>
+		<td>95% (us)</td>
+		<td>Durat. (s)</td>
+		<td>N</td>
+	</tr>	
+
+	<tr>
+		<td>Netty</td><td>100</td><td>1592</td><td>62673</td><td>42711</td><td>44687</td><td>45778</td><td>47287</td><td>50159</td><td>19</td><td>30000</td>
+	</tr>
+	<tr>
+		<td>AMQP</td><td>100</td><td>1505</td><td>57943</td><td>11100</td><td>32456</td><td>36649</td><td>38769</td><td>50510</td><td>20</td><td>30000</td>
+	</tr>
+	<tr>
+		<td colspan="2">Delta</td><td>-87 (-5.46%)</td><td bgcolor="#ccffcc">-4730 (-7.55%)</td><td bgcolor="#ccffcc">-31611 (-74.01%)</td><td bgcolor="#ccffcc">-12231 (-27.37%)</td><td bgcolor="#ccffcc">-9129 (-19.94%)</td><td bgcolor="#ccffcc">-8518 (-18.01%)</td><td>351 (0.70%)</td><td>1 (5.26%)</td><td></td>
+	</tr>
+</table>
+</pre>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=Netty+vs.+AMQP%2C+100+clients%2C+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,5253,62673.0,45778&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=AMQP|Netty&chbh=a,4,20&chco=90AA94,3D7930&chd=t:11100,32456,36649,38769,50510,57943.00|42711,44687,45778,47287,50159,62673.00&chxr=0,0,50510|2,0,50510&chds=0,50510&chg=0,10" border="0" width="750" height="400" />

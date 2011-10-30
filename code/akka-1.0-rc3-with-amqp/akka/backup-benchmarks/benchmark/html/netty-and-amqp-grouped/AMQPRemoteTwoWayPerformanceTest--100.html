@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>AMQPRemoteTwoWayPerformanceTest 2011-10-20 15:03</title>
+</head>
+<body>
+<h1>AMQPRemoteTwoWayPerformanceTest 2011-10-20 15:03</h1>
+<pre>
+
+=======================================================================================================================================
+Scenario                       	clients	TPS	mean	5%  	25% 	50% 	75% 	95% 	Durat.	N
+                               	       	   	(us)	(us)	(us)	(us)	(us)	(us)	(s)   	 
+---------------------------------------------------------------------------------------------------------------------------------------
+AMQPRemoteTwoWayPerformanceTest	100	1227	77793	9841	47939	50113	53297	118497	24	30000
+AMQPRemoteTwoWayPerformanceTest	100	1014	91730	17011	62468	73048	81848	94121	30	30000
+AMQPRemoteTwoWayPerformanceTest	100	1505	57943	11100	32456	36649	38769	50510	20	30000
+AMQPRemoteTwoWayPerformanceTest	100	1496	58713	10824	34644	37667	39819	50380	20	30000
+---------------------------------------------------------------------------------------------------------------------------------------
+
+</pre>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,3629,58713.0,37667&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=100+clients|100+clients|100+clients|100+clients&chbh=a,4,20&chco=A2C180,A2C180,90AA94,3D7930&chd=t:9841,47939,50113,53297,118497,77793.00|17011,62468,73048,81848,94121,91730.00|11100,32456,36649,38769,50510,57943.00|10824,34644,37667,39819,50380,58713.00&chxr=0,0,118497|2,0,118497&chds=0,118497&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=lxy&chs=750x400&chtt=AMQPRemoteTwoWayPerformanceTest+Latency+%28microseconds%29+and+Throughput+%28TPS%29&chxt=x,y,r,x,y,r&chxl=3:|clients|4:|Latency+(us)|5:|Throughput+(tps)&chxs=0,676767,11.5,0,lt,676767|1,676767,11.5,0,lt,676767|2,676767,11.5,0,lt,676767&chco=25B33B,3072F3,FF0000,37F0ED,FF9900&chdl=5th%20Percentile|Median|95th%20Percentile|Mean|Throughput&chdlp=b&chls=1|1|1&chls=1|1|1&chma=5,5,5,25&chm=o,25B33B,0,-1,7|o,3072F3,1,-1,7|o,FF0000,2,-1,7|o,37F0ED,3,-1,7|o,FF9900,4,-1,7&chd=t:100,100,100,100|9841,17011,11100,10824|100,100,100,100|50113,73048,36649,37667|100,100,100,100|118497,94121,50510,50380|100,100,100,100|77793.00,91730.00,57943.00,58713.00|100,100,100,100|1226.76,1013.77,1504.78,1495.73&chxr=0,100,100,4|1,0,118497|2,0,1504.78&chds=100,100,0,118497,100,100,0,118497,100,100,0,118497,100,100,0,118497.00,100,100,0,1504.78&chxp=3,50|4,100|5,100&chg=0,10" border="0" width="750" height="400" />
+<hr/>
+<pre>
+Benchmark properties:
+Operating system: Mac OS X, x86_64, 10.7.2
+JVM: Java HotSpot(TM) 64-Bit Server VM Apple Inc. 20.1-b02-383
+Processors: 2
+Load average: 1.7490234375
+Thread count: 6 (7)
+Heap: 179.94 (512.00 - 1019.88) MB
+Args:
+  -Xserver
+  -Xmx512M
+  -Xms512m
+  -Xmx1024m
+  -XX:+UseConcMarkSweepGC
+Akka version: 1.0
+Akka config:
+</pre>

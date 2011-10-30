@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>NettyRemoteTwoWayPerformanceTest 2011-10-21 15:11</title>
+</head>
+<body>
+<h1>NettyRemoteTwoWayPerformanceTest 2011-10-21 15:11</h1>
+<pre>
+
+=======================================================================================================================================
+Scenario                        	clients	TPS	mean	5%  	25% 	50% 	75% 	95% 	Durat.	N
+                                	       	   	(us)	(us)	(us)	(us)	(us)	(us)	(s)   	 
+---------------------------------------------------------------------------------------------------------------------------------------
+NettyRemoteTwoWayPerformanceTest	80	889	89089	25822	36654	39031	50225	103695	34	30000
+NettyRemoteTwoWayPerformanceTest	80	1584	49727	33037	35673	36802	38043	40436	19	30000
+NettyRemoteTwoWayPerformanceTest	80	1590	49552	32299	35369	36575	37958	40627	19	30000
+NettyRemoteTwoWayPerformanceTest	80	1591	49525	32925	35403	36541	37863	40041	19	30000
+NettyRemoteTwoWayPerformanceTest	80	1261	59915	8730	34726	36849	40061	87034	24	30000
+---------------------------------------------------------------------------------------------------------------------------------------
+
+</pre>
+<img src="http://chart.apis.google.com/chart?cht=bvg&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+Percentiles+and+Mean+%28microseconds%29&chxt=y,x,y&chxl=1:|5%|25%|50%|75%|95%|mean|2:|min|mean|median&chxp=2,1387,59915.0,36849&chxs=2,D65D82,11.5,0,lt,D65D82&chxtc=2,-1000&chdl=80+clients|80+clients|80+clients|80+clients|80+clients&chbh=a,4,20&chco=A2C180,A2C180,A2C180,90AA94,3D7930&chd=t:25822,36654,39031,50225,103695,89089.00|33037,35673,36802,38043,40436,49727.00|32299,35369,36575,37958,40627,49552.00|32925,35403,36541,37863,40041,49525.00|8730,34726,36849,40061,87034,59915.00&chxr=0,0,103695|2,0,103695&chds=0,103695&chg=0,10" border="0" width="750" height="400" />
+<img src="http://chart.apis.google.com/chart?cht=lxy&chs=750x400&chtt=NettyRemoteTwoWayPerformanceTest+Latency+%28microseconds%29+and+Throughput+%28TPS%29&chxt=x,y,r,x,y,r&chxl=3:|clients|4:|Latency+(us)|5:|Throughput+(tps)&chxs=0,676767,11.5,0,lt,676767|1,676767,11.5,0,lt,676767|2,676767,11.5,0,lt,676767&chco=25B33B,3072F3,FF0000,37F0ED,FF9900&chdl=5th%20Percentile|Median|95th%20Percentile|Mean|Throughput&chdlp=b&chls=1|1|1&chls=1|1|1&chma=5,5,5,25&chm=o,25B33B,0,-1,7|o,3072F3,1,-1,7|o,FF0000,2,-1,7|o,37F0ED,3,-1,7|o,FF9900,4,-1,7&chd=t:80,80,80,80,80|25822,33037,32299,32925,8730|80,80,80,80,80|39031,36802,36575,36541,36849|80,80,80,80,80|103695,40436,40627,40041,87034|80,80,80,80,80|89089.00,49727.00,49552.00,49525.00,59915.00|80,80,80,80,80|889.00,1584.47,1589.86,1590.94,1260.82&chxr=0,80,80,4|1,0,103695|2,0,1590.94&chds=80,80,0,103695,80,80,0,103695,80,80,0,103695,80,80,0,103695.00,80,80,0,1590.94&chxp=3,50|4,100|5,100&chg=0,10" border="0" width="750" height="400" />
+<hr/>
+<pre>
+Benchmark properties:
+Operating system: Mac OS X, x86_64, 10.7.2
+JVM: Java HotSpot(TM) 64-Bit Server VM Apple Inc. 20.1-b02-383
+Processors: 2
+Load average: 1.5751953125
+Thread count: 6 (7)
+Heap: 201.21 (512.00 - 1019.88) MB
+Args:
+  -Xserver
+  -Xmx512M
+  -Xms512m
+  -Xmx1024m
+  -XX:+UseConcMarkSweepGC
+Akka version: 1.0
+Akka config:
+</pre>
