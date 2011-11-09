@@ -8,7 +8,8 @@ implementação utiliza a implementação de atores remotos do projeto Akka apresent
 no capítulo \ref{cap:atores_akka}. Na seção \ref{sec:atores_remotos_amqp:novos_componentes}
 apresentamos os novos componentes que criamos dentro da estrutura do Akka e
 na seção \ref{sec:atores_remotos_amqp:integracao_akka} como fizemos a integração dos
-novos componentes com a implementação existente.
+novos componentes com a implementação existente. Para concluir, apresentamos
+na seção \ref{sec:atores_remotos_amqp:analise_de_desempenho} uma comparação de desempenho entre nossa implementação e a implementação original do projeto Akka.
 
 \section{Novos componentes}
 \index{Atores Remotos com AMQP!componentes}
@@ -336,3 +337,175 @@ Devemos lembrar que, caso a mensagem que foi enviada pelo servidor seja o result
 envio com \lstinline$!!$ ou \lstinline$!!!$, o conteúdo da mensagem
 (seja um resultado de sucesso ou uma exceção) é utilizado para completar a instância cujo a
 referência havia sido colocada no mapa de resultados futuros.
+
+\section{Comparação de desempenho}
+\index{Atores Remotos com AMQP!comparação de desempenho}
+\label{sec:atores_remotos_amqp:analise_de_desempenho}
+
+Com o intuito de medir como novas alterações no código da biblioteca de atores melhoravam o desempenho, 
+os desenvolvedores do projeto Akka criaram um sistema que simula a compra e venda de ações
+chamado de \english{Trading System}. Os desenvolvedores criaram também algumas classes que cuidam do armazenamento, comparação e geração de relatórios dos dados coletados em testes de desempenho.
+
+\subsection{Trading System}
+\index{Atores Remotos com AMQP!comparação de desempenho!Trading System}
+\label{sec:atores_remotos_amqp:trading_system}
+
+A disposição dos componentes do sistema de cotações é mostrados na figura \ref{fig:trading-system}.
+Os componentes são descritos a seguir:
+
+\begin{itemize}
+	\item \english{Order Book}: É uma entidade que possui informações sobre as
+	ordens de compra e venda de uma ação em específico. Neste sistema, uma ação
+	é composta por uma letra e por um número. Ele é responsável
+	por fazer o casamento de uma ordem de venda com uma ordem de compra.
+	É utilizado como nomes de ações as letras A, B e C, combinadas com
+	números de $1$ a $5$, num total de quinze \english{order books};
+
+	\item \english{Matching Engine}: É um ator que age como intermediário 
+	no encaminhamento de mensagens aos \english{order books}. Existe um \english{matching engine}
+	para cada letra de \english{order book};
+
+	\item \english{Order Receiver}: É um ator externo que tem o papel de receber
+	mensagens de compra e venda de qualquer ação, encontrar o \english{matching engine}
+	responsavél e repassar a mensagem. A quantidade de \english{order receivers} não possui
+	relação com \english{matching engines}, já que um \english{order receiver} recebe
+	mensagens para qualquer tipo de ação. O sistema possui dez \english{order receivers};
+
+	\item \english{Trading System}: É o ator recepcionista do sistema e é responsável
+	por fazer a criação e inicialização dos atores internos do sistema. Este ator ainda
+	responde a atores clientes os endereços (referências) dos \english{order receivers}
+	que foram criados;
+
+	\item \english{Order}: É um componente que não é mostrado na figura e que representa
+	uma ordem. É definida em uma classe abstrata e possui como informações o código da ação, o volume e o valor. 
+	Suas implementações são \english{Ask} para indicar uma ordem de venda, e \english{Bid} para indicar uma 
+	ordem de compra;
+\end{itemize}
+
+\begin{figure}[!h]
+		\centering
+		\includegraphics[scale=.70]{trading-system} 
+ 		\caption{Trading System -- Sistema de compra e vendas de ações.}
+  		\label{fig:trading-system}
+\end{figure}
+
+Existe ainda atores rotulados como ``clientes''. Um ator cliente é um ator externo ao 
+sistema de cotações que possui uma lista de ordens a serem enviadas, um valor inteiro
+indicando a quantidade de repetições a serem executadas na lista
+e um \english{order receiver} para onde as mensagens devem ser enviadas.
+A quantidade de atores cliente varia de acordo com a instância do teste que
+se deseja fazer. A quantidade não será necessariamente igual à quantidade de \english{order receivers}.
+Por este motivo, a associação de um ator cliente a um \english{order receiver} é feita em sequência. 
+Iteramos na lista de \english{order receivers} junto com a lista de atores clientes.
+Uma vez que tenhamos alcançado o décimo \english{order receiver}, reiniciamos a iteração a partir do
+primeiro ator. Depedendo a quantidade de atores clientes, alguns \english{order receivers}
+podem recebem mensagens de mais, de menos ou até mesmo de nenhum ator cliente quando comparados com
+outros \english{order receivers}.
+
+Cada ator cliente envia um total de trinta ordens, sendo quinze de compra e quinze de venda,
+para o \english{order receiver} que lhe foi associado. Este valor é multiplicado pela quantidade
+de repetições que o ator cliente deve executar. A medição é feita com base no tempo que uma mensagem 
+enviadar por um ator cliente levou para ser processado em um \english{order book}.
+
+\subsubsection{Trading System com atores remotos}
+\index{Atores Remotos com AMQP!comparação de desempenho!Trading System!remoto}
+\label{sec:atores_remotos_amqp:trading_system_remoto}
+
+Ainda que o \english{Trading System} não tenha sido criado para testes com atores remotos, 
+consideramos ser de grande utilidade utilizá-lo para fazer uma comparação de desempenho
+entre o suporte padrão a atores remotos do Akka com o que desenvolvemos. Para tal,
+foram necessárias algumas alterações, listadas a seguir:
+
+\begin{enumerate}
+	\item Registramos todos os atores que estão posicionados na área rotulada como ``Atores Externos''
+	na figura \ref{fig:trading-system}, como atores remotos (seção \ref{sec:atores_remotos_akka});
+
+	\item Fizemos com que as classes \english{Ask} e \english{Bid} fossem seriáveis 
+	(seção \ref{sec:atores_remotos_akka_seriacao}). Optamos por utilizar como formato de seriação, 
+	o formato definido na \english{trait} \lstinline$ScalaJSON$;
+
+	\item Trocamos os envios assíncronos de mensagens por envios síncronos (\lstinline{!!})
+	nos atores cliente. Assim, uma nova mensagem só é enviada uma vez que a mensagem anterior
+	tenha sido processada e sua confirmação recebida no ator cliente. O comportamento de um ator
+	cliente teve uma pequena alteração: para cada mensagem enviada, o ator cliente marca o momento de início
+	do envio da mensagen, aguarda o valor devolvido pelo método \lstinline{!!} 
+	(que é invocado no \english{order receiver}), marca o tempo de término do envio e salva a 
+	diferença de tempo em um repositório.
+\end{enumerate}
+
+Para que pudessemos tem medidas mais reais, separamos os atores clientes e os atores do
+\english{Trading System} em JVMs residentes em nós fisicamente separados. A máquina
+virtual Erlang, onde o RabbitMQ esteve em execução, ficou separada em um terceiro nó.
+
+\subsection{Resultados}
+
+Definimos o número de mensagens que cada cliente enviou da seguinte maneira: seja $n_c$ a 
+quantidade de atores cliente utilizada no teste e seja $r$ o número de repetições; cada ator cliente 
+enviou $30 (\lfloor r/n_c \rfloor)$ mensagens. O valor $r$ de repetições definido foi $1000$. 
+Variamos os valores de $n_c$ de modo que o resultado da divisão fosse sempre inteiro. O total 
+de mensagens enviadas por todos os atores cliente foi sempre de $30000$. 
+
+%x explicar como foram feitas as medidas
+
+A tabela \ref{tab:medidas} mostra as melhores medidas dentre todas as execuções
+feitas na execução do \english{Trading System} com atores remotos. O critério
+utilizado para a comparação entre as medidas de um mesmo conjunto de instâncias
+foi o valor que é apresentado na coluna média.
+
+
+\renewcommand{\arraystretch}{0.85}
+\captionsetup{margin=1.0cm}  % correção nas margens dos captions.
+\begin{table}
+\begin{center}
+\begin{small}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} 
+\hline
+{Cenário} & {Clientes} & {TPS} & {média ($\mu s$)} & {25\% ($\mu s$)} & {50\% ($\mu s$)} & {75\% ($\mu s$)} & 
+{90\% ($\mu s$)} & {Dur. ($s$)} \\ \hline \hline
+Netty & 1 & 500 &  1995 & 1364 & 1433 & 1968 & 3266 & 60 \\
+AMQP  & 1 & 263 &  3797 & 3283 & 3361 & 3537 & 4550 & 114 \\ \hline
+ & Delta & -47.40\% & +90.33\%  & +140.69\% & +134.54\% & +79.73\% & +39.31\% & +90.00\% \\ \hline
+									
+Netty & 2 & 892 & 2238 &  1770 & 1796 & 1836 & 3290 & 34 \\
+AMQP  & 2 & 527 & 3789 &  3234 & 3359 & 3552 & 4208 & 57 \\ \hline
+ & Delta & -40.92\% & +69.30\% &  +82.71\% & +87.03\% & +93.46\% & +27.90\% & +67.65\% \\ \hline
+
+Netty & 4 & 1243 & 3212 & 2070 & 2517 & 2726 & 4214 & 24 \\
+AMQP  & 4 &  905 & 4416 & 3248 & 3614 & 4134 & 5088 & 33 \\ \hline
+ & Delta  & -27.19\% & +37.48\% & +56.91\% & +43.58\% & +51.65\% & +20.74\% & +37.50\% \\ \hline
+
+Netty & 8 & 1491 & 5353 & 3274 & 3771 & 4745 & 6168 & 20 \\
+AMQP & 8 & 1388 & 5760 & 3567 & 4149 & 5168 & 6425 & 22 \\ \hline
+ & Delta & -6.91\% & +7.60\% & +8.95\% & +10.02\% & +8.91\% & +4.17\% & +10.00\% \\ \hline
+
+Netty & 10 & 1541 & 6484 & 4005 & 4330 & 5704 & 7041 & 19 \\
+AMQP & 10 & 1423 & 7023 & 4396 & 5107 & 6136 & 7610 & 21 \\ \hline
+ & Delta & -7.66\% & +8.31\% &  +9.76\% & +17.94\% & +7.57\% & +8.08\% & +10.53\% \\ \hline
+
+Netty & 20 & 1565 & 12757 & 8206 & 9646 & 10146 & 12015 & 19 \\
+AMQP & 20 & 1502 & 13309 & 8728 & 9964 & 10888 & 13430 & 20 \\ \hline
+ & Delta & -4.03\% & +4.33\% &  +6.36\% & +3.30\% & +7.31\% & +11.78\% & +5.26\% \\ \hline
+
+Netty & 40 & 1586 & 25176 & 17616 & 18183 & 19436 & 21350 & 19 \\
+AMQP & 40 & 1517 & 26345 &  18496 & 19525 & 20842 & 23360 & 20 \\ \hline
+& Delta & -4.35\% & +4.64\% &  +5.00\% & +7.38\% & +7.23\% & +9.41\% & +5.26\% \\ \hline 
+
+Netty & 80 & 1591 & 49525 &  35403 & 36541 & 37863 & 40041 & 19 \\
+AMQP & 80 & 1512 & 52122 &  37915 & 39399 & 40943 & 43496 & 20 \\ \hline
+ & Delta & -4.97\% & 5.24\% &  7.10\% & 7.82\% & 8.13\% & 8.63\% & 5.26\% \\ \hline
+		
+Netty & 100 & 1555 & 54314 & 17757 & 33073 & 34442 & 37031 & 19 \\
+AMQP & 100 & 1505 & 57943 &  32456 & 36649 & 38769 & 50510 & 20 \\ \hline
+ & Delta & -3.22\% & 6.68\% & 82.78\% & 10.81\% & 12.56\% & 36.40\% & 5.26\% \\
+\hline 
+\end{tabular}
+\caption{Medidas de tempo do Trading System com atores remotos.}
+\label{tab:medidas}
+\end{small}
+\end{center}
+\end{table}
+
+
+
+
+
