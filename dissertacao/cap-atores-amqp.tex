@@ -344,7 +344,8 @@ referência havia sido colocada no mapa de resultados futuros.
 
 Com o intuito de medir como novas alterações no código da biblioteca de atores melhoravam o desempenho, 
 os desenvolvedores do projeto Akka criaram um sistema que simula a compra e venda de ações
-chamado de \english{Trading System}. Os desenvolvedores criaram também algumas classes que cuidam do armazenamento, comparação e geração de relatórios dos dados coletados em testes de desempenho.
+chamado de \english{Trading System}. Os desenvolvedores criaram também algumas classes que cuidam do armazenamento, 
+comparação e geração de relatórios dos dados coletados em testes de desempenho.
 
 \subsection{Trading System}
 \index{Atores Remotos com AMQP!comparação de desempenho!Trading System}
@@ -433,6 +434,12 @@ foram necessárias algumas alterações, listadas a seguir:
 	diferença de tempo em um repositório.
 \end{enumerate}
 
+As configurações utilizadas no arquivo \lstinline$akka.conf$ para os testes com o suporte padrão
+a atores remotos do Akka foram as recomendadas uso geral, ou seja, compressão média de mensagens e tamanho
+do janelamento das mensagens de $1$KB. Nos testes executados com o suporte desenvolvido neste trabalho,
+utilizamos uma conexão por canal além da configuração \lstinline$DURABLE$ para as pontes AMQP 
+(seção \ref{sec:entidades-via-broker-amqp-bridges}).
+
 Para que pudessemos tem medidas mais reais, separamos os atores clientes e os atores do
 \english{Trading System} em JVMs residentes em nós fisicamente separados. A máquina
 virtual Erlang, onde o RabbitMQ esteve em execução, ficou separada em um terceiro nó.
@@ -443,52 +450,92 @@ Definimos o número de mensagens que cada cliente enviou da seguinte maneira: sej
 quantidade de atores cliente utilizada no teste e seja $r$ o número de repetições; cada ator cliente 
 enviou $30 (\lfloor r/n_c \rfloor)$ mensagens. O valor $r$ de repetições definido foi $1000$. 
 Variamos os valores de $n_c$ de modo que o resultado da divisão fosse sempre inteiro. O total 
-de mensagens enviadas por todos os atores cliente foi sempre de $30000$. 
+de mensagens enviadas por todos os atores cliente em uma instância de teste foi sempre $30000$. 
 
-%x explicar como foram feitas as medidas
+A estrutura criada para medida e comparação de desempenho de atores locais do Akka
+utiliza algumas bibliotecas para o armazenamento e geração de relatórios. Os valores
+das medidas registradas em uma instância de teste são organizados em percentis. 
+A biblioteca utilizada para o cálculo de percentis é a Commons Math da funcação Apache \cite{commons-math}.
+Os relatórios gerados apresentam também a quantidade de envios/respostas por segundo (ER/S),
+o tempo médio de cada envio/resposta e ainda o tempo total gasto para a execução de
+todos os envios/recebimentos. 
 
 A tabela \ref{tab:medidas} mostra as melhores medidas dentre todas as execuções
 feitas na execução do \english{Trading System} com atores remotos. O critério
 utilizado para a comparação entre as medidas de um mesmo conjunto de instâncias
 foi o valor que é apresentado na coluna média.
 
+O fato de adicionarmos um terceiro nó com um \english{message broker} na comunicação
+entre os atores remotos, naturalmente adiciona mais passagens pela rede que conecta os nós.
+Um envio que utiliza o Netty faz com que duas mensagens trafeguem pela rede (a ordem é
+enviada pelo \lstinline$RemoteClient$ direto ao \lstinline$RemoteServer$ e a resposta
+faz o caminho inverso). Já quando utilizamos a implementação com AMQP, quatro mensagens
+são trafegadas (a ordem é enviada pelo \lstinline$RemoteClient$ ao \english{message broker},
+o \english{message broker} envia a ordem para o \lstinline$RemoteServer$ e a resposta faz o caminho
+inverso). Por este motivo, esperávamos que o tempo gasto pela implementação com AMQP fosse, 
+aproximadamente, duas vezes mais do que o tempo gasto pela implementação com Netty. 
+Observando a comparação dos dados da tabela \ref{tab:medidas} para a instância com apenas $1$ ator cliente, 
+podemos notar uma diferença bem próxima da esperada, 
+já que o número de envios/respostas por segundo é quase metade ($-47.40\%$), o valor médio 
+para cada envio/resposta leva quase o dobro do tempo ($90.33\%$) e a duração total é quase o dobro
+do tempo ($90$\%). Quando analizamos os percentis, podemos notar que as execuções mais rápidas
+feitas com AMQP foram pouco mais de duas vezes mais lentas em relação às execuções feitas com Netty 
+($140.69$\% e  $134.54$\%). Entretanto, quando comparamos os percentis acima da mediana, observamos
+uma boa redução na diferença ($79.73$\% e  $39.31$\%).
+
+Devemos relembrar que não adicionamos compressão de mensagens na implementação com AMQP, e que
+os testes feitos com Netty utilizaram uma compressão média. Como as mensagens são 
+menores que $1$KB, entendemos que a implementação com AMQP possa tenha levado ligeira
+vantagem. Ademais, o terceiro nó colabora para a distribuição do processamento. Na implementação
+do feita Netty, tanto as classes responsáveis pelo envio e recebimento de mensagens quanto as classes
+do arcabouço compartilham mesma JVM que executa classes do sistema de cotações. 
+Já na implementação com AMQP, apenas as classes responsáveis pelo envio e recebimento de mensagens 
+compartilham a JVM. 
+
+Podemos observar que, conforme a quantidade de atores clientes foi aumentando, a diferença
+na quantidade de envios/respostas foi reduzindo até alcançar uma diferença de apenas $3.22$\% 
+por segundo.
+
+%% continuar argumentado sobre a tabela
+
+% lembrar de comentar de mensagens que ficam bufferizadas e sao entregues depois
 
 \renewcommand{\arraystretch}{0.85}
-\captionsetup{margin=1.0cm}  % correção nas margens dos captions.
+\captionsetup{margin=1.0cm}
 \begin{table}
 \begin{center}
 \begin{small}
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} 
 \hline
-{Cenário} & {Clientes} & {TPS} & {média ($\mu s$)} & {25\% ($\mu s$)} & {50\% ($\mu s$)} & {75\% ($\mu s$)} & 
+{Impl.} & {Clientes} & {ER/S} & {Média ($\mu s$)} & {25\% ($\mu s$)} & {50\% ($\mu s$)} & {75\% ($\mu s$)} & 
 {90\% ($\mu s$)} & {Dur. ($s$)} \\ \hline \hline
 Netty & 1 & 500 &  1995 & 1364 & 1433 & 1968 & 3266 & 60 \\
 AMQP  & 1 & 263 &  3797 & 3283 & 3361 & 3537 & 4550 & 114 \\ \hline
- & Delta & -47.40\% & +90.33\%  & +140.69\% & +134.54\% & +79.73\% & +39.31\% & +90.00\% \\ \hline
+ & Delta & -47.40\% & 90.33\%  &  140.69\% &  134.54\% &  79.73\% &  39.31\% &  90.00\% \\ \hline
 									
 Netty & 2 & 892 & 2238 &  1770 & 1796 & 1836 & 3290 & 34 \\
 AMQP  & 2 & 527 & 3789 &  3234 & 3359 & 3552 & 4208 & 57 \\ \hline
- & Delta & -40.92\% & +69.30\% &  +82.71\% & +87.03\% & +93.46\% & +27.90\% & +67.65\% \\ \hline
+ & Delta & -40.92\% &  69.30\% &   82.71\% &  87.03\% &  93.46\% &  27.90\% &  67.65\% \\ \hline
 
 Netty & 4 & 1243 & 3212 & 2070 & 2517 & 2726 & 4214 & 24 \\
 AMQP  & 4 &  905 & 4416 & 3248 & 3614 & 4134 & 5088 & 33 \\ \hline
- & Delta  & -27.19\% & +37.48\% & +56.91\% & +43.58\% & +51.65\% & +20.74\% & +37.50\% \\ \hline
+ & Delta  & -27.19\% &  37.48\% &  56.91\% &  43.58\% &  51.65\% &  20.74\% &  37.50\% \\ \hline
 
 Netty & 8 & 1491 & 5353 & 3274 & 3771 & 4745 & 6168 & 20 \\
 AMQP & 8 & 1388 & 5760 & 3567 & 4149 & 5168 & 6425 & 22 \\ \hline
- & Delta & -6.91\% & +7.60\% & +8.95\% & +10.02\% & +8.91\% & +4.17\% & +10.00\% \\ \hline
+ & Delta & -6.91\% &  7.60\% &  8.95\% &  10.02\% &  8.91\% &  4.17\% &  10.00\% \\ \hline
 
 Netty & 10 & 1541 & 6484 & 4005 & 4330 & 5704 & 7041 & 19 \\
 AMQP & 10 & 1423 & 7023 & 4396 & 5107 & 6136 & 7610 & 21 \\ \hline
- & Delta & -7.66\% & +8.31\% &  +9.76\% & +17.94\% & +7.57\% & +8.08\% & +10.53\% \\ \hline
+ & Delta & -7.66\% &  8.31\% &   9.76\% &  17.94\% &  7.57\% &  8.08\% &  10.53\% \\ \hline
 
 Netty & 20 & 1565 & 12757 & 8206 & 9646 & 10146 & 12015 & 19 \\
 AMQP & 20 & 1502 & 13309 & 8728 & 9964 & 10888 & 13430 & 20 \\ \hline
- & Delta & -4.03\% & +4.33\% &  +6.36\% & +3.30\% & +7.31\% & +11.78\% & +5.26\% \\ \hline
+ & Delta & -4.03\% &  4.33\% &   6.36\% &  3.30\% &  7.31\% &  11.78\% &  5.26\% \\ \hline
 
 Netty & 40 & 1586 & 25176 & 17616 & 18183 & 19436 & 21350 & 19 \\
 AMQP & 40 & 1517 & 26345 &  18496 & 19525 & 20842 & 23360 & 20 \\ \hline
-& Delta & -4.35\% & +4.64\% &  +5.00\% & +7.38\% & +7.23\% & +9.41\% & +5.26\% \\ \hline 
+& Delta & -4.35\% &  4.64\% &   5.00\% &  7.38\% &  7.23\% &  9.41\% &  5.26\% \\ \hline 
 
 Netty & 80 & 1591 & 49525 &  35403 & 36541 & 37863 & 40041 & 19 \\
 AMQP & 80 & 1512 & 52122 &  37915 & 39399 & 40943 & 43496 & 20 \\ \hline
