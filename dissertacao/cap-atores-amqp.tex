@@ -415,11 +415,15 @@ enviadar por um ator cliente levou para ser processado em um \english{order book
 Ainda que o \english{Trading System} não tenha sido criado para testes com atores remotos, 
 consideramos ser de grande utilidade utilizá-lo para fazer uma comparação de desempenho
 entre o suporte padrão a atores remotos do Akka com o que desenvolvemos. Para tal,
-foram necessárias algumas alterações, listadas a seguir:
+foram necessárias as alterações listadas a seguir:
 
 \begin{enumerate}
 	\item Registramos todos os atores que estão posicionados na área rotulada como ``Atores Externos''
-	na figura \ref{fig:trading-system}, como atores remotos (seção \ref{sec:atores_remotos_akka});
+	na figura \ref{fig:trading-system}, como atores remotos (seção \ref{sec:atores_remotos_akka}).
+	Essa modificação resultou em alterações na inicialização do \english{Trading System} e na obtenção
+	dos \english{order receivers}. Na versão remota, apenas os nomes sob o qual foram registrados
+	no registro de atores remotos é devolvido. Na versão local, são devolvidas \lstinline$ActorRefs$.
+	%% explicar pq nao utilizei actor refs
 
 	\item Fizemos com que as classes \english{Ask} e \english{Bid} fossem seriáveis 
 	(seção \ref{sec:atores_remotos_akka_seriacao}). Optamos por utilizar como formato de seriação, 
@@ -476,29 +480,32 @@ inverso). Por este motivo, esperávamos que o tempo gasto pela implementação com 
 aproximadamente, duas vezes mais do que o tempo gasto pela implementação com Netty. 
 Observando a comparação dos dados da tabela \ref{tab:medidas} para a instância com apenas $1$ ator cliente, 
 podemos notar uma diferença bem próxima da esperada, 
-já que o número de envios/respostas por segundo é quase metade ($-47.40\%$), o valor médio 
-para cada envio/resposta leva quase o dobro do tempo ($90.33\%$) e a duração total é quase o dobro
-do tempo ($90$\%). Quando analizamos os percentis, podemos notar que as execuções mais rápidas
-feitas com AMQP foram pouco mais de duas vezes mais lentas em relação às execuções feitas com Netty 
+já que o número de envios/respostas por segundo é quase metade ($-47.46\%$), o valor médio 
+para cada envio/resposta leva quase o dobro do tempo ($90.33\%$), fazendo com que a duração total 
+também leve quase o dobro do tempo ($90$\%). Quando analizamos os percentis, podemos notar que as execuções mais rápidas
+feitas com AMQP foram mais de duas vezes mais lentas em relação às execuções feitas com Netty 
 ($140.69$\% e  $134.54$\%). Entretanto, quando comparamos os percentis acima da mediana, observamos
 uma boa redução na diferença ($79.73$\% e  $39.31$\%).
 
 Devemos relembrar que não adicionamos compressão de mensagens na implementação com AMQP, e que
-os testes feitos com Netty utilizaram uma compressão média. Como as mensagens são 
-menores que $1$KB, entendemos que a implementação com AMQP possa tenha levado ligeira
+os testes feitos com Netty utilizaram compressão média. Como as mensagens são 
+menores que $1$KB, entendemos que a implementação com AMQP possa ter levado ligeira
 vantagem. Ademais, o terceiro nó colabora para a distribuição do processamento. Na implementação
 do feita Netty, tanto as classes responsáveis pelo envio e recebimento de mensagens quanto as classes
-do arcabouço compartilham mesma JVM que executa classes do sistema de cotações. 
+do arcabouço compartilham mesma JVM que executa as classes do sistema de cotações. 
 Já na implementação com AMQP, apenas as classes responsáveis pelo envio e recebimento de mensagens 
-compartilham a JVM. 
+compartilham a mesma JVM. Podemos observar que, conforme a quantidade de atores clientes foi aumentando, a diferença
+na quantidade de envios/respostas apresentou uma queda acentuada, até alcançar uma diferença de apenas $4.98$\% 
+por segundo. Ainda que os dados mostrem uma flutuação na difereça de tempo e que as medidas não sejam estritamente
+descrecentes, é fácil ver que o processamento extra adicionado pelo \english{message broker}, não 
 
-Podemos observar que, conforme a quantidade de atores clientes foi aumentando, a diferença
-na quantidade de envios/respostas foi reduzindo até alcançar uma diferença de apenas $3.22$\% 
-por segundo.
+% vale a pena comentar da flutuacao dos dados por conta de diversos fatores, 
+%% fazer um grafico para cara mostrar a tendencia de quedas dos tempos - pegar a medida feita com melhor
 
-%% continuar argumentado sobre a tabela
 
 % lembrar de comentar de mensagens que ficam bufferizadas e sao entregues depois
+
+%% mexer mais na tabela.. os valores devem ser mostrados por cliente e nao por conjunto de clientes.
 
 \renewcommand{\arraystretch}{0.85}
 \captionsetup{margin=1.0cm}
@@ -509,41 +516,42 @@ por segundo.
 \hline
 {Impl.} & {Clientes} & {ER/S} & {Média ($\mu s$)} & {25\% ($\mu s$)} & {50\% ($\mu s$)} & {75\% ($\mu s$)} & 
 {90\% ($\mu s$)} & {Dur. ($s$)} \\ \hline \hline
-Netty & 1 & 500 &  1995 & 1364 & 1433 & 1968 & 3266 & 60 \\
-AMQP  & 1 & 263 &  3797 & 3283 & 3361 & 3537 & 4550 & 114 \\ \hline
- & Delta & -47.40\% & 90.33\%  &  140.69\% &  134.54\% &  79.73\% &  39.31\% &  90.00\% \\ \hline
+Netty & 1 & 501 &  1995 & 1364 & 1433 & 1968 & 3266 & 59.85 \\
+AMQP  & 1 & 263 &  3797 & 3283 & 3361 & 3537 & 4550 & 113.91 \\ \hline
+ & Delta & -47.46\% & 90.33\%  &  140.69\% &  134.54\% &  79.73\% &  39.31\% &  90.33\% \\ \hline
 									
-Netty & 2 & 892 & 2238 &  1770 & 1796 & 1836 & 3290 & 34 \\
-AMQP  & 2 & 527 & 3789 &  3234 & 3359 & 3552 & 4208 & 57 \\ \hline
- & Delta & -40.92\% &  69.30\% &   82.71\% &  87.03\% &  93.46\% &  27.90\% &  67.65\% \\ \hline
+Netty & 2 & 894 & 2238 &  1770 & 1796 & 1836 & 3290 & 33.57 \\
+AMQP  & 2 & 528 & 3789 &  3234 & 3359 & 3552 & 4208 & 56.835 \\ \hline
+ & Delta & -40.93\% &  69.30\% &   82.71\% &  87.03\% &  93.46\% &  27.90\% &  69.33\% \\ \hline
 
-Netty & 4 & 1243 & 3212 & 2070 & 2517 & 2726 & 4214 & 24 \\
-AMQP  & 4 &  905 & 4416 & 3248 & 3614 & 4134 & 5088 & 33 \\ \hline
- & Delta  & -27.19\% &  37.48\% &  56.91\% &  43.58\% &  51.65\% &  20.74\% &  37.50\% \\ \hline
+Netty & 4 & 1245 & 3212 & 2070 & 2517 & 2726 & 4214 & 24.09 \\
+AMQP  & 4 &  906 & 4416 & 3248 & 3614 & 4134 & 5088 & 33.12 \\ \hline
+ & Delta  & -27.26\% &  37.48\% &  56.91\% &  43.58\% &  51.65\% &  20.74\% &  37.48\% \\ \hline
 
-Netty & 8 & 1491 & 5353 & 3274 & 3771 & 4745 & 6168 & 20 \\
-AMQP & 8 & 1388 & 5760 & 3567 & 4149 & 5168 & 6425 & 22 \\ \hline
- & Delta & -6.91\% &  7.60\% &  8.95\% &  10.02\% &  8.91\% &  4.17\% &  10.00\% \\ \hline
+Netty & 8 & 1494 & 5353 & 3274 & 3771 & 4745 & 6168 & 20.07 \\
+AMQP & 8 & 1389 & 5760 & 3567 & 4149 & 5168 & 6425 & 21.60 \\ \hline
+ & Delta & -7.07\% &  7.60\% &  8.95\% &  10.02\% &  8.91\% &  4.17\% &  7.60\% \\ \hline
 
-Netty & 10 & 1541 & 6484 & 4005 & 4330 & 5704 & 7041 & 19 \\
-AMQP & 10 & 1423 & 7023 & 4396 & 5107 & 6136 & 7610 & 21 \\ \hline
- & Delta & -7.66\% &  8.31\% &   9.76\% &  17.94\% &  7.57\% &  8.08\% &  10.53\% \\ \hline
+Netty & 10 & 1542 & 6484 & 4005 & 4330 & 5704 & 7041 & 19.45 \\
+AMQP & 10 & 1424 & 7023 & 4396 & 5107 & 6136 & 7610 & 21.06 \\ \hline
+ & Delta & -7.67\% &  8.31\% &   9.76\% &  17.94\% &  7.57\% &  8.08\% &  8.31\% \\ \hline
 
-Netty & 20 & 1565 & 12757 & 8206 & 9646 & 10146 & 12015 & 19 \\
-AMQP & 20 & 1502 & 13309 & 8728 & 9964 & 10888 & 13430 & 20 \\ \hline
- & Delta & -4.03\% &  4.33\% &   6.36\% &  3.30\% &  7.31\% &  11.78\% &  5.26\% \\ \hline
+Netty & 20 & 1568 & 12757 & 8206 & 9646 & 10146 & 12015 & 19 \\
+AMQP & 20 & 1503 & 13309 & 8728 & 9964 & 10888 & 13430 & 20 \\ \hline
+ & Delta & -4.15\% &  4.33\% &   6.36\% &  3.30\% &  7.31\% &  11.78\% &  5.26\% \\ \hline
 
-Netty & 40 & 1586 & 25176 & 17616 & 18183 & 19436 & 21350 & 19 \\
-AMQP & 40 & 1517 & 26345 &  18496 & 19525 & 20842 & 23360 & 20 \\ \hline
-& Delta & -4.35\% &  4.64\% &   5.00\% &  7.38\% &  7.23\% &  9.41\% &  5.26\% \\ \hline 
+Netty & 40 & 1589 & 25176 & 17616 & 18183 & 19436 & 21350 & 19.13 \\
+AMQP & 40 & 1518 & 26345 &  18496 & 19525 & 20842 & 23360 & 19.96 \\ \hline
+& Delta & -4.44\% &  4.64\% &   5.00\% &  7.38\% &  7.23\% &  9.41\% &  4.33\% \\ \hline 
 
-Netty & 80 & 1591 & 49525 &  35403 & 36541 & 37863 & 40041 & 19 \\
-AMQP & 80 & 1512 & 52122 &  37915 & 39399 & 40943 & 43496 & 20 \\ \hline
- & Delta & -4.97\% & 5.24\% &  7.10\% & 7.82\% & 8.13\% & 8.63\% & 5.26\% \\ \hline
-		
-Netty & 100 & 1555 & 54314 & 17757 & 33073 & 34442 & 37031 & 19 \\
-AMQP & 100 & 1505 & 57943 &  32456 & 36649 & 38769 & 50510 & 20 \\ \hline
- & Delta & -3.22\% & 6.68\% & 82.78\% & 10.81\% & 12.56\% & 36.40\% & 5.26\% \\
+Netty & 80 & 1615 & 49525 &  35403 & 36541 & 37863 & 40041 & 18.57 \\
+AMQP & 80 & 1535 & 52122 &  37915 & 39399 & 40943 & 43496 & 19.54 \\ \hline
+ & Delta & -4.98\% & 5.24\% &  7.10\% & 7.82\% & 8.13\% & 8.63\% & 5.24\% \\
+
+% os numeros para 100 estao muito estranhos		
+%Netty & 100 & 1555 & 54314 & 17757 & 33073 & 34442 & 37031 & 19 \\
+%AMQP & 100 & 1505 & 57943 &  32456 & 36649 & 38769 & 50510 & 20 \\ \hline
+% & Delta & -3.22\% & 6.68\% & 82.78\% & 10.81\% & 12.56\% & 36.40\% & 5.26\% \\
 \hline 
 \end{tabular}
 \caption{Medidas de tempo do Trading System com atores remotos.}
