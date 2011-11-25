@@ -17,9 +17,9 @@ produtor (remetente) e outra que desempenha o papel de consumidor (destinatário)
 Não existe vínculo entre esses papéis e os papéis de cliente (usuário de um serviço) 
 e servidor (provedor de um serviço), tradicionalmente usados em sistemas baseados 
 em \english{remote procedure call} (RPC), já que ambos enviam e recebem mensagens. 
-No contexto de MOMs os papéis de servidor ou cliente são definidos pela semântica da
+No contexto de MOMs, os papéis de servidor ou cliente são definidos pela semântica da
 troca de mensagens. Uma entidade pode estar atuando hora como provedora de um serviço, 
-hora como cliente de um serviço. Portanto, os termos ``cliente'' e ``servidor'' não são
+hora como cliente de um serviço. Portanto, os termos ``cliente'' e ``servidor'', não são
 aplicáveis nesta classe de sistemas do mesmo modo como são aplicáveis em sistemas baseados em RPC.
 
 MOMs formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite 
@@ -148,7 +148,7 @@ adiciona novos conceitos. Algumas de suas características são:
 	possuem uma classe definida com o mesmo nome são chamados de objeto acompanhante 
 	(\english{companion object});
 	
-	\item Scala possui suporte a \english{currying} que, junto com as funções de ordem
+	\item Scala possui suporte a \english{currying}, que em conjunto com as funções de ordem
 	superior, permite a criação de novas estruturas de controle.
 \end{itemize}
 
@@ -169,13 +169,14 @@ de transporte atualmente usado pelo Akka por um que utiliza um \english{message 
 
 As principais contribuições deste trabalho são as seguintes:
 
-\begin{itemize}
-  \item Item 1. Texto texto texto texto texto texto texto texto texto texto
-  texto texto texto texto texto texto texto texto texto texto.
+\begin{itemize}  
+  \item Um protótipo de atores remotos escrito em Scala e que utiliza um \english{message broker} 
+  AMQP como mecanismo de transporte de mensagens;
 
-  \item Item 2. Texto texto texto texto texto texto texto texto texto texto
-  texto texto texto texto texto texto texto texto texto texto.
-
+  \item Para dar suporte a nosso protótipo, criamos também uma camada de abstração para acessar
+  a biblioteca de conexão do \english{message broker} AMQP. Essa camada foi implementada com atores e
+  sua principal motivação é prover acesso concorrente seguro aos serviços oferecidos pela biblioteca
+  de conexão do \english{message broker}.
 \end{itemize}
 
 \section{Organização do Trabalho}
@@ -184,14 +185,15 @@ As principais contribuições deste trabalho são as seguintes:
 No Capítulo \ref{cap:atores}, apresentamos o modelo de atores, sua semântica e algumas
 das implementações do modelo. No Capítulo \ref{cap:atores_akka} analisamos em maiores 
 detalhes a implementação do modelo de atores feita no projeto Akka. No Capítulo
-\ref{cap:amqp} apresentamos o protocolo AMQP, suas camadas e algumas implementações
-de \english{message brokers} que implementam o protocolo. No 
-capítulo \ref{cap:estrutura-troca-mensagens-amqp} apresentamos uma estrutura
-para a troca de mensagens entre entidades remotas via \english{message broker}
-AMQP. No capítulo \ref{cap:atores_remotos_amqp} apresentamos nossa implementação 
-de atores remotos que utiliza a estrutura que definimos do capítulo 
-\ref{cap:estrutura-troca-mensagens-amqp}.
+\ref{cap:amqp} apresentamos as camadas do protocolo AMQP, além de citarmos algumas de suas 
+implementações. Ainda nesse capítulo, apresentamos algumas das principais classes  da biblioteca 
+para clientes Java da implementação RabbitMQ \cite{rabbitmq} que foi utilizada neste trabalho. 
+No capítulo \ref{cap:estrutura-troca-mensagens-amqp} apresentamos a camada de abstração
+criada para prover acesso concorrente seguro as classes de comunicação da biblioteca para clientes
+Java do RabbitMQ. No capítulo \ref{cap:atores_remotos_amqp} apresentamos nossa implementação 
+de atores remotos que utiliza a camada de abstração descrita no capítulo \ref{cap:estrutura-troca-mensagens-amqp}.
 
 Finalmente, no Capítulo \ref{cap:conclusoes} discutimos algumas conclusões obtidas neste
-trabalho. Analisamos as vantagens e desvantagens do método proposto ... 
+trabalho. Apresentamos também uma comparação de desempenho entre a implementação 
+original de atores remotos com o protótipo desenvolvido neste trabalho. 
 
