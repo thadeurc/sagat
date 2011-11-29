@@ -195,10 +195,10 @@ AMQP & 80 & 1535 & 651.52 & 473.93 & 492.48 & 511.78 & 543.7 & 19.54 \\ \hline
 
 O fato de adicionarmos um terceiro nó com um \english{message broker} na comunicação
 entre os atores remotos, naturalmente adiciona mais passagens pela rede que conecta os nós.
-Um envio que utiliza o Netty faz com que duas mensagens trafeguem pela rede (a ordem é
+Um envio que utiliza o Netty faz com que duas mensagens trafeguem pela rede: a ordem é
 enviada pelo \lstinline$RemoteClient$ direto ao \lstinline$RemoteServer$ e a resposta
-faz o caminho inverso). Já quando utilizamos a implementação com AMQP, quatro mensagens
-são trafegadas (a ordem é enviada pelo \lstinline$RemoteClient$ ao \english{message broker},
+faz o caminho inverso. Já quando utilizamos a implementação com AMQP, quatro mensagens
+são trafegadas: a ordem é enviada pelo \lstinline$RemoteClient$ ao \english{message broker},
 o \english{message broker} envia a ordem para o \lstinline$RemoteServer$ e a resposta faz o caminho
 inverso). Por este motivo, esperávamos que o tempo gasto pela implementação com AMQP fosse, 
 aproximadamente, duas vezes mais do que o tempo gasto pela implementação com Netty. 
@@ -206,10 +206,19 @@ Observando a comparação dos dados da tabela \ref{tab:medidas} para a instância c
 podemos notar uma diferença bem próxima da esperada, 
 já que o número de envios/respostas por segundo é quase metade ($-47.50\%$), o valor médio 
 para cada envio/resposta leva quase o dobro do tempo ($90.33\%$), fazendo com que a duração total 
-também leve quase o dobro do tempo ($90.33$\%). Quando analizamos os percentis, podemos notar que as execuções mais rápidas
-feitas com AMQP foram mais de duas vezes mais lentas em relação às execuções feitas com Netty 
-($140.69$\% e  $134.54$\%). Entretanto, quando comparamos os percentis acima da mediana, observamos
-uma boa redução na diferença ($79.73$\% e  $39.31$\%).
+também leve quase o dobro do tempo ($90.33$\%). Quando observamos os percentis, podemos notar que a 
+diferença de tempo das execuções com AMQP que estão abaixo da mediana, foram mais de duas vezes mais lentas em 
+relação às execuções feitas com Netty ($140.69$\% e  $134.54$\%). Entretanto, quando comparamos os 
+percentis acima da mediana, observamos uma boa redução na diferença ($79.73$\% e  $39.31$\%).
+
+Com o aumento do número de atores clientes, a diferença de tempo apresenta uma boa diminução.
+O gráfico da figura \ref{fig:grafico-er} mostra a evolução da quantidade de envios/recebimentos com o aumento
+da quantidade de atores cliente. Podemos observar que, conforme a quantidade de atores cliente foi aumentando, 
+os resultados com nossa implementação apresentaram uma boa melhora e se mantiveram muito
+próximos dos resultados obtidos com a implementação original. A diferença que era de quase $-47.50\%$ envios/recebimentos
+cai até chegar em apenas $-5.02\%$, o que no nosso teste representa pouco menos de $1$ segundo para
+completar todos os envios/recebimentos. De um modo geral, se observarmos a diferença do tempo de execução 
+para os testes a partir de $8$ clientes, a diferença de tempo fica abaixo de $1.6$ segundos. 
 
 Devemos relembrar que não adicionamos compressão de mensagens na implementação com AMQP, e que
 os testes feitos com Netty utilizaram compressão média. Como as mensagens são 
@@ -219,14 +228,6 @@ feita com Netty, tanto as classes responsáveis pelo envio e recebimento de mensa
 do arcabouço compartilham mesma JVM que executa as classes do sistema de cotações. 
 Já na implementação com AMQP, apenas as classes responsáveis pelo envio e recebimento de mensagens 
 compartilham a mesma JVM. 
-
-O gráfico da figura \ref{fig:grafico-er} mostra a evolução da quantidade de envios/recebimentos com o aumento
-da quantidade de atores cliente. Podemos observar que, conforme a quantidade de atores cliente foi aumentando, 
-os resultados com nossa implementação apresentaram uma boa melhora e se mantiveram muito
-próximos dos resultados obtidos com a implementação original. A diferença que era de quase $-47.50\%$ envios/recebimentos
-cai até chegar em apenas $-5.02\%$, o que no nosso teste representa pouco menos de $1$ segundo para
-completar todos os envios/recebimentos. De um modo geral, se observarmos a diferença do tempo de execução 
-para os testes a partir de $8$ clientes, a diferença de tempo fica abaixo de $1.6$ segundos. 
 
 \begin{figure}[!h]
 		\centering
@@ -240,12 +241,12 @@ em paralelo de mesmo \lstinline$RemoteClient$, não tivemos problemas comuns de c
 \english{deadlocks} e condições de corrida em nossa implementação. Observamos também que em um dado
 momento quando a infraestrutura de rede teve problemas de latência, nossa implementação apresentou 
 resultados mais lentos, contudo, a diferença de tempo se manteve próxima de duas vezes a diferença de tempo. 
-(apêncide x). Naturalmente, pelo fato de as mensagens serem trafegadas duas vezes a mais na rede, a latência
+(apêndice x). Naturalmente, pelo fato de as mensagens serem trafegadas duas vezes a mais na rede, a latência
 na rede é um dos maiores fatores de impacto nos resultados.
 
 Ainda que exista um processamento extra a cargo do \english{message broker} para recebimento, roteamento
 e entrega das mensagens, concluímos que existe uma vantagem relativa em relação a implementação com o JBoss Netty.
-Tal vantagem deve-se ao fato de que o JBoss Netty também possui tarefas semelhantes, como recebimento e entrega
+Tal vantagem deve-se ao fato do JBoss Netty também possuir tarefas semelhantes, como recebimento e entrega
 das mensagens, e de este processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
 o processamento das mensagens, como os atores. Conforme a frequência das mensagens foi aumentando, 
 houve uma redução considerável na diferença de tempo, como mostrado no gráfico da figura \ref{fig:grafico-er}.
@@ -253,21 +254,36 @@ Assim, entendemos que a carga extra de processamento adicionada pelo \english{me
 o seu uso como suporte para a troca de mensagens entre atores remotos. Enfatizamos que em um cenário realista
 de um sistema de atores, é esperado um número razoável de atores executando em paralelo.
 
-Nas seções \ref{sec:entidades-ponto-a-ponto} e \ref{sec:entidades-via-broker-amqp}, mencionamos algumas
-características.
-%% falar sobre detalhes de infra.. numero de portas, etc
-%% mensagens persistidas
-%% saber de erros remotos
+Comentamos brevemente no capítulo \ref{cap:estrutura-troca-mensagens-amqp} sobre algumas das características
+da trocas de mensagens entre entidades conectadas ponto-a-ponto via \english{sockets}, como saber o endereço
+do \english{host} e porta da outra parte no qual se está conectado, a possibilidade de identificar se a outra 
+parte continua conectada e o não armazenamento intermediário de mensagens.  Na implementação feita com o JBoss Netty
+pelo Akka, a biblioteca do Netty fornece meios para obter informações tanto sobre o endereço da outra parte,
+como ser notificado em caso de falhas na conexão. O fato de utilizarmos 
+filas para fazer o armazenamento intermediário das mensagens (ainda que, na maior parte do tempo, por um período 
+breve), permite que um \lstinline$RemoteServer$ ou \lstinline$RemoteClient$ possam receber mensagens mesmo
+não após sua execução ter sido interrompida. Basta que eles tenham executado alguma vez com uma configuração
+durável\footnote{O mesmo vale para configurações transientes, desde que o \english{message broker} não tenha
+sido reiniciado}. As mensagens ficam armazenadas até que um novo consumidor seja registrado. Um detalhe importante
+a se destacar é em relação a \english{exchange} não existir no momento do envio. Em casos como este, quem está
+fazendo o envio recebe uma exceção no mesmo momento que está tentando fazer o envio. Mensagens que foram
+armazenadas, por exemplo, porque o \lstinline$RemoteServer$ ou \lstinline$RemoteClient$ não estavam
+em execução para fazer o encaminhamento para o ator podem deixar de ter o mesmo significado para o ator,
+passando até mesmo a serem desconhecidas para o comportamento do ator no momento do seu processamento.
+Assim como o modelo de atores não preve a ordem de entrega das mensagens, deixando a cargo das aplicações
+que utilizam o modelo fazer o tratamento, o recebimento de mensagens que ficaram armazenadas é uma situação
+que leva a um cenário semelhante, deixando também a cargo da aplicação a responsabilidade sobre o processamento
+de tais mensagens. Mensagens enviadas de forma síncrona para atores remotos que não estão acessíveis, causam
+estouro no tempo limite de espera no resultado futuro. Uma eventual resposta do ator remoto após o tempo limite,
+não causa erros. Do modo como está a implementação, o mapa de resultados futuros (seção \ref{subsec:akka_envio_resposta})
+mantém as referências para os resultados até que eles sejam completados.
 
-
-
-Nossa conclusão final é de que existe sim uma sinergia entre as duas classes de sistemas de 
-\english{software} baseadas em troca de mensagens estudadas neste trabalho.
-
-
-
- 
-
+O uso do \english{message broker} como ponto central de comunicação de todos os atores remotos, cria um
+ponto crítico para o caso de falhas. Caso o nó onde o \english{message broker} está em execução sofra alguma
+avaria, a comunicação de todos os atores remotos é afetada. O RabbitMQ pode ser configurado para
+em um grupo lógico de um ou mais nós Erlang (\english{cluster} \cite{rabbitmq-cluster}), onde os nós 
+compartilham as informações dos \english{virtual hosts}. O uso do RabbitMQ em \english{cluster} elimina
+o problema de um ponto central de falhas.
 
 %------------------------------------------------------
 \section{Considerações Finais} 
@@ -282,7 +298,6 @@ O uso de um \english{message broker} ainda trás outros benefícios, como poder an
 %------------------------------------------------------
 \section{Sugestões para Pesquisas Futuras} 
 
-% lembrar de comentar de mensagens que ficam bufferizadas e sao entregues depois
 
 
 falar de melhorias na parte de exceptions, colocar no akka 2.0 como sip. Cloud.

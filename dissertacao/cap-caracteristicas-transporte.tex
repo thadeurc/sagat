@@ -37,10 +37,6 @@ para serviços comuns, como por exemplo servidores de correio eletrônico,
 possuem numeração fixa definida pela IANA (\english{Internet Assigned Numbers Authority})
 e não podem ser abertas para uso geral. 
 
-%% todo.. falar com reverbel para pegar paper : http://portal.acm.org/citation.cfm?id=1101798&dl=ACM&coll=DL&CFID=29058066&CFTOKEN=41896717
-
-%% argumentar sobre questoes básicas de segurança e firewall ?
-
 Este tipo de abortagem não implica no uso de armazenamento intermediário das mensagens. Uma
 mensagem enviada de uma entidade para outra, até poderia ser armazenada pela entidade que 
 recebe a mensagem, mas não pelo mecanismo de transporte. Fica a cargo da entidade que recebe 
@@ -61,14 +57,12 @@ Vimos também na seção \ref{sec:atores_locais} que atores são identificáveis,
 o que permite que eles sejam localizados no \lstinline$RemoteServerModule$ 
 para que possam receber as mensagens.
 
-%% investigar mais a fundo o jboss netty e comentar de alguns detalhes dele aqui.
 Ainda que a implementação de atores remotos do Akka agrupe
 os atores, removendo a relação do limite do número de atores com o 
 número de portas disponíveis, as entidades \lstinline$RemoteServerModule$ 
 e \lstinline$RemoteClientModule$ ainda assim possuem o conhecimento 
-do \english{host} e porta no qual se está conectado.
+do \english{host} e da porta no qual se está conectado.
 
-%% entrar mais em detalhes sobre erlang?
 A implementação de atores remotos de Erlang não usa portas explicitamente. 
 Cada máquina virtual Erlang possui um nome associado, e esse nome é utilizado
 junto com a informação do \english{host} durante a criação de atores remotos.
