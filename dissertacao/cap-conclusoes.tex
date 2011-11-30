@@ -141,7 +141,7 @@ todos os envios/recebimentos.
 A tabela \ref{tab:medidas} mostra as melhores medidas dentre todas as execuções
 feitas na execução do \english{Trading System} com atores remotos. O critério
 utilizado para a comparação entre as medidas de um mesmo conjunto de instâncias
-foi o valor que é apresentado na coluna média.
+foi o valor que é apresentado na coluna média. 
 
 \renewcommand{\arraystretch}{0.85}
 \captionsetup{margin=1.0cm}
@@ -238,11 +238,85 @@ compartilham a mesma JVM.
 
 Durante a execução dos testes observamos que, mesmo diante de diversos atores clientes executando envios
 em paralelo de mesmo \lstinline$RemoteClient$, não tivemos problemas comuns de concorrência como
-\english{deadlocks} e condições de corrida em nossa implementação. Observamos também que em um dado
-momento quando a infraestrutura de rede teve problemas de latência, nossa implementação apresentou 
-resultados mais lentos, contudo, a diferença de tempo se manteve próxima de duas vezes a diferença de tempo. 
-(apêndice x). Naturalmente, pelo fato de as mensagens serem trafegadas duas vezes a mais na rede, a latência
-na rede é um dos maiores fatores de impacto nos resultados.
+\english{deadlocks} e condições de corrida em nossa implementação. Naturalmente, pelo fato de as 
+mensagens serem trafegadas duas vezes a mais na rede, a latência da rede é um dos principais fatores que impacta 
+os resultados. A tabela \ref{tab:medidas-lentas} mostra as medidas que foram feitas 
+na rede com maior latência. Utilizamos a mesma configuração descrita anteriormente, porém removemos os cabos de rede para que os computadores pudessem ser conectados via \english{wireless}. Podemos notar pelos dados da tabela \ref{tab:medidas-lentas}, 
+que a diferença de tempo chega, no pior caso onde temos $4$ atores clientes, a pouco mais de $2.5$ vezes o tempo gasto
+pela implementação com Netty. Quando observamos os percentis, podemos notar que a 
+diferença de tempo das execuções com AMQP que estão abaixo da mediana, foram aproximadamente três vezes mais lentas em 
+relação às execuções feitas com Netty ($209.28$\% e  $197.17$\%). Quando comparamos os 
+percentis acima da mediana, observamos uma redução razoável na diferença ($179.11$\% e  $145.07$\%). Assim como na 
+tabela \ref{tab:medidas}, conforme a quantidade de atores cliente cresce, a diferença de tempo cai chegando
+a $26.74\%$, o que significa pouco menos de $9$ segundos para completar todos os envios/recebimentos. O gráfico
+da figura \ref{fig:grafico-er-lento} mostra que, com o aumento de atores clientes, o aumento da quantidade de 
+envios/recebimentos feitos com nossa implementação não teve o mesmo desempenho que a implementação com o JBoss Netty.
+Uma melhora mais significativa passa a acontecer após a quantidade de clientes passar de $10$. Observando o gráfico 
+da figura \ref{fig:grafico-er}, podemos notar que o aumento no número de envios/recebimentos foi mais acentuado 
+no início (de $1$ a $8$ atores cliente) do que no final. 
+
+%% justificar o motivo de ter acontecido isso
+
+
+\renewcommand{\arraystretch}{0.85}
+\captionsetup{margin=1.0cm}
+\begin{table}
+\begin{center}
+\begin{small}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} 
+\hline
+
+{Impl.} & {Clientes} & {ER/S} & {Média ($\mu s$)} & {25\% ($\mu s$)} & {50\% ($\mu s$)} & {75\% ($\mu s$)} & 
+{95\% ($\mu s$)} & {Dur. ($s$)} \\ \hline \hline
+
+Netty & 1 & 163 &  6129 & 3387 & 4279 & 6265 & 13403 & 183.87 \\
+AMQP  & 1 & 106 &  9464 & 5998 & 7223 & 9624 & 17360 & 283.92 \\ \hline
+ & Delta & -34.97\% & 54.41\% &  77.09\% & 68.80\% & 53.62\% & 29.52\% & 100.05 (54.41\%) \\ \hline
+
+Netty & 2  &  341  &  2928.5  &  1709  &  2056.5  &  2817.5  &  5740.5  & 87.855 \\
+AMQP  & 2  &  152  &  6560.5  &  4481.5  &  5392  &  7038.5  &  11154.5 & 196.815 \\ \hline
+ & Delta & -55.43\% & 124.02\%  &  162.23\%  &  162.19\%  &  149.81\%  &  94.31\%  &  108.96 (124.02\%) \\ \hline
+
+Netty & 4  &  479  &  2084.25  &  1312  &  1583.5  &  2054.75  &  3473 & 62.5275 \\
+AMQP  & 4  &  183  &  5468  &  4057.75  &  4705.75  &  5735  &  8511.25 & 164.04 \\ \hline
+ & Delta & -61.80\% & 162.35\%  &  209.28\%  &  197.17\%  &  179.11\%  &  145.07\%  &  101.51 (162.35\%) \\ \hline
+
+Netty & 8  &  491  &  2036.5  &  1316  &  1586.5  &  1972.5  &  2890.375 & 61.095 \\
+AMQP  & 8  &  198  &  5057.875  &  3364.75  &  4153  &  5174  &  7314.125 & 151.73625 \\ \hline
+ & Delta & -59.67\% & 148.36\%  &  155.68\%  &  161.77\%  &  162.31\%  &  153.05\%  &  90.64 (148.36\%) \\ \hline
+
+Netty & 10  &  559  &  1788.3  &  1273.7  &  1491.8  &  1809.9  &  2570.5 & 53.649 \\
+AMQP & 10  &  243  &  4089.1  &  2965.3  &  3497  &  4193.6  &  5675.5 & 122.673 \\ \hline
+ & Delta & -56.27\%  &  128.66\%  &  132.81\%  &  134.41\%  &  131.70\%  &  120.79\%  &  69.02 (128.66\%) \\ \hline
+
+Netty & 20  &  563  &  1774.3  &  1119.6  &  1343.95  &  1647.85  &  2391.85 & 53.23 \\
+AMQP & 20  &  323  &  3097.55  &  2385.5  &  2764.55  &  3225.45  &  4205.4 & 92.92 \\ \hline
+ & Delta & -42.63\% & 74.58\%  &  113.07\%  &  105.70\%  &  95.74\%  &  75.82\%  &  39.69 (74.58\%) \\ \hline
+
+Netty & 40  &  607  &  1644.55  &  1028.87  &  1243.70  &  1520.12  &  2076.05 & 49.33 \\
+AMQP & 40  &  390  &  2473.77  &  1566.97  &  1944.62  &  2461.57  &  3770.07 & 74.21 \\ \hline
+ & Delta & -35.75\% & 50.42\%  &  52.30\%  &  56.36\%  &  61.93\%  &  81.60\%  &  24.87 (50.42\%) \\ \hline
+
+Netty & 80  &  889  &  1113.61  &  458.17  &  487.88  &  627.81  &  1296.18 & 33.41 \\
+AMQP & 80  &  628  &  1411.41  &  826.60  &  969.53  &  1187.37  &  1740.18 & 42.34 \\ \hline
+ & Delta & -29.36\% & 26.74\%  &  80.41\%  &  98.72\%  &  89.13\%  &  34.25\%  &  8.93 (26.74\%) \\ 
+
+\hline 
+\end{tabular}
+\caption{Medidas de tempo do Trading System com atores remotos em rede wireless.}
+\label{tab:medidas-lentas}
+\end{small}
+\end{center}
+\end{table}
+
+
+\begin{figure}[!h]
+		\centering
+		\includegraphics[scale=.70]{grafico-er-lento} 
+ 		\caption{Comparação da quantidade de envios/recebimentos na rede wireless.}
+  		\label{fig:grafico-er-lento}
+\end{figure}
+
 
 Ainda que exista um processamento extra a cargo do \english{message broker} para recebimento, roteamento
 e entrega das mensagens, concluímos que existe uma vantagem relativa em relação a implementação com o JBoss Netty.
