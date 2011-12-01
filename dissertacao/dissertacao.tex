@@ -6,7 +6,7 @@
 % Revisão: Fabio Kon e Paulo Feofiloff
 %  
 
-\documentclass[11pt,twoside,a4paper]{book}
+\documentclass[12pt,twoside,a4paper]{book}
 
 % ---------------------------------------------------------------------------- %
 % Pacotes 
@@ -23,7 +23,7 @@
 \usepackage{listings}                   % para formatar código-fonte (ex. em Java)
 \usepackage{titletoc}
 \usepackage{amsmath}
-%\usepackage[bf,small,compact]{titlesec} % cabeçalhos dos títulos: menores e compactos
+\usepackage[bf,small,compact]{titlesec} % cabeçalhos dos títulos: menores e compactos
 \usepackage[fixlanguage]{babelbib}
 \usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
 \usepackage[usenames,svgnames,dvipsnames]{xcolor}
@@ -58,9 +58,9 @@
 % Ref: http://en.wikibooks.org/wiki/LaTeX/Packages/Listings
 \lstset{ %
 language=Java,                  % choose the language of the code
-basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+basicstyle=\scriptsize,       % the size of the fonts that are used for the code
 numbers=left,                   % where to put the line-numbers
-numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+numberstyle=\scriptsize,      % the size of the fonts that are used for the line-numbers
 stepnumber=1,                   % the step between two line-numbers. If it's 1 each line will be numbered
 numbersep=5pt,                  % how far the line-numbers are from the code
 showspaces=false,               % show spaces adding particular underscores
@@ -132,7 +132,7 @@ breakatwhitespace=false,   % define se a quebra de linhas automática deve ocorre
 xleftmargin=12pt,
 xrightmargin=12pt,
 escapeinside={(*@}{@*)},
-basicstyle={\small\ttfamily}
+basicstyle={\scriptsize\ttfamily}
 } 
 
 \newcommand{\emphasis}[1]
@@ -303,6 +303,7 @@ Abstract ...
 
 % ---------------------------------------------------------------------------- %
 \chapter{Lista de Abreviaturas}
+\begin{small}
 \begin{tabular}{ll}
          AMQP         & Protocolo Avançado para Enfileramento de Mensagens (\emph{Advanced Message Queuing Protocol})\\
          API          & Interface para Programação de Aplicativos (\emph{Application Programming Interface})\\         
@@ -319,7 +320,7 @@ Abstract ...
 		 UDP	      & Protocolo de Datagrama de Usuário (\english{User Datagram Protocol})\\
 		 XML	      & Linguagem Extendida de Marcação (\english{Extented Markup Language})
 \end{tabular}
-
+\end{small}
 % ---------------------------------------------------------------------------- %
 %\chapter{Lista de Símbolos}
 %\begin{tabular}{ll}
