@@ -385,7 +385,7 @@ O uso de um \english{message broker} ainda trás outros benefícios, como por exem
 \begin{itemize}
 	\item Ferramentas administrativas: a maioria dos \english{message brokers} possui ferramentas 
 	para administração e monitoramento. O uso deste tipo de ferramenta ajuda no monitoramento de uma
-	parte importante da infra-estrutura de um sistema distribuído. O RabbitMQ, por exemplo, possui um
+	parte importante da infraestrutura de um sistema distribuído. O RabbitMQ, por exemplo, possui um
 	módulo para gerenciamento que é acessível de um navegador \english{web} \cite{rabbitmq-mgmt}. 
 	Com este módulo é possível criar, alterar e remover entidades, além de observar informações como, por exemplo,
 	o volume de mensagens em determinada entidade, a quantidade de clientes conectados e a quantidade 
@@ -410,11 +410,47 @@ O uso de um \english{message broker} ainda trás outros benefícios, como por exem
 \end{itemize}
 
 
-
-
 %------------------------------------------------------
 \section{Sugestões para Pesquisas Futuras} 
 
+\subsection{Melhoria no tratamento de erros nas pontes AMQP}
+
+O fato de utilizarmos atores para encapsular as principais classes da biblioteca para clientes Java
+do RabbitMQ, permite que a hierarquia de atores que foi criada venha ser utilizada para o tratamento
+de erros. Ainda que nossa implementação seja de uma hierarquia de supervisão, o atores supervisores não
+possuem comportamento para o tratamento de erros em atores filhos. 
+
+A implementação pode ser ampliada para que, em caso de erros nos atores filhos, como os responsáveis pelos
+canais ou conexões, os atores supervisores possam criar novos atores supervisonados no mesmo estado que 
+estavam antes do erro acontecer. A restauração do estado nos atores filhos deve obedecer as configurações 
+originais dos objetos que foram criados no \english{message broker}. É necessário ainda que, quando
+não for possível restabelecer o sistema, seja por não se conseguir reconectar ao \english{message broker} ou
+por algum outro motivo, notificar a ponte AMQP para que ela possa propagar o erro para o nível da aplicação.
 
 
-falar de melhorias na parte de exceptions, colocar no akka 2.0 como sip. Cloud, explorar mais o protocolo (?).
+\subsection{Adaptação e experimentos para um ambiente de computação em nuvem}
+
+Nos últimos anos, o conceito de computação em nuvem (\english{cloud computing}) vem ganhando
+bastante espaço, não só na comunidade acadêmica, mas também na indústria de tecnologia.
+Computação em nuvem é um conceito que se refere tanto a aplicações disponibilizadas como serviços 
+via internet quanto pelo \english{hardware} e sistemas de \english{software} que estão nos centros 
+processamento de dados para prover estes serviços \cite{cloud2010}. O termo ``nuvem'' é
+utilizado para denotar o \english{hardware} e o \english{software} que ficam no centro de processamento
+de dados. Um dos principais atrativos da computação em nuvem é a capacidade de elasticidade da nuvem.
+Caso a demanda por um serviço aumenta, recursos que estão disponíveis, como computadores e máquinas virtuais
+podem ser provisionados para aumentar a capacidade de processamento. Quando a demanda pelo serviço cai e 
+a capacidade de processamento necessária passa a ser menor, parte recursos podem ser 
+liberados para atenderem outros serviços. 
+
+Algumas plataformas de computação em nuvem existentes no mercado, como EC2 (Amazon) \cite{ec2}, Nebula (NASA) 
+\cite{nebula}, Heroku \cite{heroku} e Cloud Foundry (VMWare) \cite{cloudfoundry}, ou possuem o RabbitMQ 
+como \english{message broker}, ou permitem que o RabbitMQ seja instalado. 
+Acreditamos que nossa implementação de atores remotos esteja muito próxima e necessite de poucas adaptações
+para poder ser implantada em uma infraestrutura de computação em nuvem. Acreditamos que a elasticidade da nuvem, 
+alinhada com a capacidade do RabbitMQ de trabalhar com um número alto de requisições, permita uma alta 
+escalabilidade no sistema que for desenvolvido. Deixamos como sugestão de experimento, fazer uma comparação 
+do \english{Trading System} com a quantidade de clientes bem maior da utilizada em nossos experimentos.
+
+
+
+
