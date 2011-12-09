@@ -29,7 +29,7 @@ mudar a maneira com que sistemas distribuídos são construídos \cite{alonso}.
 
 A garantia da entrega de mensagens é uma das características mais importantes dos MOMs.
 Filas transacionais são utilizadas para garantir que mensagens recebidas pelo 
-MOM sejam salvas de modo persistente. A a remoção de uma mensagem de uma fila transacional
+MOM sejam salvas de modo persistente. A remoção de uma mensagem de uma fila transacional
 ocorre somente após a confirmação do seu recebimento pelo destinatário. 
 No caso de avarias no sistema, mensagens
 previamente salvas pelo MOM e que não tiveram seu recebimento confirmado não são perdidas.
@@ -83,8 +83,7 @@ erradas, obtenção de travas em ordem errada, manutenção da consistência do siste
 presença de erros, esquecimento de sinalização em variáveis de condição ou de se testar 
 novamente uma condição após o despertar de um estado de espera \cite{sj:bc}. Essas 
 dificuldades mostram que a abordagem convencional, baseada em travas,
-é inviável para uma programação concorrente modular, ou seja, para a criação de grandes 
-programas concorrentes compostos por programas menores. Elas impulsionaram a pesquisa em 
+é inviável para uma programação concorrente modular, e ajudaram a impulsionar a pesquisa de
 abordagens alternativas à programação concorrente convencional.
 
 Dois modelos de programação concorrente não convencionais vem ganhando espaço recentemente. 
@@ -97,7 +96,7 @@ uma série atômica de operações de leitura e escrita na memória compartilhada.
 O segundo modelo não convencional de programação concorrente é o modelo de atores. 
 Atores \cite{Agha86} são definidos como agentes computacionais que possuem uma caixa de
 correio e um comportamento. Uma vez que o endereço da caixa de correio de um ator é conhecido, 
-mensagens podem ser adicionadas à caixa para processamento assíncrono, ou seja, 
+mensagens podem ser adicionadas à caixa para processamento assíncrono. No modelo de atores,
 o envio de uma mensagem é desacoplado do processamento da mensagem pelo ator.
 
 \section{A linguagem Scala}
@@ -118,8 +117,8 @@ Contudo, para atingir seus objetivos, Scala abre mão de algumas convenções enqua
 adiciona novos conceitos. Algumas de suas características são:
 
 \begin{itemize}
-	\item Scala possui certa semelhança com Java e C\#, de modo que tanto programas
-	escritos em Scala podem utilizar bibliotecas escritas em Java e C\#, quanto o
+	\item Scala possui certa semelhança com Java  C\#, de modo que tanto programas
+	escritos em Scala podem utilizar bibliotecas escritas em Java ou C\#, quanto o
 	inverso;
 	
 	\item Scala possui um modelo uniforme para objetos, onde todo valor é um objeto
@@ -130,11 +129,11 @@ adiciona novos conceitos. Algumas de suas características são:
 	classe são entidades que podem ser criadas em tempo de execução, utilizadas 
 	como parâmetro, devolvidas por uma função, ou ainda atribuídas a variáveis;
 	
-	\item Scala permite construções via composição de classes e
-	\english{traits}. \english{Traits} possuem definições de métodos e campos assim
+	\item Scala permite construções via extensão de classes e combinações de feições
+	(\english{traits}). Feições possuem definições de métodos e campos assim
 	como uma classe abstrata, porém não definem construtores. São
 	importantes unidades para reuso de código em Scala já que classes ou objetos podem
-	ser compostos (\english{mixin}) por diversas \english{traits};
+	ser combinados (\english{mixin}) com diversas feições;
 	
 	\item Scala permite a decomposição de objetos via casamento de padrões;
 	
@@ -144,7 +143,7 @@ adiciona novos conceitos. Algumas de suas características são:
 	\item Scala não possui o conceito de membros de classes estáticos. A linguagem
 	possui o conceito de \english{singleton objects}, que representa uma instância
 	única de uma classe. São definidos com a construção
-	\lstinline$object$ ao invés de \lstinline$class$. \english{Singleton objects} que
+	\code{object} ao invés de \code{class}. \english{Singleton objects} que
 	possuem uma classe definida com o mesmo nome são chamados de objeto acompanhante 
 	(\english{companion object});
 	
@@ -183,17 +182,17 @@ As principais contribuições deste trabalho são as seguintes:
 \label{sec:organizacao_trabalho}
 
 No Capítulo \ref{cap:atores}, apresentamos o modelo de atores, sua semântica e algumas
-das implementações do modelo. No Capítulo \ref{cap:atores_akka} analisamos em maiores 
+das implementações do modelo. No Capítulo \ref{cap:atores_akka}, analisamos em maiores 
 detalhes a implementação do modelo de atores feita no projeto Akka. No Capítulo
-\ref{cap:amqp} apresentamos as camadas do protocolo AMQP, além de citarmos algumas de suas 
+\ref{cap:amqp}, apresentamos as camadas do protocolo AMQP, além de citarmos algumas de suas 
 implementações. Ainda nesse capítulo, apresentamos algumas das principais classes  da biblioteca 
-para clientes Java da implementação RabbitMQ \cite{rabbitmq} que foi utilizada neste trabalho. 
-No capítulo \ref{cap:estrutura-troca-mensagens-amqp} apresentamos a camada de abstração
+para clientes Java da implementação RabbitMQ que foi utilizada neste trabalho. 
+No capítulo \ref{cap:estrutura-troca-mensagens-amqp}, apresentamos a camada de abstração
 criada para prover acesso concorrente seguro as classes de comunicação da biblioteca para clientes
-Java do RabbitMQ. No capítulo \ref{cap:atores_remotos_amqp} apresentamos nossa implementação 
+Java do RabbitMQ. No capítulo \ref{cap:atores_remotos_amqp}, apresentamos nossa implementação 
 de atores remotos que utiliza a camada de abstração descrita no capítulo \ref{cap:estrutura-troca-mensagens-amqp}.
 
-Finalmente, no Capítulo \ref{cap:conclusoes} discutimos algumas conclusões obtidas neste
+Finalmente, no Capítulo \ref{cap:conclusoes}, discutimos as conclusões obtidas neste
 trabalho. Apresentamos também uma comparação de desempenho entre a implementação 
-original de atores remotos com o protótipo desenvolvido neste trabalho. 
+original de atores remotos do projeto Akka com o protótipo desenvolvido neste trabalho. 
 

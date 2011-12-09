@@ -30,9 +30,9 @@ Na seção \ref{sec:amqp-modelo} descrevemos a camada de modelo, que é a camada on
 Na seção \ref{sec:amqp-sessao} descrevemos camada de sessão que 
 age como intermediária entre as camadas de modelo e transporte. 
 Comentamos brevemente na seção \ref{sec:amqp-transporte} sobre a camada de 
-transporte. Os detalhes dessa camada não se enquadram no escopo 
+transporte, já que os detalhes dessa camada não se enquadram no escopo 
 deste trabalho. Por fim, apresentamos na seção \ref{sec:amqp-implementacoes} 
-algumas das implementações disponíveis do padrão e qual implementação escolhemos 
+algumas das implementações disponíveis do padrão e a implementação que escolhemos 
 para o desenvolvimento deste trabalho.
 
 \section{A camada de modelo}		
@@ -44,7 +44,8 @@ A especificação dos requisitos dessa camada inclui, entre outros itens:
 garantir a interoperabilidade das implementações, prover controle explícito
 sobre a qualidade do serviço, proporcionar um mapeamento fácil entre os 
 comandos e as bibliotecas de nível de aplicação e ter clareza, de modo 
-que cada comando seja responsável por uma única ação. Os componentes são: 
+que cada comando seja responsável por uma única ação. Os componentes desta camada
+são: 
 
 \begin{itemize}
 	\item Servidor: É o processo,  conhecido também como \english{broker}, que 
@@ -92,8 +93,8 @@ que cada comando seja responsável por uma única ação. Os componentes são:
 	clientes escolhem um \english{virtual host} após se autenticarem no servidor.		  			
 \end{itemize}	
 	
-A figura \ref{fig:amqp_overview} mostra os componentes acima descritos e os 
-relacionamentos entre esses componentes. 
+A figura \ref{fig:amqp_overview} mostra os componentes acima descritos e como
+eles se relacionam.
 	
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -137,9 +138,9 @@ Há uma analogia entre o modelo AMQP e sistemas de email:
 \index{AMQP!padrão!modelo!envios de mensagens}
 
        
-Para enviar uma mensagem, uma aplicação produtora especifica uma determinada 
+Para enviar uma mensagem, uma aplicação produtora deve especificar a
 \english{exchange} de um determinado \english{virtual host}, uma rotulação com 
-informação de roteamento e eventualmente algumas propriedades adicionais, bem
+informação de roteamento e, eventualmente, algumas propriedades adicionais, bem
 como os dados do corpo da mensagem. Uma vez que a mensagem tenha sido recebida 
 no servidor AMQP, ocorre o roteamento para uma ou mais filas do conjunto de 
 filas do \english{virtual host} especificado. No caso de não ser possível rotear a 
@@ -150,7 +151,7 @@ A escolha depende do comportamento definido pelo produtor. Quando a mensagem
 imediatamente para a aplicação consumidora. Caso isso não seja possível, a fila mantém a 
 mensagem armazenada para uma futura tentativa de entrega. Uma vez que a mensagem foi 
 entregue com sucesso a um consumidor, ela é removida da fila. 
-A figura \ref{fig:amqp-message-flow} mostra o envio e recebimento de uma mensagem.
+A figura \ref{fig:amqp-message-flow} mostra os passos do envio e recebimento de uma mensagem.
        
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -173,9 +174,9 @@ e transporte, proporcionando confiabilidade para a transmissão de comandos
 ao \english{broker}. É parte das suas responsabilidades dar confiabilidade
 às interações entre as aplicações cliente e o \english{broker}.
 
-Sessões são interações nomeadas entre um cliente e um servidor AMQP
-(também chamados de pares (\english{peers})). Todos os comandos,
-como por exemplo envios de mensagens e criações de filas ou \english{exchanges}, devem
+Sessões são interações nomeadas entre um cliente e um servidor AMQP,
+também chamados de pares (\english{peers}). Todos os comandos,
+como envios de mensagens e criações de filas ou \english{exchanges}, devem
 acontecer no contexto de uma sessão. O ciclo de vida de alguns dos objetos da camada
 de modelo como filas, \english{exchanges} e \english{bindings} podem ser limitados ao
 escopo de uma sessão. 
@@ -192,9 +193,9 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 	comando e o resultado;
 	
 	\item Confirmação que comandos serão executados: É utilizado para que o par 
-	solicitante possa, seguramente descartar o estado associado a um comando
+	solicitante possa descartar, seguramente, o estado associado a um comando,
 	com a certeza de que ele será executado. A camada de sessão controla o envio
-	e recebimento das confirmações permitindo o gerenciamento do estado a ser mantido
+	e recebimento das confirmações permitindo que o gerenciamento do estado seja mantido
 	na sessão corrente. O estado da sessão é importante para que o sistema possa se
 	recuperar no caso de falhas temporárias em um dos pares. As confirmações podem
 	ser entregues em lotes ou mesmo serem deferidas indefinidamente, no caso do par
@@ -207,8 +208,8 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 	o par que solicitou a execução do comando não exige confirmação imediata, as 
 	confirmações podem ser acumuladas e enviadas em lotes, reduzindo o tráfego de rede;
 	
-	\item Reenvio e recuperação no caso de falhas de rede: Para que o sistema possa
-	se recuperar no caso de falhas de rede, a sessão deve ser capaz de reenviar comandos
+	\item Reenvio e recuperação no caso de falhas na rede: Para que o sistema possa
+	se recuperar no caso de falhas na rede, a sessão deve ser capaz de reenviar comandos
 	cujos recebimentos pelo outro par são duvidosos. A camada de sessão provê as
 	ferramentas necessárias para identificar o conjunto com os comandos rotulados
 	como duvidosos e reenviá-los, sem o risco de causar duplicidade.
@@ -223,7 +224,7 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 A camada de transporte é responsável por tarefas como 
 multiplexação de canais, detecção de falhas, representação de dados e 
 janelamento (\english{framing}).  A lista dos requisítos dessa camada 
-inclui, entre outros itens: possuir uma representação de dados binária 
+inclui, entre outros itens, possuir uma representação de dados binária 
 e compacta que seja rápida de se embrulhar e desembrulhar, trabalhar 
 com mensagens sem um limite significante de tamanho, permitir que 
 sessões não sejam perdidas no caso de falhas de rede ou de aplicação, 
@@ -243,11 +244,11 @@ O projeto Apache Qpid é uma implementação de código
 aberto com uma distribuição escrita em Java e uma outra escrita em C++. 
 A implementação está disponível sob a licença Apache $2.0$ \cite{apache-lic} e
 possui bibliotecas para aplicações cliente em diversas linguagens, como 
-Java, C++, Ruby, Python e C\#.Net.  A implementação da biblioteca cliente para Java é 
+Java, C++, Ruby, Python e C\#.  A implementação da biblioteca cliente para Java é 
 compatível com o a versão $1.1$ do padrão Java \english{Message Service} \cite{jms}.
 
 O projeto ZeroMQ também é uma implementação de código aberto feita em C++, com
-bibliotecas disponibilizadas para aplicações cliente em mais de $20$ linguagens,
+bibliotecas disponibilizadas para aplicações cliente em mais de vinte linguagens,
 incluindo Java, Python, C++ e C. A implementação está disponível sob a 
 licença LGPL \cite{lgpl}. A biblioteca para clientes Java depende de
 outras bibliotecas nativas específicas para sistema operacional suportado. 
@@ -260,8 +261,8 @@ e não possui dependências de código nativo, sendo totalmente independente de pla
 
 Como a especificação do padrão AMQP não define uma API padrão para as aplicações clientes,	
 tivemos de optar por uma implementação para o desenvolvimento deste trabalho. 
-Optamos por utilizar o projeto RabbitMQ. Tomamos como base para
-nossa decisão alguns fatores, a destacar:
+Optamos por utilizar o RabbitMQ. Tomamos como base para
+nossa decisão os seguintes fatores:
 	
 \begin{itemize}
 	\item Grande quantidade de atividade na comunidade de usuários e desenvolvedores;
@@ -280,13 +281,10 @@ nossa decisão alguns fatores, a destacar:
 	de sistemas distribuídos e concorrentes \cite{erlang:97};
 	
 	\item Possuir ferramentas para administração e monitoramento.
-	
-	%% falar de cloud?!
 \end{itemize}
 	
 Apresentamos a seguir uma visão geral de alguns dos principais componentes da biblioteca
-para clientes Java do projeto RabbitMQ e como eles se relacionam. Mostramos também
-uma aplicação produtor/consumidor de exemplo escrita na linguagem Scala.
+para clientes Java do projeto RabbitMQ e como eles estão relacionados.
 	
 \subsection{RabbitMQ - Biblioteca para clientes Java}
 \label{subsec:amqp-rabbit-api}
@@ -295,9 +293,9 @@ uma aplicação produtor/consumidor de exemplo escrita na linguagem Scala.
 A biblioteca para clientes Java disponibilizada pelo projeto 
 RabbitMQ \cite{rabbit-api} define diversas classes para que seja possível a interação 
 com o \english{broker}. A conexão acontece com uma instância de 
-\lstinline$com.rabbitmq.client.Connection$, que pode ser obtida pela classe
-\lstinline$com.rabbitmq.client.ConnectionFactory$, via método \lstinline$newConnection$.
-É na classe \lstinline$ConnectionFactory$ que informamos os valores dos parâmetros necessários
+\code{com.rabbitmq.client.Connection}, que pode ser obtida pela classe
+\code{com.rabbitmq.client.ConnectionFactory}, via método \code{newConnection}.
+É na classe \code{ConnectionFactory} que informamos os valores dos parâmetros necessários
 para conexão com o \english{broker} (listagem \ref{lst:conn-factory}).
 	
 \begin{lstlisting}[frame=tb, caption={Configuração e uso de uma ConnectionFactory.}, label={lst:conn-factory}]
@@ -314,12 +312,12 @@ As conexões têm como papel principal estabelecer a comunicação da
 aplicação cliente com o \english{broker}. Conexões podem ser vistas como sendo
 a implementação de uma parte considerável da camada de transporte do padrão AMQP.
 Como descrito na seção \ref{sec:amqp-transporte}, a camada de transporte deve ser
-capaz de prover a multiplexação de canais. A classe \lstinline$Connection$ provê,
-dentre outros métodos, o método \lstinline$createChannel$. A invocação desse método resulta em
-uma instância de \lstinline$com.rabbitmq.client.Channel$ por onde
+capaz de prover a multiplexação de canais. A classe \code{Connection} provê,
+dentre outros métodos, o método \code{createChannel}. A invocação desse método resulta em
+uma instância de \code{com.rabbitmq.client.Channel} por onde
 podemos executar os comandos definidos na camada de sessão (listagem \ref{lst:channels}). 
-Por exemplo a criação de filas (\lstinline$queueDeclare$) ou o envio (\lstinline$basicPublish$) e 
-recebimento de mensagens (\lstinline$basicConsume$).
+Por exemplo a criação de filas (\code{queueDeclare}) ou o envio (\code{basicPublish}) e 
+recebimento de mensagens (\code{basicConsume}).
 	
 \begin{lstlisting}[frame=tb, caption={Criação e uso de canais.}, label={lst:channels}]
 val channel = connection.createChannel
@@ -330,12 +328,12 @@ channel.basicPublish(...)
 \end{lstlisting}
 
 O recebimento das mensagens é feito com o uso de consumidores que são instâncias de 
-\lstinline$com.rabbitmq.client.Consumer$. Os consumidores são registrados nos canais
+\code{com.rabbitmq.client.Consumer}. Os consumidores são registrados nos canais
 e podem receber as mensagens assincronamente através do método 
-\lstinline$handleDelivery$ (listagem \ref{lst:sample-consumer}). 	
+\code{handleDelivery} (listagem \ref{lst:sample-consumer}). 	
 
 A figura \ref{fig:rabbitmq-colaboracao} mostra como 
-uma fábrica de conexões, uma conexão, um canal e um consumidor se relacionam. 
+uma fábrica de conexões, uma conexão, um canal e um consumidor estão relacionados. 
 Um exemplo completo de uma aplicação produtora e de uma aplicação consumidora com a biblioteca
 Java do RabbitMQ é apresentado no apêndice \ref{ape:sample-amqp}.
 	
@@ -344,8 +342,8 @@ da existênca de um objeto antes da criação efetiva do objeto. Por exemplo, se ti
 criado uma fila durável $F_1$, e tentássemos criar uma nova fila durável $F_1$, a fila não seria
 recriada e a execução seguiria normalmente. Eventuais mensagens em $F_1$ não sofreriam 
 alterações. Contudo, caso estivéssemos tentando recriar $F_1$ como não durável, uma exceção
-seria lançada e o canal utilizado para executar o comando de criação seria fechado. A regra
-também vale para \english{exchanges}. O procedimento correto é remover, seja via código ou
+seria lançada e o canal utilizado para executar o comando de criação seria fechado. Para casos
+como este, a regra também vale para \english{exchanges}. O procedimento correto é remover, seja via código ou
 via alguma aplicação administrativa do RabbitMQ, para depois fazer a criação.
 
 \begin{lstlisting}[frame=tb, caption={Registro de um consumidor.}, label={lst:sample-consumer}]		
@@ -367,7 +365,7 @@ class MyConsumer(channel: Channel) extends Consumer{
 \begin{figure}[hbtp]
   \centering
   \includegraphics[scale=.6]{rabbitmq-colaboracao}
-  \caption{RabbitMQ Java API -- Relacionamento entre classes de transporte e sessão.}
+  \caption{RabbitMQ Java API -- Relação entre classes de transporte e sessão.}
   \label{fig:rabbitmq-colaboracao}
 \end{figure} 	
 		
@@ -375,7 +373,7 @@ Para finalizar este capítulo, é importante destacar que a implementação de canai
 \cite{rabbit-channels} não é uma segura para acesso concorrente (\english{thread safe}), 
 de modo que é de responsabilidade da aplicação fazer a devida proteção para 
 evitar que diferentes \english{threads} façam uso dos canais concorrentemente. Canais
-permitem ainda que sejam registrados tratadores de erros (\lstinline$setReturnListener$), 
+permitem ainda que sejam registrados tratadores de erros (\code{setReturnListener}), 
 como por exemplo para o caso em que mensagens não puderem ser enviadas ou entregues 
 aos seus respectivos destinatários. Em situações como essas, o corpo da mensagem e algumas
 informações do envio, como o nome da \english{exchange}, a chave de roteamento e 
