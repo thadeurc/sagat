@@ -19,14 +19,14 @@ que desacopla a definição dos componentes para transporte das mensagens a atores
 remotos, como apresentado na seção \ref{sec:atores_remotos_akka}. Para viabilizar 
 o envio de mensagens remotas via \english{message broker} AMQP, tivemos
 que criar novos componentes para a camada de implementação com base nas classes
-e \english{traits} que definem a interface remota (figura \ref{fig:remote-actor-colaboracao}).
+e feições que definem a interface remota (figura \ref{fig:remote-actor-colaboracao}).
 Utilizamos a estrutura apresentada no capítulo \ref{cap:estrutura-troca-mensagens-amqp} 
 como suporte para a implementação dos novos componentes do Akka. 
 Criamos os seguintes componentes:
 
 \begin{itemize}
 	\item \code{AMQPRemoteServer}: É uma classe utilizada no lado do servidor onde
-	estão os atores remotamente acessíveis. Essa classe implementa os métodos abstrados
+	estão os atores remotamente acessíveis. Essa classe implementa os métodos abstratos
 	de um \code{MessageHandler} e é responsável pelo recebimento,
 	desseriação e encaminhamento das mensagens para os atores que estão em seu registro. 
 	A classe também é responsável por enviar eventuais mensagens de resposta para os 
@@ -94,7 +94,7 @@ não mudar nem o construtor e nem o atributo. Em nossa implementação, o valor
 desse atributo (\code{homeAddress}) não é utilizado.
 Como o projeto Akka possui desenvolvimento ativo, acreditamos que existe
 uma grande possibilidade de mudança na interface dos componentes
-do módulo de atores remotos, de modo que haja um desacomplamento entre sua interface
+do módulo de atores remotos, de modo que haja um desacoplamento entre sua interface
 e as novas implementações da camada de transporte.
 
 \section{Integração com o Akka}
@@ -105,7 +105,7 @@ Uma vez definidos os componentes dentro da estrutura do Akka, é necessário que
 a biblioteca do Akka faça uso deles, de modo que a instância referenciada por
 \code{Actor.remote} seja uma instância de \code{AMQPRemoteSupport}.
 Ademais, devemos informar as configurações que nosso suporte espera, como por exemplo,
-as políticas de armazenamendo e compartilhamento de canais. As alterações necessárias
+as políticas de armazenamento e compartilhamento de canais. As alterações necessárias
 para a integração do nosso novo suporte com a biblioteca de atores do Akka são apresentadas
 nas seções a seguir.
 
@@ -189,7 +189,7 @@ divergentes entre JVMs podem levar aos seguintes cenários:
 	transiente e algum de seus clientes possui uma configuração persistente: Esse é 
 	um cenário mais problemático, já que quando a \english{exchange} do servidor
 	é removida todas as suas associações também são removidas, porém as filas persistentes
-	não. Esse cenário deve ser analizado de duas ópticas diferentes: \entry{(i)} 
+	não. Esse cenário deve ser analisado de duas ópticas diferentes: \entry{(i)} 
 	Óptica da criação dos objetos:
 	como a biblioteca Java do RabbitMQ faz uma verificação da existência de um objeto
 	antes de tentar fazer a sua criação (\ref{sec:entidades-via-broker-amqp-gerenciamento-conexoes}),
@@ -207,7 +207,7 @@ na conexão.
 
 \subsection{Segurança}
 
-Com o intuito de previnir conexões em servidores remotos de clientes não autorizados,
+Com o intuito de prevenir conexões em servidores remotos de clientes não autorizados,
 o Akka deixa como opção de configuração exigir que somente clientes autenticados
 possam interagir com os atores. A autenticação é feita com \english{cookie} de segurança. 
 O \english{cookie} de segurança é definido no arquivo \code{akka.conf} na seção \code{remote}. O uso de 

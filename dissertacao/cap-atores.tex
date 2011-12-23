@@ -105,7 +105,7 @@ Assim, os comportamentos $B_1$ e $B_2$ podem ser comportamentos idênticos.
 No modelo de atores, a real localização de um ator não afeta a interação com outros atores. 
 Os atores que um ator conhece podem estar distribuídos em diferentes núcleos de um processador,
 ou mesmo em diferentes nós de uma rede de computadores. A transparência da localidade
-abstrai a infra-estrutura e permite que programas sejam desenvolvidos de modo distribuído,
+abstrai a infraestrutura e permite que programas sejam desenvolvidos de modo distribuído,
 sem que a real localização de seus atores seja conhecida. Uma consequência direta da  
 transparência da localidade é a capacidade de se mover atores entre os diferentes nós de uma rede de computadores. 
 
@@ -137,7 +137,7 @@ precisem de escalabilidade \cite{Kim95}.
 \index{Atores!histórico}
 
 O modelo de atores foi originalmente proposto por Carl Hewitt em $1971$ \cite{hewitt:71}. 
-O termo ator foi originalmente utilizado para descrever entidades ativas que analizavam 
+O termo ator foi originalmente utilizado para descrever entidades ativas que analisavam 
 padrões para iniciar atividades. O conceito de atores passou então a ser explorado pela 
 comunidade científica e, em $1973$, a noção de atores se aproximou do conceito de agentes existente
 na área de inteligência artificial distribuída, por possuírem intenções, recursos,
@@ -145,12 +145,12 @@ monitores de mensagens e um agendador \cite{Hewitt:1973}.
 
 Em $1975$, Irene Greif desenvolveu um modelo abstrato de atores orientado 
 a eventos onde cada ator guardava um histórico dos seus eventos \cite{greif:1975}. 
-O objetivo do estudo era analizar a relação causal entre os eventos. Em $1977$, Baker e Hewitt formalizaram um conjunto de axiomas para computação concorrente \cite{baker:1977}. No mesmo ano, Hewitt 
+O objetivo do estudo era analisar a relação causal entre os eventos. Em $1977$, Baker e Hewitt formalizaram um conjunto de axiomas para computação concorrente \cite{baker:1977}. No mesmo ano, Hewitt 
 apresentou um estudo sobre como o entendimento dos padrões de troca de mensagens entre atores pode ajudar na definição de estruturas de controle. Esse estudo demonstrou o uso do estilo de passagem de continuações no modelo de atores.	
 
 O conceito de guardião foi definido em $1979$ por Attardi e Hewitt \cite{Hewitt:1979}. 
 Um guardião é uma entidade que regula o uso de recursos compartilhados. Guardiões incorporam 
-explitamente a noção de estado e são responsáveis por agendar o acesso e fazer a 
+explicitamente a noção de estado e são responsáveis por agendar o acesso e fazer a 
 proteção dos recursos. No mesmo ano, Hewitt e Atkinson definiram um conceito relacionado ao 
 de guardião denominado seriador (\english{serializer}) \cite{atkinson:1979}. 
 Um seriador age como um monitor, porém, ao invés de aguardar sinais explícitos vindos dos processos, seriadores procuram ativamente por condições que permitam que processos em espera possam 
@@ -175,10 +175,10 @@ por Tomlinson e outros \cite{Tomlinson:1988}.
 \label{sec:atores-implementacoes}
 
 O suporte ao modelo de atores pode estar disponível em uma linguagem de programação, seja 
-fazendo parte da estrutura da linguagem, ou ainda como uma biblioteca. Apresentamos na sub-seção 
+fazendo parte da estrutura da linguagem, ou ainda como uma biblioteca. Apresentamos na subseção 
 \ref{sec:atores-linguagens}  algumas linguagens de programação baseadas no modelo de atores. 
 Essas linguagens possuem primitivas que facilitam a criação de sistemas baseados em atores. 
-Apresentamos na sub-seção \ref{sec:atores-bibliotecas} algumas bibliotecas que adicionam o 
+Apresentamos na subseção \ref{sec:atores-bibliotecas} algumas bibliotecas que adicionam o 
 suporte ao modelo de atores a linguagens mais gerais.
 
 \subsection{Linguagens}
@@ -196,7 +196,7 @@ Axum (anteriormente conhecida como Maestro) é uma linguagem experimental orienta
 objetos\footnote{O projeto está em uma encubadora de projetos.} criada pela Microsoft 
 Corporation para o desenvolvimento de sistemas concorrentes na plataforma .Net \cite{axum-lang-overview}. 
 A criação da linguagem teve como motivação permitir que sistemas modelados como 
-componentes que interajem entre si pudessem ser traduzidos naturalmente para código.
+componentes que interajam entre si pudessem ser traduzidos naturalmente para código.
 Pelo fato de ser uma linguagem da plataforma .Net, Axum pode interagir com outras linguagens 
 da plataforma, como VB.Net, C\# e F\#.
 
@@ -237,11 +237,11 @@ os métodos que definem o comportamento do ator. Assim como na hierarquia de clas
 em Java, onde não existe herança múltipla e classes podem implementar zero ou muitas 
 \english{interfaces}, \english{behaviors} seguem a mesma regra. O \english{behavior}
 \code{salsa.language.UniversalActor} é análogo a classe \code{java.lang.Object}, e todos os
-\english{behaviors} o extendem direta ou indiretamente. A primitiva \code{<-} é utilizada
+\english{behaviors} o estendem direta ou indiretamente. A primitiva \code{<-} é utilizada
 para enviar uma mensagem a um ator.
 
 A implementação de atores da linguagem utiliza o objeto \code{salsa.language.Actor}
-como ator base que extende \code{java.lang.Thread}, criando uma relação onde 
+como ator base que estende \code{java.lang.Thread}, criando uma relação onde 
 cada ator executa em uma \english{thread}. Cada ator possui uma fila de mensagens onde
 as mensagens recebidas ficam armazenadas até que o método \code{run} as retire
 para que o método correspondente seja executado via reflexão. 
@@ -416,7 +416,7 @@ dentro de um tempo limite especificado e \code{!!}, que faz o envio assíncrono d
 mensagem e recebe um resultado futuro correspondente a uma resposta. 
         
 O suporte a atores remotos faz parte da biblioteca, porém com algumas restrições em comparação 
-com os atores de Erlang.Não é possível a criação de um ator em um nó que não seja o local, ou seja, 
+com os atores de Erlang. Não é possível a criação de um ator em um nó que não seja o local, ou seja, 
 \english{remote spawns} não são possíveis. Os atores são acessíveis remotamente 
 via \english{proxies}. Para obter uma referência a um ator remoto, um cliente faz uma busca  
 em um determinado nó (uma JVM identificada por um par com o endereço do hospedeiro e a porta), utilizando como chave o nome sob o qual o ator foi registrado. Esta abordagem, apesar de soar restritiva, evita um problema importante que é a necessidade de carga remota da classe do ator 

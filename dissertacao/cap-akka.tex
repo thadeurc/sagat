@@ -73,7 +73,7 @@ ao estado de ``desligado'' e não executa mais ação alguma.
   theActor ! "hello"
 \end{lstlisting}
 
-As mensagens que são enviadas para um ator são colocada sincronamente 
+As mensagens que são enviadas para um ator são colocadas sincronamente 
 na fila de mensagens do ator, levando tempo $O(1)$. As mensagens enfileiradas são então 
 despachadas assincronamente para a função parcial definida no bloco \code{receive}, 
 como mostrado na figura \ref{fig:local-actor-message}. 
@@ -119,7 +119,7 @@ possui em sua distribuição os quatro despachadores listados a seguir:
 	Este despachador é definido na classe \code{HawtDispatcher};		
 	
 	\item Despachador impulsionado por \english{threads}:  	
-	É o despachador mais simples de todos os dispachadores, já que associa uma \english{thread} para 
+	É o despachador mais simples de todos os despachadores, já que associa uma \english{thread} para 
 	cada ator. O uso desse despachador implica no ator
 	utilizar filas transientes. É importante ressaltar que, internamente, é utilizado uma fila
 	que faz o bloqueio da \english{thread} que está tentando adicionar uma mensagem, caso o limite
@@ -131,7 +131,7 @@ Por padrão atores são associados ao despachador global impulsionado por eventos.
 configuração padrão do despachador define uma fila transiente sem limite máximo de mensagens. 
 Caso seja necessário definir um outro despachador para um ator, a definição deve acontecer 
 antes de o ator ser inciado via método \code{self.dispatcher}. O Akka permite ainda
-que novos dispachadores sejam criados. Por padrão, os despachadores são criados no pacote
+que novos despachadores sejam criados. Por padrão, os despachadores são criados no pacote
 \code{akka.dispatch}.
 
 \subsection{Envios de respostas}
@@ -210,7 +210,7 @@ ou classe pode enviar uma mensagem a um ator. Podemos notar que o código da list
 de resposta pode verificar se há um remetente definido associado a mensagem recebida, 
 porém existe um modo alternativo e mais simples: o método \code{self.reply\_?} faz o 
 envio ao remetente somente no caso em que há um remetente definido, devolvendo o valor 
-boleano \code{true} para indicar se houve envio ou \code{false} caso contrário.
+booleano \code{true} para indicar se houve envio ou \code{false} caso contrário.
 
 \subsection{Hierarquias de supervisão}
 \index{Akka!atores locais!supervisão}
@@ -232,8 +232,8 @@ deverá ter. O ciclo de vida de um ator indica ao ator supervisor como proceder n
 Existem dois tipos de ciclo de vida:
 
 \begin{enumerate}
-	\item Permantente: Indica que o ator possui um ciclo de 
-	vida permante e sempre deve ser reiniciado no caso de erros.
+	\item Permanente: Indica que o ator possui um ciclo de 
+	vida permanente e sempre deve ser reiniciado no caso de erros.
 	Este ciclo é definido na classe \code{Supervision.Permanent};
 	
 	\item Temporário: 
@@ -302,7 +302,7 @@ class MySupervised extends akka.actor.Actor{
 \end{lstlisting}
 
 
-Junto com a estratégida de reinicialização, é necessário definir quais são as exceções que o ator
+Junto com a estratégia de reinicialização, é necessário definir quais são as exceções que o ator
 é responsável por fazer o tratamento, além de configurações relacionadas a quantas tentativas de
 reinicialização devem ser feitas dentro de um período de tempo. Mostramos na listagem 
 \ref{lst:supervisor-actor} a definição de um ator supervisor. Na linha $2$ dessa listagem
@@ -359,7 +359,7 @@ No contexto de envios de mensagens para atores remotos, o termo cliente se refer
 normalmente, iniciam o envio de mensagens. O termo servidor denota o processo (máquina virtual) 
 no qual reside o ator remoto. Atores remotamente acessíveis possuem as mesmas características
 de atores locais no que diz respeito ao recebimento e despachamento de mensagens. Atores
-locais e remotos diferem basicamente na sua criação e no envio de mensagens. A infra-estrutura 
+locais e remotos diferem basicamente na sua criação e no envio de mensagens. A infraestrutura 
 de atores remotos utiliza os seguintes elementos:
 	
 \begin{itemize}	
@@ -375,8 +375,8 @@ de atores remotos utiliza os seguintes elementos:
 	\item \code{RemoteClientModule}: É uma feição que define as responsabilidades
 	do componente usado no lado do cliente. Suas implementações têm como responsabilidade 
 	visível oferecer uma interface para obtenção de referências a atores remotos. 
-	Ademais, oferece também suporte em tempo de execução para a infra-estrutura de atores do lado do 
-	cliente, provendo uma série de serviços não vísiveis para o usuário, tais como
+	Ademais, oferece também suporte em tempo de execução para a infraestrutura de atores do lado do 
+	cliente, provendo uma série de serviços não visíveis para o usuário, tais como
 	seriação de mensagens, envio de mensagens para atores remotos,
 	conversão de ator local em ator remoto e intermediação de 
 	mensagens de resposta vindas do \code{RemoteServerModule}, no caso envios via \code{!!}
@@ -467,7 +467,7 @@ object SampleRemoteClient extends Application{
 \index{Akka!atores remotos!fluxo de envio}
 \label{sec:atores_remotos_akka_fluxo}
 
-O envio assícrono de uma mensagem a um ator remoto tem alguns passos adicionais em relação
+O envio assíncrono de uma mensagem a um ator remoto tem alguns passos adicionais em relação
 a um envio local de mensagens. O processo de um envio assíncrono de uma mensagem
 para um ator remoto é ilustrado na figura \ref{fig:remote-actor-message-flow} e acontece
 em sete passos:
@@ -476,7 +476,7 @@ em sete passos:
 	\item O processo de envio começa com o \english{proxy} local 
 	embrulhando a mensagem e adicionando a ela informações de cabeçalho necessárias para 
 	o envio e processamento posterior. A mensagem embrulhada e com as informações de cabeçalho
-	é entao repassada ao seriador;
+	é então repassada ao seriador;
 	
 	\item O seriador é responsável por converter a informação 
 	recebida em um vetor de \english{bytes} para que o transporte possa ocorrer. 
@@ -495,7 +495,7 @@ em sete passos:
 	lhe foi associado;
 	
 	\item A implementação do \english{handler} feita no Akka repassa a mensagem para o seriador
-	para que a deseriação seja feita;
+	para que a desseriação seja feita;
 	
 	\item O seriador desseria a mensagem, deixando-a no formato original, e em seguida,
 	repassa novamente a mensagem ao \english{handler};
@@ -566,10 +566,10 @@ ser utilizada como implementação da camada de suporte para atores remotos.
 Os dados informados no arquivo \code{akka.conf}, uma vez que foram lidos ficam acessíveis
 em objetos de acordo com o contexto que fazem parte. As propriedades relacionadas
 aos atores remotos estão organizadas em objetos dentro do módulo \code{RemoteShared}.
-Existe ainda uma classe auxíliar que é utilizada para acessar os módulos dos sub-projetos
+Existe ainda uma classe auxiliar que é utilizada para acessar os módulos dos subprojetos
 do Akka via reflexão chamada de \code{ReflectiveAccess}. 
 A camada de implementação para o transporte de mensagens entre atores remotos é instanciada nessa
-classe. A listagem \ref{lst:akka-conf-vanilla} mostra a seção reference às configurações do módulo de atores remotos.
+classe. A listagem \ref{lst:akka-conf-vanilla} mostra a seção referente às configurações do módulo de atores remotos.
 
 
 \begin{lstlisting}[frame=tb, caption={Seção remote do arquivo akka.conf.}, label={lst:akka-conf-vanilla}]
@@ -607,9 +607,9 @@ uso da biblioteca Protobuf. Protobuf \cite{protobuf} é uma biblioteca que permit
 estruturados sejam representados em um formato eficiente e extensível. A biblioteca possui um compilador que 
 converte a definição de protocolos em classes Java, Python e C++, permitindo uma interação 
 direta com o protocolo nas linguagens, eliminando a necessidade de bibliotecas adicionais 
-para conversões. A bibliteca permite que protocolos sejam definidos com a palavra-chave 
-\code{message}. Protocolos podem contér outros protocolos e tipos primitivos 
-de dados, como por exemplo números, textos, valores boleanos e vetores de dados. Ademais, pode-se
+para conversões. A biblioteca permite que protocolos sejam definidos com a palavra-chave 
+\code{message}. Protocolos podem conter outros protocolos e tipos primitivos 
+de dados, como por exemplo números, textos, valores booleanos e vetores de dados. Ademais, pode-se
 definir a obrigatoriedade dos valores para alguns atributos com as palavras-chaves
 \code{optional} e \code{required}.
 
@@ -666,7 +666,7 @@ mensagens remotas. Esse protocolo é composto pelo protocolo para mensagens
 Na linha $1$, o atributo \code{uuid} é um identificador único para as mensagens.
 A implementação do protocolo \code{UuidProtocol} utiliza a biblioteca UUID \cite{uuid}
 que é uma implementação de identificadores globais únicos. Podemos notar na linha $4$ um 
-atributo boleano que é utilizado para indicar se é esperado uma mensagem de resposta para a
+atributo booleano que é utilizado para indicar se é esperado uma mensagem de resposta para a
 mensagem que está sendo processada. Envios feitos via método \code{!} possuem valor
 \code{oneWay = true}, enquanto que os demais envios não.
 

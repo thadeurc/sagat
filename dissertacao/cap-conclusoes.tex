@@ -32,7 +32,7 @@ Os componentes são descritos a seguir:
 
 	\item \english{Order Receiver}: É um ator externo que tem o papel de receber
 	mensagens de compra e venda de qualquer ação, encontrar o \english{matching engine}
-	responsavél e repassar a mensagem. A quantidade de \english{order receivers} não possui
+	responsável e repassar a mensagem. A quantidade de \english{order receivers} não possui
 	relação com \english{matching engines}, já que um \english{order receiver} recebe
 	mensagens para qualquer tipo de ação. O sistema possui dez \english{order receivers};
 
@@ -63,11 +63,11 @@ se deseja fazer. A quantidade não será necessariamente igual à quantidade de \en
 Por este motivo, a associação de um ator cliente a um \english{order receiver} é feita em sequência. 
 Itera-se na lista de \english{order receivers} junto com a lista de atores clientes.
 Uma vez que se tenha alcançado o décimo \english{order receiver}, reinicia-se a iteração a partir do
-primeiro ator. Depedendo a quantidade de atores clientes, alguns \english{order receivers}
+primeiro ator. Dependendo a quantidade de atores clientes, alguns \english{order receivers}
 podem recebem mensagens de mais, de menos ou até mesmo de nenhum ator cliente quando comparados com
 outros \english{order receivers}.
 
-Cada ator cliente envia um total de trinta ordens (quinze ordens de compra e quinze ordenrs de venda)
+Cada ator cliente envia um total de trinta ordens (quinze ordens de compra e quinze ordens de venda)
 para o \english{order receiver} que lhe foi associado. Esse valor é multiplicado pela quantidade
 de repetições que o ator cliente deve executar. A medição é feita com base no tempo que uma mensagem 
 enviada por um ator cliente levou para ser processada em um \english{order book}.
@@ -110,7 +110,7 @@ do janelamento das mensagens de $1$KB). Nos testes executados com o suporte dese
 utilizamos uma conexão por canal além da configuração \code{DURABLE} para as pontes AMQP 
 (seção \ref{sec:entidades-via-broker-amqp-bridges}).
 
-Para que pudessemos ter medidas mais reais, separamos os atores clientes e os atores do
+Para que pudéssemos ter medidas mais reais, separamos os atores clientes e os atores do
 \english{Trading System} em JVMs residentes em nós fisicamente separados. A máquina
 virtual Erlang, onde o RabbitMQ esteve em execução, ficou separada em um terceiro nó.
 A máquina virtual Erlang, responsável por executar o RabbitMQ, ficou em execução em
@@ -211,7 +211,7 @@ diferença de tempo das execuções com AMQP que estão abaixo da mediana, foram mai
 relação às execuções feitas com Netty ($140.69$\% e  $134.54$\%). Entretanto, quando comparamos os 
 percentis acima da mediana, observamos uma boa redução na diferença ($79.73$\% e  $39.31$\%).
 
-Com o aumento do número de atores clientes, a diferença de tempo apresenta uma boa diminução.
+Com o aumento do número de atores clientes, a diferença de tempo apresenta uma boa diminuição.
 O gráfico da figura \ref{fig:grafico-er} mostra a evolução da quantidade de envios/respostas com o aumento
 da quantidade de atores clientes. Podemos observar que, conforme a quantidade de atores clientes foi aumentando, 
 os resultados com nossa implementação apresentaram uma boa melhora e se mantiveram muito
@@ -352,9 +352,9 @@ a se destacar é em relação a \english{exchange} não existir no momento do envio.
 fazendo o envio recebe uma exceção no mesmo momento que está tentando fazer o envio. Mensagens que foram
 armazenadas, por exemplo, porque o \code{RemoteServer} ou \code{RemoteClient} não estavam
 em execução podem deixar de ter a mesma semântica para o ator. O comportamento do ator no momento do recebimento
-da mensagem pode, eventualmente, ser diferente do comportamento que o ator possuia no momento do envio.
+da mensagem pode, eventualmente, ser diferente do comportamento que o ator possuía no momento do envio.
 
-Assim como o modelo de atores não preve a ordem de entrega das mensagens, deixando a cargo das aplicações
+Assim como o modelo de atores não prevê a ordem de entrega das mensagens, deixando a cargo das aplicações
 que utilizam o modelo fazer o tratamento, o recebimento de mensagens que ficaram armazenadas é uma situação
 que leva a um cenário semelhante, também deixando a cargo da aplicação a responsabilidade sobre o processamento
 de tais mensagens. Mensagens enviadas de forma síncrona para atores remotos que não estão acessíveis, causam
@@ -377,7 +377,7 @@ O uso do RabbitMQ como \english{message broker} AMQP em conjunto com a estrutura
 entre atores remotos. O tempo extra de processamento adicionado com uso do \english{message broker} 
 se mostrou muito baixo para um cenário mais realista, onde existe uma quantidade razoável de atores executando
 em paralelo e baixa latência de rede, está bem abaixo do que esperávamos. Dependendo do tipo de aplicação, podemos
-afirmar que o tempo extra pode ser até considerado como despresível. Nossa conclusão é de que as duas 
+afirmar que o tempo extra pode ser até considerado como desprezível. Nossa conclusão é de que as duas 
 classes de sistemas estudas neste trabalho possuem boa sinergia.
 
 O uso de um \english{message broker} ainda trás outros benefícios, como por exemplo:
@@ -400,11 +400,11 @@ O uso de um \english{message broker} ainda trás outros benefícios, como por exem
 	os nós onde residem os atores remotos, conseguimos certa independência dos endereços IPs. O único endereço
 	que deve ser conhecido é o do nó onde o \english{message broker} está em execução.
 	Ainda que em nossa implementação tenhamos mantido as assinaturas dos métodos definidos no projeto Akka, 
-	nossa implementação não fica atrelhada a esse detalhe. Os endereços IPs dos nós não possuem relação 
-	com os nomes utilizados para registrar ou localizar um ator remoto. Exiete ainda uma outra vantagem que é
-	a redução do número de portas que devem ser desboqueadas em um \english{firewall}. Não é necessário
+	nossa implementação não fica atrelada a esse detalhe. Os endereços IPs dos nós não possuem relação 
+	com os nomes utilizados para registrar ou localizar um ator remoto. Existe ainda uma outra vantagem que é
+	a redução do número de portas que devem ser desbloqueadas em um \english{firewall}. Não é necessário
 	desbloquear as portas onde cada \code{RemoteServer} estará disponível. A única porta que precisa estar
-	desloqueada para aceitar conexões, é a porta que o \english{message broker} disponibilizou
+	desbloqueada para aceitar conexões, é a porta que o \english{message broker} disponibilizou
 	para os clientes e somente no nó onde ele está em execução.
 \end{itemize}
 
@@ -420,14 +420,14 @@ de erros. Ainda que nossa implementação seja de uma hierarquia de supervisão, o 
 possuem comportamento para o tratamento de erros em atores filhos. 
 
 A implementação pode ser ampliada para que, em caso de erros nos atores filhos, como os responsáveis pelos
-canais ou conexões, os atores supervisores possam criar novos atores supervisonados no mesmo estado que 
+canais ou conexões, os atores supervisores possam criar novos atores supervisionados no mesmo estado que 
 estavam antes do erro acontecer. A restauração do estado nos atores filhos deve obedecer as configurações 
 originais dos objetos que foram criados no \english{message broker}. É necessário ainda que, quando
 não for possível restabelecer o sistema, seja por não se conseguir reconectar ao \english{message broker} ou
 por algum outro motivo, notificar a ponte AMQP para que ela possa propagar o erro para o nível da aplicação.
 
 
-\subsection{Experimenos em um ambiente de computação em nuvem}
+\subsection{Experimentos em um ambiente de computação em nuvem}
 
 Nos últimos anos, o conceito de computação em nuvem (\english{cloud computing}) vem ganhando
 bastante espaço, não só na comunidade acadêmica, mas também na indústria de tecnologia.

@@ -7,7 +7,7 @@ entre entidades remotas via \english{message broker} AMQP. A estrutura apresenta
 neste capítulo foi utilizada como suporte para o desenvolvimento dos novos componentes 
 da camada de implementação para transporte de mensagens entre atores remoto do projeto Akka 
 (figura \ref{fig:remote-actor-colaboracao}). Entretanto, 
-antes de apresentar a estrutra que definimos, comentamos brevemente algumas 
+antes de apresentar a estrutura que definimos, comentamos brevemente algumas 
 características de entidades conectadas ponto-a-ponto via \english{sockets}
 que são impactadas ou deixam de fazer sentido com a nova abordagem.
 
@@ -35,7 +35,7 @@ para serviços comuns, como por exemplo servidores de correio eletrônico,
 possuem numeração fixa definida pela IANA (\english{Internet Assigned Numbers Authority})
 e não podem ser abertas para uso geral. 
 
-Este tipo de abortagem não implica no uso de armazenamento intermediário das mensagens. Uma
+Este tipo de abordagem não implica no uso de armazenamento intermediário das mensagens. Uma
 mensagem enviada de uma entidade para outra, até poderia ser armazenada pela entidade que 
 recebe a mensagem, mas não pelo mecanismo de transporte. Fica a cargo da entidade que recebe 
 a mensagem implementar o armazenamento temporário, caso haja necessidade.
@@ -73,7 +73,7 @@ que estão em uma mesma rede de computadores estão por padrão em \english{cluster
 \label{sec:entidades-via-broker-amqp}
 
 A substituição por um mecanismo baseado em troca de mensagens naturalmente
-introduz novas característas à comunicação. As entidades passam 
+introduz novas características à comunicação. As entidades passam 
 a não estarem mais conectadas diretamente, já que o \english{message broker} passa a ser 
 o componente central de conexão entre todas as entidades. Eventuais funcionalidades 
 baseadas na comunicação ponto-a-ponto, como por exemplo uma das partes saber que a 
@@ -115,20 +115,20 @@ entidade servidora. O módulo \code{AMQPBridge} contém as seguintes classes:
 	recebe como argumentos o nome que identifica a ponte e uma conexão para um \english{message broker} 
 	AMQP. Essa classe define ainda o padrão de nomeação utilizado na criação dos objetos,
 	como mostra a listagem \ref{lst:amqp-bridge}. A classe possui também um objeto companheiro que
-	define métodos para a criação de instâncias das sub-classes de \code{AMQPBridge};
+	define métodos para a criação de instâncias das subclasses de \code{AMQPBridge};
 
 	\item \code{MessageHandler}: É a feição que define os métodos a serem
 	invocados quando mensagens forem recebidas ou envios feitos pela entidade forem 
 	rejeitados pelo \english{message broker}; 
 	
-	\item \code{ServerAMQPBridge}: É uma das duas sub-classes de \code{AMQPBridge} e
+	\item \code{ServerAMQPBridge}: É uma das duas subclasses de \code{AMQPBridge} e
 	define o comportamento para entidades que atuam como servidoras. 
 	Além dos métodos herdados, essa classe ainda define o método \code{setup}. Esse
 	método recebe como argumento uma implementação de \code{MessageHandler} e os
 	parâmetros com as configurações da fila e da \english{exchange} que serão criadas
 	durante a execução do método, como mostrado na listagem \ref{lst:amqp-server-bridge};	
 
-	\item \code{ClientAMQPBridge}: É a outra sub-classe de \code{AMQPBridge} e
+	\item \code{ClientAMQPBridge}: É a outra subclasse de \code{AMQPBridge} e
 	define o comportamento para entidades que atuam como clientes. Essa
 	classe tem em seu construtor um parâmetro adicional em relação à classe \code{ServerAMQPBridge}.
 	O parâmetro \code{id} é utilizado para a identificação do cliente. A identificação é necessária 
@@ -141,7 +141,7 @@ entidade servidora. O módulo \code{AMQPBridge} contém as seguintes classes:
 \begin{lstlisting}[frame=tb, caption={Classe AMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-bridge}]
 abstract class AMQPBridge(val name: String, 
 						  val connection: SupervisedConnectionWrapper) {
-  require(nodeName != null)
+  require(name != null)
   require(connection != null)
     
   val id: String
@@ -226,7 +226,7 @@ A combinação dos seus valores dão semântica às seguintes políticas:
 \label{sec:entidades-via-broker-amqp-gerenciamento-conexoes}
 
 O módulo \code{ConnectionPoolSupervisor} é responsável por encapsular os detalhes 
-da interação com o \english{message broker}. Como mostrado na sub-seção \ref{subsec:amqp-rabbit-api}, o envio
+da interação com o \english{message broker}. Como mostrado na subseção \ref{subsec:amqp-rabbit-api}, o envio
 de comandos e recebimentos de mensagens com o RabbitMQ acontece por meio de canais
 que são abertos em uma conexão. Esses canais não oferecem proteção para acesso concorrente,
 deixando a cargo da aplicação fazer a proteção.
@@ -237,7 +237,7 @@ ainda define uma interface simples e clara para as pontes AMQP, abstraindo
 toda a responsabilidade em relação à interação com o \english{message broker}. 
 
 Para que os canais possam ser acessados concorrentemente de modo seguro, optamos por
-encapsulá-los em atores Akka. A idéia de encapsular o acesso aos canais em atores foi inspirada
+encapsulá-los em atores Akka. A ideia de encapsular o acesso aos canais em atores foi inspirada
 na implementação de um dos módulos adicionais do projeto Akka. O módulo AMQP do projeto
 Akka abstrai a criação de consumidores e produtores como atores, além de também abstrair
 a criação de objetos no \english{message broker}.
@@ -270,7 +270,7 @@ As principais classes do módulo \code{ConnectionPoolSupervisor} são:
 
 \begin{itemize}
 	\item \code{BridgeConsumer}: É uma implementação de um consumidor padrão
-	de mensagens. Essa implementação extende a classe \code{DefaultConsumer}
+	de mensagens. Essa implementação estende a classe \code{DefaultConsumer}
 	do RabbitMQ, e utiliza a implementação do \code{MessageHandler} para a
 	notificação de eventos como mensagens recebidas ou mensagens rejeitadas e retornadas;
 	
@@ -294,7 +294,7 @@ As principais classes do módulo \code{ConnectionPoolSupervisor} são:
 	atores de conexão. Essa feição define ainda métodos que interagem
 	com a fábrica de conexões do RabbitMQ para a criação de novas conexões;
 	
-	\item \code{AMQPConnectionFactory}: É a classe raíz da hierarquia
+	\item \code{AMQPConnectionFactory}: É a classe raiz da hierarquia
 	de supervisão. Essa classe herda de \code{AMQPSupervisor} e
 	define o despachador para todos os atores que estarão direta ou indiretamente
 	sob supervisão. A classe possui ainda um objeto companheiro que define
@@ -493,7 +493,7 @@ O Akka mantém um registro com todos os atores em execução. Nesse registro é poss
 localizar um ator por seu identificador e até mesmo
 interromper a execução de todos os atores do registro. Para evitar efeitos colaterais entre
 as interações do registro de atores do Akka com a nossa implementação, optamos por remover
-a hierarquia que definimos do registro do Akka. Isso acontece após a incialização de cada
+a hierarquia que definimos do registro do Akka. Isso acontece após a inicialização de cada
 ator via método \code{Actor.registry.unregister(actor)}. Nossa hierarquia de
 atores, por sua vez, pode ter sua execução interrompida via método 
 \code{AMQPConnectionFactory.shutdownAll}.
@@ -520,12 +520,12 @@ precisa do identificador de uma ponte cliente para poder lhe enviar uma mensagem
   	\label{fig:bridges-broker-all-together}
 \end{figure}
 
-Segundo a específicação do padrão AMQP \cite{amqp}, as implementações 
+Segundo a especificação do padrão AMQP \cite{amqp}, as implementações 
 de \english{brokers} devem suportar ao menos $256$ filas por \english{virtual host}. 
 Contudo, a recomendação é que não haja imposição de limites que não pela disponibilidade 
 de recursos. A especificação também menciona que o número mínimo de \english{exchanges} por
 \english{virtual host} é de $16$, e faz a mesma observação quanto a não imposição
-de limite que não seja pela disponiblidade de recursos. A implementação RabbitMQ
+de limite que não seja pela disponibilidade de recursos. A implementação RabbitMQ
 utilizada neste trabalho deixa as limitações a cargo da quantidade de recursos
 do sistema hospedeiro. 
 
@@ -626,12 +626,12 @@ O recebimento de uma mensagem por uma ponte servidora é ilustrado na figura
 \begin{figure}[!h]
 	\centering
 	\includegraphics[scale=0.5]{bridge-message-flow} 
-  	\caption{Passor para recebimento de mensagens via pontes AMQP.}
+  	\caption{Passos para recebimento de mensagens via pontes AMQP.}
   	\label{fig:bridge-message-flow}
 \end{figure}
 
 Devemos recordar que a execução do método \code{handleReceived}
-deve retornar um valor boleano. Esse valor indica se o recebimento deve ser confirmado  
+deve retornar um valor booleano. Esse valor indica se o recebimento deve ser confirmado  
 para então a mensagem ser removida da fila pelo \english{message broker}. Os passos utilizados
 para o recebimento de uma mensagem por uma ponte cliente são idênticos aos ilustrados
 na figura \ref{fig:bridge-message-flow}.
