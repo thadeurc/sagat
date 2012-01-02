@@ -20,7 +20,7 @@ e um comportamento \cite{Agha86}.
 
 O modelo define que toda interação entre atores deve acontecer via trocas assíncronas
 de mensagens. Uma vez que o endereço da fila de mensagens de um ator é conhecido, 
-mensagens podem ser enviadas ao ator. As mensagem enviadas são armazenadas para processamento 
+mensagens podem ser enviadas ao ator. As mensagens enviadas são armazenadas para processamento 
 assíncrono, desacoplando o envio de uma mensagem do seu processamento. 
 
 Toda computação em um sistema de atores é resultado do processamento de uma mensagem. 
@@ -109,12 +109,13 @@ abstrai a infraestrutura e permite que programas sejam desenvolvidos de modo dis
 sem que a real localização de seus atores seja conhecida. Uma consequência direta da  
 transparência da localidade é a capacidade de se mover atores entre os diferentes nós de uma rede de computadores. 
 
-Apesar de o modelo ser bem explícito e claro em relação a interação ser via troca de mensagens e
+Apesar do modelo ser bem explícito e claro em relação à interação ser via troca de mensagens e
 dizer que o estado de um ator não deve ser compartilhado, implementações 
-poderiam permitir que o estado interno de um ator fosse acessado diretamente por outro ator. 
+poderiam permitir que um ator fizesse acesso ao estado interno de outro ator. 
 Por exemplo, um ator poderia invocar algum método de outro ator. 
-Mesmo que a interface de um ator não permita o compartilhamento do seu estado, mensagens enviadas poderiam expor um compartilhamento indesejado
-de estado com atores colocados. O uso de mensagens imutáveis ou passadas via ``cópia funda'' é uma abordagem mais apropriada para evitar um compartilhamento indesejado de memória entre atores colocados.
+Mesmo que a interface de um ator não permita o compartilhamento do seu estado, mensagens enviadas poderiam expor um compartilhamento indesejado de estado com atores residentes no mesmo processo (``atores co-locados''). 
+O uso de mensagens imutáveis ou passadas 
+via ``cópia funda'' é uma abordagem mais apropriada para evitar um compartilhamento indesejado de memória entre atores co-locados.
 
 Mobilidade é definida como a habilidade de se poder mover um programa de um nó para outro,
 e pode ser classificada como mobilidade fraca ou mobilidade forte. Mobilidade fraca é a 
@@ -140,11 +141,10 @@ O modelo de atores foi originalmente proposto por Carl Hewitt em $1971$ \cite{he
 O termo ator foi originalmente utilizado para descrever entidades ativas que analisavam 
 padrões para iniciar atividades. O conceito de atores passou então a ser explorado pela 
 comunidade científica e, em $1973$, a noção de atores se aproximou do conceito de agentes existente
-na área de inteligência artificial distribuída, por possuírem intenções, recursos,
-monitores de mensagens e um agendador \cite{Hewitt:1973}.
+na área de inteligência artificial distribuída, pois tanto atores quanto agentes possuem intenções, recursos, monitores de mensagens e um agendador \cite{Hewitt:1973}.
 
 Em $1975$, Irene Greif desenvolveu um modelo abstrato de atores orientado 
-a eventos onde cada ator guardava um histórico dos seus eventos \cite{greif:1975}. 
+a eventos em que cada ator guardava um histórico dos seus eventos \cite{greif:1975}. 
 O objetivo do estudo era analisar a relação causal entre os eventos. Em $1977$, Baker e Hewitt formalizaram um conjunto de axiomas para computação concorrente \cite{baker:1977}. No mesmo ano, Hewitt 
 apresentou um estudo sobre como o entendimento dos padrões de troca de mensagens entre atores pode ajudar na definição de estruturas de controle. Esse estudo demonstrou o uso do estilo de passagem de continuações no modelo de atores.	
 
@@ -158,7 +158,7 @@ voltar a ser executados.
 Em $1987$, Henry Lieberman implementou em Lisp a linguagem Act1 \cite{Lieberman:1987}, 
 uma linguagem de atores com guardiões, seriadores e atores chamados de ``trapaceiros'' 
 (\english{rock-bottom}). Atores trapaceiros são atores que podem burlar as regras do modelo
-de atores para, por exemplo, fazer uso dados primitivos e funções da linguagem usada em sua
+de atores para, por exemplo, fazer uso de dados primitivos e funções da linguagem usada em sua
 implementação.
 
 Gul Agha definiu em $1986$ um sistema simples de transição para atores \cite{Agha86}. 
@@ -167,7 +167,7 @@ Atores recepcionistas são atores que ocultam a existência de outros atores em um
 sistema de atores, agindo como intermediários no recebimento das mensagens. 
 O uso de atores recepcionistas permite uma forma de encapsulamento, já que eles acabam 
 agindo como interface para atores externos. Em $1987$, esse modelo foi implementado 
-na linguagem Acore, por Carl Manning \cite{manning1987acore} e em $1988$ na linguagem Rosette, 
+na linguagem Acore, por Carl Manning \cite{manning1987acore}, e em $1988$, na linguagem Rosette, 
 por Tomlinson e outros \cite{Tomlinson:1988}.
 
 \section{Implementações}
@@ -207,7 +207,7 @@ mensagens é feita via canais. Os canais são responsáveis por definir os tipos de
 que trafegam neles com o uso das palavras-chaves \code{input} e \code{output}. 
 Canais possuem duas extremidades, a extremidade implementadora
 (\english{implementing end}) e a extremidade de uso (\english{using end}). Agentes que implementam
-o comportamento da extremidade implementadora de um canal, passam a agir como servidores que 
+o comportamento da extremidade implementadora de um canal passam a agir como servidores que 
 processam as mensagens recebidas por seus respectivos canais. A extremidade de uso do canal é visível e deve ser utilizada por 
 outros agentes para fazer o envio de mensagens. 
 
@@ -216,7 +216,7 @@ A linguagem possui ainda o conceito de domínio. Domínios são definidos com a pal
 de estado. Uma instância de domínio pode ter atributos que são usados para 
 compartilhamento seguro e controlado de informações.
 
-Apesar de Axum ter seu desenvolvimento interrompido na versão $0.3$ no início
+Apesar de Axum ter seu desenvolvimento interrompido na versão $0.3$, no início
 de $2011$, segundo os seus autores os conceitos implementados na linguagem poderão ser portados 
 para as linguagens C\# e Visual Basic \cite{axum}.
 
@@ -232,17 +232,20 @@ que por sua vez pode ser compilado para \english{bytecode}
 e ser executado sobre a JVM.
 
 A linguagem possui primitivas para a criação, uso e organização dos atores. A construção
-\code{behavior} é semelhante a construção \code{class} de Java, e é utilizada para definir
-os métodos que definem o comportamento do ator. Assim como na hierarquia de classes
-em Java, onde não existe herança múltipla e classes podem implementar zero ou muitas 
-\english{interfaces}, \english{behaviors} seguem a mesma regra. O \english{behavior}
+\code{behavior} é semelhante à construção \code{class} de Java, e é utilizada para definir
+os métodos que definem o comportamento do ator. Há uma relação de herança em \english{behaviors},
+similar à herança de classes Java. A hierarquia de \english{behaviors} segue regras
+análogas às da hierarquia de classes Java: não existe herança múltipla e um \english{behavior} 
+podem implementar zero ou múltiplas \english{interfaces}. 
+
+O \english{behavior}
 \code{salsa.language.UniversalActor} é análogo a classe \code{java.lang.Object}, e todos os
 \english{behaviors} o estendem direta ou indiretamente. A primitiva \code{<-} é utilizada
 para enviar uma mensagem a um ator.
 
 A implementação de atores da linguagem utiliza o objeto \code{salsa.language.Actor}
-como ator base que estende \code{java.lang.Thread}, criando uma relação onde 
-cada ator executa em uma \english{thread}. Cada ator possui uma fila de mensagens onde
+como ator base que estende \code{java.lang.Thread}, de modo que 
+cada ator é executado em uma \english{thread}. Cada ator possui uma fila de mensagens onde
 as mensagens recebidas ficam armazenadas até que o método \code{run} as retire
 para que o método correspondente seja executado via reflexão. 
 
@@ -326,10 +329,10 @@ Com a possibilidade de se criar uma quantidade considerável de atores, o uso de 
 de supervisão torna-se extremamente importante. No que diz respeito ao tratamento de erros em 
 atores filhos, as primitivas existentes na linguagem dão suporte a três abordagens:
 \begin{enumerate}
-	\item Não se tem interesse em saber se um ator filho foi terminado normalmente ou não; 
+	\item Não se tem interesse em saber se um ator filho foi terminado normalmente ou não. 
 	
 	\item Caso um ator filho não tenha terminado normalmente, o ator criador também é 
-		  terminado; 
+		  terminado.
 
 	\item Caso um ator filho não tenha terminado normalmente, o ator criador é 
 		  notificado e pode fazer o controle de erros da maneira que julgar mais apropriada. 
@@ -372,12 +375,10 @@ bibliotecas:
 	
 \end{itemize}
 
-Pelo fato de nosso trabalho ter sido desenvolvido sobre a JVM, mais especificamente na linguagem
-Scala, optamos por não comparar todas as bibliotecas listas anteriormente para não nos distanciarmos
+Pelo fato de nossa implementação ter sido desenvolvido sobre a JVM, mais especificamente na linguagem
+Scala, optamos por não descrever todas as bibliotecas listadas acima, pois isso nos distanciaria
 do escopo deste trabalho. Em \cite{karmani2009}, Karmani e Agha apresentam uma análise comparativa de algumas implementações de atores para a JVM. Essa análise traz
-comparações entre as várias implementações da semântica de execução e das abstrações. 
-
-Apresentamos a seguir informações sobre duas bibliotecas de atores que foram consideras como opções
+comparações entre as várias implementações da semântica de execução e das abstrações. Apresentamos a seguir informações sobre duas bibliotecas de atores Scala que foram consideradas como opções
 e analisadas para o desenvolvimento do nosso trabalho.
 
 \subsubsection{A biblioteca de atores de Scala}
@@ -435,9 +436,9 @@ baseados em eventos transacionais, assíncronos e componíveis. Akka oferece ainda
 módulos adicionais para integração com outras tecnologias.
 
 A biblioteca de atores do projeto Akka é totalmente independente da que é parte da distribuição 
-de Scala, embora também sega as idéias de Erlang. O comportamento dos atores Akka no 
+de Scala, embora também siga as idéias de Erlang. O comportamento dos atores Akka no 
 recebimento de mensagens inesperadas (que não casam com nenhum dos padrões especificados em um 
-\code{receive}) é diferente dos atores de Erlang e Scala, onde o ator é suspenso. No caso 
+\code{receive}) é diferente do comportamento dos atores de Erlang e Scala, em que o ator é suspenso. No caso 
 de atores Akka, tais mensagens provocam o lançamento de exceções.
 	
 O suporte a atores remotos do projeto Akka é bem mais completo do que o oferecido pela biblioteca 
@@ -461,24 +462,17 @@ disponível quando iniciamos o desenvolvimento. Nossa escolha pela implementação 
 do projeto Akka foi motivada pelos fatores a seguir:
 
 \begin{itemize}
-	\item Ter código aberto;
+	\item O projeto Akka tem código aberto.
 	
-	\item Ser escrito em Scala;
+	\item A implementação de atores é escrita em Scala.
 	
-	\item Possuir uma implementação mais completa de atores remotos em relação
-	às demais implementações que observamos; 
+	\item O Akka possui uma implementação mais completa de atores remotos em comparação
+	com outras bibliotecas que examinamos.
 	
-	\item A implementação de atores remotos possuir certa disposição para novas 
-	implementações de transportes;
+	\item O grau de acomplamento entre a implementação de atores remotos e o mecanismo
+	de transporte é relativamente baixo.	
 	
-	\item Ter grande volume de atividade na comunidade de usuários e de desenvolvedores;
-
-	\item Estar com desenvolvimento ativo;
-	
-	\item Ser não apenas um projeto, mas sim de um produto que foi criado
-	com objetivos comerciais\footnote{
-	A distribuição do Akka faz parte da \english{Typesafe Stack}, uma plataforma
-	para desenvolvimento de sistemas concorrentes e escaláveis da empresa Typesafe.}.
+	\item O projeto tem grande volume de atividade em sua comunidade de usuários e de desenvolvedores.
 \end{itemize}
 
 Os principais detalhes da implementação da biblioteca de atores feita no projeto são apresentados no 

@@ -18,8 +18,8 @@ Não existe vínculo entre esses papéis e os papéis de cliente (usuário de um serv
 e servidor (provedor de um serviço), tradicionalmente usados em sistemas baseados 
 em \english{remote procedure call} (RPC), já que ambos enviam e recebem mensagens. 
 No contexto de MOMs, os papéis de servidor ou cliente são definidos pela semântica da
-troca de mensagens. Uma entidade pode estar atuando hora como provedora de um serviço, 
-hora como cliente de um serviço. Portanto, os termos ``cliente'' e ``servidor'', não são
+troca de mensagens. Uma entidade pode estar atuando ora como provedora de um serviço, 
+ora como cliente de um serviço. Portanto, os termos ``cliente'' e ``servidor'', não são
 aplicáveis nesta classe de sistemas do mesmo modo como são aplicáveis em sistemas baseados em RPC.
 
 MOMs formam uma base que simplifica o desenvolvimento de aplicações distribuídas, permite 
@@ -51,7 +51,7 @@ para que programas Java possam interagir com \english{message brokers}. Boa part
 destacar JBoss Messaging \cite{jboss-messaging}, IBM Websphere MQ \cite{ibm-mqseries} 
 (mais conhecido como MQ Series) e Apache Active MQ \cite{apache-activemq}. 
 
-O protocolo AMQP \cite{amqp} (\english{Advanced Message Queuing Protocol}) é uma proposta recente 
+O padrão AMQP \cite{amqp} (\english{Advanced Message Queuing Protocol}) é uma proposta recente 
 de padronização de um protocolo para \english{message brokers}. Foi criada por um conjunto de 
 empresas (Red Hat, JPMorgan Chase, Cisco Systems, entre outras), com o objetivo de viabilizar 
 tanto o desenvolvimento quanto a disseminação de um protocolo padrão para esse tipo de sistema.
@@ -64,7 +64,7 @@ Por conta dessas e de outras limitações, a busca por ganhos de capacidade de pro
 levou à construção de processadores com múltiplos núcleos (\english{multicore}).
 
 Um dos principais impactos que processadores \english{multicore} causam no desenvolvimento 
-de programas está relacionado com o modo com que programas são escritos. Para usufruir de ganhos 
+de programas está relacionado com o modo com que programas são escritos. Para usufruirem de ganhos 
 de desempenho com esses processadores, programas precisam ser escritos de forma 
 concorrente \cite{sutter-free-lunch-is-over}, uma tarefa que não é simples. A maioria das 
 linguagens de programação e dos ambientes de desenvolvimento não são
@@ -101,7 +101,7 @@ o envio de uma mensagem é desacoplado do processamento da mensagem pelo ator.
 
 \section{A linguagem Scala}
 
-Scala \cite{scala-overview} é uma linguagem moderna, com tipagem estática, inferência de tipo
+Scala \cite{scala-overview} é uma linguagem moderna, que possui tipagem estática e inferência de tipos
 e que unifica os paradigmas de programação funcional e orientado a objetos. Vem sendo 
 desenvolvida desde $2001$ no laboratório de métodos de programação da EPFL 
 (\english{École Polytechnique Fédérale de Lausanne}). O código escrito em Scala pode ser 
@@ -117,35 +117,35 @@ Contudo, para atingir seus objetivos, Scala abre mão de algumas convenções enqua
 adiciona novos conceitos. Algumas de suas características são:
 
 \begin{itemize}
-	\item Scala possui certa semelhança com Java  C\#, de modo que tanto programas
+	\item Scala possui certa semelhança com Java e C\#, de modo que tanto programas
 	escritos em Scala podem utilizar bibliotecas escritas em Java ou C\#, quanto o
-	inverso;
+	inverso.
 	
 	\item Scala possui um modelo uniforme para objetos, onde todo valor é um objeto
-	e toda operação é um método;
+	e toda operação é um método.
 	
 	\item Scala é uma linguagem funcional e todas as funções são valores de
 	primeira classe. No contexto de linguagens de programação, valores de primeira
 	classe são entidades que podem ser criadas em tempo de execução, utilizadas 
-	como parâmetro, devolvidas por uma função, ou ainda atribuídas a variáveis;
+	como parâmetros, devolvidas por uma função, ou ainda atribuídas a variáveis.
 	
 	\item Scala permite construções via extensão de classes e combinações de feições
 	(\english{traits}). Feições possuem definições de métodos e campos assim
 	como uma classe abstrata, porém não definem construtores. São
-	importantes unidades para reuso de código em Scala já que classes ou objetos podem
-	ser combinados (\english{mixin}) com diversas feições;
+	importantes unidades para reuso de código em Scala, já que classes ou objetos podem
+	ser combinados (\english{mixin}) com diversas feições.
 	
-	\item Scala permite a decomposição de objetos via casamento de padrões;
+	\item Scala permite a decomposição de objetos via casamento de padrões.
 	
 	\item Scala possui suporte ao tratamento de XML (\english{extended markup language}) 
-	na própria sintaxe da linguagem;
+	na própria sintaxe da linguagem.
 	
 	\item Scala não possui o conceito de membros de classes estáticos. A linguagem
-	possui o conceito de \english{singleton objects}, que representa uma instância
-	única de uma classe. São definidos com a construção
-	\code{object} ao invés de \code{class}. \english{Singleton objects} que
-	possuem uma classe definida com o mesmo nome são chamados de objeto acompanhante 
-	(\english{companion object});
+	possui o conceito de \english{singleton object}, que representa uma instância
+	única de uma classe. \english{Singleton objects} definidos com a construção
+	\code{object} ao invés de \code{class}. Um \english{singleton object} que
+	tenha o mesmo nome que uma classe é denominado objeto acompanhante 
+	(\english{companion object}) dessa classe.
 	
 	\item Scala possui suporte a \english{currying}, que em conjunto com as funções de ordem
 	superior, permite a criação de novas estruturas de controle.
@@ -158,10 +158,10 @@ proverem facilidades para a implementação de atores.
 \section{Objetivos}
 \label{sec:objetivo}
 
-Nosso propósito é criar uma implementação em Scala do modelo de atores que use 
-o padrão AMQP para o transporte de mensagens entre atores remotos. Geraremos um protótipo 
-baseado na implementação do modelo de atores feito projeto Akka. Iremos substituir o mecanismo
-de transporte atualmente usado pelo Akka por um que utiliza um \english{message broker} AMQP. 
+Este trabalho teve como objetivo criar uma implementação em Scala do modelo de atores que use 
+o padrão AMQP para o transporte de mensagens entre atores remotos. Geramos um protótipo 
+baseado na implementação do modelo de atores do projeto Akka. Substituímos o mecanismo
+de transporte do Akka por um que utiliza um \english{message broker} AMQP. 
 
 \section{Contribuições}
 \label{sec:contribucoes}
@@ -169,11 +169,11 @@ de transporte atualmente usado pelo Akka por um que utiliza um \english{message 
 As principais contribuições deste trabalho são as seguintes:
 
 \begin{itemize}  
-  \item Um protótipo de atores remotos escrito em Scala e que utiliza um \english{message broker} 
-  AMQP como mecanismo de transporte de mensagens;
+  \item uma implementação do modelo de atores que é escrita em Scala e utiliza um \english{message broker} 
+  AMQP como mecanismo de transporte de mensagens entre atores remotos;
 
-  \item Para dar suporte a nosso protótipo, criamos também uma camada de abstração para acessar
-  a biblioteca de conexão do \english{message broker} AMQP. Essa camada foi implementada com atores e
+  \item uma camada de abstração para acesso à biblioteca de conexão do \english{message broker} AMQP. 
+  Criada para dar suporte ao nosso protótipo, essa camada foi implementada com atores e
   sua principal motivação é prover acesso concorrente seguro aos serviços oferecidos pela biblioteca
   de conexão do \english{message broker}.
 \end{itemize}
@@ -184,15 +184,15 @@ As principais contribuições deste trabalho são as seguintes:
 No Capítulo \ref{cap:atores}, apresentamos o modelo de atores, sua semântica e algumas
 das implementações do modelo. No Capítulo \ref{cap:atores_akka}, analisamos em maiores 
 detalhes a implementação do modelo de atores feita no projeto Akka. No Capítulo
-\ref{cap:amqp}, apresentamos as camadas do protocolo AMQP, além de citarmos algumas de suas 
-implementações. Ainda nesse capítulo, apresentamos algumas das principais classes  da biblioteca 
-para clientes Java da implementação RabbitMQ que foi utilizada neste trabalho. 
+\ref{cap:amqp}, apresentamos as camadas do padrão AMQP, mencionamos algumas das implementações
+desse protocolo e examinamos algumas das principais classes da biblioteca 
+para clientes Java da implementação utilizada neste trabalho. 
 No capítulo \ref{cap:estrutura-troca-mensagens-amqp}, apresentamos a camada de abstração
-criada para prover acesso concorrente seguro as classes de comunicação da biblioteca para clientes
-Java do RabbitMQ. No capítulo \ref{cap:atores_remotos_amqp}, apresentamos nossa implementação 
+criada para prover acesso concorrente seguro às classes de comunicação da biblioteca para clientes
+Java da implementação de AMQP que utilizamos. No capítulo \ref{cap:atores_remotos_amqp}, apresentamos nossa implementação 
 de atores remotos que utiliza a camada de abstração descrita no capítulo \ref{cap:estrutura-troca-mensagens-amqp}.
 
 Finalmente, no Capítulo \ref{cap:conclusoes}, discutimos as conclusões obtidas neste
 trabalho. Apresentamos também uma comparação de desempenho entre a implementação 
-original de atores remotos do projeto Akka com o protótipo desenvolvido neste trabalho. 
+original de atores remotos do projeto Akka e o protótipo desenvolvido neste trabalho. 
 
