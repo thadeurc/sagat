@@ -39,12 +39,12 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1233"
-     inkscape:window-height="756"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="367.79885"
-     inkscape:cy="918.27079"
-     inkscape:window-x="8"
+     inkscape:window-width="1280"
+     inkscape:window-height="698"
+     inkscape:zoom="2"
+     inkscape:cx="251.94764"
+     inkscape:cy="858.46567"
+     inkscape:window-x="1"
      inkscape:window-y="0"
      inkscape:current-layer="svg2"
      showgrid="true"
@@ -1189,7 +1189,7 @@
     </g>
   </g>
   <g
-     transform="translate(-231.99997,77)"
+     transform="translate(-231.99997,97.000004)"
      id="g6023">
     <rect
        transform="matrix(0,1,-1,0,0,0)"
@@ -1214,11 +1214,11 @@
   <path
      inkscape:connector-curvature="0"
      id="path6065"
-     d="m 226.99977,184.50851 0,26.39217"
-     style="fill:none;stroke:#000000;stroke-width:0.94382066px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1531)" />
+     d="m 227.00028,184.6869 0,45.40831"
+     style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#marker1531)" />
   <path
-     style="fill:none;stroke:#000000;stroke-width:0.9439351px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1531)"
-     d="m 191.0325,218.02922 0,-26.39752"
+     style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Lend)"
+     d="m 191.03193,237.90282 0,-45.54064"
      id="path7911"
      inkscape:connector-curvature="0" />
   <text
@@ -1441,23 +1441,29 @@
   <text
      sodipodi:linespacing="125%"
      id="text11611"
-     y="194.23679"
-     x="164.11514"
+     y="154.22647"
+     x="-211.7419"
      style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-     xml:space="preserve"><tspan
+     xml:space="preserve"
+     transform="matrix(0,-1,1,0,0,0)"><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
-       y="194.23679"
-       x="165.38858"
+       y="154.22647"
+       x="-211.7419"
        id="tspan11613"
-       sodipodi:role="line">6.repassa </tspan><tspan
+       sodipodi:role="line">6.repassa</tspan><tspan
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
+       y="164.22647"
+       x="-210.46846"
+       sodipodi:role="line"
+       id="tspan10290">a mensagem </tspan><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
        id="tspan11615"
-       y="204.23679"
-       x="164.11514"
+       y="174.22647"
+       x="-211.7419"
        sodipodi:role="line">desseriada</tspan><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
-       y="214.23679"
-       x="164.11514"
+       y="184.22647"
+       x="-211.7419"
        sodipodi:role="line"
        id="tspan11617">ao handler</tspan></text>
   <text
@@ -1485,43 +1491,53 @@
   <text
      sodipodi:linespacing="125%"
      id="text11636"
-     y="243.91016"
-     x="-195.72156"
+     y="238.91211"
+     x="-211.7419"
      style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
      xml:space="preserve"
      transform="matrix(0,-1,1,0,0,0)"><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
-       y="243.91016"
-       x="-194.44812"
+       y="238.91211"
+       x="-211.7419"
        id="tspan11638"
-       sodipodi:role="line">5.repassa </tspan><tspan
+       sodipodi:role="line">5.repassa</tspan><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
-       y="253.91016"
-       x="-195.72156"
+       y="248.91211"
+       x="-210.46846"
+       sodipodi:role="line"
+       id="tspan11132">a mensagem </tspan><tspan
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
+       y="258.91211"
+       x="-211.7419"
        sodipodi:role="line"
        id="tspan11642">ao seriador</tspan></text>
   <text
      sodipodi:linespacing="125%"
      id="text11644"
-     y="127.7609"
-     x="436.02139"
+     y="117.7609"
+     x="432.02139"
      style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
      xml:space="preserve"><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
-       y="127.7609"
-       x="437.29483"
-       id="tspan11646"
-       sodipodi:role="line">1.repassa </tspan><tspan
+       y="117.7609"
+       x="432.02139"
+       sodipodi:role="line"
+       id="tspan11650">1. monta a</tspan><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
-       id="tspan11648"
+       y="127.7609"
+       x="432.02139"
+       sodipodi:role="line"
+       id="tspan19523">mensagem</tspan><tspan
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
        y="137.76089"
-       x="437.29483"
-       sodipodi:role="line">ao </tspan><tspan
+       x="433.29483"
+       sodipodi:role="line"
+       id="tspan19525">e repassa </tspan><tspan
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Serif;-inkscape-font-specification:Serif"
        y="147.76089"
-       x="436.02139"
+       x="432.02139"
        sodipodi:role="line"
-       id="tspan11650">seriador</tspan></text>
+       id="tspan19527">ao seriador</tspan></text>
   <text
      xml:space="preserve"
      style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"

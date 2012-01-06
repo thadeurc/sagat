@@ -85,7 +85,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="322.60629"
+     inkscape:cx="426.94999"
      inkscape:cy="855.23162"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -395,15 +395,15 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="181.23824"
+       x="193.39648"
        y="58.362183"
        id="text4397"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4399"
-         x="181.23824"
+         x="193.39648"
          y="58.362183"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">&lt;&lt; creates &gt;&gt;</tspan></text>
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">&lt;&lt; cria &gt;&gt;</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#Arrow1Lend);marker-mid:none"
        d="m 374.24528,112.36218 0,60"
@@ -412,27 +412,27 @@
     <text
        sodipodi:linespacing="125%"
        id="text4403"
-       y="147.87238"
+       y="147.41394"
        x="375.22385"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        xml:space="preserve"><tspan
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-         y="147.87238"
+         y="147.41394"
          x="375.22385"
          id="tspan4405"
-         sodipodi:role="line">&lt;&lt; opens &gt;&gt;</tspan></text>
+         sodipodi:role="line">&lt;&lt; cria &gt;&gt;</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="458.17029"
+       x="460.29883"
        y="235.48524"
        id="text6419"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6421"
-         x="458.17029"
+         x="460.29883"
          y="235.48524"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">&lt;&lt;consumes&gt;&gt;</tspan></text>
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">&lt;&lt;consome&gt;&gt;</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 20,82.362183 160,0"
