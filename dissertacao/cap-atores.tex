@@ -27,14 +27,14 @@ Toda computação em um sistema de atores é resultado do processamento de uma mens
 Cada mensagem recebida por um ator é mapeada em uma $3$-tupla que consiste de:
 
 \begin{enumerate}
-	\item Um conjunto finito de envios de mensagens para atores cujas filas
+	\item um conjunto finito de envios de mensagens para atores cujas filas
 	tenham seus endereços conhecidos (um desses atores pode ser o próprio ator destinatário
 	da mensagem que está sendo processada);
 	
-	\item Um novo comportamento (mapeamento de mensagens em $3$-tuplas), que será usado para processar a próxima mensagem
+	\item um novo comportamento (mapeamento de mensagens em $3$-tuplas), que será usado para processar a próxima mensagem
 	recebida;
 	
-	\item Um conjunto finito de criações de novos atores.
+	\item um conjunto finito de criações de novos atores.
 \end{enumerate}
 
 Um ator que recebe mensagens faz o processamento individual de cada mensagem em 
@@ -52,12 +52,12 @@ comunicado ao ator remetente da mensagem. Há três maneiras de um ator, ao recebe
 a conhecer um destinatário ao qual o ator pode enviar mensagens:
 
 \begin{enumerate}
-	\item O ator já conhecia o endereço da fila do destinatário antes
+	\item o ator já conhecia o endereço da fila do destinatário antes
 		do recebimento da mensagem \emph{m};
 
-	\item O endereço da fila estava presente na mensagem \emph{m};
+	\item o endereço da fila estava presente na mensagem \emph{m};
 	
-	\item Um novo ator foi criado como resultado do processamento da mensagem \emph{m}.
+	\item um novo ator foi criado como resultado do processamento da mensagem \emph{m}.
 \end{enumerate}
 
 Um aspecto importante do modelo de atores é a existência de 
@@ -76,7 +76,7 @@ Por exemplo, um tipo de atores poderia optar por descartar todas as mensagens re
 Gul Agha, em sua definição da semântica do modelo de atores \cite{Agha86}, 
 afirma que ``em qualquer rede real de agentes computacionais, não é possível prever quando uma 
 mensagem enviada por um agente será recebida por outro''. A afirmação é enfatizada para redes 
-dinâmicas, onde agentes podem ser criados ou destruídos, e reconfigurações como migrações 
+dinâmicas, em que agentes podem ser criados ou destruídos, e reconfigurações como migrações 
 de agentes para diferentes nós podem acontecer. Em sua conclusão, Agha afirma que um modelo 
 realista deve pressupor que a ordem de recebimento das mensagens não é determinística, mas sim 
 arbitrária e desconhecida. O não determinismo na ordem de recebimento das mensagens pelo ator não 
@@ -130,7 +130,7 @@ importante para se obter um melhor desempenho, tolerância a falhas e reconfigura
 
 A semântica do modelo de atores apresentada nesta seção objetiva proporcionar
 uma arquitetura modular e componível \cite{Agha98afoundation}, e um melhor desempenho para 
-sistemas concorrentes e distribuídos, em particular para situações onde as aplicações
+sistemas concorrentes e distribuídos, em particular para situações em que as aplicações
 precisem de escalabilidade \cite{Kim95}.
 
 \section{Breve histórico}
@@ -270,7 +270,7 @@ assíncronas entre os atores:
 	no contexto do último \english{token} passado. O ator \code{diretor} recebe como argumento
 	o resultado da computação do ator \code{gerente2}. Ainda nesse exemplo, utilizamos
 	a primitiva \code{@} para indicar que desejamos utilizar a continuação com passagem
-	de \english{token};
+	de \english{token}.
 				
 	\item Continuações de junção (\english{join continuations}): Atores podem receber vetores
 	com \english{tokens} recebidos de diversos atores. Essa abstração permite que os 
@@ -285,7 +285,7 @@ assíncronas entre os atores:
 	
 	Nesse exemplo, os dois atores \code{gerente1} e \code{gerente2} fazem suas aprovações
 	em paralelo e, somente quando os dois tiverem dado suas aprovações, o ator \code{diretor}
-	irá receber a mensagem de \code{aprovacaoFinal};
+	irá receber a mensagem de \code{aprovacaoFinal}.
 
 	\item Continuações de primeira classe (\english{first-class continuations}): Essa abstração
 	é análoga às funções de ordem superior, na qual funções podem receber outras funções. No caso

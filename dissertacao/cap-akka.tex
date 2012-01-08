@@ -45,7 +45,8 @@ class SampleActor(val name: String) extends akka.actor.Actor {
 
 Atores são criados pelo método \code{actorOf} do objeto \code{akka.actor.Actor}
 como mostrado na listagem \ref{lst:actorOf1}. Nessa listagem, a instância do ator é criada
-por reflexão com base no tipo da classe onde o construtor padrão é executado.
+por reflexão com base no tipo da classe (\code{SampleActor}). O construtor utilizado
+durante a reflexão é o construtor padrão.
 O método \code{actorOf} é sobrecarregado para permitir que uma função sem 
 argumentos e com tipo de retorno \code{Actor}, possa ser utilizada como alternativa ao
 construtor padrão na criação do ator, como mostrado na listagem \ref{lst:actorOf2}. 
@@ -99,7 +100,7 @@ possui em sua distribuição os quatro despachadores listados a seguir:
 	tipos, já que ele utiliza um \english{thread pool} para agendar as ações de despachamento.
 	É o despachador mais flexível em termos de configurações, já que permite que
 	parâmetros do \english{thread pool} e da fila de mensagens sejam configurados.
-	É definido na classe \code{ExecutorBasedEventDrivenDispatcher};
+	É definido na classe \code{ExecutorBasedEventDrivenDispatcher}.
 	
 
 	\item Despachador impulsionado por eventos com balanceamento de carga:	
@@ -107,7 +108,7 @@ possui em sua distribuição os quatro despachadores listados a seguir:
 	Definido na classe \code{ExecutorBasedEventDrivenWorkStealingDispatcher}, é
 	um despachador para ser usado em atores do mesmo tipo, já que permite que
 	atores que não estejam processando mensagens possam ``roubar'' mensagens das filas dos atores
-	que estão sobrecarregados, permitindo o balanceamento do processamento das mensagens entre os atores;
+	que estão sobrecarregados, permitindo o balanceamento do processamento das mensagens entre os atores.
 	
 	\item Despachador quente: 
 	É um despachador inspirado no \english{Grand Central Dispacher} do Mac OS X \cite{apple-gcd}. Esse despachador 
@@ -116,14 +117,14 @@ possui em sua distribuição os quatro despachadores listados a seguir:
 	inativas\footnote{Idealmente a quantidade de \english{threads} corresponde ao número de núcleos disponíveis.}.
 	Sua grande vantagem, é a capacidade de agrupar diversos eventos gerados pela
 	aplicação, por exemplo diversas mensagens recebidas, gerando uma única tarefa assíncrona.
-	Este despachador é definido na classe \code{HawtDispatcher};		
+	Este despachador é definido na classe \code{HawtDispatcher}.		
 	
 	\item Despachador impulsionado por \english{threads}:  	
 	É o despachador mais simples de todos os despachadores, já que associa uma \english{thread} para 
 	cada ator. O uso desse despachador implica no ator
 	utilizar filas transientes. É importante ressaltar que, internamente, é utilizado uma fila
 	que faz o bloqueio da \english{thread} que está tentando adicionar uma mensagem, caso o limite
-	superior da fila tenha sido atingido (para o caso onde há um limite informado). 		
+	superior da fila tenha sido atingido (para o caso em que há um limite informado). 		
 	Este despachador é definido na classe \code{ThreadBasedDispatcher}.
 \end{itemize}
 
@@ -178,19 +179,17 @@ Envios de mensagens feitos via métodos \code{!!} e \code{!!!} são
 considerados como feitos por ``remetentes futuros''. Uma vez que o ator enviou
 a mensagem de resposta, a mensagem não é coloca em uma fila de mensagens assim como
 acontece para atores, mas é utilizada para indicar no resultado futuro que a computação 
-foi completada. 
-
-Na \code{ActorRef}, um envio de uma mensagem feito via método \code{!!!} é processado 
+foi completada. Na \code{ActorRef}, um envio de uma mensagem feito via método \code{!!!} é processado 
 da seguinte maneira:
 
 \begin{enumerate}
-	\item Uma instância de \code{CompletableFuture} é criada dentro do método;
+	\item Uma instância de \code{CompletableFuture} é criada dentro do método.
 	
 	\item Assim como para um envio assíncrono, a mensagem é colocada da fila do ator. Contudo,
-	uma referência para a instância criada no passo anterior é colocada junto da mensagem;
+	uma referência para a instância criada no passo anterior é colocada junto da mensagem.
 	
 	\item É retornado para quem invocou o método uma outra cópia da referência para o 
-	\code{CompletableFuture} criado no passo $1$;
+	\code{CompletableFuture} criado no passo $1$.
 	
 	\item Quando a mensagem terminou de ser processada, seu resultado é atualizado
 	na referência que foi enviado junto à mensagem. Como a instância que teve
@@ -200,9 +199,9 @@ da seguinte maneira:
 \end{enumerate}
 
 Um envio feito via método \code{!!} possui quase os mesmos passos de processamento.
-A diferença está no retorno da referência. Como o envio é síncrono, a espera do resultado
+A diferença está na devolução da referência. Como o envio é síncrono, a espera do resultado
 da computação assíncrona acontece de modo bloqueante dentro do próprio método \code{!!}.
-Quando a computação for completada, o resultado é retornado a quem fez a invocação do método.
+Quando a computação for completada, o resultado é devolvido a quem fez a invocação do método.
 
 Envios de mensagens não são limitados somente a atores. Qualquer objeto
 ou classe pode enviar uma mensagem a um ator. Podemos notar que o código da listagem 
@@ -234,7 +233,7 @@ Existem dois tipos de ciclo de vida:
 \begin{enumerate}
 	\item Permanente: Indica que o ator possui um ciclo de 
 	vida permanente e sempre deve ser reiniciado no caso de erros.
-	Este ciclo é definido na classe \code{Supervision.Permanent};
+	Este ciclo é definido na classe \code{Supervision.Permanent}.
 	
 	\item Temporário: 
 	Indica que o ator possui um ciclo de vida temporário e
@@ -253,12 +252,12 @@ invocados, respectivamente, antes de o ator ser desligado e logo após ele ter si
 Alguns detalhes importantes a observarmos sobre a reinicialização de atores:
 
 \begin{itemize}
-	\item O método \code{preRestart} é invocado na instância onde ocorreu o erro;
+	\item O método \code{preRestart} é invocado na instância em que ocorreu o erro.
 
-	\item O método \code{postRestart} é invocado na nova instância;
+	\item O método \code{postRestart} é invocado na nova instância.
 
-	\item A nova instância criada utiliza a mesma \code{ActorRef} do ator onde ocorreu o erro,
-	logo, as duas instâncias possuem o mesmo valor para \code{self};
+	\item A nova instância criada utiliza a mesma \code{ActorRef} do ator em que ocorreu o erro,
+	logo, as duas instâncias possuem o mesmo valor para \code{self}.
 
 	\item  A criação da nova instância é feita da mesma maneira que o ator foi criado 
 	originalmente. Por exemplo, na listagem \ref{lst:actorOf1} o ator foi originalmente
@@ -274,7 +273,7 @@ os atores que ficarão ligados a ele. Existem duas estratégias possíveis:
 	Quando essa estratégia é utilizada, exceções lançadas por um ator 
 	sob supervisão que possua um ciclo de vida permanente, fazem
 	com que somente o ator seja reiniciado. Esta estratégia é definida 
-	na classe \code{Supervision.OneForOneStrategy};
+	na classe \code{Supervision.OneForOneStrategy}.
 	
 	\item Todos por um:  
 	Quando essa estratégia é utilizada, exceções lançadas por um ator 
@@ -370,7 +369,7 @@ de atores remotos utiliza os seguintes elementos:
 	de hospedeiro (\english{host}) e a uma porta TCP. Um mesma máquina virtual pode conter 
 	múltiplos \code{RemoteServerModule}s.
 	A documentação do Akka utiliza para esse componente a terminologia ``servidor remoto'' 
-	(\english{remote server});
+	(\english{remote server}).
 
 	\item \code{RemoteClientModule}: É uma feição que define as responsabilidades
 	do componente usado no lado do cliente. Suas implementações têm como responsabilidade 
@@ -381,11 +380,11 @@ de atores remotos utiliza os seguintes elementos:
 	conversão de ator local em ator remoto e intermediação de 
 	mensagens de resposta vindas do \code{RemoteServerModule}, no caso envios via \code{!!}
 	ou \code{!!!}. A documentação do Akka utiliza para esse componente a terminologia
-	``cliente remoto'' (\english{remote client});
+	``cliente remoto'' (\english{remote client}).
 
 	\item \code{RemoteSupport}: Essa classe abstrata é responsável por concentrar as 
 	responsabilidades definidas para os módulos remotos do cliente e do servidor e ser um 
-	ponto único de suporte remoto. É acessível via \code{Actor.remote};
+	ponto único de suporte remoto. É acessível via \code{Actor.remote}.
 
 	\item \code{RemoteActorRef}: É uma classe equivalente a \code{LocalActorRef}, porém
 	utiliza o suporte remoto para fazer envio das mensagens.
@@ -476,29 +475,29 @@ em sete passos:
 	\item O processo de envio começa com o \english{proxy} local 
 	embrulhando a mensagem e adicionando a ela informações de cabeçalho necessárias para 
 	o envio e processamento posterior. A mensagem embrulhada e com as informações de cabeçalho
-	é então repassada ao seriador;
+	é então repassada ao seriador.
 	
 	\item O seriador é responsável por converter a informação 
 	recebida em um vetor de \english{bytes} para que o transporte possa ocorrer. 
 	Uma vez que a informação esteja no formato a ser transportado, o \english{proxy} utiliza uma 
 	implementação de \code{RemoteSupport} (que na figura \ref{fig:remote-actor-message-flow} é 
 	uma instância de \code{NettyRemoteSupport}) para enviar a mensagem 
-	ao \code{RemoteSupport} que está no lado do servidor;
+	ao \code{RemoteSupport} que está no lado do servidor.
 	
 	\item A classe \code{ClientBootstrap} repassa a mensagem para o 
 	\code{ServerBootstrap} ao qual se está conectada. O processo de envio, do ponto de vista 
 	do cliente, leva tempo $O(1)$, já que o transporte da mensagem pelo JBoss Netty 
 	entre o \code{ClientBootstrap} e o \code{ServerBootstrap}	
-	é feito de modo assíncrono;
+	é feito de modo assíncrono.
 	
 	\item A classe \code{ServerBootstrap} repassa a mensagem ao \english{handler} que
-	lhe foi associado;
+	lhe foi associado.
 	
 	\item A implementação do \english{handler} feita no Akka repassa a mensagem para o seriador
-	para que a desseriação seja feita;
+	para que a desseriação seja feita.
 	
 	\item O seriador desseria a mensagem, deixando-a no formato original, e em seguida,
-	repassa novamente a mensagem ao \english{handler};
+	repassa novamente a mensagem ao \english{handler}.
 	
 	\item Por fim, a implementação do \english{handler} utiliza as informações definidas
 	de cabeçalho da mensagem para identificar qual o ator destinatário no registro
@@ -520,7 +519,7 @@ em sete passos:
 Os envios feitos via métodos \code{!!} e \code{!!!} para atores remotos são iguais,
 e possuem um passo a mais do que os mostrados na figura \ref{fig:remote-actor-message-flow}.
 O passo adicional acontece entre os passos $2$ e $3$. Antes da mensagem ser enviada,
-uma cópia da referência da instância do resultado futuro que é retornada é colocada 
+uma cópia da referência da instância do resultado futuro que é devolvida é colocada 
 no mapa de resultados futuros. A chave para a instância é o identificador da mensagem.
 
 Envios feitos via métodos \code{!!} e \code{!!!}, assim como mensagens para atores
@@ -531,7 +530,7 @@ seja o resultado de um envio feito via métodos \code{!!} ou \code{!!!}, o conteú
 Já no caso de mensagens originadas no servidor e que possuam um ator supervisor, o ator supervisor
 é localizado e é feito um envio local assíncrono da mensagem para ele.
 
-O Akka possui uma configuração opcional de segurança onde cada JVM que esteja executando o
+O Akka possui uma configuração opcional de segurança em que cada JVM que esteja executando o
 arcabouço pode definir um \english{cookie}. O \english{cookie} nada mais é do que uma chave
 que o usuário pode definir e que faz parte das informações do cabeçalho das mensagens.
 Quando a verificação de segurança está ativada, o recebedor da mensagem verifica se a informação
@@ -649,7 +648,7 @@ o nome que é utilizado para identificar o ator (linha $1$), a classe que foi uti
 a criação do ator (linha $2$), o endereço de onde o ator remoto foi criado (linha $3$) e, por
 fim, um valor opcional que indica o tempo máximo que o ator deve ficar bloqueado 
 durante um envio síncrono (linha $4$). O protocolo \code{AddressProtocol} utilizado na linha $3$,
-possui atributos para o endereço do hospedeiro e a porta .
+possui atributos para o endereço do hospedeiro e a porta.
 
 \begin{lstlisting}[frame=tb, caption={Protocolo para referências de atores remotos.}, label={lst:proto-remote-actor}]
 message RemoteActorRefProtocol {

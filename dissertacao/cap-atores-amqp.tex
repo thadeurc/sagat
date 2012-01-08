@@ -34,14 +34,14 @@ Criamos os seguintes componentes:
 	ou ainda mensagens para atores supervisores. Tanto no recebimento como no envio de mensagens 
 	a classe utiliza um módulo separado para seriação e desseriação de mensagens. Existe um 
 	relacionamento bidirecional um para um entre um \code{AMQPRemoteServer} e uma ponte 
-	servidora;
+	servidora.
 			
 	\item \code{AMQPRemoteServerModule}: É uma feição que estende 
 	a feição \code{RemoteServerModule} e define um nó onde atores
 	são registrados para ficarem acessíveis remotamente. Essa implementação 
 	mantém o registro desses atores e possui uma relação 
 	bidirecional um para um com um \code{AMQPRemoteServer}. As mensagens recebidas pelo 
-	\code{AMQPRemoteServer} são encaminhadas para os atores residentes neste nó;
+	\code{AMQPRemoteServer} são encaminhadas para os atores residentes neste nó.
 
 	\item \code{AMQPRemoteClient}:	É uma classe utilizada no lado do cliente
 	onde ficam os \english{proxies} dos atores remotos. A classe mantém o registro de 
@@ -54,7 +54,7 @@ Criamos os seguintes componentes:
 	Existe uma relação bidirecional um para um entre um \code{AMQPRemoteClient}
 	e uma ponte cliente. A classe ainda é responsável por manter um identificador
 	que deve ser único entre todos os clientes do mesmo servidor remoto. Esse identificador
-	é utilizado na criação da instância da ponte cliente;
+	é utilizado na criação da instância da ponte cliente.
 	
 	\item \code{AMQPRemoteClientModule}: É uma feição que estende
 	a feição \code{RemoteClientModule}. Essa feição
@@ -63,7 +63,7 @@ Criamos os seguintes componentes:
 	remotos via \code{AMQPRemoteClient}. Ademais, esta feição feição
 	mantém ainda um registro dos \code{AMQPRemoteClient} que são utilizados
 	para enviar as mensagens para seus respectivos nós remotos, já que
-	uma aplicação cliente pode interagir com diversos atores em diferentes nós;
+	uma aplicação cliente pode interagir com diversos atores em diferentes nós.
 
 	\item \code{AMQPRemoteSupport}: É a implementação que tornamos acessível 
 	via \code{Actor.remote}. Essa classe é responsável por concentrar as 
@@ -163,7 +163,7 @@ Todos os clientes remotos que forem criados na JVM, independente
 do nome do servidor remoto utilizam o mesmo identificador de cliente.
 Contudo, essa restrição não impede a criação dos objetos
 no \english{message broker}. Para exemplificar, vamos considerar o
-caso onde dois clientes remotos seriam criados em uma JVM para
+caso em que dois clientes remotos seriam criados em uma JVM para
 servidores remotos cujos nomes são \code{node1} e \code{node2}.
 Os objetos que seriam criados pelos primeiro cliente remoto teriam o sufixo
 \code{client.node1.<id>} e \code{client.node2.<id>}.	
@@ -182,10 +182,10 @@ divergentes entre JVMs podem levar aos seguintes cenários:
 	transiente: Este não é um caso muito problemático, já que os objetos criados
 	pelo servidor não dependem dos objetos criados pelos clientes. Como os objetos 
 	definidos como transientes só são removidos quando o \english{message broker}
-	é desligado, o problema se limita ao retorno de eventuais mensagens que 
-	ainda estavam na fila;
+	é desligado, o problema se limita à devolução de eventuais mensagens que 
+	ainda estavam na fila.
 	
-	\item Cenário oposto ao anterior, onde o servidor remoto possui uma configuração
+	\item Cenário oposto ao anterior, em que o servidor remoto possui uma configuração
 	transiente e algum de seus clientes possui uma configuração persistente: Esse é 
 	um cenário mais problemático, já que quando a \english{exchange} do servidor
 	é removida todas as suas associações também são removidas, porém as filas persistentes
@@ -196,7 +196,7 @@ divergentes entre JVMs podem levar aos seguintes cenários:
 	não há problemas. A associação da fila persistente com a \english{exchange}
 	recém criada acontecerá durante a execução da inicialização do módulo do cliente remoto;
 	\entry{(ii)} Óptica é a da aplicação: Eventuais mensagens não consumidas pelo servidor
-	remoto são retornadas.	
+	remoto são devolvidas.	
 \end{enumerate}
 
 As configurações relacionadas ao compartilhamento da conexão entre os canais de leitura e

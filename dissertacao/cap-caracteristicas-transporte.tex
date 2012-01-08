@@ -20,7 +20,7 @@ ponto-a-ponto por \english{sockets} TCP ou UDP, ambas as entidades devem conhece
 detalhes sobre a conexão e sobre o protocolo das mensagens que são enviadas. 
 O fato de não haver uma entidade intermediando a troca de mensagens, permite que 
 uma das entidades identifique uma eventual desconexão da outra, ou ainda que uma 
-entidade conheça o endereço do nó hospedeiro onde está a outra entidade. Nos casos onde as 
+entidade conheça o endereço do nó hospedeiro onde está a outra entidade. Nos casos em que as 
 entidades estão em nós que não fazem parte de uma rede interna,
 a informação da localidade pode não indicar exatamente o nó corrente da entidade, 
 mas o endereço de alguma porta de ligação (\english{gateway}). 
@@ -106,7 +106,7 @@ do \english{message broker} RabbitMQ.
 O módulo \code{AMQPBridge} é responsável por fornecer classes que agem como pontes de comunicação
 para o \english{message broker}. Juntas, suas classes definem uma interface
 com funcionalidades básicas para troca de mensagens como envios, recebimentos, 
-tratamento de mensagens retornadas e suporte a múltiplas entidades cliente conectadas a uma
+tratamento de mensagens rejeitadas e suporte a múltiplas entidades cliente conectadas a uma
 entidade servidora. O módulo \code{AMQPBridge} contém as seguintes classes:
 
 \begin{itemize}
@@ -115,18 +115,18 @@ entidade servidora. O módulo \code{AMQPBridge} contém as seguintes classes:
 	recebe como argumentos o nome que identifica a ponte e uma conexão para um \english{message broker} 
 	AMQP. Essa classe define ainda o padrão de nomeação utilizado na criação dos objetos,
 	como mostra a listagem \ref{lst:amqp-bridge}. A classe possui também um objeto companheiro que
-	define métodos para a criação de instâncias das subclasses de \code{AMQPBridge};
+	define métodos para a criação de instâncias das subclasses de \code{AMQPBridge}.
 
 	\item \code{MessageHandler}: É a feição que define os métodos a serem
 	invocados quando mensagens forem recebidas ou envios feitos pela entidade forem 
-	rejeitados pelo \english{message broker}; 
+	rejeitados pelo \english{message broker}.
 	
 	\item \code{ServerAMQPBridge}: É uma das duas subclasses de \code{AMQPBridge} e
 	define o comportamento para entidades que atuam como servidoras. 
 	Além dos métodos herdados, essa classe ainda define o método \code{setup}. Esse
 	método recebe como argumento uma implementação de \code{MessageHandler} e os
 	parâmetros com as configurações da fila e da \english{exchange} que serão criadas
-	durante a execução do método, como mostrado na listagem \ref{lst:amqp-server-bridge};	
+	durante a execução do método, como mostrado na listagem \ref{lst:amqp-server-bridge}.	
 
 	\item \code{ClientAMQPBridge}: É a outra subclasse de \code{AMQPBridge} e
 	define o comportamento para entidades que atuam como clientes. Essa
@@ -207,17 +207,17 @@ e detalhadas para filas e \english{exchanges}, respectivamente.
 A combinação dos seus valores dão semântica às seguintes políticas:
 
 \begin{enumerate}
-	\item \code{DURABLE}: Define uma configuração onde os objetos criados são duráveis,
-	ou seja, continuam a existir caso o \english{message broker} seja reiniciado;
+	\item \code{DURABLE}: Define uma configuração no qual os objetos criados são duráveis,
+	ou seja, continuam a existir caso o \english{message broker} seja reiniciado.
 	
-	\item \code{TRANSIENT}: Define uma configuração onde os objetos criados são transientes,
-	ou seja, deixam de existir caso o \english{message broker} ser reiniciado;
+	\item \code{TRANSIENT}: Define uma configuração no qual os objetos criados são transientes,
+	ou seja, deixam de existir caso o \english{message broker} ser reiniciado.
 	
-	\item \code{EXCLUSIVE\_AUTODELETE}: Define uma configuração onde os objetos estão
+	\item \code{EXCLUSIVE\_AUTODELETE}: Define uma configuração no qual os objetos estão
 	atrelados ao ciclo de vida da aplicação que os criou. Os objetos são removidos
-	pelo \english{message broker} quando a conexão por onde os objetos foram criados
+	pelo \english{message broker} quando a conexão em que os objetos foram criados
 	é fechada. Ademais, as filas criadas por essa configuração possuem acesso exclusivo
-	a um único consumidor. O consumidor fica atrelado ao canal por onde a criação da 
+	a um único consumidor. O consumidor fica atrelado ao canal em que a criação da 
 	fila ocorreu.
 \end{enumerate}
 
@@ -272,33 +272,33 @@ As principais classes do módulo \code{ConnectionPoolSupervisor} são:
 	\item \code{BridgeConsumer}: É uma implementação de um consumidor padrão
 	de mensagens. Essa implementação estende a classe \code{DefaultConsumer}
 	do RabbitMQ, e utiliza a implementação do \code{MessageHandler} para a
-	notificação de eventos como mensagens recebidas ou mensagens rejeitadas e retornadas;
+	notificação de eventos como mensagens recebidas ou mensagens rejeitadas.
 	
 	\item \code{ChannelActor}: É a feição que define o comportamento inicial
-	de um ator responsável por um canal genérico;
+	de um ator responsável por um canal genérico.
 	
 	\item \code{ReadChannelActor}: É a classe que define o comportamento inicial
 	de um ator responsável por um canal de leitura, utilizado para o recebimento de
-	mensagens;
+	mensagens.
 
 	\item \code{WriteChannelActor}: É a classe que define o comportamento inicial
-	de um ator responsável por um canal de escrita, utilizado para o envio de mensagens;
+	de um ator responsável por um canal de escrita, utilizado para o envio de mensagens.
 
 	\item \code{ConnectionActor}: É a classe que define o comportamento inicial
 	de um ator responsável pela conexão e abertura de canais com o \english{message broker}.
     Uma outra responsabilidade desse ator é supervisionar os atores que lhe
-	solicitaram a abertura de canais;
+	solicitaram a abertura de canais.
 	
 	\item \code{AMQPSupervisor}: É a feição que define o comportamento
 	padrão a ser utilizado por um ator que será responsável por supervisionar os
 	atores de conexão. Essa feição define ainda métodos que interagem
-	com a fábrica de conexões do RabbitMQ para a criação de novas conexões;
+	com a fábrica de conexões do RabbitMQ para a criação de novas conexões.
 	
 	\item \code{AMQPConnectionFactory}: É a classe raiz da hierarquia
 	de supervisão. Essa classe herda de \code{AMQPSupervisor} e
 	define o despachador para todos os atores que estarão direta ou indiretamente
 	sob supervisão. A classe possui ainda um objeto companheiro que define
-	métodos para a criação dos atores de canais e conexões;
+	métodos para a criação dos atores de canais e conexões.
 	
 	\item \code{ConnectionSharePolicy}: É a enumeração que define a política
 	de compartilhamento de uma conexão. A enumeração possui apenas dois valores
@@ -341,14 +341,14 @@ e os canais também sejam criados. A primeira instância a ser criada
 \ref{fig:new-connection-actor} e acontece em quatro passos:
 
 \begin{enumerate}
-	\item Uma instância de \code{ConnectionActor} é criada e inicializada;
+	\item uma instância de \code{ConnectionActor} é criada e inicializada;
 	
-	\item O ator é ligado (\code{link}) ao ator supervisor\footnote{A classe 
+	\item o ator é ligado (\code{link}) ao ator supervisor\footnote{A classe 
 	\code{AMQPConnectionFactory} é o ator supervisor de todos os atores de conexão.};
 	
-	\item A mensagem \code{Connect} é enviada sincronamente para o ator;
+	\item a mensagem \code{Connect} é enviada sincronamente para o ator;
 	
-	\item A mensagem \code{Connect} é processada pelo ator. Seu processamento leva
+	\item a mensagem \code{Connect} é processada pelo ator. Seu processamento leva
 	a solicitação de uma nova conexão para a fábrica de conexões do RabbitMQ.
 	Dependendo do tipo de política definida para o compartilhamento da conexão entre os canais de 
 	leitura e escrita, o passo $4$ é executado duas vezes.
@@ -370,21 +370,22 @@ A criação do ator responsável pelo canal de leitura acontece é ilustrada
 na figura \ref{fig:new-channel-actor} e acontece em seis passos:
 
 \begin{enumerate}
-	\item Uma instância de \code{ReadChannelActor} é criada e inicializada;
+	\item uma instância de \code{ReadChannelActor} é criada e inicializada;
 	
-	\item O ator é ligado (\code{link}) ao ator supervisor, que neste caso
+	\item o ator é ligado (\code{link}) ao ator supervisor, que neste caso
 	é o ator de conexão recém criado;
 	
-	\item A mensagem \code{StartReadChannel} é enviada sincronamente para o ator;
+	\item a mensagem \code{StartReadChannel} é enviada sincronamente para o ator;
 	
-	\item A mensagem \code{StartReadChannel} é processada pelo ator. Seu processamento leva
-	ao envio síncrono da mensagem \code{ReadChannelRequest} para o ator de conexão que foi
-	definido como supervisor;
+	\item a mensagem \code{StartReadChannel} é processada pelo ator (seu processamento faz
+	um envio síncrono da mensagem \code{ReadChannelRequest} para o ator de conexão que foi
+	definido como supervisor);
 	
-	\item O ator de conexão solicita um novo canal à sua conexão de leitura;
+	\item o ator de conexão solicita um novo canal à sua conexão de leitura;
 
-	\item O novo canal é enviado como resposta para \code{ReadChannelRequest}.
+	\item o novo canal é enviado como resposta para \code{ReadChannelRequest}.
 \end{enumerate}
+
 
 \vspace{1ex}
 \begin{figure}[!h]
@@ -413,28 +414,28 @@ tem diferentes passos para cada tipo de ponte. A execução do método \code{setup}
 acontece em oito passos:
 
 \begin{enumerate}
-	\item O método \code{setup} da classe \code{SupervisedConnection}
+	\item o método \code{setup} da classe \code{SupervisedConnection}
 	é invocado;
 	
-	\item A mensagem \code{RemoteServerSetup} é enviada para o canal de escrita
+	\item a mensagem \code{RemoteServerSetup} é enviada para o canal de escrita
 	com as configurações dos objetos a serem criados;
 	
-	\item O processamento da mensagem \code{RemoteServerSetup} leva a criação
+	\item o processamento da mensagem \code{RemoteServerSetup} leva a criação
 	de uma \english{exchange} direta com a configuração de durabilidade solicitada;
 	
-	\item A implementação de \code{MessageHandler} informada é utilizada na
-	associação do tratador de mensagens retornadas (\english{return listener});
+	\item a implementação de \code{MessageHandler} informada é utilizada na
+	associação do tratador de mensagens rejeitadas (\english{return listener});
 	
-	\item A mensagem \code{RemoteServerSetup} é enviada para o canal de leitura
+	\item a mensagem \code{RemoteServerSetup} é enviada para o canal de leitura
 	com as configurações dos objetos a serem criados;
 	
-	\item O processamento da mensagem \code{RemoteServerSetup} leva a criação
+	\item o processamento da mensagem \code{RemoteServerSetup} leva a criação
 	de uma fila com a configuração de durabilidade solicitada;
 	
-	\item O \english{binding} entre a fila recém criada e a \english{exchange}
+	\item o \english{binding} entre a fila recém criada e a \english{exchange}
 	criada no passo $3$ é definido;
 	
-	\item A implementação de \code{MessageHandler} informada é utilizada na
+	\item a implementação de \code{MessageHandler} informada é utilizada na
 	associação do consumidor na fila criada no passo $6$.	
 \end{enumerate}
 
@@ -458,26 +459,26 @@ A execução do método \code{setup} da classe \code{ClientAMQPBridge}
 é ilustrada na figura \ref{fig:client-amqp-bridge-setup} e acontece em sete passos:
 
 \begin{enumerate}
-	\item O método \code{setup} da classe \code{SupervisedConnection}
+	\item o método \code{setup} da classe \code{SupervisedConnection}
 	é invocado;
 	
-	\item A mensagem \code{RemoteClientSetup} é enviada para o canal de escrita
+	\item a mensagem \code{RemoteClientSetup} é enviada para o canal de escrita
 	com as configurações dos objetos a serem criados;
 		
-	\item A implementação de \code{MessageHandler} informada é utilizada na
-	associação do tratador de mensagens retornadas;
+	\item a implementação de \code{MessageHandler} informada é utilizada na
+	associação do tratador de mensagens rejeitadas;
 	
-	\item A mensagem \code{RemoteClientSetup} é enviada para o canal de leitura
+	\item a mensagem \code{RemoteClientSetup} é enviada para o canal de leitura
 	com as configurações dos objetos a serem criados;
 	
-	\item O processamento da mensagem \code{RemoteClientSetup} leva a criação
+	\item o processamento da mensagem \code{RemoteClientSetup} leva a criação
 	de uma fila que rotulamos como ``fila de saída'' que possui a configuração 
 	de durabilidade solicitada;
 	
-	\item O \english{binding} entre a fila recém criada e a \english{exchage}
+	\item o \english{binding} entre a fila recém criada e a \english{exchage}
 	definida pela ponte servidora correspondente é criado;
 	
-	\item A implementação de \code{MessageHandler} informada é utilizada na
+	\item a implementação de \code{MessageHandler} informada é utilizada na
 	associação do consumidor na fila criada no passo $5$.	
 \end{enumerate}
 
@@ -540,23 +541,23 @@ execução do método é ilustrada na figura \ref{fig:bridge-send-message-flow} e ac
 quatro passos:
 
 \begin{enumerate}
-	\item O método \code{sendMessageToServer} foi invocado por alguma classe que deseja
+	\item o método \code{sendMessageToServer} foi invocado por alguma classe que deseja
 	enviar uma mensagem;
 	
-	\item O método \code{publishTo} da classe \code{SupervisedConnectionWrapper}
-	é invocado. A invocação do método utiliza como argumentos a mensagem a ser enviada,
+	\item o método \code{publishTo} da classe \code{SupervisedConnectionWrapper}
+	é invocado (a invocação do método utiliza como argumentos a mensagem a ser enviada,
 	o nome da \english{exchange} que foi criada com base no nome da ponte e o nome do 
-	\english{binding} entre a \english{exchange} e a fila de entrada da ponte servidora;
+	\english{binding} entre a \english{exchange} e a fila de entrada da ponte servidora);
 	
-	\item O método \code{publishTo} faz um envio assíncrono da mensagem 
-	\code{BasicPublish} ao ator responsável pelo canal de escrita. A mensagem
+	\item o método \code{publishTo} faz um envio assíncrono da mensagem 
+	\code{BasicPublish} ao ator responsável pelo canal de escrita (a mensagem
 	\code{BasicPublish} possui informações sobre detalhes do envio a ser executado
-	como por exemplo, se o envio deve ser mandatório e o consumo imediato;	
+	como por exemplo, se o envio deve ser mandatório e o consumo imediato);	
 	
-	\item O método \code{basicPublish} é invocado na classe \code{Channel} do 
-	RabbitMQ como resultado do processamento da mensagem \code{BasicPublish}. Os 
+	\item o método \code{basicPublish} é invocado na classe \code{Channel} do 
+	RabbitMQ como resultado do processamento da mensagem \code{BasicPublish} (os 
 	argumentos utilizados para execução do método são os que foram passados junto à
-	mensagem \code{BasicPublish}.
+	mensagem \code{BasicPublish}).
 \end{enumerate}
 
 \vspace{1ex}
@@ -567,22 +568,22 @@ quatro passos:
   	\label{fig:bridge-send-message-flow}
 \end{figure}
 
-Optamos por fazer envios mandatórios porém com consumo não imediato. Isso significa que
+Optamos por fazer envios mandatórios, porém sem consumo imediato. Isso significa que
 a fila de destino deve obrigatoriamente existir no momento do envio, mas a mensagem não 
 precisa ser consumida no momento do depósito na fila. O trecho de código que executa o
 passo $4$ é mostrado na listagem \ref{lst:basic-publish}. Os valores para as variáveis
 \code{mandatory} e \code{immediate} são respectivamente \code{true} e 
 \code{false}. Caso ocorra um envio massivo de mensagens, o consumo imediato das mensagens 
-pode não ser possível, acarretando no retorno de mensagens para o remetente.
+pode não ser possível, acarretando na devolução de mensagens para o remetente.
 Decidimos por não forçar um consumo imediato para que não sobrecarregar 
-as implementações dos consumidores, minimizando a possibilidade de retornos de mensagens. 
+as implementações dos consumidores, minimizando a possibilidade de rejeições de mensagens. 
 
-Ainda assim, caso uma mensagem seja retornada, o método 
+Ainda assim, caso uma mensagem seja rejeitada e devolvida, o método 
 \code{handleRejected} do \code{MessageHandler} é invocado para que alguma ação 
-seja tomada com a mensagem rejeitada. Mensagens podem ser retornadas por basicamente dois motivos:
+seja tomada com a mensagem rejeitada. Mensagens podem ser rejeitadas por basicamente dois motivos:
 \entry{(i)} uma mensagem não pode ser roteada para uma fila pois a chave de roteamento
 utilizada no envio não está associada à \english{exchange}; \entry{(ii)} uma mensagem foi depositada
-em alguma fila, porém a fila foi removida. Nesse caso, todas as mensagens são retornadas
+em alguma fila, porém a fila foi removida. Nesse caso, todas as mensagens são devolvidas
 aos seus respectivos remetentes.
 
 O envio de mensagens de uma ponte servidora para uma ponte cliente é similar ao mostrado
@@ -607,17 +608,16 @@ O identificador do remetente
 (atributo \code{id} da listagem \ref{lst:amqp-client-bridge}) deve ser enviado
 como parte da mensagem e esse envio é de responsabilidade do criador da mensagem. 
 Essa identificação será utilizada como argumento do método \code{sendMessageTo} 
-no caso de haver uma mensagem de resposta.
+no caso de haver uma mensagem de resposta. O recebimento de uma mensagem por uma ponte 
+servidora é ilustrado na figura \ref{fig:bridge-message-flow} e acontece em três passos:
 
-O recebimento de uma mensagem por uma ponte servidora é ilustrado na figura 
-\ref{fig:bridge-message-flow} e acontece em três passos:
 \begin{enumerate}
-	\item O \english{message broker} repassa a mensagem ao canal de leitura;
+	\item o \english{message broker} repassa a mensagem ao canal de leitura;
 	
-	\item O método \code{handleDelivery} da classe \code{BridgeConsumer}
+	\item o método \code{handleDelivery} da classe \code{BridgeConsumer}
 	é invocado;
 	
-	\item O método \code{handleReceived} da implementação de \code{MessageHandler}
+	\item o método \code{handleReceived} da implementação de \code{MessageHandler}
 	(definida durante a configuração da ponte servidora) é executado pelo \code{BridgeConsumer}
 	para que a mensagem possa ser processada.
 \end{enumerate}
@@ -631,7 +631,7 @@ O recebimento de uma mensagem por uma ponte servidora é ilustrado na figura
 \end{figure}
 
 Devemos recordar que a execução do método \code{handleReceived}
-deve retornar um valor booleano. Esse valor indica se o recebimento deve ser confirmado  
+deve devolver um valor booleano. Esse valor indica se o recebimento deve ser confirmado  
 para então a mensagem ser removida da fila pelo \english{message broker}. Os passos utilizados
 para o recebimento de uma mensagem por uma ponte cliente são idênticos aos ilustrados
 na figura \ref{fig:bridge-message-flow}.

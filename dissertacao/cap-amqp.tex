@@ -25,7 +25,7 @@ como mostrado na figura \ref{fig:protocol_overview}.
   	\label{fig:protocol_overview}
 \end{figure}
 
-Na seção \ref{sec:amqp-modelo} descrevemos a camada de modelo, que é a camada onde 
+Na seção \ref{sec:amqp-modelo} descrevemos a camada de modelo, que é a camada em que 
 é definido o conjunto de objetos que utilizamos em nosso trabalho.	
 Na seção \ref{sec:amqp-sessao} descrevemos camada de sessão que 
 age como intermediária entre as camadas de modelo e transporte. 
@@ -38,7 +38,7 @@ para o desenvolvimento deste trabalho.
 \section{A camada de modelo}		
 \label{sec:amqp-modelo}
 \index{AMQP!padrão!modelo}
-A camada de modelo é a camada onde está definido o conjunto de comandos
+A camada de modelo é a camada em que está definido o conjunto de comandos
 e dos objetos que as aplicações podem utilizar. 
 A especificação dos requisitos dessa camada inclui, entre outros itens: 
 garantir a interoperabilidade das implementações, prover controle explícito
@@ -50,7 +50,7 @@ são:
 \begin{itemize}
 	\item Servidor: É o processo,  conhecido também como \english{broker}, que 
 	aceita conexões de clientes e implementa as funções de filas de mensagens e 
-	roteamento;
+	roteamento.
 	  
 	\item Filas: São entidades internas do servidor que armazenam as mensagens, 
 	tanto em memória quanto em disco, até que elas sejam enviadas em sequência para 
@@ -64,7 +64,7 @@ são:
 	consumidores na forma \english{round-robin}, fila temporária para resposta, que 
 	armazena as mensagens e as encaminha para um  único consumidor; e fila \english{pub-sub}, 
 	que armazena mensagens provenientes de vários produtores e as envia para um único 
-	consumidor;
+	consumidor.
 	  
 	\item \english{Exchanges}: São entidades internas do servidor que recebem e roteiam 
 	as mensagens das aplicações produtoras para as filas, levando em conta critérios 
@@ -72,19 +72,19 @@ são:
 	na maioria dos casos, a chave de roteamento presente no cabeçalho de cada mensagem. 		
 	Com o auxílio da tabela de \english{bindings}, uma \english{exchange} decide como 
 	encaminhar as mensagens às respectivas filas, jamais armazenando mensagens.
-	\english{Exchanges} podem ser: diretas (\english{direct}), onde o valor da chave 
+	\english{Exchanges} podem ser: diretas (\english{direct}), em que o valor da chave 
 	de roteamento, que é parte do cabeçalho da mensagem, deve ser exatamente igual 
 	a uma entrada da tabela de \english{bindings} para que a mensagem seja 
-	roteada para a fila; tópicos (\english{topic}), onde é utilizado o casamento de
+	roteada para a fila; tópicos (\english{topic}), em que é utilizado o casamento de
 	padrões para determinar o roteamento às filas. Os caracteres coringa 
 	suportados são *, que indica uma única palavra, e \#, que indica zero ou muitas palavras. 
 	A chave de roteamento deve ser formada por palavras e pontos. Por exemplo, 
 	o padrão *.stock.\# casa com usd.stock e eur.stock.db, nas não com stock.nasdaq; 
-	e \english{fanout}, onde o roteamento acontece para todas as filas 
-	associadas a \english{exchange}, indepententemente da chave de roteamento;
+	e \english{fanout}, em que o roteamento acontece para todas as filas 
+	associadas a \english{exchange}, indepententemente da chave de roteamento.
 	  
 	\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas. 
-	Esses relacionamentos definem como deverá ser feito o roteamento das mensagens;
+	Esses relacionamentos definem como deverá ser feito o roteamento das mensagens.
 	
 	  
 	\item \english{Virtual hosts}: São coleções de \english{exchanges}, filas e 
@@ -187,10 +187,10 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 	é identificado, única e individualmente, dentro da sessão para que o sistema 
 	seja capaz de garantir sua execução exatamente uma vez. Utiliza-se um esquema
 	de numeração sequencial. A noção de identificação permite a correlação de comandos
-	e o retorno de resultados assíncronos. O identificador do comando é disponibilizado
-	para a camada de modelo e, quando um resultado é retornado para um comando, o
+	e a devolução de resultados assíncronos. O identificador do comando é disponibilizado
+	para a camada de modelo e, quando um resultado é devolvido para um comando, o
 	identificador desse comando é utilizado para estabelecer a correlação entre o
-	comando e o resultado;
+	comando e o resultado.
 	
 	\item Confirmação que comandos serão executados: É utilizado para que o par 
 	solicitante possa descartar, seguramente, o estado associado a um comando,
@@ -199,14 +199,14 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 	na sessão corrente. O estado da sessão é importante para que o sistema possa se
 	recuperar no caso de falhas temporárias em um dos pares. As confirmações podem
 	ser entregues em lotes ou mesmo serem deferidas indefinidamente, no caso do par
-	solicitante não requerer a confirmação de que o comando será executado;
+	solicitante não requerer a confirmação de que o comando será executado.
 	
 	\item Notificação de comandos completados: Diferente do conceito de confirmação,
 	este serviço notifica o par que solicitou a execução de um comando que o comando foi
 	executado por completo. As notificações de comandos completados tem como motivação
 	a sincronização e a garantia da ordem de execução entre diferentes sessões. Quando
 	o par que solicitou a execução do comando não exige confirmação imediata, as 
-	confirmações podem ser acumuladas e enviadas em lotes, reduzindo o tráfego de rede;
+	confirmações podem ser acumuladas e enviadas em lotes, reduzindo o tráfego de rede.
 	
 	\item Reenvio e recuperação no caso de falhas na rede: Para que o sistema possa
 	se recuperar no caso de falhas na rede, a sessão deve ser capaz de reenviar comandos
@@ -265,20 +265,18 @@ Optamos por utilizar o RabbitMQ. Tomamos como base para
 nossa decisão os seguintes fatores:
 	
 \begin{itemize}
-	\item Grande quantidade de atividade na comunidade de usuários e desenvolvedores;
+	\item Grande quantidade de atividade na comunidade de usuários e desenvolvedores.
 	
 	\item Facilidade para se obter informações, seja via tutoriais ou em listas 
-	de discussões;
+	de discussões.
 	
-	\item Possuir código aberto;
-	
-	\item Biblioteca para clientes Java independente de plataforma;
-	
+	\item Possuir código aberto e sua biblioteca para clientes Java ser independente de plataforma.
+		
 	\item Se tratar não só de um projeto, mas sim de um produto\footnote{
-		A empresa responsável pelo suporte é a Spring Source, uma divisão da VMware};
+		A empresa responsável pelo suporte é a Spring Source, uma divisão da VMware}.
 	
 	\item Ter sido escrito em Erlang, uma linguagem desenvolvida para o desenvolvimento
-	de sistemas distribuídos e concorrentes \cite{erlang:97};
+	de sistemas distribuídos e concorrentes \cite{erlang:97}.
 	
 	\item Possuir ferramentas para administração e monitoramento.
 \end{itemize}
@@ -314,7 +312,7 @@ a implementação de uma parte considerável da camada de transporte do padrão AMQP
 Como descrito na seção \ref{sec:amqp-transporte}, a camada de transporte deve ser
 capaz de prover a multiplexação de canais. A classe \code{Connection} provê,
 dentre outros métodos, o método \code{createChannel}. A invocação desse método resulta em
-uma instância de \code{com.rabbitmq.client.Channel} por onde
+uma instância de \code{com.rabbitmq.client.Channel} no qual
 podemos executar os comandos definidos na camada de sessão (listagem \ref{lst:channels}). 
 Por exemplo a criação de filas (\code{queueDeclare}) ou o envio (\code{basicPublish}) e 
 recebimento de mensagens (\code{basicConsume}).
