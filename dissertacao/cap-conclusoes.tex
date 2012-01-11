@@ -1,337 +1,7 @@
 %% ------------------------------------------------------------------------- %%
 \chapter{Conclusões}
+\index{Conclusões}
 \label{cap:conclusoes}
-
-\section{Comparação de desempenho}
-\index{Atores Remotos com AMQP!comparação de desempenho}
-\label{sec:atores_remotos_amqp:analise_de_desempenho}
-
-Com o intuito de medir como novas alterações no código da biblioteca de atores melhoravam o desempenho, 
-os desenvolvedores do projeto Akka criaram um sistema que simula a compra e venda de ações
-chamado de \english{Trading System}. Os desenvolvedores criaram também algumas classes que cuidam do armazenamento, 
-comparação e geração de relatórios dos dados coletados nos experimentos de desempenho.
-
-\subsection{Trading System}
-\index{Atores Remotos com AMQP!comparação de desempenho!Trading System}
-\label{sec:atores_remotos_amqp:trading_system}
-
-A disposição dos componentes do sistema de cotações é mostrados na figura \ref{fig:trading-system}.
-Os componentes são descritos a seguir:
-
-\begin{itemize}
-	\item \english{Order Book}: É uma entidade que possui informações sobre as
-	ordens de compra e venda de uma determinada ação. Neste sistema, uma ação
-	é composta por uma letra e por um número. Tem como responsabilidade
-	fazer o casamento de uma ordem de venda com uma ordem de compra.
-	São utilizados como nomes de ações as letras A, B e C, combinadas com
-	números de $1$ a $5$, num total de quinze \english{order books}.
-
-	\item \english{Matching Engine}: É um ator que age como intermediário 
-	no encaminhamento de mensagens aos \english{order books}. Existe um \english{matching engine}
-	para cada letra de \english{order book}.
-
-	\item \english{Order Receiver}: É um ator externo que tem o papel de receber
-	mensagens de compra e venda de qualquer ação, encontrar o \english{matching engine}
-	responsável e repassar a mensagem. A quantidade de \english{order receivers} não possui
-	relação com \english{matching engines}, já que um \english{order receiver} recebe
-	mensagens para qualquer tipo de ação. O sistema possui dez \english{order receivers}.
-
-	\item \english{Trading System}: É o ator recepcionista do sistema. É responsável
-	por fazer a criação e inicialização dos atores internos do sistema. Este ator ainda
-	responde aos atores clientes com os endereços (referências) dos \english{order receivers}
-	que foram criados.
-
-	\item \english{Order}: É um componente que não é mostrado na figura, mas que representa
-	uma ordem. É definida em uma classe abstrata e possui como informações o código da ação, o volume e o valor. 
-	Suas implementações são \english{Ask} para indicar uma ordem de venda, e \english{Bid} para indicar uma 
-	ordem de compra.
-\end{itemize}
-
-\begin{figure}[!h]
-		\centering
-		\includegraphics[scale=.70]{trading-system} 
- 		\caption{Trading System -- Sistema de compra e vendas de ações.}
-  		\label{fig:trading-system}
-\end{figure}
-
-Existem ainda atores rotulados como ``clientes''. Um ator cliente é um ator externo ao 
-sistema de cotações que possui uma lista de ordens a serem enviadas, um valor inteiro
-indicando a quantidade de repetições a serem executadas na lista
-e um \english{order receiver} para onde as mensagens devem ser enviadas.
-A quantidade de atores clientes varia de acordo com a instância do experimento que
-se deseja fazer. A quantidade não será necessariamente igual à quantidade de \english{order receivers}.
-Por este motivo, a associação de um ator cliente a um \english{order receiver} é feita em sequência. 
-Itera-se na lista de \english{order receivers} junto com a lista de atores clientes.
-Uma vez que se tenha alcançado o décimo \english{order receiver}, reinicia-se a iteração a partir do
-primeiro ator. Dependendo a quantidade de atores clientes, alguns \english{order receivers}
-podem recebem mensagens de mais, de menos ou até mesmo de nenhum ator cliente quando comparados com
-outros \english{order receivers}.
-
-Cada ator cliente envia um total de trinta ordens (quinze ordens de compra e quinze ordens de venda)
-para o \english{order receiver} que lhe foi associado. Esse valor é multiplicado pela quantidade
-de repetições que o ator cliente deve executar. A medição é feita com base no tempo que uma mensagem 
-enviada por um ator cliente levou para ser processada em um \english{order book}.
-
-\subsubsection{Trading System com atores remotos}
-\index{Atores Remotos com AMQP!comparação de desempenho!Trading System!remoto}
-\label{sec:atores_remotos_amqp:trading_system_remoto}
-
-Ainda que o \english{Trading System} não tenha sido criado para experimentos com atores remotos, 
-consideramos ser de grande utilidade utilizá-lo para fazer uma comparação de desempenho
-entre o suporte padrão a atores remotos do Akka com o que desenvolvemos neste trabalho. Para tal,
-foram necessárias as alterações listadas a seguir:
-
-\begin{enumerate}
-	\item Registramos todos os atores que estão posicionados na área rotulada como ``Atores Externos''
-	na figura \ref{fig:trading-system}, como atores remotos (seção \ref{sec:atores_remotos_akka}).
-	Essa modificação resultou em alterações na inicialização do \english{Trading System} e na obtenção
-	dos \english{order receivers}. Na versão remota, apenas os nomes sob o qual os \english{order receivers}
-	foram registrados no registro de atores remotos é devolvido. Na versão local, são devolvidas \code{ActorRef}s.
-	Evitamos devolver \code{ActorRef}s como parte das mensagens pois, neste caso, os atores deveriam
-	passar por uma seriação funda. Enviando os nomes sob os quais os atores foram registrados, permite que
-	façamos buscas no registro de atores remotos, trabalhando apenas com as referências remotas.	
-
-	\item Fizemos com que as classes \english{Ask} e \english{Bid} fossem seriáveis 
-	(seção \ref{sec:atores_remotos_akka_seriacao}). Optamos por utilizar como formato de seriação, 
-	o formato definido na feição \code{ScalaJSON}.
-
-	\item Trocamos os envios assíncronos de mensagens dos atores clientes por envios síncronos.
-	Assim, uma nova mensagem só é enviada uma vez que a mensagem anterior
-	tenha sido processada e sua confirmação recebida no ator cliente. O comportamento de um ator
-	cliente teve uma pequena alteração: para cada mensagem enviada, o ator cliente marca o momento de início
-	do envio da mensagem, aguarda o valor devolvido pelo método \lstinline{!!} 
-	(que é invocado no \english{order receiver}), marca o tempo de término do envio e salva a 
-	diferença de tempo em um repositório.
-\end{enumerate}
-
-As configurações utilizadas no arquivo \code{akka.conf} para os experimentos com o suporte padrão
-a atores remotos do Akka são as recomendadas uso geral (compressão média de mensagens e tamanho
-do janelamento das mensagens de $1$KB). Nos experimentos executados com o suporte desenvolvido neste trabalho,
-utilizamos uma conexão por canal além da configuração \code{DURABLE} para as pontes AMQP 
-(seção \ref{sec:entidades-via-broker-amqp-bridges}).
-
-Para que pudéssemos ter medidas mais reais, separamos os atores clientes e os atores do
-\english{Trading System} em JVMs residentes em nós fisicamente separados. A máquina
-virtual Erlang, onde o RabbitMQ esteve em execução, ficou separada em um terceiro nó.
-A máquina virtual Erlang, responsável por executar o RabbitMQ, ficou em execução em
-um \english{laptop} Dell Inspirion N4030 com processador Intel Core i3 de $2.4$ GHz e $4$ GB de RAM
-com Linux Ubuntu $10.10$. A JVM onde implantamos os atores clientes, ficou em execução
-em um \english{laptop} Lenovo T410 com processador Intel Core i5 de $2.4$ GHz e $4$ GB de RAM
-com Linux Ubuntu $10.10$. Por fim, a JVM onde o \english{Trading System} foi implantado, ficou
-em execução em um \english{laptop} MacBook Pro com processador Core $2$ Duo de $2.4$ GHz e $4$ GB de RAM
-com Mac OS X $10.7$. Os três \english{laptops} foram conectados por um roteador D-Link DI-$524$.
-Apesar de este ser um roteador para redes \english{wireless}, optamos por conectá-los com cabos de rede.
-
-\subsection{Resultados}
-
-Definimos o número de mensagens que cada cliente enviou da seguinte maneira: seja $n_c$ a 
-quantidade de atores clientes utilizada em um experimento e seja $r$ o número de repetições; cada ator cliente 
-enviou $ (30r)/n_c$ mensagens. O valor $r$ de repetições utilizado foi $1000$. 
-Variamos os valores de $n_c$ de modo que o resultado da divisão fosse sempre inteiro. O total 
-de mensagens enviadas por todos os atores clientes em uma instância de experimento foi sempre $30000$. 
-
-A estrutura criada para medição e comparação de desempenho de atores locais do Akka
-utiliza algumas bibliotecas para o armazenamento e geração de relatórios. Os valores
-das medidas registradas em uma instância de experimento são organizados em percentis. 
-A biblioteca utilizada para o cálculo de percentis é a Commons Math da fundação Apache \cite{commons-math}.
-Os relatórios gerados apresentam também a quantidade de envios/respostas por segundo (ER/S),
-o tempo médio de cada envio/resposta e ainda o tempo total gasto para a execução de
-todos os envios/respostas. 
-
-A tabela \ref{tab:medidas} mostra as melhores medidas dentre todas as execuções
-feitas na execução do \english{Trading System} com atores remotos. O critério
-utilizado para a comparação entre as medidas de um mesmo conjunto de instâncias
-foi o valor que é apresentado na coluna média. 
-
-\renewcommand{\arraystretch}{0.85}
-\captionsetup{margin=1.0cm}
-\begin{table}
-\begin{center}
-\begin{scriptsize}
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} 
-\hline
-
-{Impl.} & {Clientes} & {ER/S} & {Média ($\mu s$)} & {25\% ($\mu s$)} & {50\% ($\mu s$)} & {75\% ($\mu s$)} & 
-{95\% ($\mu s$)} & {Dur. ($s$)} \\ \hline \hline
-Netty & 1 & 501 &  1995 & 1364 & 1433 & 1968 & 3266 & 59.85 \\
-AMQP  & 1 & 263 &  3797 & 3283 & 3361 & 3537 & 4550 & 113.91 \\ \hline
- & Delta & -47.50\% & 90.33\%  &  140.69\% &  134.54\% &  79.73\% &  39.31\% &  54.06 (90.33\%) \\ \hline
-									
-Netty & 2 & 894 & 2238 & 1770 & 1796 & 1836 & 3290 & 33.57 \\
-AMQP  & 2 & 528 & 3789 & 3234 & 3359 & 3552 & 4208 & 56.83 \\ \hline
- & Delta & -40.99\% &  69.30\% &   82.71\% &  87.03\% &  93.46\% &  27.90\% &  23.26 (69.33\%) \\ \hline
-
-Netty & 4 & 1245 & 3212 & 2070 & 2517 & 2726 & 4214 & 24.09 \\
-AMQP  & 4 &  906 & 4416 & 3248 & 3614 & 4134 & 5088 & 33.12 \\ \hline
- & Delta  & -27.31\% &  37.48\% &  56.91\% &  43.58\% &  51.65\% &  20.74\% &  9.03 (37.48\%) \\ \hline
-
-Netty & 8 & 1494 & 5353 & 3274 & 3771 & 4745 & 6168 & 20.07 \\
-AMQP & 8 & 1389 & 5760 & 3567 & 4149 & 5168 & 6425 & 21.60 \\ \hline
- & Delta & -7.10\% &  7.60\% &  8.95\% &  10.02\% &  8.91\% &  4.17\% &   1.52 (7.60\%) \\ \hline
-
-Netty & 10 & 1542 & 6484 & 4005 & 4330 & 5704 & 7041 & 19.45 \\
-AMQP & 10 & 1424 & 7023 & 4396 & 5107 & 6136 & 7610 & 21.06 \\ \hline
- & Delta & -7.72\% &  8.31\% &   9.76\% &  17.94\% &  7.57\% &  8.08\% &  1.61 (8.31\%) \\ \hline
-
-Netty & 20 & 1568 & 12757 & 8206 & 9646 & 10146 & 12015 & 19.13 \\
-AMQP & 20 & 1503 & 13309 & 8728 & 9964 & 10888 & 13430 & 19.96 \\ \hline
- & Delta & -4.15\% &  4.33\% &   6.36\% &  3.30\% &  7.31\% &  11.78\% &  0.82 (4.33\%) \\ \hline
-
-Netty & 40 & 1589 & 25176 & 17616 & 18183 & 19436 & 21350 & 18.82 \\
-AMQP & 40 & 1518 & 26345 & 18496 & 19525 & 20842 & 23360 & 19.75 \\ \hline
-& Delta & -4.41\% &  4.64\% &   5.00\% &  7.38\% &  7.23\% &  9.41\% &  0.87 (4.64\%) \\ \hline 
-
-Netty & 80 & 1615 & 49525 & 35403 & 36541 & 37863 & 40041 & 18.57 \\
-AMQP & 80 & 1535 & 52122 & 37915 & 39399 & 40943 & 43496 & 19.54 \\ \hline
- & Delta & -5.02\% & 5.24\% &  7.10\% & 7.82\% & 8.13\% & 8.63\% & 0.97 (5.24\%) \\
-
-\hline 
-\end{tabular}
-\caption{Medidas de tempo do Trading System com atores remotos.}
-\label{tab:medidas}
-\end{scriptsize}
-\end{center}
-\end{table}
-
-O fato de adicionarmos um terceiro nó com um \english{message broker} na comunicação
-entre os atores remotos, naturalmente adiciona mais passagens pela rede que conecta os nós.
-Um envio que utiliza o Netty faz com que duas mensagens trafeguem pela rede: a ordem é
-enviada pelo \code{RemoteClient} direto ao \code{RemoteServer} e a resposta
-faz o caminho inverso. Já quando utilizamos nossa implementação com AMQP, quatro mensagens
-são trafegadas: a ordem é enviada pelo \code{RemoteClient} ao \english{message broker},
-o \english{message broker} envia a ordem para o \code{RemoteServer} e a resposta faz o caminho
-inverso. Por este motivo, esperávamos que o tempo gasto pela implementação com AMQP fosse, 
-aproximadamente, duas vezes maior do que o tempo gasto pela implementação com Netty. 
-Observando a comparação dos dados da tabela \ref{tab:medidas} para a instância com apenas $1$ ator cliente, 
-podemos notar uma diferença bem próxima da esperada, 
-já que o número de envios/respostas por segundo é quase metade ($-47.50\%$), o valor médio 
-para cada envio/resposta leva quase o dobro do tempo ($90.33\%$), fazendo com que a duração total 
-também leve quase o dobro do tempo ($90.33$\%). Quando observamos os percentis, podemos notar que a 
-diferença de tempo das execuções com AMQP que estão abaixo da mediana, foram maior que duas vezes mais lentas em 
-relação às execuções feitas com Netty ($140.69$\% e  $134.54$\%). Entretanto, quando comparamos os 
-percentis acima da mediana, observamos uma boa redução na diferença ($79.73$\% e  $39.31$\%).
-
-Com o aumento do número de atores clientes, a diferença de tempo apresenta uma boa diminuição.
-O gráfico da figura \ref{fig:grafico-er} mostra a evolução da quantidade de envios/respostas com o aumento
-da quantidade de atores clientes. Podemos observar que, conforme a quantidade de atores clientes foi aumentando, 
-os resultados com nossa implementação apresentaram uma boa melhora e se mantiveram muito
-próximos dos resultados obtidos com a implementação original do Akka. A diferença que era de quase $-47.50\%$ envios/respostas
-cai até chegar em apenas $-5.02\%$, o que no nosso experimento representa pouco menos de $1$ segundo para
-completar todos os envios/respostas. De um modo geral, se observarmos a diferença do tempo de execução 
-para os experimentos a partir de $8$ clientes, temos uma diferença de tempo abaixo de $1.6$ segundos. 
-
-Devemos relembrar que não adicionamos compressão de mensagens em nossa implementação com AMQP, e que
-os experimentos feitos com Netty utilizaram compressão média. Como as mensagens são 
-menores que $1$KB, entendemos que a implementação com AMQP possa ter levado ligeira
-vantagem. Ademais, o terceiro nó colabora para a distribuição do processamento. Na implementação
-feita com Netty, tanto as classes responsáveis pelo envio e recebimento de mensagens quanto as classes
-do arcabouço compartilham mesma JVM que executa os atores do sistema de cotações. 
-Já na implementação com AMQP, apenas as classes responsáveis pelo envio e recebimento de mensagens 
-compartilham a mesma JVM. Durante a execução dos experimentos, mesmo diante de um cenário com alta concorrência em que vários 
-atores clientes executaram diversos envios em paralelo para um \code{RemoteClient} compartilhando, 
-não tivemos problemas comuns de concorrência como \english{deadlocks} e condições de corrida 
-em nossa implementação. 
-
-\begin{figure}[!h]
-		\centering
-		\includegraphics[scale=.70]{grafico-er} 
- 		\caption{Comparação da quantidade de envios/respostas.}
-  		\label{fig:grafico-er}
-\end{figure}
-
-
-Pelo fato das mensagens serem trafegadas duas vezes a mais na rede, naturalmente, a latência da 
-rede é um dos principais fatores que impactam os resultados. A tabela \ref{tab:medidas-lentas} apresenta 
-as medidas que feitas na rede \english{wireless}, com maior latência. Utilizamos a mesma 
-configuração descrita anteriormente, porém retiramos os cabos que ligavam os computadores e passamos a 
-conectá-los via \english{wireless}. Os d ados da tabela \ref{tab:medidas-lentas} mostram 
-que a diferença de tempo chega no pior caso, com $4$ atores clientes, a pouco mais de $2.5$ vezes o tempo gasto
-pela implementação com Netty. Quando observamos os percentis, podemos notar que a 
-diferença no tempo das execuções com AMQP que estão abaixo da mediana foram, aproximadamente, $3$ vezes 
-mais lentas em relação às execuções feitas com Netty ($209.28$\% e $197.17$\%). Quando comparamos os 
-percentis acima da mediana, observamos uma redução razoável na diferença ($179.11$\% e  $145.07$\%). Assim como na 
-tabela \ref{tab:medidas}, conforme aumentamos a quantidade de atores clientes, a diferença de tempo cai chegando
-a $26.74\%$, pouco menos que $9$ segundos para completar todos os envios/respostas. 
-
-O gráfico da figura \ref{fig:grafico-er-lento} mostra que, com o aumento de atores clientes, o aumento da 
-quantidade de envios/respostas feitos com nossa implementação não apresentou a mesma melhora de desempenho 
-que a implementação com o Netty. Uma melhora mais significativa passa a acontecer quando a 
-quantidade de clientes passa de $10$. Se observamos novamente o gráfico da figura \ref{fig:grafico-er}, 
-notamos que o aumento no número de envios/respostas foi mais acentuado no início (de $1$ a $8$ atores clientes) 
-do que no final. Com as mensagens levando mais tempo para chegar ao \english{message broker} e ao seu destino
-final, o volume de mensagens em um dado instante tende a ser menor. Com um volume menor de mensagens, a vantagem
-que levamos com a distribuição do processamento dos envios e recebimentos de mensagens só começa a 
-contar positivamente com o aumento do volume de mensagens concorrentes.
-
-\renewcommand{\arraystretch}{0.85}
-\captionsetup{margin=1.0cm}
-\begin{table}
-\begin{center}
-\begin{scriptsize}
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} 
-\hline
-
-{Impl.} & {Clientes} & {ER/S} & {Média ($\mu s$)} & {25\% ($\mu s$)} & {50\% ($\mu s$)} & {75\% ($\mu s$)} & 
-{95\% ($\mu s$)} & {Dur. ($s$)} \\ \hline \hline
-
-Netty & 1 & 163 &  6129 & 3387 & 4279 & 6265 & 13403 & 183.87 \\
-AMQP  & 1 & 106 &  9464 & 5998 & 7223 & 9624 & 17360 & 283.92 \\ \hline
- & Delta & -34.97\% & 54.41\% &  77.09\% & 68.80\% & 53.62\% & 29.52\% & 100.05 (54.41\%) \\ \hline
-
-Netty & 2  &  341  &  5857  &  3418  &  4113  &  5635  &  11481  & 87.855 \\
-AMQP  & 2  &  152  &  13121  &  8963  &  10784  &  14077  &  22309 & 196.815 \\ \hline
- & Delta & -55.43\% & 124.02\%  &  162.23\%  &  162.19\%  &  149.81\%  &  94.31\%  &  108.96 (124.02\%) \\ \hline
-
-Netty & 4  &  479  &  8337  &  5248  &  6334  &  8219  &  13892 & 62.5275 \\
-AMQP  & 4  &  183  &  21872  &  16231  &  18823  &  22940  &  34045 & 164.04 \\ \hline
- & Delta & -61.80\% & 162.35\%  &  209.28\%  &  197.17\%  &  179.11\%  &  145.07\%  &  101.51 (162.35\%) \\ \hline
-
-Netty & 8  &  491  &  16292  &  10528  &  12692  &  15780  &  23123 & 61.095 \\
-AMQP  & 8  &  198  &  40463  &  26918  &  33224  &  41392  &  58513 & 151.73625 \\ \hline
- & Delta & -59.67\% & 148.36\%  &  155.68\%  &  161.77\%  &  162.31\%  &  153.05\%  &  90.64 (148.36\%) \\ \hline
-
-Netty & 10  &  559  &  17883  &  12737  &  14918  &  18099  &  25705 & 53.649 \\
-AMQP & 10  &  243  &  40891  &  29653  &  34970  &  41936  &  56755 & 122.673 \\ \hline
- & Delta & -56.27\%  &  128.66\%  &  132.81\%  &  134.41\%  &  131.70\%  &  120.79\%  &  69.02 (128.66\%) \\ \hline
-
-Netty & 20  &  563  &  35486  &  22392  &  26879  &  32957  &  47837 & 53.23 \\
-AMQP & 20  &  323  &  61951  &  47710  &  55291  &  64509  &  84108 & 92.92 \\ \hline
- & Delta & -42.63\% & 74.58\%  &  113.07\%  &  105.70\%  &  95.74\%  &  75.82\%  &  39.69 (74.58\%) \\ \hline
-
-Netty & 40  &  607  &  65782  &  41155  &  49748  &  60805  &  83042 & 49.33 \\
-AMQP & 40  &  390  &  98951  &  62679  &  77785  &  98463  &  150803 & 74.21 \\ \hline
- & Delta & -35.75\% & 50.42\%  &  52.30\%  &  56.36\%  &  61.93\%  &  81.60\%  &  24.87 (50.42\%) \\ \hline
-
-Netty & 80  &  889  &  89089  &  36654  &  39031  &  50225  &  103695 & 33.41 \\
-AMQP & 80  &  628  &  112913  &  66128  &  77563  &  94990  &  139215 & 42.34 \\ \hline
- & Delta & -29.36\% & 26.74\%  &  80.41\%  &  98.72\%  &  89.13\%  &  34.25\%  &  8.93 (26.74\%) \\ 
-
-\hline 
-\end{tabular}
-\caption{Medidas de tempo do Trading System com atores remotos (wireless).}
-\label{tab:medidas-lentas}
-\end{scriptsize}
-\end{center}
-\end{table}
-
-
-\begin{figure}[!h]
-		\centering
-		\includegraphics[scale=.70]{grafico-er-lento} 
- 		\caption{Comparação da quantidade de envios/respostas na rede wireless.}
-  		\label{fig:grafico-er-lento}
-\end{figure}
-
-
-Sobre as medidas, ainda que exista um processamento extra a cargo do \english{message broker} para recebimento, roteamento
-e entrega das mensagens, concluímos que existe uma vantagem relativa em relação a implementação feita com o Netty.
-Tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, como recebimento e entrega
-das mensagens, e de este processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
-o processamento das mensagens, como os atores. Conforme a frequência das mensagens foi aumentando, 
-houve uma redução considerável na diferença de tempo, como mostrado no gráfico da figura \ref{fig:grafico-er}.
-Assim, entendemos que a carga extra de processamento adicionada pelo \english{message broker}, não invalida
-o seu uso como suporte para a troca de mensagens entre atores remotos. Enfatizamos que em um cenário realista
-de um sistema de atores, é esperado um número razoável de atores executando em paralelo.
 
 Comentamos brevemente no capítulo \ref{cap:estrutura-troca-mensagens-amqp} sobre algumas das características
 da trocas de mensagens entre entidades conectadas ponto-a-ponto via \english{sockets}, como saber o endereço
@@ -370,7 +40,44 @@ compartilham as informações dos \english{virtual hosts}. O uso do RabbitMQ em \e
 o problema de o \english{message broker} ser um ponto central de falhas.
 
 %------------------------------------------------------
+\section{Trabalhos Relacionados} 
+\index{Conclusões!trabalhos relacionados}
+\label{sec:conclusao:trabalhos_relacionados}
+
+\subsection{Replicação de transações no Drizzle com RabbitMQ}
+
+Drizzle \cite{drizzle} é uma implementação de banco de dados voltado para computação em nuvem
+(\english{cloud computing}). A implementação desse banco de dados possui código aberto e foi 
+desenvolvida tomando como base o código da implementação do banco de dados MySQL \cite{mysql}.
+
+Uma das características do Drizzle é a replicação de transações. Transações como,
+inserções ou atualizações, que são executadas na instância principal (\english{master}),
+são replicadas para uma ou mais instâncias secundárias (\english{slaves}). Esse módulo utiliza uma combinação
+de tabelas transacionais (InnoDB) e mensagens no formato Protobuf \ref{drizzle-replication-slave}. 
+O uso das tabelas transacionais tem como característica a criação de um arquivo para armazenamento
+das transações executadas.
+
+O Drizzle oferece a possibilidade de replicação de transações via \english{message broker}
+AMQP. A implementação está disponível via módulo RabbitMQ Integration \cite{drizzle-replication-rabbitmq}.
+Quando esse módulo é utilizado, deve-se informar as informações necessárias para conexão com o RabbitMQ,
+tais como endereço, porta, \english{virtual host}, usuário e senha. Deve-se informar também,
+o nome da \english{exchange} para onde as mensagens devem ser enviadas e a chave de roteamento.
+Quando o módulo de replicação RabbitMQ Integration está ativado, uma aplicação Java associada a
+instância principal coleta as informações do arquivo onde as transações foram armazenadas e faz
+o envio das mensagens com as transações. Aplicações Java associadas às instâncias secundárias
+são responsáveis por fazer o consumo das mensagens vindas do RabbitMQ, a conversão da mensagem e tomar
+alguma ação, como executar as operações da transação na instância do Drizzle no qual está associada.
+Vale destacar que as aplicações Java associadas às instâncias secundárias do Drizzle, são responsáveis
+por fazer a criação da fila onde esperam mensagens e definir seu \english{binding} com a \english{exchange}
+informada durante a ativação do módulo RabbitMQ Integration. As informações para a criação das filas, como
+nome, e da instância do Drizzle para onde as transações serão replicadas, são informadas em um arquivo de propriedades.
+
+%\subsection{Replicação de transações no Drizzle com RabbitMQ}
+
+%------------------------------------------------------
 \section{Considerações Finais} 
+\index{Conclusões!considerações finais}
+\label{sec:conclusao:consideracoes_finais}
 
 O uso do RabbitMQ como \english{message broker} AMQP em conjunto com a estrutura descrita no capítulo
 \ref{cap:estrutura-troca-mensagens-amqp}, se mostrou eficaz em nossos experimentos para transportar mensagens
@@ -411,6 +118,8 @@ O uso de um \english{message broker} ainda trás outros benefícios, como por exem
 
 %------------------------------------------------------
 \section{Sugestões para Pesquisas Futuras} 
+\index{Conclusões!sugestões para pesquisas futuras}
+\label{sec:conclusao:pesquisas_futuras}
 
 \subsection{Melhoria no tratamento de erros nas pontes AMQP}
 
@@ -429,7 +138,7 @@ por algum outro motivo, notificar a ponte AMQP para que ela possa propagar o err
 
 \subsection{Experimentos em um ambiente de computação em nuvem}
 
-Nos últimos anos, o conceito de computação em nuvem (\english{cloud computing}) vem ganhando
+Nos últimos anos, o conceito de computação em nuvem vem ganhando
 bastante espaço, não só na comunidade acadêmica, mas também na indústria de tecnologia.
 Computação em nuvem é um conceito que se refere tanto a aplicações disponibilizadas como serviços 
 via internet quanto pelo \english{hardware} e sistemas de \english{software} que estão nos centros 
