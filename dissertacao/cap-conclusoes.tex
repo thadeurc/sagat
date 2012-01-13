@@ -50,27 +50,30 @@ Drizzle \cite{drizzle} é uma implementação de banco de dados voltado para comput
 (\english{cloud computing}). A implementação desse banco de dados possui código aberto e foi 
 desenvolvida tomando como base o código da implementação do banco de dados MySQL \cite{mysql}.
 
-Uma das características do Drizzle é a replicação de transações. Transações como,
-inserções ou atualizações, que são executadas na instância principal (\english{master}),
-são replicadas para uma ou mais instâncias secundárias (\english{slaves}). Esse módulo utiliza uma combinação
-de tabelas transacionais (InnoDB) e mensagens no formato Protobuf \ref{drizzle-replication-slave}. 
-O uso das tabelas transacionais tem como característica a criação de um arquivo para armazenamento
-das transações executadas.
+Uma das características do Drizzle é a replicação de transações. Transações como
+inserções ou atualizações que são executadas na instância principal (\english{master}) do banco de dados,
+são replicadas para uma ou mais instâncias secundárias (\english{slaves}) do banco de dados. 
+O módulo responsável por dar suporte a replicação de transações
+utiliza uma combinação de tabelas transacionais (InnoDB) e mensagens no formato 
+Protobuf \ref{drizzle-replication-slave}. O uso das tabelas transacionais tem como 
+característica a criação de um arquivo para registro das transações executadas. Cada transação
+executada em uma tabela transacional gera uma entrada no arquivo de registro.
 
 O Drizzle oferece a possibilidade de replicação de transações via \english{message broker}
 AMQP. A implementação está disponível via módulo RabbitMQ Integration \cite{drizzle-replication-rabbitmq}.
+Quando o módulo de replicação RabbitMQ Integration está ativado, uma aplicação Java associada à
+instância principal coleta as informações do arquivo onde as transações foram registradas e faz
+envio de mensagens com as transações. As aplicações Java associadas às instâncias secundárias
+são responsáveis por fazer o consumo das mensagens vindas do RabbitMQ, a conversão da mensagem e tomar
+alguma ação, como executar as operações da transação na instância do Drizzle no qual está associada.
+
 Quando esse módulo é utilizado, deve-se informar as informações necessárias para conexão com o RabbitMQ,
 tais como endereço, porta, \english{virtual host}, usuário e senha. Deve-se informar também,
 o nome da \english{exchange} para onde as mensagens devem ser enviadas e a chave de roteamento.
-Quando o módulo de replicação RabbitMQ Integration está ativado, uma aplicação Java associada a
-instância principal coleta as informações do arquivo onde as transações foram armazenadas e faz
-o envio das mensagens com as transações. Aplicações Java associadas às instâncias secundárias
-são responsáveis por fazer o consumo das mensagens vindas do RabbitMQ, a conversão da mensagem e tomar
-alguma ação, como executar as operações da transação na instância do Drizzle no qual está associada.
 Vale destacar que as aplicações Java associadas às instâncias secundárias do Drizzle, são responsáveis
 por fazer a criação da fila onde esperam mensagens e definir seu \english{binding} com a \english{exchange}
-informada durante a ativação do módulo RabbitMQ Integration. As informações para a criação das filas, como
-nome, e da instância do Drizzle para onde as transações serão replicadas, são informadas em um arquivo de propriedades.
+informada durante a ativação do módulo RabbitMQ Integration. As informações para a criação das filas
+e da instância do Drizzle para onde as transações serão replicadas, são informadas em um arquivo de propriedades.
 
 %\subsection{Replicação de transações no Drizzle com RabbitMQ}
 
