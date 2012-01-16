@@ -9,28 +9,21 @@ de quaisquer outros atores, inclusive daqueles residentes em outras máquinas vir
 Em outras palavras, o termo ``ator remoto'' é um sinônimo de ``ator remotamente acessível''.
 
 Na seção \ref{sec:atores_locais} examinamos a implementação de atores locais. Nosso objetivo
-é focar na criação desses atores, no envio e despachamento de mensagens e na hierarquia 
+é focar a criação desses atores, o envio e despachamento de mensagens e a hierarquia 
 de supervisão. Na seção \ref{sec:atores_remotos_akka} examinamos a implementação de 
-atores remotos. Nosso objetivo é focar na estrutura definida para o suporte a atores remotos,
-seriação de mensagens e no protocolo que foi definido para o envio de mensagens.
+atores remotos. Nosso objetivo é focar a estrutura definida para o suporte a atores remotos,
+a seriação de mensagens e o formato definido para o envio de mensagens.
         
 \section{Atores locais}
 \label{sec:atores_locais}
 \index{Akka!atores locais}
 
-A definição de atores locais acontece se combinando a feição \code{akka.actor.Actor}, 
-e provendo uma implementação para o método \code{receive}, como mostrado na listagem \ref{lst:def-actor}. 
-A definição de um ator descreve o comportamento inicial que o
-ator terá. O ator propriamente dito (aquele que possui as funcionalidades providas
-pelo arcabouço) é uma instância de \code{akka.actor.ActorRef}. Essas referências
-são imutáveis, seriáveis, identificáveis, possuem um relacionamento único com a 
-definição do ator e armazenam o endereço do nó onde foram criadas. 
-
-A feição \code{Actor} possui em sua declaração uma referência para o seu 
-\code{ActorRef}, acessível via atributo \code{self}. Com essa referência, a classe que 
-define o comportamento do ator pode alterar as definições padrão providas pelo arcabouço e utilizar 
-seus métodos para, por exemplo, responder ou encaminhar mensagens recebidas e acessar a referência de 
-um ator supervisor. Vale mencionar que, caso de atores locais, \code{self} referencia uma instância de \code{akka.actor.LocalActorRef}.
+Para se definir um ator local, cria-se uma classe que é combinada com a feição \code{akka.actor.Actor} 
+e que provê uma implementação para o método \code{receive}, como mostrado na listagem \ref{lst:def-actor}. 
+A classe que define um ator descreve o comportamento inicial que o
+ator terá. Entretanto, o ator propriamente dito não é uma instância dessa classe, e sim 
+da feição \code{akka.actor.ActorRef}, cujas instâncias têm o papel de referências para atores. 
+Essas referências são imutáveis, seriáveis, identificáveis e armazenam o endereço do nó onde foram criadas. 
 
 \begin{lstlisting}[frame=tb, caption={Classe SampleActor.}, label={lst:def-actor}]
 class SampleActor(val name: String) extends akka.actor.Actor {
@@ -43,27 +36,26 @@ class SampleActor(val name: String) extends akka.actor.Actor {
 }
 \end{lstlisting}
 
-Atores são criados pelo método \code{actorOf} do objeto \code{akka.actor.Actor}
-como mostrado na listagem \ref{lst:actorOf1}. Nessa listagem, a instância do ator é criada
-por reflexão com base no tipo da classe (\code{SampleActor}). O construtor utilizado
-durante a reflexão é o construtor padrão.
-O método \code{actorOf} é sobrecarregado para permitir que uma função sem 
-argumentos e com tipo de retorno \code{Actor}, possa ser utilizada como alternativa ao
-construtor padrão na criação do ator, como mostrado na listagem \ref{lst:actorOf2}. 
+Atores são criados pelo método \code{actorOf} do objeto \code{akka.actor.Actor}, um
+objeto \english{singleton} que é o objeto acompanhante da feição de mesmo nome. 
+A listagem \ref{lst:actorOf1} mostra o uso do método \code{actorOf}, que devolve 
+uma instância de \code{akka.actor.ActorRef}. A instância do ator criado
+possui uma referência para uma instância da classe que define o comportamento do ator.
+Na listagem \ref{lst:actorOf1}, esta instância é criada por reflexão com base no tipo \code{SampleActor}. 
+O construtor utilizado durante a reflexão é o construtor padrão. A listagem 
+\ref{lst:actorOf1} ilustra também o uso do método \code{!} para fazer
+o envio assícrono da mensagem \code{"hello"} ao ator referenciado por \code{theActor}.
+O processamento dessa mensagem resultará na impressão do texto \code{"No name received hello"}.
 
 \begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via construtor padrão.}, label={lst:actorOf1}]
   val theActor = Actor.actorOf[SampleActor].start
   theActor ! "hello"
 \end{lstlisting}
 
-Nas listagens \ref{lst:actorOf1} e \ref{lst:actorOf2}, tivemos que chamar explicitamente o método 
-\code{start} para iniciar o ator. Os atores do projeto Akka possuem um conjunto de estados
-simples, bem definido e linear. Um ator, logo após sua criação, está no estado chamado de ``novo'' 
-e ainda não pode receber mensagens. Após a invocação do método \code{start}, o ator passa ao 
-estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método \code{exit} ou 
-\code{stop}\footnote{O método \code{exit} invoca internamente o método 
-\code{stop} que é responsável por desligar o ator.} é invocado, o ator passa 
-ao estado de ``desligado'' e não executa mais ação alguma.
+O método \code{actorOf} é sobrecarregado para permitir que uma função de inicialização (uma função sem 
+argumentos e com tipo de retorno \code{Actor}) possa ser utilizada como alternativa ao
+construtor padrão na criação do ator. A listagem \ref{lst:actorOf2} ilustra a criação do ator
+via função de inicialização. 
 
 \begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via função de inicialização.}, label={lst:actorOf2}]
   val function = {
@@ -74,10 +66,24 @@ ao estado de ``desligado'' e não executa mais ação alguma.
   theActor ! "hello"
 \end{lstlisting}
 
+Nas listagens \ref{lst:actorOf1} e \ref{lst:actorOf2}, tivemos que chamar explicitamente o método 
+\code{start} para iniciar o ator. Os atores do projeto Akka possuem um conjunto de estados
+simples e linear. Um ator, logo após sua criação, está no estado ``novo'' 
+e ainda não pode receber mensagens. Após a invocação do método \code{start}, o ator passa ao 
+estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método 
+\code{stop} é invocado, o ator passa ao estado ``desligado'' e não executa mais ação alguma.
+
+A feição \code{Actor} possui em sua declaração uma referência para o seu 
+\code{ActorRef}, acessível via atributo \code{self}. Com essa referência, a classe que 
+define o comportamento do ator pode alterar as definições padrão providas pelo Akka e utilizar 
+o métodos do \code{ActorRef} para, por exemplo, enviar uma resposta ao remetente de uma
+mensagem ou encaminhar a outro ator uma mensagem recebida. Vale mencionar que, no caso de 
+atores locais, \code{self} referencia uma instância da classe \code{akka.actor.LocalActorRef}.
+
 As mensagens que são enviadas para um ator são colocadas sincronamente 
 na fila de mensagens do ator, levando tempo $O(1)$. As mensagens enfileiradas são então 
-despachadas assincronamente para a função parcial definida no bloco \code{receive}, 
-como mostrado na figura \ref{fig:local-actor-message}. 
+despachadas assincronamente para a função parcial definida no bloco \code{receive} da classe
+que define o comportamento do ator, como mostrado na figura \ref{fig:local-actor-message}. 
 
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -95,55 +101,61 @@ de um ator pode ser durável ou transiente e ter seu tamanho limitado superiormen
 possui em sua distribuição os quatro despachadores listados a seguir:
 
 \begin{itemize}
+	\item Despachador baseado em \english{threads}:  	
+	É o despachador mais simples de todos os despachadores, que associa uma \english{thread} a 
+	cada ator. Essa \english{thread} processa sequencialmente as mensagens na fila do ator.
+	O uso deste despachador implica no uso de uma fila transiente.
+	Internamente, é utilizada uma fila
+	que faz o bloqueio da \english{thread} que está tentando adicionar uma mensagem, caso o limite
+	superior da fila tenha sido atingido. Este despachador é definido na classe 
+	\code{ThreadBasedDispatcher}.
+
 	\item Despachador impulsionado por eventos: 
 	É um despachador normalmente compartilhado por diversos atores de diferentes
 	tipos, já que ele utiliza um \english{thread pool} para agendar as ações de despachamento.
-	É o despachador mais flexível em termos de configurações, já que permite que
+	Este é o despachador mais flexível em termos de configurações, pois permite que
 	parâmetros do \english{thread pool} e da fila de mensagens sejam configurados.
 	É definido na classe \code{ExecutorBasedEventDrivenDispatcher}.
 	
-
 	\item Despachador impulsionado por eventos com balanceamento de carga:	
 	É um despachador semelhante ao despachador anterior, já que também é impulsionado por eventos.
-	Definido na classe \code{ExecutorBasedEventDrivenWorkStealingDispatcher}, é
-	um despachador para ser usado em atores do mesmo tipo, já que permite que
+	Este despachador deve ser compartilhado por atores do mesmo tipo, pois permite que
 	atores que não estejam processando mensagens possam ``roubar'' mensagens das filas dos atores
-	que estão sobrecarregados, permitindo o balanceamento do processamento das mensagens entre os atores.
+	que estejam sobrecarregados. Dessa forma, o despachador dá suporte a uma forma de balanceamento 
+	do processamento das mensagens entre os atores.
+	É definido na classe \code{ExecutorBasedEventDrivenWorkStealingDispatcher},
 	
 	\item Despachador quente: 
-	É um despachador inspirado no \english{Grand Central Dispacher} do Mac OS X \cite{apple-gcd}. Esse despachador 
-	define um \english{thread pool} cujo tamanho é ajustado automaticamente
+	É um despachador inspirado no \english{Grand Central Dispacher} do Mac OS X \cite{apple-gcd}. 
+	Este despachador define um \english{thread pool} cujo tamanho é ajustado automaticamente
 	para minimizar a quantidade de \english{threads} concorrentes e 
 	inativas\footnote{Idealmente a quantidade de \english{threads} corresponde ao número de núcleos disponíveis.}.
-	Sua grande vantagem, é a capacidade de agrupar diversos eventos gerados pela
+	Sua vantagem é a capacidade de agrupar múltiplos eventos gerados pela
 	aplicação, por exemplo diversas mensagens recebidas, gerando uma única tarefa assíncrona.
-	Este despachador é definido na classe \code{HawtDispatcher}.		
-	
-	\item Despachador impulsionado por \english{threads}:  	
-	É o despachador mais simples de todos os despachadores, já que associa uma \english{thread} para 
-	cada ator. O uso desse despachador implica no ator
-	utilizar filas transientes. É importante ressaltar que, internamente, é utilizado uma fila
-	que faz o bloqueio da \english{thread} que está tentando adicionar uma mensagem, caso o limite
-	superior da fila tenha sido atingido (para o caso em que há um limite informado). 		
-	Este despachador é definido na classe \code{ThreadBasedDispatcher}.
+	Este despachador é definido na classe \code{HawtDispatcher}.			
 \end{itemize}
 
-Por padrão atores são associados ao despachador global impulsionado por eventos. A 
-configuração padrão do despachador define uma fila transiente sem limite máximo de mensagens. 
-Caso seja necessário definir um outro despachador para um ator, a definição deve acontecer 
-antes de o ator ser inciado via método \code{self.dispatcher}. O Akka permite ainda
-que novos despachadores sejam criados. Por padrão, os despachadores são criados no pacote
-\code{akka.dispatch}.
+Por padrão, atores são associados a um despachador global impulsionado por eventos. A 
+configuração padrão desse despachador define uma fila transiente sem limite máximo de mensagens. 
+Caso seja necessário outro despachador a um ator, a atribuição deve acontecer 
+antes do ator ser iniciado via método \code{self.dispatcher}. O Akka permite ainda
+que novos despachadores sejam criados. 
 
 \subsection{Envios de respostas}
 \index{Akka!atores locais!envios de respostas}
 \label{subsec:akka_envio_resposta}
 
-Envios de mensagens podem gerar mensagens de resposta ao remetente. Os métodos para
-envios de mensagens capturam implicitamente uma cópia da referência da entidade que está 
-fazendo o envio (\english{sender}). A assinatura do método \code{!!} é mostrada na 
-listagem \ref{lst:method!!}. Uma cópia da referência do \english{sender} é enviada junto 
+Além do método \code{!}, que faz o envio assícrono de uma mensagem sem devolver resposta
+alguma ao remetente, o Akka oferece dois métodos para envio de mensagem com
+resposta ao remetente. O primeiro deles é o método \code{!!}, que faz envio síncrono
+da mensagem e deixa o remetente bloqueado aguardando uma resposta durante um tempo limite. 
+O segundo é o método \code{!!!}, que devolve um resultado futuro ao remetente.
+
+Os métodos para envio de mensagem com resposta ao remetente capturam implicitamente uma
+referência para o ator remetente (\english{sender}). A assinatura do método \code{!!} é mostrada na 
+listagem \ref{lst:method!!}. Uma cópia da referência ao \english{sender} é enviada junto 
 com a mensagem para que o ator destinatário possa, eventualmente, enviar uma mensagem de resposta. 
+O ator destinatário pode enviar uma mensagem de resposta via método \code{self.reply}. 
 
 \begin{lstlisting}[frame=tb, caption={Assinatura do método !!.}, label={lst:method!!}]
 def !!(message: Any, timeout: Long = this.timeout)
@@ -152,20 +164,16 @@ def !!(message: Any, timeout: Long = this.timeout)
 }
 \end{lstlisting}
 
-O ator destinatário pode responder a uma mensagem via método \code{self.reply}. 
-A execução do método para envio de uma resposta nada mais é que um envio de mensagem como 
-já apresentado. 
-
 A implementação dos métodos \code{!!} e \code{!!!} é baseada em resultados futuros.
-Resultados futuros são representações de resultados de computações assíncronas. Em Java,
+Resultados futuros são representações de resultados de computações assíncronas. Na biblioteca de Java,
 a classe \code{java.util.concurrent.FutureTask} provê funcionalidades básicas
 para resultados futuros. O projeto Akka tem sua própria implementação
-para representar resultados futuros de computações assíncronas. Essa implementação provê
-algumas facilidades em relação a implementação de Java que são necessárias
-pelo arcabouço. A feição \code{CompletableFuture} define métodos
-para que resultados futuros possam ser completados por outras entidades como mostrado na listagem
-\ref{lst:completable}. Essa implementação foi inspirada no projeto Actorom \cite{actorom}.
-A implementação do Akka é construída sobre classes do pacote \code{java.util.concurrent}.
+de resultados futuros de computações assíncronas. Essa implementação provê
+algumas facilidades que não são oferecidas pela implementação de Java e que são necessárias
+ao Akka. A feição \code{CompletableFuture} define métodos
+para que resultados futuros possam ser completados por outras entidades, como mostra a listagem
+\ref{lst:completable}. A implementação do Akka é inspirada no projeto Actorom \cite{actorom} e
+é construída sobre classes do pacote \code{java.util.concurrent}.
 
 \begin{lstlisting}[frame=tb, caption={Feição CompletableFuture.}, label={lst:completable}]
 trait CompletableFuture[T] extends Future[T] {
@@ -175,40 +183,43 @@ trait CompletableFuture[T] extends Future[T] {
 }
 \end{lstlisting}
 
-Envios de mensagens feitos via métodos \code{!!} e \code{!!!} são 
-considerados como feitos por ``remetentes futuros''. Uma vez que o ator enviou
-a mensagem de resposta, a mensagem não é coloca em uma fila de mensagens assim como
-acontece para atores, mas é utilizada para indicar no resultado futuro que a computação 
+Envios de mensagens via métodos \code{!!} e \code{!!!} são 
+considerados como feitos por ``remetentes futuros''. Uma vez que o ator destinatário enviou
+a mensagem de resposta, essa mensagem não é colocada em uma fila de mensagens como no caso
+de um envio via \code{!}, mas é utilizada para indicar no resultado futuro que a computação 
 foi completada. Na \code{ActorRef}, um envio de uma mensagem feito via método \code{!!!} é processado 
 da seguinte maneira:
 
 \begin{enumerate}
 	\item Uma instância de \code{CompletableFuture} é criada dentro do método.
 	
-	\item Assim como para um envio assíncrono, a mensagem é colocada da fila do ator. Contudo,
-	uma referência para a instância criada no passo anterior é colocada junto da mensagem.
+	\item Assim como para um envio assíncrono via \code{!}, a mensagem é colocada na fila do ator destinatário. 
+	Além disso, uma referência para a instância de \code{CompletableFuture} criada no passo anterior é colocada 
+	juntamente com a mensagem.
 	
-	\item É retornado para quem invocou o método uma outra cópia da referência para o 
-	\code{CompletableFuture} criado no passo $1$.
+	\item Uma outra cópia da referência para o \code{CompletableFuture} criado no passo $1$
+	é devolvida para quem invocou o método \code{!!!}.
 	
-	\item Quando a mensagem terminou de ser processada, seu resultado é atualizado
-	na referência que foi enviado junto à mensagem. Como a instância que teve
-	o resultado ``completado'' (seja com um valor ou com uma exceção) também
-	é referenciada por quem fez a invocação do método, o resultado pode então
+	\item Ao final do processamento da mensagem, o \code{CompletableFuture}
+	é completado com o resultado. Como a instância completada
+	(seja com um resultado válido ou com uma exceção) é a mesma
+	referenciada por quem fez a invocação do método \code{!!!}, o resultado pode então
 	ser utilizado.
 \end{enumerate}
 
 Um envio feito via método \code{!!} possui quase os mesmos passos de processamento.
 A diferença está na devolução da referência. Como o envio é síncrono, a espera do resultado
-da computação assíncrona acontece de modo bloqueante dentro do próprio método \code{!!}.
-Quando a computação for completada, o resultado é devolvido a quem fez a invocação do método.
+acontece de modo bloqueante dentro do próprio método \code{!!}.
+Quando o \code{CompletableFuture} estiver preenchido, o resultado será devolvido ao chamador
+do método \code{!!}.
 
 Envios de mensagens não são limitados somente a atores. Qualquer objeto
 ou classe pode enviar uma mensagem a um ator. Podemos notar que o código da listagem 
-\ref{lst:actorOf1} não está definido em um ator. O ator que está para enviar a mensagem
-de resposta pode verificar se há um remetente definido associado a mensagem recebida, 
+\ref{lst:actorOf1} não está definido em um ator. Num envio de mensagem com resposta
+ao remetente (\code{!!} ou \code{!!!}), o ator destinatário
+pode verificar se há um remetente definido a mensagem recebida, 
 porém existe um modo alternativo e mais simples: o método \code{self.reply\_?} faz o 
-envio ao remetente somente no caso em que há um remetente definido, devolvendo o valor 
+envio ao remetente somente no caso em que há remetente definido, devolvendo o valor 
 booleano \code{true} para indicar se houve envio ou \code{false} caso contrário.
 
 \subsection{Hierarquias de supervisão}
