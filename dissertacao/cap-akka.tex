@@ -222,76 +222,40 @@ porém existe um modo alternativo e mais simples: o método \code{self.reply\_?} f
 envio ao remetente somente no caso em que há remetente definido, devolvendo o valor 
 booleano \code{true} para indicar se houve envio ou \code{false} caso contrário.
 
-\subsection{Hierarquias de supervisão}
-\index{Akka!atores locais!supervisão}
+\section{Hierarquias de supervisão}
+\index{Akka!hierarquias de supervisão}
 
 A biblioteca de atores do Akka permite que o tratamento de erros possa ser feito por
 atores definidos como supervisores. Sua implementação é totalmente baseada na abordagem feita na
-linguagem Erlang \cite{PROG_ERLANG07} e é conhecida como ``deixe que falhe'' (\english{let it crash}). 
+linguagem Erlang \cite{PROG_ERLANG07}, conhecida como ``deixe que falhe'' (\english{let it crash}). 
 
 Uma hierarquia de supervisão é criada com o uso de ligações entre atores. A ligação
-de dois atores pode acontecer via métodos \code{link}, \code{startLink} e
-\code{spawnLink}, definidos em \code{ActorRef}. O método \code{link}
-faz a ligação de dois atores $A1$ e $A2$. O método \code{startLink} também faz a ligação
-de dois atores $A1$ e $A2$, porém coloca o ator $A2$ em execução.
-O método \code{spawnLink} faz a criação do ator $A2$, sua ligação com $A1$ e ainda
-coloca $A2$ execução. 
+de dois atores pode acontecer via métodos \code{link} e \code{startLink}, definidos em \code{ActorRef}. 
+A chamada \code{a1.link(a2)} faz a ligação dos atores \code{a1} e \code{a2}. A chamada
+\code{a1.startLink(a2)} também faz a ligação dos atores \code{a1} e \code{a2}, porém
+coloca o ator \code{a2} no estado ``iniciado''. As ligações são unidirecionais, ou seja,
+o ator alvo da chamada que criou uma ligação (\code{a1}) receberá uma notificação 
+em caso de falha em algum um ator ligado a ele (\code{a2}).
 
-É necessário definir no ator que estará sob supervisão, qual ciclo de vida que esse ator 
-deverá ter. O ciclo de vida de um ator indica ao ator supervisor como proceder no caso de erros. 
-Existem dois tipos de ciclo de vida:
+Quando se define uma hierarquia de supervisão, é necessário definir, em cada ator supervisionado, 
+o ciclo de vida que esse ator deverá ter. O ciclo de vida de um ator indica ao ator supervisor 
+como proceder no caso de erros no ator supervisionado. Existem dois tipos de ciclo de vida:
 
 \begin{enumerate}
 	\item Permanente: Indica que o ator possui um ciclo de 
-	vida permanente e sempre deve ser reiniciado no caso de erros.
-	Este ciclo é definido na classe \code{Supervision.Permanent}.
+	vida permanente e sempre deve ser reiniciado no caso de falhas.
+	Este ciclo é definido pela classe \code{Supervision.Permanent}.
 	
 	\item Temporário: 
 	Indica que o ator possui um ciclo de vida temporário e
-	não deve ser reiniciado no caso de erros. Contudo, esse ciclo de vida
-	indica que o ator deve ser desligado normalmente, ou seja, como
-	se o método \code{exit} tivesse sido invocado. O processo normal
-	ainda faz uma invocação ao método \code{postStop}.	
-	Este ciclo é definido na classe \code{Supervision.Temporary}.
+	não deve ser reiniciado no caso de falhas. Ademais, esse ciclo de vida
+	indica que o ator deve ser colocado no estado ``desligado'', como
+	se ele tivesse encerrado sua execução normalmente (ou seja, como se ele tivesse sido alvo de uma 
+	chamada ao método \code{stop}). Este ciclo é definido na classe \code{Supervision.Temporary}.
 \end{enumerate}
 
 A definição de um ator com ciclo de vida permanente é mostrada na listagem
 \ref{lst:supervised-actor}. A definição do ciclo de vida do ator acontece na linha $2$.
-O processo de reinicialização de um ator consiste na criação de uma nova instância da
-classe que define o ator. Os métodos \code{preRestart} e \code{postRestart} são 
-invocados, respectivamente, antes de o ator ser desligado e logo após ele ter sido reiniciado.
-Alguns detalhes importantes a observarmos sobre a reinicialização de atores:
-
-\begin{itemize}
-	\item O método \code{preRestart} é invocado na instância em que ocorreu o erro.
-
-	\item O método \code{postRestart} é invocado na nova instância.
-
-	\item A nova instância criada utiliza a mesma \code{ActorRef} do ator em que ocorreu o erro,
-	logo, as duas instâncias possuem o mesmo valor para \code{self}.
-
-	\item  A criação da nova instância é feita da mesma maneira que o ator foi criado 
-	originalmente. Por exemplo, na listagem \ref{lst:actorOf1} o ator foi originalmente
-	criado via construtor padrão. Já na listagem \ref{lst:actorOf2}, o ator foi originalmente
-	criado com o uso de uma função específica.
-\end{itemize}
-
-No ator supervisor, por sua vez, deverá ser definida a estratégia de reinicialização para
-os atores que ficarão ligados a ele. Existem duas estratégias possíveis:
-
-\begin{enumerate}
-	\item Um por um:  
-	Quando essa estratégia é utilizada, exceções lançadas por um ator 
-	sob supervisão que possua um ciclo de vida permanente, fazem
-	com que somente o ator seja reiniciado. Esta estratégia é definida 
-	na classe \code{Supervision.OneForOneStrategy}.
-	
-	\item Todos por um:  
-	Quando essa estratégia é utilizada, exceções lançadas por um ator 
-	sob supervisão que possua um ciclo de vida permanente, fazem com 
-	que todos os atores sob o mesmo supervisor sejam reiniciados. Esta 
-	estratégia é definida na classe \code{Supervision.AllForOneStrategy}.
-\end{enumerate}
 
 \begin{lstlisting}[frame=tb, caption={Ator com ciclo de vida permanente.}, label={lst:supervised-actor}]
 class MySupervised extends akka.actor.Actor{
@@ -311,16 +275,49 @@ class MySupervised extends akka.actor.Actor{
 }
 \end{lstlisting}
 
+O processo de reinicialização de um ator consiste na criação de uma nova instância da
+classe que define o ator. Os métodos de \english{callback} \code{preRestart} e \code{postRestart} são 
+invocados, respectivamente, antes do ator passar ao estado ``desligado'' e logo após ele ter sido reiniciado.
+Alguns detalhes importantes a observarmos sobre a reinicialização de atores:
 
-Junto com a estratégia de reinicialização, é necessário definir quais são as exceções que o ator
-é responsável por fazer o tratamento, além de configurações relacionadas a quantas tentativas de
-reinicialização devem ser feitas dentro de um período de tempo. Mostramos na listagem 
+\begin{itemize}
+	\item O método \code{preRestart} é invocado na instância em que ocorreu o erro.
+
+	\item O método \code{postRestart} é invocado na nova instância.
+
+	\item A nova instância criada utiliza a mesma \code{ActorRef} da instância em que ocorreu o erro,
+	ou seja, tanto a instância nova quanto a anterior possuem o mesmo valor de \code{self}.
+
+	\item  A criação da nova instância é feita da mesma maneira que a do ator original, o qual pode
+	ter sido criado via construtor padrão (é o caso do ator da listagem \ref{lst:actorOf1}) ou
+	com o uso de uma função de inicialização (é o caso do ator da listagem \ref{lst:actorOf2}).
+\end{itemize}
+
+No ator supervisor, por sua vez, deverá ser definida a estratégia de reinicialização para
+os atores que ficarão ligados a ele. Existem duas estratégias possíveis:
+
+\begin{enumerate}
+	\item Um por um:  
+	Com esta estratégia, uma exceção lançada por um ator 
+	supervisionado que possua ciclo de vida permanente faz
+	com que somente esse ator seja reiniciado. Esta estratégia é definida 
+	na classe \code{Supervision.OneForOneStrategy}.
+	
+	\item Todos por um:  
+	Com esta estratégia, uma exceção lançadas por um ator 
+	supervisionado que possua ciclo de vida permanente faz com 
+	que todos os atores sob o mesmo supervisor sejam reiniciados. Esta 
+	estratégia é definida na classe \code{Supervision.AllForOneStrategy}.
+\end{enumerate}
+
+Junto com a estratégia de reinicialização, é necessário definir quais são as exceções que o ator supervisor
+tem interesse em tratar, além de configurações relacionadas à quantidade de tentativas de
+reinicialização de um ator supervisionado que podem ser feitas dentro de um período de tempo. Mostramos na listagem 
 \ref{lst:supervisor-actor} a definição de um ator supervisor. Na linha $2$ dessa listagem
-definimos a estratégia um por um, supervisionando exceções do tipo \code{java.lang.Exception}, 
+definimos a estratégia um por um, tratando exceções do tipo \code{java.lang.Exception}, 
 com duas tentativas de reinicialização em um período de cinco segundos. Caso o limite de tentativas
-de reinicialização tenha sido atingido, porém sem sucesso na reinicialização do ator supervisionado,
-uma mensagem específica é enviada para o ator supervisor. Essa mensagem pode estar definida
-no método \code{receive} para que as ações necessárias sejam tomadas.
+de reinicialização tenha sido atingido, sem que se tenha obtido sucesso na reinicialização do ator supervisionado,
+uma mensagem específica é enviada para o ator supervisor.
 
 \begin{lstlisting}[frame=tb, caption={Ator supervisor.}, label={lst:supervisor-actor}]
 class MySupervisor extends akka.actor.Actor {
@@ -344,9 +341,8 @@ object SampleSupervisorHierarchy extends Application {
 }
 \end{lstlisting}
 
-Atores supervisores e supervisionados podem trocar mensagens. Quando criamos uma ligação
-de supervisão entre dois atores, como na linha $4$ da listagem \ref{lst:supervisor-hier},
-a referência para o ator supervisor passa a estar definida no ator \code{supervised}.
+Quando criamos uma ligação de supervisão entre dois atores, como na linha $4$ da listagem 
+\ref{lst:supervisor-hier}, a referência para o ator supervisor fica armazenada no ator supervisionado.
 Essa referência é acessível via método \code{self.supervisor}. Um ator supervisor
 também pode ser supervisionado por outro ator, como mostrado na figura 
 \ref{fig:actor-hier}. O encadeamento de atores supervisores abre a possibilidade da
@@ -379,21 +375,21 @@ de atores remotos utiliza os seguintes elementos:
 	recebidas de clientes remotos. Cada \code{RemoteServerModule} é associado a um endereço
 	de hospedeiro (\english{host}) e a uma porta TCP. Um mesma máquina virtual pode conter 
 	múltiplos \code{RemoteServerModule}s.
-	A documentação do Akka utiliza para esse componente a terminologia ``servidor remoto'' 
+	A documentação do Akka utiliza para este componente a terminologia ``servidor remoto'' 
 	(\english{remote server}).
 
 	\item \code{RemoteClientModule}: É uma feição que define as responsabilidades
 	do componente usado no lado do cliente. Suas implementações têm como responsabilidade 
 	visível oferecer uma interface para obtenção de referências a atores remotos. 
 	Ademais, oferece também suporte em tempo de execução para a infraestrutura de atores do lado do 
-	cliente, provendo uma série de serviços não visíveis para o usuário, tais como
-	seriação de mensagens, envio de mensagens para atores remotos,
+	cliente, provendo uma série de serviços não visíveis para o usuário. Tais serviços incluem os
+	seguintes: seriação de mensagens, envio de mensagens para atores remotos,
 	conversão de ator local em ator remoto e intermediação de 
-	mensagens de resposta vindas do \code{RemoteServerModule}, no caso envios via \code{!!}
-	ou \code{!!!}. A documentação do Akka utiliza para esse componente a terminologia
+	mensagens de resposta vindas do \code{RemoteServerModule}, no caso de envios via \code{!!}
+	ou \code{!!!}. A documentação do Akka utiliza para este componente a terminologia
 	``cliente remoto'' (\english{remote client}).
 
-	\item \code{RemoteSupport}: Essa classe abstrata é responsável por concentrar as 
+	\item \code{RemoteSupport}: Esta classe abstrata é responsável por concentrar as 
 	responsabilidades definidas para os módulos remotos do cliente e do servidor e ser um 
 	ponto único de suporte remoto. É acessível via \code{Actor.remote}.
 
