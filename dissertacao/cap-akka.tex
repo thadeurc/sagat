@@ -151,11 +151,15 @@ resposta ao remetente. O primeiro deles é o método \code{!!}, que faz envio sínc
 da mensagem e deixa o remetente bloqueado aguardando uma resposta durante um tempo limite. 
 O segundo é o método \code{!!!}, que devolve um resultado futuro ao remetente.
 
-Os métodos para envio de mensagem com resposta ao remetente capturam implicitamente uma
-referência para o ator remetente (\english{sender}). A assinatura do método \code{!!} é mostrada na 
-listagem \ref{lst:method!!}. Uma cópia da referência ao \english{sender} é enviada junto 
-com a mensagem para que o ator destinatário possa, eventualmente, enviar uma mensagem de resposta. 
-O ator destinatário pode enviar uma mensagem de resposta via método \code{self.reply}. 
+Todos os métodos para envio de mensagem capturam implicitamente uma
+referência para o ator remetente (\english{sender}). Uma cópia da referência 
+ao \english{sender} é enviada junto  com a mensagem para que o ator destinatário possa, 
+eventualmente, enviar uma mensagem de resposta. O ator destinatário pode enviar uma mensagem 
+de resposta via método \code{self.reply}. No caso dos envios de mensagem com resposta
+ao remetente, a chamada \code{self.reply} é obrigatória. A listagem \ref{lst:method!!}
+mostra a assinatura de um dos métodos de envio, o método \code{!!}. Note a presença
+do parâmetro implícito \code{sender}, que normalmente não é fornecido pelo chamador
+do método.
 
 \begin{lstlisting}[frame=tb, caption={Assinatura do método !!.}, label={lst:method!!}]
 def !!(message: Any, timeout: Long = this.timeout)
@@ -363,10 +367,7 @@ criação de sub-hieraquias, cada uma com seu supervisor.
 No contexto de envios de mensagens para atores remotos, o termo cliente se refere ao processo
 (máquina virtual) onde residem as referências para os atores remotos e as demais entidades que, 
 normalmente, iniciam o envio de mensagens. O termo servidor denota o processo (máquina virtual) 
-no qual reside o ator remoto. Atores remotamente acessíveis possuem as mesmas características
-de atores locais no que diz respeito ao recebimento e despachamento de mensagens. Atores
-locais e remotos diferem basicamente na sua criação e no envio de mensagens. A infraestrutura 
-de atores remotos utiliza os seguintes elementos:
+no qual reside o ator remoto. A infraestrutura de atores remotos utiliza os seguintes elementos:
 	
 \begin{itemize}	
 	\item \code{RemoteServerModule}: É uma feição que define as responsabilidades
@@ -397,30 +398,66 @@ de atores remotos utiliza os seguintes elementos:
 	utiliza o suporte remoto para fazer envio das mensagens.
 \end{itemize}
 
-A biblioteca de atores remotos do Akka implementa os componentes de suporte remoto com o
-auxílio do JBoss Netty \cite{jboss-netty}. Apresentamos na figura \ref{fig:remote-actor-colaboracao} como os 
-componentes descritos acima estão relacionados. Dividimos a figura em duas camadas, sendo a primeira a 
-camada de interface remota, e a segunda a camada de implementação. A camada
-de implementação é associada em tempo de execução, permitindo que demais implementações 
-possam ser utilizadas.
-
-Na versão $1.0$ do Akka, a definição de atores remotos não possui diferença em
-relação a definição de atores locais. Podemos utilizar a classe apresentada na 
-listagem \ref{lst:def-actor} para criamos instâncias de atores remotos. A criação de atores
-remotos pode acontecer tanto no nó onde reside a aplicação servidora, quanto
-ser criado remotamente por uma aplicação cliente.
-
-A criação de atores remotos gerenciados pelo servidor (\english{server managed actors})
-é mostrada na listagem \ref{lst:remote-server1}. Nessa listagem, um servidor
-remoto é inicializado na linha $2$ para que os atores possam ser registrados. Na implementação
-padrão feita com o Netty, a inicialização de um servidor remoto implica na associação
-de um componente do Netty para monitorar a \english{socket} associada ao par hospedeiro e 
-porta. Na linha $3$ registramos o ator sob o nome \code{hello-service}. O ator passou a 
+Atores remotamente acessíveis possuem as mesmas características de atores locais no que 
+diz respeito ao envio, recebimento e despachamento de mensagens. A criação de um ator 
+remoto pode ocorrer tanto por iniciativa do nó onde reside a aplicação servidora, 
+como por iniciativa de uma aplicação cliente remota. A listagem \ref{lst:remote-server1} mostra
+a criação de um ator remoto gerenciado pelo servidor (\english{server managed actor}). 
+Nessa listagem, um servidor remoto é inicializado na linha $2$ para que os atores possam ser registrados. 
+Na linha $3$ registramos o ator sob o nome \code{hello-service}. O ator passou a 
 estar remotamente acessível a aplicações que residam em outras máquinas virtuais. Um detalhe
-importante a ser destacado é a inicialização implícita do ator feita pelo método \code{register}.
-A implementação desse método fica a critério dos componentes da camada de implementação de
-suporte remoto, porém sua interface obriga que implementações compatíveis inicializem atores
-que ainda não estão em execução.
+importante a ser destacado é a inicialização implícita do ator feita pelo método \code{register},
+tornando opcional a chamada ao método \code{start} no ator. Note que o fato de um ator ser remoto 
+não altera a declaração da classe do ator. A classe do ator remoto da listagem \ref{lst:remote-server1}, 
+é a mesma do ator local da listagem \ref{lst:actorOf1}.
+
+
+\begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteServer.}, label={lst:remote-server1}]
+object SampleRemoteServer extends Application {
+	Actor.remote.start("localhost", 2552)
+	Actor.remote.register("hello-service", Actor.actorOf[SampleActor])
+}
+\end{lstlisting}
+
+Referências para atores remotos são obtidas via método \code{actorFor}. Esse
+método possui diversas sobrecargas, sendo que a mais simples recebe como argumentos o nome do ator, 
+o endereço do hospedeiro e a porta do \english{remote server} onde o ator foi registrado. 
+A linha $2$ da listagem \ref{lst:remote-client1} mostra como uma aplicação cliente 
+obtém uma referência para um ator remoto. Podemos notar que, no uso do ator na linha $3$, não há nenhuma 
+indicação que caracterize um envio remoto. O método \code{actorFor} devolve, na 
+maioria das vezes, uma instância de \code{RemoteActorRef} que representam \english{proxies} 
+locais para o ator remoto. A implementação desse método possui otimizações para que referências
+locais sejam utilizadas sempre que possível. Por exemplo, caso a entidade que está enviando a mensagem resida no 
+mesmo nó que o ator remoto, uma instância de \code{LocalActorRef} é devolvida. 
+
+\begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteClient.}, label={lst:remote-client1}]
+object SampleRemoteClient extends Application{
+  val helloActor = Actor.remote.actorFor("hello-service", "localhost", 2552)
+  helloActor ! "Hello"
+}
+\end{lstlisting}
+		
+Aplicações cliente podem optar por criar e iniciar atores em nós diferentes do nó corrente.
+Esses atores são denominados atores gerenciados pelo cliente (\english{client managed actors}). 
+A biblioteca de atores fornece uma versão alternativa do método \code{actorFor}
+que recebe parâmetros adicionais para indicar o nó onde o ator criado será executado. Como o Akka
+não oferece suporte a carga remota de classes, é necessário que o conjunto de classes com a definição
+de um ator esteja acessível para a máquina virtual onde o ator será instanciado e executado.
+Outra observação importante diz respeito ao servidor remoto que irá executar um ator criado via
+\code{actorFor}: é necessário que esse servidor esteja em execução antes do método \code{actorFor}
+ser invocado. Detalhes como esses motivam discussões entre
+a comunidade de desenvolvedores do Akka para que o suporte a atores gerenciados pelo cliente seja 
+tornado obsoleto e removido em versões futuras, já que os mesmos resultados podem ser obtidos com o uso de 
+atores gerenciados pelo servidor.
+
+A biblioteca de atores remotos do Akka implementa os componentes de suporte remoto com o
+auxílio do JBoss Netty \cite{jboss-netty}. A figura \ref{fig:remote-actor-colaboracao} mostra como esses
+componentes se relacionam. Dividimos a figura em duas camadas, sendo a primeira a 
+camada de interface remota, e a segunda a camada de implementação. A camada
+de implementação é associada ao suporte remoto em tempo de execução, permitindo que outras 
+implementações possam ser utilizadas. Na implementação padrão feita com o Netty, a inicialização 
+de um servidor remoto (linha $2$ da listagem \ref{lst:remote-server1}) tem como consequência a 
+instanciação de um componente do Netty para monitorar a \english{socket} associada ao par hospedeiro e porta. 
 
 \vspace{1ex}
 \begin{figure}[!h]
@@ -429,45 +466,6 @@ que ainda não estão em execução.
   	\caption{Relacionamento entre os componentes remotos.}
   	\label{fig:remote-actor-colaboracao}
 \end{figure}
-
-As referências para os atores remotos são obtidas via método \code{actorFor}. Esse
-método possui diversas sobrecargas, sendo que a mais simples recebe como argumentos o nome do ator, 
-o endereço do hospedeiro e a porta do \english{remote server} onde o ator foi registrado. 
-A linha $2$ da listagem \ref{lst:remote-client1} mostra como uma aplicação cliente 
-obtém uma referência para o ator. Podemos notar que, no uso do ator na linha $3$, não há nenhuma 
-indicação que caracterize um envio remoto. O método \code{actorFor} devolve, na 
-maioria das vezes, instâncias de \code{RemoteActorRef} que representam \english{proxies} 
-locais para o ator remoto. A implementação possui algumas otimizações para que referências
-locais sejam utilizadas sempre que possível. Por exemplo, caso a entidade que está enviando a mensagem resida no 
-mesmo nó que o ator, uma instância de \code{LocalActorRef} é devolvida. 
-
-\begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteServer.}, label={lst:remote-server1}]
-object SampleRemoteServer extends Application {
-	Actor.remote.start("localhost", 2552)
-	Actor.remote.register("hello-service", Actor.actorOf[SampleActor])
-}
-\end{lstlisting}
-		
-Aplicações cliente podem optar por criar e iniciar atores em nós que não sejam o corrente.
-Esses atores são chamados de atores gerenciados pelo cliente (\english{client managed actors}). 
-Para tal, a biblioteca de atores fornece uma versão alternativa do método \code{actorOf}
-que recebe parâmetros adicionais para indicar o nó onde o ator criado será executado. O Akka
-não possui carregamento remoto de classes, obrigando que as classes com as definições
-dos atores estejam acessíveis para a máquina virtual onde ele será instanciado e executado.
-Uma outra observação importante a ser feita em relação ao servidor remoto que irá executar
-o ator sendo criado, é a necessidade de ele estar em execução antes de o método \code{actorOf}
-ser invocado. Esses detalhes são alguns dos exemplos que motivam discussões entre
-a comunidade de desenvolvedores do Akka para que esse tipo de suporte seja depreciado e 
-removido em versões futuras, já que os mesmos resultados podem ser obtidos com o uso de 
-atores gerenciados pelo servidor.
-
-\begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteClient.}, label={lst:remote-client1}]
-object SampleRemoteClient extends Application{
-  val helloActor = Actor.remote.actorFor("hello-service", "localhost", 2552)
-  helloActor ! "Hello"
-}
-\end{lstlisting}
-
 
 \subsection{Fluxo de envio das mensagens}
 \index{Akka!atores remotos!fluxo de envio}
@@ -503,16 +501,18 @@ em sete passos:
 	\item A implementação do \english{handler} feita no Akka repassa a mensagem para o seriador
 	para que a desseriação seja feita.
 	
-	\item O seriador desseria a mensagem, deixando-a no formato original, e em seguida,
+	\item O seriador desseria a mensagem, deixando-a no formato original e, em seguida,
 	repassa novamente a mensagem ao \english{handler}.
 	
-	\item Por fim, a implementação do \english{handler} utiliza as informações definidas
-	de cabeçalho da mensagem para identificar qual o ator destinatário no registro
-	local de atores e como deve ser feito o envio. No caso do envio assíncrono, o ator 
-	destinatário tem seu método \code{!} invocado com a mensagem e eventualmente a 
-	referência do ator que fez o envio (ou \code{None} caso contrário).
-	O despachador associado ao ator tem o mesmo comportamento já mostrado na 
-	figura \ref{fig:local-actor-message}.
+	\item Por fim, a implementação do \english{handler} utiliza as informações
+	de cabeçalho da mensagem para identificar qual o ator destinatário e buscá-lo 
+	no registro local de atores, bem como para verificar se o envio é assíncrono ou não. 
+	No caso de envio assíncrono, o ator destinatário tem seu método \code{!} 
+	invocado. Além de receber como parâmetro a mensagem, essa chamada ao método \code{!}
+	recebe um segundo parâmetro (que normalmente não é fornecido por ser implicitamente 
+	capturado) com uma referência para o ator remetente (\code{sender}) ou com o valor \code{None},
+	caso o remetente não seja um ator.  O despachador associado ao ator destinatário tem o mesmo 
+	comportamento já mostrado na figura \ref{fig:local-actor-message}.
 \end{enumerate}
 
 \vspace{1ex}
@@ -523,11 +523,11 @@ em sete passos:
   	\label{fig:remote-actor-message-flow}
 \end{figure}
         
-Os envios feitos via métodos \code{!!} e \code{!!!} para atores remotos são iguais,
-e possuem um passo a mais do que os mostrados na figura \ref{fig:remote-actor-message-flow}.
+Os envios feitos via métodos \code{!!} e \code{!!!} para atores remotos são análogos,
+mas possuem um passo adicional em relação aos mostrados na figura \ref{fig:remote-actor-message-flow}.
 O passo adicional acontece entre os passos $2$ e $3$. Antes da mensagem ser enviada,
-uma cópia da referência da instância do resultado futuro que é devolvida é colocada 
-no mapa de resultados futuros. A chave para a instância é o identificador da mensagem.
+é colocada no mapa de resultados futuros uma referência para a instância de \code{CompletableFuture} 
+criada pela chamada ao método \code{!!} ou \code{!!!}. A chave para essa instância é o identificador da mensagem.
 
 Envios feitos via métodos \code{!!} e \code{!!!}, assim como mensagens para atores
 supervisores que estão remotos, geram envios de mensagens no caminho contrário ao mostrado
