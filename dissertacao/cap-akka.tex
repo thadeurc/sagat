@@ -529,53 +529,45 @@ O passo adicional acontece entre os passos $2$ e $3$. Antes da mensagem ser envi
 é colocada no mapa de resultados futuros uma referência para a instância de \code{CompletableFuture} 
 criada pela chamada ao método \code{!!} ou \code{!!!}. A chave para essa instância é o identificador da mensagem.
 
-Envios feitos via métodos \code{!!} e \code{!!!}, assim como mensagens para atores
-supervisores que estão remotos, geram envios de mensagens no caminho contrário ao mostrado
-na figura \ref{fig:remote-actor-message-flow}. Caso a mensagem que foi enviada pelo servidor
-seja o resultado de um envio feito via métodos \code{!!} ou \code{!!!}, o conteúdo da mensagem
-(seja um resultado de sucesso ou uma exceção) é utilizado para completar o resultado futuro.
-Já no caso de mensagens originadas no servidor e que possuam um ator supervisor, o ator supervisor
-é localizado e é feito um envio local assíncrono da mensagem para ele.
+Um envio feito mediante chamada ao método \code{!!} ou \code{!!!} gera uma mensagem de resposta 
+no caminho contrário ao mostrado na figura \ref{fig:remote-actor-message-flow}. O conteúdo
+dessa mensagem de resposta (seja um resultado de sucesso ou uma exceção) é utilizado para completar
+o resultado futuro. Caso a mensagem de resposta contenha uma exceção e caso o ator que gerou a resposta
+possua um ator supervisor residente na JVM do lado cliente, esse ator supervisor é localizado
+no mapa de supervisores e recebe uma mensagem assícrona de notificação enviada localmente.
 
-O Akka possui uma configuração opcional de segurança em que cada JVM que esteja executando o
-arcabouço pode definir um \english{cookie}. O \english{cookie} nada mais é do que uma chave
-que o usuário pode definir e que faz parte das informações do cabeçalho das mensagens.
-Quando a verificação de segurança está ativada, o recebedor da mensagem verifica se a informação
-do \english{cookie} presente na mensagem confere com a informação esperada. Essa verificação
+O Akka possui uma configuração opcional de segurança em que cada JVM pode definir 
+um \english{cookie}. O \english{cookie} nada mais é do que uma chave
+que o usuário pode definir e que deve ter o mesmo valor para todas as JVMs cujos atores
+vão interagir. Em outras palavras, o \english{cookie} é um segredo comum compartilhado
+por todos os nós de um ``aglomerado lógico''. O valor do \english{cookie} é uma das informações
+presentes no cabeçalho das mensagens. Quando a verificação de segurança está habilitada, 
+a cada envio de mensagem, a infraestrutura do Akka no destinatário verifica se a valor
+do \english{cookie} presente na mensagem confere com a valor esperado. Essa verificação
 ocorre entre os passos $6$ e $7$ da figura \ref{fig:remote-actor-message-flow}. Caso
-os valores sejam iguais, o passo $7$ será executado. Caso contrário, uma exceção de segurança 
-será lançada na JVM onde a mensagem foi recebida e o passo $7$ não será executado.
+os valores sejam iguais, o passo $7$ é executado. Caso contrário, uma exceção de segurança 
+é lançada na JVM onde a mensagem foi recebida e o passo $7$ não será executado.
 
-O Netty oferece algumas opções específicas para o transporte de mensagens baseadas
+O Netty oferece algumas opções específicas para o transporte de mensagens baseado
 em \english{socket}s TCP. Exemplos dessas opções são a definição do tamanho máximo da
 janela utilizada para o envio das mensagens a atores remotos, o tempo limite de espera 
 para leitura na \english{socket}, o intervalo de espera para tentativa de reconexão e
 o intervalo máximo em que o cliente deve tentar se conectar. Além dessas opções, o
 Netty fornece ainda a possibilidade de compactação das mensagens durante o envio. O Akka
-faz uso de todas as opções listadas, permitindo que os usuários da biblioteca definam
+faz uso de todas as opções mencionadas, permitindo que os usuários da biblioteca definam
 os valores desejados. As configurações de todos os módulos do Akka são feitas no 
 arquivo \code{akka.conf}. 
 
 O arquivo \code{akka.conf} é o ponto de entrada para todas as configurações
-que são parametrizáveis de todos os módulos do projeto Akka. O formato do arquivo difere
-dos arquivos para configurações de propriedades baseados em chaves e valores. O projeto
-Akka utiliza uma biblioteca chamada Configgy \cite{configgy} que define um formato
-mais idiomático para arquivos de configurações. Existe uma seção
+parametrizáveis de todos os módulos do projeto Akka. Nesse arquivo existe uma seção
 específica para as configurações correspondentes aos atores remotos. Na distribuição
-padrão, boa parte das propriedades para configuração de atores remotos são relacionadas ao
-Netty. Por exemplo, o tipo nível de compressão, tamanho da janela da mensagem e
-tempo limite de espera pelo cliente para se conectar. Contudo, existem algumas propriedades
-que são mais gerais, como se a comunicação deve ser autenticada via \english{cookies}
-pré-definidos, qual o \english{cookie} de segurança que deve ser utilizado e ainda qual a classe que deve
-ser utilizada como implementação da camada de suporte para atores remotos.
-
-Os dados informados no arquivo \code{akka.conf}, uma vez que foram lidos ficam acessíveis
-em objetos de acordo com o contexto que fazem parte. As propriedades relacionadas
-aos atores remotos estão organizadas em objetos dentro do módulo \code{RemoteShared}.
-Existe ainda uma classe auxiliar que é utilizada para acessar os módulos dos subprojetos
-do Akka via reflexão chamada de \code{ReflectiveAccess}. 
-A camada de implementação para o transporte de mensagens entre atores remotos é instanciada nessa
-classe. A listagem \ref{lst:akka-conf-vanilla} mostra a seção referente às configurações do módulo de atores remotos.
+padrão, boa parte das propriedades configuráveis de atores remotos são relacionadas ao
+Netty. Exemplos de tais propriedades são: o algoritmo e o nível de compressão, o tamanho da janela da mensagem e
+o tempo limite de espera por conexão no cliente. Contudo, existem algumas propriedades
+que são mais gerais, como a habilitação ou não da autenticação via \english{cookies}
+pré-definidos, o valor do \english{cookie} de segurança e ainda a classe que implementa a camada
+de suporte para atores remotos. A listagem \ref{lst:akka-conf-vanilla} mostra a seção referente 
+às configurações do módulo de atores remotos.
 
 
 \begin{lstlisting}[frame=tb, caption={Seção remote do arquivo akka.conf.}, label={lst:akka-conf-vanilla}]
@@ -604,33 +596,34 @@ remote {
 }
 \end{lstlisting}
 
-\subsection{Protocolo para envios de mensagens a atores remotos}
-\index{Akka!atores remotos!protocolo}
+\subsection{Formato das mensagens trocadas entre atores remotos}
+\index{Akka!atores remotos!formato das mensagens}
 \label{sec:atores_remotos_akka_protocolo}
 
-O protocolo utilizado para envios de mensagens entre atores remotos é definido no Akka com o
-uso da biblioteca Protobuf. Protobuf \cite{protobuf} é uma biblioteca que permite que dados 
-estruturados sejam representados em um formato eficiente e extensível. A biblioteca possui um compilador que 
-converte a definição de protocolos em classes Java, Python e C++, permitindo uma interação 
-direta com o protocolo nas linguagens, eliminando a necessidade de bibliotecas adicionais 
-para conversões. A biblioteca permite que protocolos sejam definidos com a palavra-chave 
-\code{message}. Protocolos podem conter outros protocolos e tipos primitivos 
-de dados, como por exemplo números, textos, valores booleanos e vetores de dados. Ademais, pode-se
-definir a obrigatoriedade dos valores para alguns atributos com as palavras-chaves
-\code{optional} e \code{required}.
+O formato das mensagens utilizado para envios de mensagens entre atores remotos é definido no Akka com o
+uso do Protobuf \cite{protobuf}, uma caixa de ferramentas que permite que dados 
+estruturados sejam representados em um formato eficiente e extensível. Essa caixa de ferramentas 
+possui um compilador que aceita definições de formatos de mensagens numa linguagem declarativa
+específica do Protobuf e que converte tais definições em classes Java, Python e C++.
 
-O protocolo das mensagens é mostrado na listagem \ref{lst:proto-message}. Uma mensagem
-é definida pelo tipo de seriação (linha $1$) que foi utilizado na codificação dos dados da mensagem 
-(listagem \ref{lst:proto-enum-serial}), pelos bytes da mensagem (linha $2$) 
-e por um atributo que é utilizado para informar o nome da classe da mensagem. 
-As mensagens para atores remotos são definidas com 
-base no tipo de seriação que foi definido na JVM onde se originou o envio. Para que a JVM 
-que esteja recebendo a mensagem possa fazer o processamento correto, a informação do tipo de 
-seriação deve estar presente. O atributo de manifesto da mensagem (linha $3$) é opcional, 
-porém é utilizado para forçar o carregamento da classe no \english{class loader}
-onde a mensagem será desseriada. 
+A linguagem declarativa utiliza a palavra-chave \code{message} para definir o formato de uma mensagem. 
+No contexto do Protobuf, o termo ``mensagem'' signfica ``tipo de dados estruturado''.
+Mensagens podem conter tipos primitivos de dados como números, cadeias de caracteres e valores booleanos,
+podem conter outras mensagens, e podem conter vetores de tipos primitivos ou de outras mensagens.
+Ademais, a linguagem permite que se defina a obrigatoriedade ou não de valores para os atributos,
+com as palavras-chaves \code{required} e \code{optional}.
 
-\begin{lstlisting}[frame=tb, caption={Protocolo para mensagens.}, label={lst:proto-message}]
+O formato de uma mensagem é mostrado na listagem \ref{lst:proto-message}. A mensagem
+é definida pelo tipo de seriação (linha $2$) utilizado para transformar o conteúdo da mensagem
+numa sequência de bytes (listagem \ref{lst:proto-enum-serial}), pelos bytes com o conteúdo da mensagem 
+seriado (linha $3$) e por um atributo de manifesto, que é utilizado para informar o nome da classe da mensagem. 
+Em toda mensagem enviada a um ator remoto, o tipo de seriação é o especificado na JVM que enviou a mensagem. 
+Para que a JVM destinatária possa fazer o processamento correto, a informação do tipo de 
+seriação deve estar presente na mensagem. O atributo de manifesto da mensagem (linha $4$) é opcional, 
+porém é utilizado para forçar o carregamento da classe por um \english{class loader} da JVM
+destinatária.
+
+\begin{lstlisting}[frame=tb, caption={Formato de uma mensagem.}, label={lst:proto-message}]
 message MessageProtocol {
   required SerializationSchemeType serializationScheme = 1;
   required bytes message = 2;
@@ -638,7 +631,7 @@ message MessageProtocol {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[frame=tb, caption={Enumeração com tipos de seriação suportados.}, label={lst:proto-enum-serial}]
+\begin{lstlisting}[frame=tb, caption={Enumeração com os tipos de seriação suportados.}, label={lst:proto-enum-serial}]
 enum SerializationSchemeType {
   JAVA = 1;
   SBINARY = 2;
@@ -649,15 +642,15 @@ enum SerializationSchemeType {
 \end{lstlisting}  
 
 Pelo fato da referência remota de um ator que faz um envio de mensagem ser enviada
-junto à mensagem, foi definido um protocolo para as \code{RemoteActorRef}s.
-Esse protocolo, mostrado na listagem \ref{lst:proto-remote-actor},  define
-o nome que é utilizado para identificar o ator (linha $1$), a classe que foi utilizada para
-a criação do ator (linha $2$), o endereço de onde o ator remoto foi criado (linha $3$) e, por
-fim, um valor opcional que indica o tempo máximo que o ator deve ficar bloqueado 
-durante um envio síncrono (linha $4$). O protocolo \code{AddressProtocol} utilizado na linha $3$,
-possui atributos para o endereço do hospedeiro e a porta.
+junto à mensagem, foi definido um formato para as \code{RemoteActorRef}s.
+Esse formato, mostrado na listagem \ref{lst:proto-remote-actor}, contém
+um nome único utilizado para identificar o ator (linha $2$), a classe que foi utilizada para
+a criação do ator (linha $3$), o endereço do nó onde o ator remoto foi criado (linha $4$) e, por
+fim, um valor opcional que indica o valor padrão do tempo máximo de bloqueio de um cliente
+durante um envio síncrono ao ator (linha $5$). O formato de mensagem \code{AddressProtocol} 
+utilizado na linha $3$, consiste em um par de atributos com o endereço do hospedeiro e a porta.
 
-\begin{lstlisting}[frame=tb, caption={Protocolo para referências de atores remotos.}, label={lst:proto-remote-actor}]
+\begin{lstlisting}[frame=tb, caption={Formato para referências de atores remotos.}, label={lst:proto-remote-actor}]
 message RemoteActorRefProtocol {
   required string classOrServiceName = 1;
   required string actorClassname = 2;
@@ -666,17 +659,18 @@ message RemoteActorRefProtocol {
 }
 \end{lstlisting}
 
-Por fim, é apresentado na listagem \ref{lst:proto-remote-message}, o protocolo utilizado para as 
-mensagens remotas. Esse protocolo é composto pelo protocolo para mensagens 
-(linha $4$) e pelo protocolo para referências remotas (linha $7$), além de outros protocolos menores.
-Na linha $1$, o atributo \code{uuid} é um identificador único para as mensagens.
-A implementação do protocolo \code{UuidProtocol} utiliza a biblioteca UUID \cite{uuid}
-que é uma implementação de identificadores globais únicos. Podemos notar na linha $4$ um 
-atributo booleano que é utilizado para indicar se é esperado uma mensagem de resposta para a
-mensagem que está sendo processada. Envios feitos via método \code{!} possuem valor
-\code{oneWay = true}, enquanto que os demais envios não.
+Por fim, é apresentado na listagem \ref{lst:proto-remote-message}, o formato de mensagem utilizado como 
+envelope para as mensagens remotas. Esse formato contém a mensagem envelopada
+(linha $5$) e uma referências remota para o remetente (linha $8$), além de outros atributos.
+Na linha $2$, o atributo \code{uuid} é um identificador único da mensagem.
+O formato \code{UuidProtocol} utiliza a biblioteca UUID \cite{uuid},
+que é uma implementação de identificadores globais únicos. Podemos notar na linha $5$ um 
+atributo booleano que indica se é esperada uma mensagem de resposta. As mensagens enviadas via 
+método \code{!} possuem valor \code{oneWay = true}, enquanto que as enviadas via métodos \code{!!}
+e \code{!!!} possuem valor \code{oneWay = false}.
 
-\begin{lstlisting}[frame=tb, caption={Protocolo para envios de mensagens remotas.}, label={lst:proto-remote-message}]
+\begin{lstlisting}[frame=tb, caption={Formato do envelope para envio de mensagem remota.}, 
+label={lst:proto-remote-message}]
 message RemoteMessageProtocol {
   required UuidProtocol uuid = 1;
   required ActorInfoProtocol actorInfo = 2;
@@ -690,30 +684,29 @@ message RemoteMessageProtocol {
 }
 \end{lstlisting}
 
-Optamos por não detalhar os demais protocolos utilizados para compor o protocolo para
-mensagens remotas pois, apesar de serem importantes para o suporte a atores remotos, 
-eles não possuem grande relevância para o desenvolvimento deste trabalho.
+Optamos por não detalhar os demais formatos utilizados que estão presentes no envelope de
+uma mensagem remota. Apesar de serem importantes para o suporte a atores remotos, 
+esses formatos não possuem grande relevância para o desenvolvimento deste trabalho.
 
-\subsection{Seriação de mensagens e de referências remotas}
+\subsection{Seriação de mensagens}
 \index{Akka!atores remotos!seriação}
 \label{sec:atores_remotos_akka_seriacao}
 
-Os diferentes tipos de seriação suportados pelo projeto Akka são utilizados na seriação
-da mensagem (listagem \ref{lst:proto-message}) e opcionalmente na seriação da referência
-remota (listagem \ref{lst:proto-remote-actor}). O módulo \code{Serializable} define 
-um conjunto de feições que podem ser utilizadas para trocar a seriação Java 
-padrão por algum dos outros formatos suportados.
+A transformação do conteúdo de uma mensagem em uma sequência de bytes (linha $3$ da listagem \ref{lst:proto-message})
+é efetuada por meio de um dos tipos de seriação suportados pelo Akka. As seguintes opções estão
+disponíveis: seriação Java, SBinary, JSON e Protobuf. Essas opções correspondem aos itens da enumeração
+na listagem \ref{lst:proto-enum-serial}. Por padrão, o Akka utiliza seriação Java para seriar o 
+conteúdo das mensagens e as mesmas regras para seriação de objetos Java se aplicam 
+aos objetos enviados como mensagens remotas. 
 
-O módulo \code{Serializer} define um objeto chamado de \code{MessageSerializer}
-que é o responsável para seriação e desseriação das mensagens. A seriação das mensagens
-acontece com base no tipo da mensagem. Por exemplo, se a instância utilizada como
-argumento para os métodos de envio de mensagens combinar a feição
-\code{ScalaJSON}, o conteúdo binário da mensagem estará no formato JSON.
+O módulo \code{Serializable} define um conjunto de feições que podem ser utilizadas para 
+trocar a seriação Java por algum dos outros formatos. O módulo \code{Serializer} define um 
+objeto chamado de \code{MessageSerializer} que é o responsável pela seriação e 
+desseriação das mensagens. A seleção do tipo de seriação empregado para uma dada mensagem,
+é feita com base no tipo da mensagem. Caso a mensagem seja combinada com uma das feições
+do módulo \code{Serializable} mencionadas acima, será usado o tipo de seriação correspondente
+à essa feição. Por exemplo, se a instância utilizada como argumento para um envio de mensagem for combinada com
+a feição \code{ScalaJSON}, o conteúdo binário da mensagem estará no formato JSON. Caso a mensagem
+não seja combinada com nenhuma daquelas feições, será usada seriação Java.
 
-A seriação de \code{RemoteActorRef}s é suportada por padrão e é utilizada
-no envio implícito do ator remetente (quando existe um ator remetente) junto
-à mensagem. Contudo, a seriação do estado ou mesmo da definição do ator 
-(chamada de \english{deep serialization}) deve, quando necessária, ser implementada pelo
-usuário da biblioteca. A seriação completa do ator é útil
-quando desejamos realocar o ator em um nó diferente do atual. 
  
