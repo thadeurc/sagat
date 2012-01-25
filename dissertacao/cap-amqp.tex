@@ -291,12 +291,12 @@ para clientes Java do projeto RabbitMQ e como eles estão relacionados.
 A biblioteca para clientes Java disponibilizada pelo projeto 
 RabbitMQ \cite{rabbit-api} define diversas classes para que seja possível a interação 
 com o \english{broker}. A conexão acontece com uma instância de 
-\code{com.rabbitmq.client.Connection}, que pode ser obtida pela classe
-\code{com.rabbitmq.client.ConnectionFactory}, via método \code{newConnection}.
-É na classe \code{ConnectionFactory} que informamos os valores dos parâmetros necessários
+\lstinline{com.rabbitmq.client.Connection}, que pode ser obtida pela classe
+\lstinline{com.rabbitmq.client.ConnectionFactory}, via método \lstinline{newConnection}.
+É na classe \lstinline{ConnectionFactory} que informamos os valores dos parâmetros necessários
 para conexão com o \english{broker} (listagem \ref{lst:conn-factory}).
 	
-\begin{lstlisting}[frame=tb, caption={Configuração e uso de uma ConnectionFactory.}, label={lst:conn-factory}]
+\begin{lstlisting}[caption={Configuração e uso de uma ConnectionFactory.}, label={lst:conn-factory}]
 val factory = new ConnectionFactory()
 factory.setHost(...)
 factory.setPort(...)
@@ -310,14 +310,14 @@ As conexões têm como papel principal estabelecer a comunicação da
 aplicação cliente com o \english{broker}. Conexões podem ser vistas como sendo
 a implementação de uma parte considerável da camada de transporte do padrão AMQP.
 Como descrito na seção \ref{sec:amqp-transporte}, a camada de transporte deve ser
-capaz de prover a multiplexação de canais. A classe \code{Connection} provê,
-dentre outros métodos, o método \code{createChannel}. A invocação desse método resulta em
-uma instância de \code{com.rabbitmq.client.Channel} no qual
+capaz de prover a multiplexação de canais. A classe \lstinline{Connection} provê,
+dentre outros métodos, o método \lstinline{createChannel}. A invocação desse método resulta em
+uma instância de \lstinline{com.rabbitmq.client.Channel} no qual
 podemos executar os comandos definidos na camada de sessão (listagem \ref{lst:channels}). 
-Por exemplo a criação de filas (\code{queueDeclare}) ou o envio (\code{basicPublish}) e 
-recebimento de mensagens (\code{basicConsume}).
+Por exemplo a criação de filas (\lstinline{queueDeclare}) ou o envio (\lstinline{basicPublish}) e 
+recebimento de mensagens (\lstinline{basicConsume}).
 	
-\begin{lstlisting}[frame=tb, caption={Criação e uso de canais.}, label={lst:channels}]
+\begin{lstlisting}[caption={Criação e uso de canais.}, label={lst:channels}]
 val channel = connection.createChannel
 channel.exchangeDeclare(...)
 channel.queueDeclare(...)
@@ -326,9 +326,9 @@ channel.basicPublish(...)
 \end{lstlisting}
 
 O recebimento das mensagens é feito com o uso de consumidores que são instâncias de 
-\code{com.rabbitmq.client.Consumer}. Os consumidores são registrados nos canais
+\lstinline{com.rabbitmq.client.Consumer}. Os consumidores são registrados nos canais
 e podem receber as mensagens assincronamente através do método 
-\code{handleDelivery} (listagem \ref{lst:sample-consumer}). 	
+\lstinline{handleDelivery} (listagem \ref{lst:sample-consumer}). 	
 
 A figura \ref{fig:rabbitmq-colaboracao} mostra como 
 uma fábrica de conexões, uma conexão, um canal e um consumidor estão relacionados. 
@@ -344,15 +344,14 @@ seria lançada e o canal utilizado para executar o comando de criação seria fecha
 como este, a regra também vale para \english{exchanges}. O procedimento correto é remover, seja via código ou
 via alguma aplicação administrativa do RabbitMQ, para depois fazer a criação.
 
-\begin{lstlisting}[frame=tb, caption={Registro de um consumidor.}, label={lst:sample-consumer}]		
+\begin{lstlisting}[caption={Registro de um consumidor.}, label={lst:sample-consumer}]		
 class MyConsumer(channel: Channel) extends Consumer{
 ...
 	def registerConsumer(queue: String, autoAck: Boolean): Unit = {
 	    channel.basicConsume(queue, autoAck, this)
 	}
 	@Override
-	def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties,
-                   message: Array[Byte]): Unit = {
+	def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties, message: Array[Byte]): Unit = {
 		// processamento da mensagem                   	
 	}	
 ...
@@ -371,7 +370,7 @@ Para finalizar este capítulo, é importante destacar que a implementação de canai
 \cite{rabbit-channels} não é uma segura para acesso concorrente (\english{thread safe}), 
 de modo que é de responsabilidade da aplicação fazer a devida proteção para 
 evitar que diferentes \english{threads} façam uso dos canais concorrentemente. Canais
-permitem ainda que sejam registrados tratadores de erros (\code{setReturnListener}), 
+permitem ainda que sejam registrados tratadores de erros (\lstinline{setReturnListener}), 
 como por exemplo para o caso em que mensagens não puderem ser enviadas ou entregues 
 aos seus respectivos destinatários. Em situações como essas, o corpo da mensagem e algumas
 informações do envio, como o nome da \english{exchange}, a chave de roteamento e 

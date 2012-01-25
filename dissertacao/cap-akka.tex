@@ -18,11 +18,11 @@ a seriação de mensagens e o formato definido para o envio de mensagens.
 \label{sec:atores_locais}
 \index{Akka!atores locais}
 
-Para se definir um ator local, cria-se uma classe que é combinada com a feição \code{akka.actor.Actor} 
-e que provê uma implementação para o método \code{receive}, como mostrado na listagem \ref{lst:def-actor}. 
+Para se definir um ator local, cria-se uma classe que é combinada com a feição \lstinline{akka.actor.Actor} 
+e que provê uma implementação para o método \lstinline{receive}, como mostrado na listagem \ref{lst:def-actor}. 
 A classe que define um ator descreve o comportamento inicial que o
 ator terá. Entretanto, o ator propriamente dito não é uma instância dessa classe, e sim 
-da feição \code{akka.actor.ActorRef}, cujas instâncias têm o papel de referências para atores. 
+da feição \lstinline{akka.actor.ActorRef}, cujas instâncias têm o papel de referências para atores. 
 Essas referências são imutáveis, seriáveis, identificáveis e armazenam o endereço do nó onde foram criadas. 
 
 \begin{lstlisting}[frame=tb, caption={Classe SampleActor.}, label={lst:def-actor}]
@@ -36,24 +36,24 @@ class SampleActor(val name: String) extends akka.actor.Actor {
 }
 \end{lstlisting}
 
-Atores são criados pelo método \code{actorOf} do objeto \code{akka.actor.Actor}, um
+Atores são criados pelo método \lstinline{actorOf} do objeto \lstinline{akka.actor.Actor}, um
 objeto \english{singleton} que é o objeto acompanhante da feição de mesmo nome. 
-A listagem \ref{lst:actorOf1} mostra o uso do método \code{actorOf}, que devolve 
-uma instância de \code{akka.actor.ActorRef}. A instância do ator criado
+A listagem \ref{lst:actorOf1} mostra o uso do método \lstinline{actorOf}, que devolve 
+uma instância de \lstinline{akka.actor.ActorRef}. A instância do ator criado
 possui uma referência para uma instância da classe que define o comportamento do ator.
-Na listagem \ref{lst:actorOf1}, esta instância é criada por reflexão com base no tipo \code{SampleActor}. 
+Na listagem \ref{lst:actorOf1}, esta instância é criada por reflexão com base no tipo \lstinline{SampleActor}. 
 O construtor utilizado durante a reflexão é o construtor padrão. A listagem 
-\ref{lst:actorOf1} ilustra também o uso do método \code{!} para fazer
-o envio assícrono da mensagem \code{"hello"} ao ator referenciado por \code{theActor}.
-O processamento dessa mensagem resultará na impressão do texto \code{"No name received hello"}.
+\ref{lst:actorOf1} ilustra também o uso do método \lstinline{!} para fazer
+o envio assícrono da mensagem \lstinline{"hello"} ao ator referenciado por \lstinline{theActor}.
+O processamento dessa mensagem resultará na impressão do texto \lstinline{"No name received hello"}.
 
 \begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via construtor padrão.}, label={lst:actorOf1}]
   val theActor = Actor.actorOf[SampleActor].start
   theActor ! "hello"
 \end{lstlisting}
 
-O método \code{actorOf} é sobrecarregado para permitir que uma função de inicialização (uma função sem 
-argumentos e com tipo de retorno \code{Actor}) possa ser utilizada como alternativa ao
+O método \lstinline{actorOf} é sobrecarregado para permitir que uma função de inicialização (uma função sem 
+argumentos e com tipo de retorno \lstinline{Actor}) possa ser utilizada como alternativa ao
 construtor padrão na criação do ator. A listagem \ref{lst:actorOf2} ilustra a criação do ator
 via função de inicialização. 
 
@@ -67,22 +67,22 @@ via função de inicialização.
 \end{lstlisting}
 
 Nas listagens \ref{lst:actorOf1} e \ref{lst:actorOf2}, tivemos que chamar explicitamente o método 
-\code{start} para iniciar o ator. Os atores do projeto Akka possuem um conjunto de estados
+\lstinline{start} para iniciar o ator. Os atores do projeto Akka possuem um conjunto de estados
 simples e linear. Um ator, logo após sua criação, está no estado ``novo'' 
-e ainda não pode receber mensagens. Após a invocação do método \code{start}, o ator passa ao 
+e ainda não pode receber mensagens. Após a invocação do método \lstinline{start}, o ator passa ao 
 estado ``iniciado'' e está apto a receber mensagens. Uma vez que o método 
-\code{stop} é invocado, o ator passa ao estado ``desligado'' e não executa mais ação alguma.
+\lstinline{stop} é invocado, o ator passa ao estado ``desligado'' e não executa mais ação alguma.
 
-A feição \code{Actor} possui em sua declaração uma referência para o seu 
-\code{ActorRef}, acessível via atributo \code{self}. Com essa referência, a classe que 
+A feição \lstinline{Actor} possui em sua declaração uma referência para o seu 
+\lstinline{ActorRef}, acessível via atributo \lstinline{self}. Com essa referência, a classe que 
 define o comportamento do ator pode alterar as definições padrão providas pelo Akka e utilizar 
-o métodos do \code{ActorRef} para, por exemplo, enviar uma resposta ao remetente de uma
+o métodos do \lstinline{ActorRef} para, por exemplo, enviar uma resposta ao remetente de uma
 mensagem ou encaminhar a outro ator uma mensagem recebida. Vale mencionar que, no caso de 
-atores locais, \code{self} referencia uma instância da classe \code{akka.actor.LocalActorRef}.
+atores locais, \lstinline{self} referencia uma instância da classe \lstinline{akka.actor.LocalActorRef}.
 
 As mensagens que são enviadas para um ator são colocadas sincronamente 
 na fila de mensagens do ator, levando tempo $O(1)$. As mensagens enfileiradas são então 
-despachadas assincronamente para a função parcial definida no bloco \code{receive} da classe
+despachadas assincronamente para a função parcial definida no bloco \lstinline{receive} da classe
 que define o comportamento do ator, como mostrado na figura \ref{fig:local-actor-message}. 
 
 \vspace{1ex}
@@ -108,14 +108,14 @@ possui em sua distribuição os quatro despachadores listados a seguir:
 	Internamente, é utilizada uma fila
 	que faz o bloqueio da \english{thread} que está tentando adicionar uma mensagem, caso o limite
 	superior da fila tenha sido atingido. Este despachador é definido na classe 
-	\code{ThreadBasedDispatcher}.
+	\lstinline{ThreadBasedDispatcher}.
 
 	\item Despachador impulsionado por eventos: 
 	É um despachador normalmente compartilhado por diversos atores de diferentes
 	tipos, já que ele utiliza um \english{thread pool} para agendar as ações de despachamento.
 	Este é o despachador mais flexível em termos de configurações, pois permite que
 	parâmetros do \english{thread pool} e da fila de mensagens sejam configurados.
-	É definido na classe \code{ExecutorBasedEventDrivenDispatcher}.
+	É definido na classe \lstinline{ExecutorBasedEventDrivenDispatcher}.
 	
 	\item Despachador impulsionado por eventos com balanceamento de carga:	
 	É um despachador semelhante ao despachador anterior, já que também é impulsionado por eventos.
@@ -123,7 +123,7 @@ possui em sua distribuição os quatro despachadores listados a seguir:
 	atores que não estejam processando mensagens possam ``roubar'' mensagens das filas dos atores
 	que estejam sobrecarregados. Dessa forma, o despachador dá suporte a uma forma de balanceamento 
 	do processamento das mensagens entre os atores.
-	É definido na classe \code{ExecutorBasedEventDrivenWorkStealingDispatcher},
+	É definido na classe \lstinline{ExecutorBasedEventDrivenWorkStealingDispatcher},
 	
 	\item Despachador quente: 
 	É um despachador inspirado no \english{Grand Central Dispacher} do Mac OS X \cite{apple-gcd}. 
@@ -132,33 +132,33 @@ possui em sua distribuição os quatro despachadores listados a seguir:
 	inativas\footnote{Idealmente a quantidade de \english{threads} corresponde ao número de núcleos disponíveis.}.
 	Sua vantagem é a capacidade de agrupar múltiplos eventos gerados pela
 	aplicação, por exemplo diversas mensagens recebidas, gerando uma única tarefa assíncrona.
-	Este despachador é definido na classe \code{HawtDispatcher}.			
+	Este despachador é definido na classe \lstinline{HawtDispatcher}.			
 \end{itemize}
 
 Por padrão, atores são associados a um despachador global impulsionado por eventos. A 
 configuração padrão desse despachador define uma fila transiente sem limite máximo de mensagens. 
 Caso seja necessário outro despachador a um ator, a atribuição deve acontecer 
-antes do ator ser iniciado via método \code{self.dispatcher}. O Akka permite ainda
+antes do ator ser iniciado via método \lstinline{self.dispatcher}. O Akka permite ainda
 que novos despachadores sejam criados. 
 
 \subsection{Envios de respostas}
 \index{Akka!atores locais!envios de respostas}
 \label{subsec:akka_envio_resposta}
 
-Além do método \code{!}, que faz o envio assícrono de uma mensagem sem devolver resposta
+Além do método \lstinline{!}, que faz o envio assícrono de uma mensagem sem devolver resposta
 alguma ao remetente, o Akka oferece dois métodos para envio de mensagem com
-resposta ao remetente. O primeiro deles é o método \code{!!}, que faz envio síncrono
+resposta ao remetente. O primeiro deles é o método \lstinline{!!}, que faz envio síncrono
 da mensagem e deixa o remetente bloqueado aguardando uma resposta durante um tempo limite. 
-O segundo é o método \code{!!!}, que devolve um resultado futuro ao remetente.
+O segundo é o método \lstinline{!!!}, que devolve um resultado futuro ao remetente.
 
 Todos os métodos para envio de mensagem capturam implicitamente uma
 referência para o ator remetente (\english{sender}). Uma cópia da referência 
 ao \english{sender} é enviada junto  com a mensagem para que o ator destinatário possa, 
 eventualmente, enviar uma mensagem de resposta. O ator destinatário pode enviar uma mensagem 
-de resposta via método \code{self.reply}. No caso dos envios de mensagem com resposta
-ao remetente, a chamada \code{self.reply} é obrigatória. A listagem \ref{lst:method!!}
-mostra a assinatura de um dos métodos de envio, o método \code{!!}. Note a presença
-do parâmetro implícito \code{sender}, que normalmente não é fornecido pelo chamador
+de resposta via método \lstinline{self.reply}. No caso dos envios de mensagem com resposta
+ao remetente, a chamada \lstinline{self.reply} é obrigatória. A listagem \ref{lst:method!!}
+mostra a assinatura de um dos métodos de envio, o método \lstinline{!!}. Note a presença
+do parâmetro implícito \lstinline{sender}, que normalmente não é fornecido pelo chamador
 do método.
 
 \begin{lstlisting}[frame=tb, caption={Assinatura do método !!.}, label={lst:method!!}]
@@ -168,16 +168,16 @@ def !!(message: Any, timeout: Long = this.timeout)
 }
 \end{lstlisting}
 
-A implementação dos métodos \code{!!} e \code{!!!} é baseada em resultados futuros.
+A implementação dos métodos \lstinline{!!} e \lstinline{!!!} é baseada em resultados futuros.
 Resultados futuros são representações de resultados de computações assíncronas. Na biblioteca de Java,
-a classe \code{java.util.concurrent.FutureTask} provê funcionalidades básicas
+a classe \lstinline{java.util.concurrent.FutureTask} provê funcionalidades básicas
 para resultados futuros. O projeto Akka tem sua própria implementação
 de resultados futuros de computações assíncronas. Essa implementação provê
 algumas facilidades que não são oferecidas pela implementação de Java e que são necessárias
-ao Akka. A feição \code{CompletableFuture} define métodos
+ao Akka. A feição \lstinline{CompletableFuture} define métodos
 para que resultados futuros possam ser completados por outras entidades, como mostra a listagem
 \ref{lst:completable}. A implementação do Akka é inspirada no projeto Actorom \cite{actorom} e
-é construída sobre classes do pacote \code{java.util.concurrent}.
+é construída sobre classes do pacote \lstinline{java.util.concurrent}.
 
 \begin{lstlisting}[frame=tb, caption={Feição CompletableFuture.}, label={lst:completable}]
 trait CompletableFuture[T] extends Future[T] {
@@ -187,44 +187,44 @@ trait CompletableFuture[T] extends Future[T] {
 }
 \end{lstlisting}
 
-Envios de mensagens via métodos \code{!!} e \code{!!!} são 
+Envios de mensagens via métodos \lstinline{!!} e \lstinline{!!!} são 
 considerados como feitos por ``remetentes futuros''. Uma vez que o ator destinatário enviou
 a mensagem de resposta, essa mensagem não é colocada em uma fila de mensagens como no caso
-de um envio via \code{!}, mas é utilizada para indicar no resultado futuro que a computação 
-foi completada. Na \code{ActorRef}, um envio de uma mensagem feito via método \code{!!!} é processado 
+de um envio via \lstinline{!}, mas é utilizada para indicar no resultado futuro que a computação 
+foi completada. Na \lstinline{ActorRef}, um envio de uma mensagem feito via método \lstinline{!!!} é processado 
 da seguinte maneira:
 
 \begin{enumerate}
-	\item Uma instância de \code{CompletableFuture} é criada dentro do método.
+	\item Uma instância de \lstinline{CompletableFuture} é criada dentro do método.
 	
-	\item Assim como para um envio assíncrono via \code{!}, a mensagem é colocada na fila do ator destinatário. 
-	Além disso, uma referência para a instância de \code{CompletableFuture} criada no passo anterior é colocada 
+	\item Assim como para um envio assíncrono via \lstinline{!}, a mensagem é colocada na fila do ator destinatário. 
+	Além disso, uma referência para a instância de \lstinline{CompletableFuture} criada no passo anterior é colocada 
 	juntamente com a mensagem.
 	
-	\item Uma outra cópia da referência para o \code{CompletableFuture} criado no passo $1$
-	é devolvida para quem invocou o método \code{!!!}.
+	\item Uma outra cópia da referência para o \lstinline{CompletableFuture} criado no passo $1$
+	é devolvida para quem invocou o método \lstinline{!!!}.
 	
-	\item Ao final do processamento da mensagem, o \code{CompletableFuture}
+	\item Ao final do processamento da mensagem, o \lstinline{CompletableFuture}
 	é completado com o resultado. Como a instância completada
 	(seja com um resultado válido ou com uma exceção) é a mesma
-	referenciada por quem fez a invocação do método \code{!!!}, o resultado pode então
+	referenciada por quem fez a invocação do método \lstinline{!!!}, o resultado pode então
 	ser utilizado.
 \end{enumerate}
 
-Um envio feito via método \code{!!} possui quase os mesmos passos de processamento.
+Um envio feito via método \lstinline{!!} possui quase os mesmos passos de processamento.
 A diferença está na devolução da referência. Como o envio é síncrono, a espera do resultado
-acontece de modo bloqueante dentro do próprio método \code{!!}.
-Quando o \code{CompletableFuture} estiver preenchido, o resultado será devolvido ao chamador
-do método \code{!!}.
+acontece de modo bloqueante dentro do próprio método \lstinline{!!}.
+Quando o \lstinline{CompletableFuture} estiver preenchido, o resultado será devolvido ao chamador
+do método \lstinline{!!}.
 
 Envios de mensagens não são limitados somente a atores. Qualquer objeto
 ou classe pode enviar uma mensagem a um ator. Podemos notar que o código da listagem 
 \ref{lst:actorOf1} não está definido em um ator. Num envio de mensagem com resposta
-ao remetente (\code{!!} ou \code{!!!}), o ator destinatário
+ao remetente (\lstinline{!!} ou \lstinline{!!!}), o ator destinatário
 pode verificar se há um remetente definido a mensagem recebida, 
-porém existe um modo alternativo e mais simples: o método \code{self.reply\_?} faz o 
+porém existe um modo alternativo e mais simples: o método \lstinline{self.reply_?} faz o 
 envio ao remetente somente no caso em que há remetente definido, devolvendo o valor 
-booleano \code{true} para indicar se houve envio ou \code{false} caso contrário.
+booleano \lstinline{true} para indicar se houve envio ou \lstinline{false} caso contrário.
 
 \section{Hierarquias de supervisão}
 \index{Akka!hierarquias de supervisão}
@@ -234,12 +234,12 @@ atores definidos como supervisores. Sua implementação é totalmente baseada na ab
 linguagem Erlang \cite{PROG_ERLANG07}, conhecida como ``deixe que falhe'' (\english{let it crash}). 
 
 Uma hierarquia de supervisão é criada com o uso de ligações entre atores. A ligação
-de dois atores pode acontecer via métodos \code{link} e \code{startLink}, definidos em \code{ActorRef}. 
-A chamada \code{a1.link(a2)} faz a ligação dos atores \code{a1} e \code{a2}. A chamada
-\code{a1.startLink(a2)} também faz a ligação dos atores \code{a1} e \code{a2}, porém
-coloca o ator \code{a2} no estado ``iniciado''. As ligações são unidirecionais, ou seja,
-o ator alvo da chamada que criou uma ligação (\code{a1}) receberá uma notificação 
-em caso de falha em algum um ator ligado a ele (\code{a2}).
+de dois atores pode acontecer via métodos \lstinline{link} e \lstinline{startLink}, definidos em \lstinline{ActorRef}. 
+A chamada \lstinline{a1.link(a2)} faz a ligação dos atores \lstinline{a1} e \lstinline{a2}. A chamada
+\lstinline{a1.startLink(a2)} também faz a ligação dos atores \lstinline{a1} e \lstinline{a2}, porém
+coloca o ator \lstinline{a2} no estado ``iniciado''. As ligações são unidirecionais, ou seja,
+o ator alvo da chamada que criou uma ligação (\lstinline{a1}) receberá uma notificação 
+em caso de falha em algum um ator ligado a ele (\lstinline{a2}).
 
 Quando se define uma hierarquia de supervisão, é necessário definir, em cada ator supervisionado, 
 o ciclo de vida que esse ator deverá ter. O ciclo de vida de um ator indica ao ator supervisor 
@@ -248,14 +248,14 @@ como proceder no caso de erros no ator supervisionado. Existem dois tipos de cic
 \begin{enumerate}
 	\item Permanente: Indica que o ator possui um ciclo de 
 	vida permanente e sempre deve ser reiniciado no caso de falhas.
-	Este ciclo é definido pela classe \code{Supervision.Permanent}.
+	Este ciclo é definido pela classe \lstinline{Supervision.Permanent}.
 	
 	\item Temporário: 
 	Indica que o ator possui um ciclo de vida temporário e
 	não deve ser reiniciado no caso de falhas. Ademais, esse ciclo de vida
 	indica que o ator deve ser colocado no estado ``desligado'', como
 	se ele tivesse encerrado sua execução normalmente (ou seja, como se ele tivesse sido alvo de uma 
-	chamada ao método \code{stop}). Este ciclo é definido na classe \code{Supervision.Temporary}.
+	chamada ao método \lstinline{stop}). Este ciclo é definido na classe \lstinline{Supervision.Temporary}.
 \end{enumerate}
 
 A definição de um ator com ciclo de vida permanente é mostrada na listagem
@@ -280,17 +280,17 @@ class MySupervised extends akka.actor.Actor{
 \end{lstlisting}
 
 O processo de reinicialização de um ator consiste na criação de uma nova instância da
-classe que define o ator. Os métodos de \english{callback} \code{preRestart} e \code{postRestart} são 
+classe que define o ator. Os métodos de \english{callback} \lstinline{preRestart} e \lstinline{postRestart} são 
 invocados, respectivamente, antes do ator passar ao estado ``desligado'' e logo após ele ter sido reiniciado.
 Alguns detalhes importantes a observarmos sobre a reinicialização de atores:
 
 \begin{itemize}
-	\item O método \code{preRestart} é invocado na instância em que ocorreu o erro.
+	\item O método \lstinline{preRestart} é invocado na instância em que ocorreu o erro.
 
-	\item O método \code{postRestart} é invocado na nova instância.
+	\item O método \lstinline{postRestart} é invocado na nova instância.
 
-	\item A nova instância criada utiliza a mesma \code{ActorRef} da instância em que ocorreu o erro,
-	ou seja, tanto a instância nova quanto a anterior possuem o mesmo valor de \code{self}.
+	\item A nova instância criada utiliza a mesma \lstinline{ActorRef} da instância em que ocorreu o erro,
+	ou seja, tanto a instância nova quanto a anterior possuem o mesmo valor de \lstinline{self}.
 
 	\item  A criação da nova instância é feita da mesma maneira que a do ator original, o qual pode
 	ter sido criado via construtor padrão (é o caso do ator da listagem \ref{lst:actorOf1}) ou
@@ -305,20 +305,20 @@ os atores que ficarão ligados a ele. Existem duas estratégias possíveis:
 	Com esta estratégia, uma exceção lançada por um ator 
 	supervisionado que possua ciclo de vida permanente faz
 	com que somente esse ator seja reiniciado. Esta estratégia é definida 
-	na classe \code{Supervision.OneForOneStrategy}.
+	na classe \lstinline{Supervision.OneForOneStrategy}.
 	
 	\item Todos por um:  
 	Com esta estratégia, uma exceção lançadas por um ator 
 	supervisionado que possua ciclo de vida permanente faz com 
 	que todos os atores sob o mesmo supervisor sejam reiniciados. Esta 
-	estratégia é definida na classe \code{Supervision.AllForOneStrategy}.
+	estratégia é definida na classe \lstinline{Supervision.AllForOneStrategy}.
 \end{enumerate}
 
 Junto com a estratégia de reinicialização, é necessário definir quais são as exceções que o ator supervisor
 tem interesse em tratar, além de configurações relacionadas à quantidade de tentativas de
 reinicialização de um ator supervisionado que podem ser feitas dentro de um período de tempo. Mostramos na listagem 
 \ref{lst:supervisor-actor} a definição de um ator supervisor. Na linha $2$ dessa listagem
-definimos a estratégia um por um, tratando exceções do tipo \code{java.lang.Exception}, 
+definimos a estratégia um por um, tratando exceções do tipo \lstinline{java.lang.Exception}, 
 com duas tentativas de reinicialização em um período de cinco segundos. Caso o limite de tentativas
 de reinicialização tenha sido atingido, sem que se tenha obtido sucesso na reinicialização do ator supervisionado,
 uma mensagem específica é enviada para o ator supervisor.
@@ -347,7 +347,7 @@ object SampleSupervisorHierarchy extends Application {
 
 Quando criamos uma ligação de supervisão entre dois atores, como na linha $4$ da listagem 
 \ref{lst:supervisor-hier}, a referência para o ator supervisor fica armazenada no ator supervisionado.
-Essa referência é acessível via método \code{self.supervisor}. Um ator supervisor
+Essa referência é acessível via método \lstinline{self.supervisor}. Um ator supervisor
 também pode ser supervisionado por outro ator, como mostrado na figura 
 \ref{fig:actor-hier}. O encadeamento de atores supervisores abre a possibilidade da
 criação de sub-hieraquias, cada uma com seu supervisor. 
@@ -370,31 +370,31 @@ normalmente, iniciam o envio de mensagens. O termo servidor denota o processo (m
 no qual reside o ator remoto. A infraestrutura de atores remotos utiliza os seguintes elementos:
 	
 \begin{itemize}	
-	\item \code{RemoteServerModule}: É uma feição que define as responsabilidades
+	\item \lstinline{RemoteServerModule}: É uma feição que define as responsabilidades
 	do componente utilizado no lado do servidor. Suas implementações têm como
 	responsabilidade manter registrados os atores, bem como encaminhar a eles as mensagens 
-	recebidas de clientes remotos. Cada \code{RemoteServerModule} é associado a um endereço
+	recebidas de clientes remotos. Cada \lstinline{RemoteServerModule} é associado a um endereço
 	de hospedeiro (\english{host}) e a uma porta TCP. Um mesma máquina virtual pode conter 
-	múltiplos \code{RemoteServerModule}s.
+	múltiplos \lstinline{RemoteServerModule}s.
 	A documentação do Akka utiliza para este componente a terminologia ``servidor remoto'' 
 	(\english{remote server}).
 
-	\item \code{RemoteClientModule}: É uma feição que define as responsabilidades
+	\item \lstinline{RemoteClientModule}: É uma feição que define as responsabilidades
 	do componente usado no lado do cliente. Suas implementações têm como responsabilidade 
 	visível oferecer uma interface para obtenção de referências a atores remotos. 
 	Ademais, oferece também suporte em tempo de execução para a infraestrutura de atores do lado do 
 	cliente, provendo uma série de serviços não visíveis para o usuário. Tais serviços incluem os
 	seguintes: seriação de mensagens, envio de mensagens para atores remotos,
 	conversão de ator local em ator remoto e intermediação de 
-	mensagens de resposta vindas do \code{RemoteServerModule}, no caso de envios via \code{!!}
-	ou \code{!!!}. A documentação do Akka utiliza para este componente a terminologia
+	mensagens de resposta vindas do \lstinline{RemoteServerModule}, no caso de envios via \lstinline{!!}
+	ou \lstinline{!!!}. A documentação do Akka utiliza para este componente a terminologia
 	``cliente remoto'' (\english{remote client}).
 
-	\item \code{RemoteSupport}: Esta classe abstrata é responsável por concentrar as 
+	\item \lstinline{RemoteSupport}: Esta classe abstrata é responsável por concentrar as 
 	responsabilidades definidas para os módulos remotos do cliente e do servidor e ser um 
-	ponto único de suporte remoto. É acessível via \code{Actor.remote}.
+	ponto único de suporte remoto. É acessível via \lstinline{Actor.remote}.
 
-	\item \code{RemoteActorRef}: É uma classe equivalente a \code{LocalActorRef}, porém
+	\item \lstinline{RemoteActorRef}: É uma classe equivalente a \lstinline{LocalActorRef}, porém
 	utiliza o suporte remoto para fazer envio das mensagens.
 \end{itemize}
 
@@ -404,10 +404,10 @@ remoto pode ocorrer tanto por iniciativa do nó onde reside a aplicação servidora
 como por iniciativa de uma aplicação cliente remota. A listagem \ref{lst:remote-server1} mostra
 a criação de um ator remoto gerenciado pelo servidor (\english{server managed actor}). 
 Nessa listagem, um servidor remoto é inicializado na linha $2$ para que os atores possam ser registrados. 
-Na linha $3$ registramos o ator sob o nome \code{hello-service}. O ator passou a 
+Na linha $3$ registramos o ator sob o nome \lstinline{hello-service}. O ator passou a 
 estar remotamente acessível a aplicações que residam em outras máquinas virtuais. Um detalhe
-importante a ser destacado é a inicialização implícita do ator feita pelo método \code{register},
-tornando opcional a chamada ao método \code{start} no ator. Note que o fato de um ator ser remoto 
+importante a ser destacado é a inicialização implícita do ator feita pelo método \lstinline{register},
+tornando opcional a chamada ao método \lstinline{start} no ator. Note que o fato de um ator ser remoto 
 não altera a declaração da classe do ator. A classe do ator remoto da listagem \ref{lst:remote-server1}, 
 é a mesma do ator local da listagem \ref{lst:actorOf1}.
 
@@ -419,16 +419,16 @@ object SampleRemoteServer extends Application {
 }
 \end{lstlisting}
 
-Referências para atores remotos são obtidas via método \code{actorFor}. Esse
+Referências para atores remotos são obtidas via método \lstinline{actorFor}. Esse
 método possui diversas sobrecargas, sendo que a mais simples recebe como argumentos o nome do ator, 
 o endereço do hospedeiro e a porta do \english{remote server} onde o ator foi registrado. 
 A linha $2$ da listagem \ref{lst:remote-client1} mostra como uma aplicação cliente 
 obtém uma referência para um ator remoto. Podemos notar que, no uso do ator na linha $3$, não há nenhuma 
-indicação que caracterize um envio remoto. O método \code{actorFor} devolve, na 
-maioria das vezes, uma instância de \code{RemoteActorRef} que representam \english{proxies} 
+indicação que caracterize um envio remoto. O método \lstinline{actorFor} devolve, na 
+maioria das vezes, uma instância de \lstinline{RemoteActorRef} que representam \english{proxies} 
 locais para o ator remoto. A implementação desse método possui otimizações para que referências
 locais sejam utilizadas sempre que possível. Por exemplo, caso a entidade que está enviando a mensagem resida no 
-mesmo nó que o ator remoto, uma instância de \code{LocalActorRef} é devolvida. 
+mesmo nó que o ator remoto, uma instância de \lstinline{LocalActorRef} é devolvida. 
 
 \begin{lstlisting}[frame=tb, caption={Aplicação SampleRemoteClient.}, label={lst:remote-client1}]
 object SampleRemoteClient extends Application{
@@ -439,12 +439,12 @@ object SampleRemoteClient extends Application{
 		
 Aplicações cliente podem optar por criar e iniciar atores em nós diferentes do nó corrente.
 Esses atores são denominados atores gerenciados pelo cliente (\english{client managed actors}). 
-A biblioteca de atores fornece uma versão alternativa do método \code{actorFor}
+A biblioteca de atores fornece uma versão alternativa do método \lstinline{actorFor}
 que recebe parâmetros adicionais para indicar o nó onde o ator criado será executado. Como o Akka
 não oferece suporte a carga remota de classes, é necessário que o conjunto de classes com a definição
 de um ator esteja acessível para a máquina virtual onde o ator será instanciado e executado.
 Outra observação importante diz respeito ao servidor remoto que irá executar um ator criado via
-\code{actorFor}: é necessário que esse servidor esteja em execução antes do método \code{actorFor}
+\lstinline{actorFor}: é necessário que esse servidor esteja em execução antes do método \lstinline{actorFor}
 ser invocado. Detalhes como esses motivam discussões entre
 a comunidade de desenvolvedores do Akka para que o suporte a atores gerenciados pelo cliente seja 
 tornado obsoleto e removido em versões futuras, já que os mesmos resultados podem ser obtidos com o uso de 
@@ -485,17 +485,17 @@ em sete passos:
 	\item O seriador é responsável por converter a informação 
 	recebida em um vetor de \english{bytes} para que o transporte possa ocorrer. 
 	Uma vez que a informação esteja no formato a ser transportado, o \english{proxy} utiliza uma 
-	implementação de \code{RemoteSupport} (que na figura \ref{fig:remote-actor-message-flow} é 
-	uma instância de \code{NettyRemoteSupport}) para enviar a mensagem 
-	ao \code{RemoteSupport} que está no lado do servidor.
+	implementação de \lstinline{RemoteSupport} (que na figura \ref{fig:remote-actor-message-flow} é 
+	uma instância de \lstinline{NettyRemoteSupport}) para enviar a mensagem 
+	ao \lstinline{RemoteSupport} que está no lado do servidor.
 	
-	\item A classe \code{ClientBootstrap} repassa a mensagem para o 
-	\code{ServerBootstrap} ao qual se está conectada. O processo de envio, do ponto de vista 
+	\item A classe \lstinline{ClientBootstrap} repassa a mensagem para o 
+	\lstinline{ServerBootstrap} ao qual se está conectada. O processo de envio, do ponto de vista 
 	do cliente, leva tempo $O(1)$, já que o transporte da mensagem pelo JBoss Netty 
-	entre o \code{ClientBootstrap} e o \code{ServerBootstrap}	
+	entre o \lstinline{ClientBootstrap} e o \lstinline{ServerBootstrap}	
 	é feito de modo assíncrono.
 	
-	\item A classe \code{ServerBootstrap} repassa a mensagem ao \english{handler} que
+	\item A classe \lstinline{ServerBootstrap} repassa a mensagem ao \english{handler} que
 	lhe foi associado.
 	
 	\item A implementação do \english{handler} feita no Akka repassa a mensagem para o seriador
@@ -507,10 +507,10 @@ em sete passos:
 	\item Por fim, a implementação do \english{handler} utiliza as informações
 	de cabeçalho da mensagem para identificar qual o ator destinatário e buscá-lo 
 	no registro local de atores, bem como para verificar se o envio é assíncrono ou não. 
-	No caso de envio assíncrono, o ator destinatário tem seu método \code{!} 
-	invocado. Além de receber como parâmetro a mensagem, essa chamada ao método \code{!}
+	No caso de envio assíncrono, o ator destinatário tem seu método \lstinline{!} 
+	invocado. Além de receber como parâmetro a mensagem, essa chamada ao método \lstinline{!}
 	recebe um segundo parâmetro (que normalmente não é fornecido por ser implicitamente 
-	capturado) com uma referência para o ator remetente (\code{sender}) ou com o valor \code{None},
+	capturado) com uma referência para o ator remetente (\lstinline{sender}) ou com o valor \lstinline{None},
 	caso o remetente não seja um ator.  O despachador associado ao ator destinatário tem o mesmo 
 	comportamento já mostrado na figura \ref{fig:local-actor-message}.
 \end{enumerate}
@@ -523,13 +523,13 @@ em sete passos:
   	\label{fig:remote-actor-message-flow}
 \end{figure}
         
-Os envios feitos via métodos \code{!!} e \code{!!!} para atores remotos são análogos,
+Os envios feitos via métodos \lstinline{!!} e \lstinline{!!!} para atores remotos são análogos,
 mas possuem um passo adicional em relação aos mostrados na figura \ref{fig:remote-actor-message-flow}.
 O passo adicional acontece entre os passos $2$ e $3$. Antes da mensagem ser enviada,
-é colocada no mapa de resultados futuros uma referência para a instância de \code{CompletableFuture} 
-criada pela chamada ao método \code{!!} ou \code{!!!}. A chave para essa instância é o identificador da mensagem.
+é colocada no mapa de resultados futuros uma referência para a instância de \lstinline{CompletableFuture} 
+criada pela chamada ao método \lstinline{!!} ou \lstinline{!!!}. A chave para essa instância é o identificador da mensagem.
 
-Um envio feito mediante chamada ao método \code{!!} ou \code{!!!} gera uma mensagem de resposta 
+Um envio feito mediante chamada ao método \lstinline{!!} ou \lstinline{!!!} gera uma mensagem de resposta 
 no caminho contrário ao mostrado na figura \ref{fig:remote-actor-message-flow}. O conteúdo
 dessa mensagem de resposta (seja um resultado de sucesso ou uma exceção) é utilizado para completar
 o resultado futuro. Caso a mensagem de resposta contenha uma exceção e caso o ator que gerou a resposta
@@ -556,9 +556,9 @@ o intervalo máximo em que o cliente deve tentar se conectar. Além dessas opções,
 Netty fornece ainda a possibilidade de compactação das mensagens durante o envio. O Akka
 faz uso de todas as opções mencionadas, permitindo que os usuários da biblioteca definam
 os valores desejados. As configurações de todos os módulos do Akka são feitas no 
-arquivo \code{akka.conf}. 
+arquivo \lstinline{akka.conf}. 
 
-O arquivo \code{akka.conf} é o ponto de entrada para todas as configurações
+O arquivo \lstinline{akka.conf} é o ponto de entrada para todas as configurações
 parametrizáveis de todos os módulos do projeto Akka. Nesse arquivo existe uma seção
 específica para as configurações correspondentes aos atores remotos. Na distribuição
 padrão, boa parte das propriedades configuráveis de atores remotos são relacionadas ao
@@ -606,12 +606,12 @@ estruturados sejam representados em um formato eficiente e extensível. Essa caix
 possui um compilador que aceita definições de formatos de mensagens numa linguagem declarativa
 específica do Protobuf e que converte tais definições em classes Java, Python e C++.
 
-A linguagem declarativa utiliza a palavra-chave \code{message} para definir o formato de uma mensagem. 
+A linguagem declarativa utiliza a palavra-chave \lstinline{message} para definir o formato de uma mensagem. 
 No contexto do Protobuf, o termo ``mensagem'' signfica ``tipo de dados estruturado''.
 Mensagens podem conter tipos primitivos de dados como números, cadeias de caracteres e valores booleanos,
 podem conter outras mensagens, e podem conter vetores de tipos primitivos ou de outras mensagens.
 Ademais, a linguagem permite que se defina a obrigatoriedade ou não de valores para os atributos,
-com as palavras-chaves \code{required} e \code{optional}.
+com as palavras-chaves \lstinline{required} e \lstinline{optional}.
 
 O formato de uma mensagem é mostrado na listagem \ref{lst:proto-message}. A mensagem
 é definida pelo tipo de seriação (linha $2$) utilizado para transformar o conteúdo da mensagem
@@ -642,12 +642,12 @@ enum SerializationSchemeType {
 \end{lstlisting}  
 
 Pelo fato da referência remota de um ator que faz um envio de mensagem ser enviada
-junto à mensagem, foi definido um formato para as \code{RemoteActorRef}s.
+junto à mensagem, foi definido um formato para as \lstinline{RemoteActorRef}s.
 Esse formato, mostrado na listagem \ref{lst:proto-remote-actor}, contém
 um nome único utilizado para identificar o ator (linha $2$), a classe que foi utilizada para
 a criação do ator (linha $3$), o endereço do nó onde o ator remoto foi criado (linha $4$) e, por
 fim, um valor opcional que indica o valor padrão do tempo máximo de bloqueio de um cliente
-durante um envio síncrono ao ator (linha $5$). O formato de mensagem \code{AddressProtocol} 
+durante um envio síncrono ao ator (linha $5$). O formato de mensagem \lstinline{AddressProtocol} 
 utilizado na linha $3$, consiste em um par de atributos com o endereço do hospedeiro e a porta.
 
 \begin{lstlisting}[frame=tb, caption={Formato para referências de atores remotos.}, label={lst:proto-remote-actor}]
@@ -662,12 +662,12 @@ message RemoteActorRefProtocol {
 Por fim, é apresentado na listagem \ref{lst:proto-remote-message}, o formato de mensagem utilizado como 
 envelope para as mensagens remotas. Esse formato contém a mensagem envelopada
 (linha $5$) e uma referências remota para o remetente (linha $8$), além de outros atributos.
-Na linha $2$, o atributo \code{uuid} é um identificador único da mensagem.
-O formato \code{UuidProtocol} utiliza a biblioteca UUID \cite{uuid},
+Na linha $2$, o atributo \lstinline{uuid} é um identificador único da mensagem.
+O formato \lstinline{UuidProtocol} utiliza a biblioteca UUID \cite{uuid},
 que é uma implementação de identificadores globais únicos. Podemos notar na linha $5$ um 
 atributo booleano que indica se é esperada uma mensagem de resposta. As mensagens enviadas via 
-método \code{!} possuem valor \code{oneWay = true}, enquanto que as enviadas via métodos \code{!!}
-e \code{!!!} possuem valor \code{oneWay = false}.
+método \lstinline{!} possuem valor \lstinline{oneWay = true}, enquanto que as enviadas via métodos \lstinline{!!}
+e \lstinline{!!!} possuem valor \lstinline{oneWay = false}.
 
 \begin{lstlisting}[frame=tb, caption={Formato do envelope para envio de mensagem remota.}, 
 label={lst:proto-remote-message}]
@@ -699,14 +699,14 @@ na listagem \ref{lst:proto-enum-serial}. Por padrão, o Akka utiliza seriação Jav
 conteúdo das mensagens e as mesmas regras para seriação de objetos Java se aplicam 
 aos objetos enviados como mensagens remotas. 
 
-O módulo \code{Serializable} define um conjunto de feições que podem ser utilizadas para 
-trocar a seriação Java por algum dos outros formatos. O módulo \code{Serializer} define um 
-objeto chamado de \code{MessageSerializer} que é o responsável pela seriação e 
+O módulo \lstinline{Serializable} define um conjunto de feições que podem ser utilizadas para 
+trocar a seriação Java por algum dos outros formatos. O módulo \lstinline{Serializer} define um 
+objeto chamado de \lstinline{MessageSerializer} que é o responsável pela seriação e 
 desseriação das mensagens. A seleção do tipo de seriação empregado para uma dada mensagem,
 é feita com base no tipo da mensagem. Caso a mensagem seja combinada com uma das feições
-do módulo \code{Serializable} mencionadas acima, será usado o tipo de seriação correspondente
+do módulo \lstinline{Serializable} mencionadas acima, será usado o tipo de seriação correspondente
 à essa feição. Por exemplo, se a instância utilizada como argumento para um envio de mensagem for combinada com
-a feição \code{ScalaJSON}, o conteúdo binário da mensagem estará no formato JSON. Caso a mensagem
+a feição \lstinline{ScalaJSON}, o conteúdo binário da mensagem estará no formato JSON. Caso a mensagem
 não seja combinada com nenhuma daquelas feições, será usada seriação Java.
 
  

@@ -9,18 +9,18 @@ do hospedeiro e porta da outra parte no qual se está conectado, a possibilidade 
 parte continua conectada e o não armazenamento intermediário de mensagens.  
 A biblioteca do Netty fornece meios para obter informações tanto sobre o endereço da outra parte,
 como ser notificado em caso de falhas na conexão. Esses meios são utilizados na implementação de atores
-remotos do Akka, tanto para notificar  um \code{RemoteClient} que o \code{RemoteServer} correspondente
+remotos do Akka, tanto para notificar  um \lstinline{RemoteClient} que o \lstinline{RemoteServer} correspondente
 não está mais conectado, quanto o contrário.
 
 O fato de utilizarmos filas para fazer o armazenamento intermediário das mensagens 
-(ainda que, na maior parte do tempo, por um período breve), permite que um \code{RemoteServer} 
-ou \code{RemoteClient} possam receber mensagens mesmo após sua execução ter sido interrompida. 
+(ainda que, na maior parte do tempo, por um período breve), permite que um \lstinline{RemoteServer} 
+ou \lstinline{RemoteClient} possam receber mensagens mesmo após sua execução ter sido interrompida. 
 Para tal, basta que eles tenham executado alguma vez com uma configuração durável\footnote{O mesmo 
 vale para configurações transientes, desde que o \english{message broker} não tenha sido reiniciado}. 
 As mensagens ficam armazenadas até que um novo consumidor seja registrado. Um detalhe importante
 a se destacar é em relação a \english{exchange} não existir no momento do envio. Em casos como esse, quem está
 fazendo o envio recebe uma exceção no mesmo momento que está tentando fazer o envio. Mensagens que foram
-armazenadas, por exemplo, porque o \code{RemoteServer} ou \code{RemoteClient} não estavam
+armazenadas, por exemplo, porque o \lstinline{RemoteServer} ou \lstinline{RemoteClient} não estavam
 em execução podem deixar de ter a mesma semântica para o ator. O comportamento do ator no momento do recebimento
 da mensagem pode, eventualmente, ser diferente do comportamento que o ator possuía no momento do envio.
 
@@ -113,7 +113,7 @@ O uso de um \english{message broker} ainda trás outros benefícios, como por exem
 	nossa implementação não fica atrelada a esse detalhe. Os endereços IPs dos nós não possuem relação 
 	com os nomes utilizados para registrar ou localizar um ator remoto. Existe ainda uma outra vantagem que é
 	a redução do número de portas que devem ser desbloqueadas em um \english{firewall}. Não é necessário
-	desbloquear as portas que cada \code{RemoteServer} estará disponível. A única porta que precisa estar
+	desbloquear as portas que cada \lstinline{RemoteServer} estará disponível. A única porta que precisa estar
 	desbloqueada para aceitar conexões, é a porta que o \english{message broker} disponibilizou
 	para os clientes e somente no nó onde ele está em execução.
 \end{itemize}

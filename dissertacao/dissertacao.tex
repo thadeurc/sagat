@@ -6,7 +6,8 @@
 % Revisão: Fabio Kon e Paulo Feofiloff
 %  
 
-\documentclass[12pt,twoside,a4paper]{book}
+%\documentclass[12pt,twoside,a4paper]{book}
+\documentclass[11pt,twoside,a4paper,openright]{book}
 
 % ---------------------------------------------------------------------------- %
 % Pacotes 
@@ -28,7 +29,6 @@
 \usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
 \usepackage[usenames,svgnames,dvipsnames]{xcolor}
 \usepackage[a4paper,top=2.54cm,bottom=2.0cm,left=2.0cm,right=2.54cm]{geometry} % margens
-%\usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=black,linkcolor=black,urlcolor=black,filecolor=black,bookmarksopen=true]{hyperref} % links em preto
 \usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=DarkGreen,linkcolor=NavyBlue,urlcolor=DarkRed,filecolor=green,bookmarksopen=true]{hyperref} % links coloridos
 \usepackage[all]{hypcap}                % soluciona o problema com o hyperref e capitulos
 \usepackage[square,sort,nonamebreak,comma]{natbib}  % citação bibliográfica alpha (alpha-ime.bst)
@@ -58,9 +58,9 @@
 % Ref: http://en.wikibooks.org/wiki/LaTeX/Packages/Listings
 \lstset{ %
 language=Java,                  % choose the language of the code
-basicstyle=\scriptsize,       % the size of the fonts that are used for the code
+basicstyle=\small,       % the size of the fonts that are used for the code
 numbers=left,                   % where to put the line-numbers
-numberstyle=\scriptsize,      % the size of the fonts that are used for the line-numbers
+numberstyle=\small,      % the size of the fonts that are used for the line-numbers
 stepnumber=1,                   % the step between two line-numbers. If it's 1 each line will be numbered
 numbersep=5pt,                  % how far the line-numbers are from the code
 showspaces=false,               % show spaces adding particular underscores
@@ -74,7 +74,7 @@ breaklines=true,                % sets automatic line breaking
 breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
 escapeinside={\%*}{*)},         % if you want to add a comment within your code
 backgroundcolor=\color[rgb]{1.0,1.0,1.0}, % choose the background color.
-rulecolor=\color[rgb]{0.8,0.8,0.8},
+rulecolor=\color[rgb]{0.0,0.0,0.0},
 extendedchars=true,
 xleftmargin=10pt,
 xrightmargin=10pt,
@@ -119,7 +119,7 @@ morestring=[b]"
 % Default settings for code listings
 \lstset{
 language=scala,
-frame=single,              % desenha uma janela com linha simples ao redor do código
+frame=tb,              % desenha uma janela com linha simples ao redor do código
 aboveskip=4mm,             % espaço acima do código
 belowskip=4mm,             % espaço abaixo do código
 showspaces=false,          % não sublinha espaços no código
@@ -132,7 +132,7 @@ breakatwhitespace=false,   % define se a quebra de linhas automática deve ocorre
 xleftmargin=12pt,
 xrightmargin=12pt,
 escapeinside={(*@}{@*)},
-basicstyle={\scriptsize\ttfamily}
+basicstyle={\small\ttfamily}
 } 
 
 \newcommand{\emphasis}[1]

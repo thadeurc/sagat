@@ -202,9 +202,9 @@ da plataforma, como VB.Net, C\# e F\#.
 
 Em Axum, o termo ``ator'' é substituído pelo termo ``agente'' (\english{agent}). Agentes
 são executados como \english{threads} dentro da CLR (\english{Common Language Runtime}) 
-e são definidos com o uso da palavra-chave \code{agent}. A troca de
+e são definidos com o uso da palavra-chave \lstinline{agent}. A troca de
 mensagens é feita via canais. Os canais são responsáveis por definir os tipos de dados
-que trafegam neles com o uso das palavras-chaves \code{input} e \code{output}. 
+que trafegam neles com o uso das palavras-chaves \lstinline{input} e \lstinline{output}. 
 Canais possuem duas extremidades, a extremidade implementadora
 (\english{implementing end}) e a extremidade de uso (\english{using end}). Agentes que implementam
 o comportamento da extremidade implementadora de um canal passam a agir como servidores que 
@@ -212,7 +212,7 @@ processam as mensagens recebidas por seus respectivos canais. A extremidade de u
 outros agentes para fazer o envio de mensagens. 
 
 A linguagem possui ainda o conceito de domínio. Domínios são definidos com a palavra-chave 
-\code{domain} e permitem que agentes definidos dentro de um domínio compartilhem informações
+\lstinline{domain} e permitem que agentes definidos dentro de um domínio compartilhem informações
 de estado. Uma instância de domínio pode ter atributos que são usados para 
 compartilhamento seguro e controlado de informações.
 
@@ -232,19 +232,19 @@ que por sua vez pode ser compilado para \english{bytecode}
 e ser executado sobre a JVM.
 
 A linguagem possui primitivas para a criação, uso e organização dos atores. A construção
-\code{behavior} é semelhante à construção \code{class} de Java, e é utilizada para definir
+\lstinline{behavior} é semelhante à construção \lstinline{class} de Java, e é utilizada para definir
 os métodos que definem o comportamento do ator. Há uma relação de herança em \english{behaviors},
 similar à herança de classes Java. A hierarquia de \english{behaviors} segue regras
 análogas às da hierarquia de classes Java: não existe herança múltipla e um \english{behavior} 
 podem implementar zero ou múltiplas \english{interfaces}. O \english{behavior}
-\code{salsa.language.UniversalActor} é análogo a classe \code{java.lang.Object}, e todos os
-\english{behaviors} o estendem direta ou indiretamente. A primitiva \code{<-} é utilizada
+\lstinline{salsa.language.UniversalActor} é análogo a classe \lstinline{java.lang.Object}, e todos os
+\english{behaviors} o estendem direta ou indiretamente. A primitiva \lstinline{<-} é utilizada
 para enviar uma mensagem a um ator.
 
-A implementação de atores da linguagem utiliza o objeto \code{salsa.language.Actor}
-como ator base que estende \code{java.lang.Thread}, de modo que 
+A implementação de atores da linguagem utiliza o objeto \lstinline{salsa.language.Actor}
+como ator base que estende \lstinline{java.lang.Thread}, de modo que 
 cada ator é executado em uma \english{thread}. Cada ator possui uma fila de mensagens onde
-as mensagens recebidas ficam armazenadas até que o método \code{run} as retire
+as mensagens recebidas ficam armazenadas até que o método \lstinline{run} as retire
 para que o método correspondente seja executado via reflexão. 
 
 Além de prover a implementação da semântica do modelo de atores, a 
@@ -259,17 +259,17 @@ assíncronas entre os atores:
 	referência para o ator que irá consumir o \english{token}, como mostrado no exemplo a seguir:
 	
 	\begin{center}
-		\code{gerente <- aprovacao1(500)} \\
-		\code{@ gerente2 <- aprovacao2(token)} \\
-		\code{@ diretor <- aprovacaoFinal(token);}
+		\lstinline{gerente <- aprovacao1(500)} \\
+		\lstinline{@ gerente2 <- aprovacao2(token)} \\
+		\lstinline{@ diretor <- aprovacaoFinal(token);}
 	\end{center}
 	
-	Nesse exemplo, \code{gerente} processa a mensagem \code{aprovacao1(500)} e produz
-	um valor que é passado como \code{token} no envio da mensagem para o ator
-	\code{gerente2}. A palavra \english{token} é uma palavra-chave e seu valor é associado 
-	no contexto do último \english{token} passado. O ator \code{diretor} recebe como argumento
-	o resultado da computação do ator \code{gerente2}. Ainda nesse exemplo, utilizamos
-	a primitiva \code{@} para indicar que desejamos utilizar a continuação com passagem
+	Nesse exemplo, \lstinline{gerente} processa a mensagem \lstinline{aprovacao1(500)} e produz
+	um valor que é passado como \lstinline{token} no envio da mensagem para o ator
+	\lstinline{gerente2}. A palavra \english{token} é uma palavra-chave e seu valor é associado 
+	no contexto do último \english{token} passado. O ator \lstinline{diretor} recebe como argumento
+	o resultado da computação do ator \lstinline{gerente2}. Ainda nesse exemplo, utilizamos
+	a primitiva \lstinline{@} para indicar que desejamos utilizar a continuação com passagem
 	de \english{token}.
 				
 	\item Continuações de junção (\english{join continuations}): Atores podem receber vetores
@@ -278,14 +278,14 @@ assíncronas entre os atores:
 	de todos os \english{tokens} aguardados terem sido recebidos. Por exemplo:
 	
 	\begin{center}
-		\code{join(gerente <- aprovacao1(500),} \\
-		\code{gerente2 <- aprovacao2(500))} \\
-		\code{@ diretor <- aprovacaoFinal(500);}
+		\lstinline{join(gerente <- aprovacao1(500),} \\
+		\lstinline{gerente2 <- aprovacao2(500))} \\
+		\lstinline{@ diretor <- aprovacaoFinal(500);}
 	\end{center}
 	
-	Nesse exemplo, os dois atores \code{gerente1} e \code{gerente2} fazem suas aprovações
-	em paralelo e, somente quando os dois tiverem dado suas aprovações, o ator \code{diretor}
-	irá receber a mensagem de \code{aprovacaoFinal}.
+	Nesse exemplo, os dois atores \lstinline{gerente1} e \lstinline{gerente2} fazem suas aprovações
+	em paralelo e, somente quando os dois tiverem dado suas aprovações, o ator \lstinline{diretor}
+	irá receber a mensagem de \lstinline{aprovacaoFinal}.
 
 	\item Continuações de primeira classe (\english{first-class continuations}): Essa abstração
 	é análoga às funções de ordem superior, na qual funções podem receber outras funções. No caso
@@ -293,7 +293,7 @@ assíncronas entre os atores:
 	para outras continuações. O processamento da mensagem pode optar por delegar o restante do 
 	processamento à continuação recebida, por exemplo em chamadas recursivas. 
 	No processamento de uma mensagem, a continuação recebida como parâmetro é acessada 
-	pela palavra-chave \code{currentContinuation}.
+	pela palavra-chave \lstinline{currentContinuation}.
 	
 \end{enumerate}
 
@@ -308,9 +308,9 @@ de $1985$ à $1997$ \cite{erlang:97}.
 
 A linguagem em si, embora bem enxuta, possui características interessantes para simplificar o 
 desenvolvimento de sistemas concorrentes. Exemplos de tais características são: variáveis de 
-atribuição única, casamento de padrões e um conjunto de primitivas que inclui \code{spawn}
-para criação de atores, \code{send} e \code{!} para o envio de mensagens, \code{receive}
-para o recebimento de mensagens e \code{link} para a definição de adjacências entre atores. 
+atribuição única, casamento de padrões e um conjunto de primitivas que inclui \lstinline{spawn}
+para criação de atores, \lstinline{send} e \lstinline{!} para o envio de mensagens, \lstinline{receive}
+para o recebimento de mensagens e \lstinline{link} para a definição de adjacências entre atores. 
 Ademais, a linguagem dá suporte a hierarquias de supervisão entre atores e troca quente de 
 código (\english{hotswap}).
 
@@ -338,7 +338,7 @@ atores filhos, as primitivas existentes na linguagem dão suporte a três abordage
 
 Em Erlang é possível criar atores em nós remotos (\english{remote spawn}). Vale ressaltar 
 que o código do ator deve estar acessível na máquina virtual onde o ator irá ser executado.
-Erlang possui o módulo \code{erl\_prim\_loader} que auxilia no carregamento de módulos em
+Erlang possui o módulo \lstinline{erl_prim_loader} que auxilia no carregamento de módulos em
 nós remotos. Uma vez que alguns detalhes de infra-estrutura 
 foram observados (as máquinas virtuais Erlang necessitam se autenticar umas com as outras),
 a troca de mensagens entre atores remotos acontece de maneira transparente. No processo de 
@@ -383,35 +383,35 @@ e analisadas para o desenvolvimento do nosso trabalho.
 
 A distribuição de Scala inclui uma biblioteca de atores inspirada pelo suporte a atores de  
 Erlang. Nessa biblioteca os atores foram projetados como objetos baseados em \english{threads} 
-Java. Elas possuem métodos como \code{send}, \code{!}, \code{receive}, além de 
-outros métodos como \code{act} e \code{react}. Cada ator possui uma caixa de correio 
+Java. Elas possuem métodos como \lstinline{send}, \lstinline{!}, \lstinline{receive}, além de 
+outros métodos como \lstinline{act} e \lstinline{react}. Cada ator possui uma caixa de correio 
 para o recebimento e armazenamento temporário das mensagens. O processamento de uma mensagem 
-é feito por um bloco \code{receive}.
+é feito por um bloco \lstinline{receive}.
 
-No bloco \code{receive} são definidos os padrões a serem casados com as mensagens 
+No bloco \lstinline{receive} são definidos os padrões a serem casados com as mensagens 
 que o ator processa e as ações associadas. 
 A primeira mensagem que casar com qualquer dos padrões é removida da caixa de correio e a 
 ação correspondente é executada. Caso não haja casamento com nenhum dos padrões, o ator é suspenso.
 
 Atores são executados em um \english{thread pool}\footnote{Idealmente o tamanho do 
 \english{thread pool} corresponde ao número de núcleos do processador.} que cresce conforme a demanda. 
-É importante ressaltar que o uso do método \code{receive}
+É importante ressaltar que o uso do método \lstinline{receive}
 fixa o ator à \english{thread} que o está executando, limitando superiormente a quantidade
 de atores pelo número de \english{threads} que podem ser criadas. É recomendado o uso do método 
-\code{react} ao invés do método \code{receive} sempre que possível, pois dessa forma 
+\lstinline{react} ao invés do método \lstinline{receive} sempre que possível, pois dessa forma 
 um ator que não estiver em execução cederá sua \english{thread} para que ela execute outro ator.
-Do ponto de vista de funcionalidade, o método \code{receive} é bloqueante e pode devolver 
-valores, enquanto que o método \code{react}, além de não devolver valores, faz com que o ator
+Do ponto de vista de funcionalidade, o método \lstinline{receive} é bloqueante e pode devolver 
+valores, enquanto que o método \lstinline{react}, além de não devolver valores, faz com que o ator
 passe a reagir aos eventos (recebimentos de mensagens). Da perspectiva do programador, uma
-implicação prática do uso de \code{react} em vez de \code{receive}
-é o uso da estrutura de controle \code{loop} ao invés de laços tradicionais, 
+implicação prática do uso de \lstinline{react} em vez de \lstinline{receive}
+é o uso da estrutura de controle \lstinline{loop} ao invés de laços tradicionais, 
 para indicar que o ator deve continuar reagindo após o processamento de 
 uma mensagem (o emprego de laços tradicionais bloquearia a \english{thread}) \cite{scala-actors}.	
 
 Além de métodos para envio de mensagens equivalentes às primitivas de Erlang, a biblioteca de atores
 de Scala implementa dois métodos adicionais, que facilitam o tratamento de algumas necessidades 
-específicas. Esses métodos são: \code{!?}, que faz envio síncrono e aguarda uma resposta 
-dentro de um tempo limite especificado e \code{!!}, que faz o envio assíncrono da 
+específicas. Esses métodos são: \lstinline{!?}, que faz envio síncrono e aguarda uma resposta 
+dentro de um tempo limite especificado e \lstinline{!!}, que faz o envio assíncrono da 
 mensagem e recebe um resultado futuro correspondente a uma resposta. 
         
 O suporte a atores remotos faz parte da biblioteca, porém com algumas restrições em comparação 
@@ -436,15 +436,15 @@ módulos adicionais para integração com outras tecnologias.
 A biblioteca de atores do projeto Akka é totalmente independente da que é parte da distribuição 
 de Scala, embora também siga as idéias de Erlang. O comportamento dos atores Akka no 
 recebimento de mensagens inesperadas (que não casam com nenhum dos padrões especificados em um 
-\code{receive}) é diferente do comportamento dos atores de Erlang e Scala, em que o ator é suspenso. No caso 
+\lstinline{receive}) é diferente do comportamento dos atores de Erlang e Scala, em que o ator é suspenso. No caso 
 de atores Akka, tais mensagens provocam o lançamento de exceções.
 	
 O suporte a atores remotos do projeto Akka é bem mais completo do que o oferecido pela biblioteca 
 de atores de Scala e será discutido no capítulo \ref{cap:atores_akka}. Assim como a 
 biblioteca de atores de Scala, a de Akka oferece métodos para diferentes tipos de envio de mensagens:
-\code{!!}, semelhante ao método \code{!?} da biblioteca de atores de Scala, no qual o
-remetente fica bloqueado aguardando uma resposta durante um tempo limite, e \code{!!!}, que é 
-semelhante ao método \code{!!} da biblioteca de atores de Scala, o qual devolve um resultado
+\lstinline{!!}, semelhante ao método \lstinline{!?} da biblioteca de atores de Scala, no qual o
+remetente fica bloqueado aguardando uma resposta durante um tempo limite, e \lstinline{!!!}, que é 
+semelhante ao método \lstinline{!!} da biblioteca de atores de Scala, o qual devolve um resultado
 futuro ao remetente.
 
 No que diz respeito à seriação das mensagens para um ator remoto, o Akka oferece as 

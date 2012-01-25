@@ -80,14 +80,14 @@ foram necessárias as alterações listadas a seguir:
 	na figura \ref{fig:trading-system}, como atores remotos (seção \ref{sec:atores_remotos_akka}).
 	Essa modificação resultou em alterações na inicialização do \english{Trading System} e na obtenção
 	dos \english{order receivers}. Na versão remota, apenas os nomes sob o qual os \english{order receivers}
-	foram registrados no registro de atores remotos é devolvido. Na versão local, são devolvidas \code{ActorRef}s.
-	Evitamos devolver \code{ActorRef}s como parte das mensagens pois, neste caso, os atores deveriam
+	foram registrados no registro de atores remotos é devolvido. Na versão local, são devolvidas \lstinline{ActorRef}s.
+	Evitamos devolver \lstinline{ActorRef}s como parte das mensagens pois, neste caso, os atores deveriam
 	passar por uma seriação funda. Enviando os nomes sob os quais os atores foram registrados, permite que
 	façamos buscas no registro de atores remotos, trabalhando apenas com as referências remotas.	
 
 	\item Fizemos com que as classes \english{Ask} e \english{Bid} fossem seriáveis 
 	(seção \ref{sec:atores_remotos_akka_seriacao}). Optamos por utilizar como formato de seriação, 
-	o formato definido na feição \code{ScalaJSON}.
+	o formato definido na feição \lstinline{ScalaJSON}.
 
 	\item Trocamos os envios assíncronos de mensagens dos atores clientes por envios síncronos.
 	Assim, uma nova mensagem só é enviada uma vez que a mensagem anterior
@@ -98,10 +98,10 @@ foram necessárias as alterações listadas a seguir:
 	diferença de tempo em um repositório.
 \end{enumerate}
 
-As configurações utilizadas no arquivo \code{akka.conf} para os experimentos com o suporte padrão
+As configurações utilizadas no arquivo \lstinline{akka.conf} para os experimentos com o suporte padrão
 a atores remotos do Akka são as recomendadas uso geral (compressão média de mensagens e tamanho
 do janelamento das mensagens de $1$KB). Nos experimentos executados com o suporte desenvolvido neste trabalho,
-utilizamos uma conexão por canal além da configuração \code{DURABLE} para as pontes AMQP 
+utilizamos uma conexão por canal além da configuração \lstinline{DURABLE} para as pontes AMQP 
 (seção \ref{sec:entidades-via-broker-amqp-bridges}).
 
 \section{Comparação de desempenho}
@@ -192,10 +192,10 @@ AMQP & 80 & 1535 & 52122 & 37915 & 39399 & 40943 & 43496 & 19.54 \\ \hline
 O fato de adicionarmos um terceiro nó com um \english{message broker} na comunicação
 entre os atores remotos, naturalmente adiciona mais passagens pela rede que conecta os nós.
 Um envio que utiliza o Netty faz com que duas mensagens trafeguem pela rede: a ordem é
-enviada pelo \code{RemoteClient} direto ao \code{RemoteServer} e a resposta
+enviada pelo \lstinline{RemoteClient} direto ao \lstinline{RemoteServer} e a resposta
 faz o caminho inverso. Já quando utilizamos nossa implementação com AMQP, quatro mensagens
-são trafegadas: a ordem é enviada pelo \code{RemoteClient} ao \english{message broker},
-o \english{message broker} envia a ordem para o \code{RemoteServer} e a resposta faz o caminho
+são trafegadas: a ordem é enviada pelo \lstinline{RemoteClient} ao \english{message broker},
+o \english{message broker} envia a ordem para o \lstinline{RemoteServer} e a resposta faz o caminho
 inverso. Por este motivo, esperávamos que o tempo gasto pela implementação com AMQP fosse, 
 aproximadamente, duas vezes maior do que o tempo gasto pela implementação com Netty. 
 Observando a comparação dos dados da tabela \ref{tab:medidas} para a instância com apenas $1$ ator cliente, 
@@ -224,7 +224,7 @@ feita com Netty, tanto as classes responsáveis pelo envio e recebimento de mensa
 do arcabouço compartilham mesma JVM que executa os atores do sistema de cotações. 
 Já na implementação com AMQP, apenas as classes responsáveis pelo envio e recebimento de mensagens 
 compartilham a mesma JVM. Durante a execução dos experimentos, mesmo diante de um cenário com alta concorrência em que vários 
-atores clientes executaram diversos envios em paralelo para um \code{RemoteClient} compartilhando, 
+atores clientes executaram diversos envios em paralelo para um \lstinline{RemoteClient} compartilhando, 
 não tivemos problemas comuns de concorrência como \english{deadlocks} e condições de corrida 
 em nossa implementação. 
 

@@ -37,17 +37,17 @@ trait CommonAMQP {
 }		
 \end{lstlisting}
 	
-	Para o nosso exemplo optamos por criar a classe \code{SampleProducer} para 
+	Para o nosso exemplo optamos por criar a classe \lstinline{SampleProducer} para 
 	encapsular a criação dos objetos no \english{broker} e o envio das mensagens. 
-	A classe é apresentada na listagem \ref{lst:producer}. O método \code{startProducer}
+	A classe é apresentada na listagem \ref{lst:producer}. O método \lstinline{startProducer}
 	se conecta ao servidor AMQP na linha $6$, e abre um canal na linha $7$ para interagir 
 	com a camada de sessão. Nas linhas seguintes, o método declara uma \english{exhange}\footnote{
 	Caso o objeto já exista, um novo não será criado. Caso o objeto existente possua 
 	uma configuração diferente, uma exceção é lançada.} direta e transiente, uma fila pública, 
-	transiente e temporária e faz o \english{binding} de ambos. O método \code{publish}, por 
+	transiente e temporária e faz o \english{binding} de ambos. O método \lstinline{publish}, por 
 	sua vez, verifica logo na sua primeira linha se o estado da instância é válido e, em 
 	seguida, itera na sequência de mensagens fazendo o envio. Para esse exemplo em particular, 
-	omitimos as propriedades adicionais (\code{BASIC\_PROPS}) que podem ser utilizadas no 
+	omitimos as propriedades adicionais (\lstinline{BASIC\_PROPS}) que podem ser utilizadas no 
 	envio. Exemplos dessas propriedades são definir a prioridade da mensagem, especificar um 
 	remetente diferente para resposta (\english{replyTo}) e definir uma data para expiração 
 	da mensagem.
@@ -80,8 +80,8 @@ class SampleProducer extends CommonAMQP {
 	\end{lstlisting}
 	
 	A listagem \ref{lst:producer-app} mostra a aplicação que faz uso da classe 
-	\code{SampleProducer}. Nessa listagem fazemos a instanciação e a inicialização
-	de um \code{producer}, geramos uma sequência com $100$ mensagens e as
+	\lstinline{SampleProducer}. Nessa listagem fazemos a instanciação e a inicialização
+	de um \lstinline{producer}, geramos uma sequência com $100$ mensagens e as
 	repassamos para o envio. Por fim, encerramos a conexão e implicitamente canais que 
 	tenham sido abertos junto a ela.
 	
@@ -101,18 +101,18 @@ object SampleProducerApplication  extends Application {
    	\end{lstlisting}
 
 	A abordagem tomada para exemplificar o recebimento das mensagens foi a mesma tomada para o
-	envio. Criamos a classe \code{SampleConsumer} para encapsular o recebimento, a 
+	envio. Criamos a classe \lstinline{SampleConsumer} para encapsular o recebimento, a 
 	confirmação e tratamento das mensagens, como mostrado na listagem \ref{lst:consumer}.
-	O método \code{startConsumer}, assim como o método \code{startProducer} mostrado
+	O método \lstinline{startConsumer}, assim como o método \lstinline{startProducer} mostrado
 	na listagem \ref{lst:producer}, se conecta ao servidor AMQP e abre um canal para interagir
 	com a camada de sessão. Em seguida, ele registra a instância corrente como um consumidor
 	na fila previamente criada com confirmação implícita de recebimento. O método 
-	\code{handleDelivery} é o método invocado a cada mensagem recebida. Podemos
+	\lstinline{handleDelivery} é o método invocado a cada mensagem recebida. Podemos
 	notar que o método, além de receber o corpo da mensagem, ainda recebe algumas informações sobre
-	o envio. Os demais métodos são herdados da interface \code{com.rabbitmq.client.Consumer}
+	o envio. Os demais métodos são herdados da interface \lstinline{com.rabbitmq.client.Consumer}
 	e servem como notificadores para outros eventos, como registro 
-	(\code{handleConsumerOk}) ou cancelamento (\code{handleCancelOk}) de um 
-	consumidor na fila. Mais detalhes sobre a interface \code{com.rabbitmq.client.Consumer}
+	(\lstinline{handleConsumerOk}) ou cancelamento (\lstinline{handleCancelOk}) de um 
+	consumidor na fila. Mais detalhes sobre a interface \lstinline{com.rabbitmq.client.Consumer}
 	e de suas implementações podem ser encontradas na documentação da biblioteca para clientes Java \cite{rabbit-api}.
 	
 	\begin{lstlisting}[frame=tb, caption={Classe SampleConsumer.}, label={lst:consumer}]
@@ -137,7 +137,7 @@ class SampleConsumer extends Consumer with CommonAMQP {
 	\end{lstlisting}
 	
 	A listagem \ref{lst:consumer-app} mostra a aplicação que faz uso da classe 
-	\code{SampleConsumer}. 
+	\lstinline{SampleConsumer}. 
 	
 	\begin{lstlisting}[frame=tb, caption={Aplicação SampleConsumerApplication.}, label={lst:consumer-app}]
 object SampleConsumerApplication extends Application {
