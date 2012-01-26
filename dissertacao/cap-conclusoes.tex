@@ -53,9 +53,9 @@ desenvolvida tomando como base o código da implementação do banco de dados MySQL
 Uma das características do Drizzle é a replicação de transações. Transações como
 inserções ou atualizações que são executadas na instância principal (\english{master}) do banco de dados,
 são replicadas para uma ou mais instâncias secundárias (\english{slaves}) do banco de dados. 
-O módulo responsável por dar suporte a replicação de transações
+O módulo \cite{drizzle-slave} responsável por dar suporte a replicação de transações
 utiliza uma combinação de tabelas transacionais (InnoDB) e mensagens no formato 
-Protobuf \ref{drizzle-replication-slave}. O uso das tabelas transacionais tem como 
+Protobuf. O uso das tabelas transacionais tem como 
 característica a criação de um arquivo para registro das transações executadas. Cada transação
 executada em uma tabela transacional gera uma entrada no arquivo de registro.
 
@@ -75,9 +75,37 @@ por fazer a criação da fila onde esperam mensagens e definir seu \english{bindin
 informada durante a ativação do módulo RabbitMQ Integration. As informações para a criação das filas
 e da instância do Drizzle para onde as transações serão replicadas, são informadas em um arquivo de propriedades.
 
-%\subsection{Replicação de transações no Drizzle com RabbitMQ}
+\subsection{Camada de comunicação entre agentes remotos com RabbitMQ}
 
-%------------------------------------------------------
+Arlekar e outros \cite{ctep} apresentam uma proposta de um arcabouço voltado para simulações baseadas
+no modelo de agentes. Ainda que nosso trabalho tenha sido voltado ao modelo de atores,
+observamos semelhança na definição da camada de comunicação entre agentes remotos utilizada nesse arcabouço.
+
+Esse arcabouço prove a infraestrutura necessária para a criação de agentes, a troca de mensagens entre agentes e
+o armazenamento e a exibição das informações geradas no sistema. O arcabouço possui diversos componentes, contudo,
+destacamos apenas os três cujo identificamos semelhança com nosso trabalho:
+
+\begin{itemize}
+	\item \english{Care Take Agent} (CTA): É um componente análogo ao \lstinline{RemoteSupport} existente 
+	na implementação de atores remotos do Akka. Um CTA possui como algumas de suas responsabilidades, 
+	criar agentes e controlar a troca de mensagens entre agentes residentes em diferentes CTAs.
+
+	\item Agente: É análogo a um ator. Um agente representa uma entidade que faz parte da simulação como, por exemplo,
+	uma pessoa.
+
+	\item Camada de comunicação: É análoga a implementação da camada de transporte do Akka. A camada de comunicação
+	é um componente fundamental no arcabouço que permite que agentes residentes em diferentes CTAs possam trocar
+	mensagens entre si. 
+\end{itemize}
+
+A implementação da camada de comunicação é feita com filas criadas no RabbitMQ. Cada CTA possui uma fila associada
+para recebimento de mensagens. As filas criadas no \english{message broker} são identificadas pelo endereço IP
+do CTA proprietário da fila e por um nome. É importante comentar que cada CTA é executado em sua própria JVM.
+As mensagens que são recebidas em um CTA são repassadas a um ou vários dos seus agentes. O CTA age também como 
+\english{proxy} no envio de uma mensagem. Agentes enviam mensagens a outros agentes utilizando o CTA no qual 
+reside como \english{proxy} durante o envio.
+
+
 \section{Considerações Finais} 
 \index{Conclusões!considerações finais}
 \label{sec:conclusao:consideracoes_finais}
