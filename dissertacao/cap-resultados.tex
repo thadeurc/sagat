@@ -337,17 +337,25 @@ Argumentamos que na rede com maior latência, o sistema não conseguiu chegar próx
 do seu ponto de saturação (como mostramos na figura \ref{fig:grafico-er}, o ponto de saturação
 foi o ponto onde a diferença de tempo das execuções com Netty e AMQP ficou abaixo dos $8$\%).
 Nosso argumento é baseado na comparação dos valores de envios/respostas obtidos para instâncias com $1$ e $2$ 
-clientes mostrados na tabela \ref{tab:medidas}, com os valores de envios/respostas obtidos para instâncias com $10$
+atores clientes mostrados na tabela \ref{tab:medidas}, com os valores de envios/respostas obtidos para instâncias com $10$
 e $80$ clientes mostrados na tabela \ref{tab:medidas-lentas}. 
 
-Se compararmos o valor da tabela \ref{tab:medidas} para experimentos com Netty e $1$ ator cliente, 
+Se verificarmos o valor da tabela \ref{tab:medidas} para experimentos com Netty e $1$ ator cliente, 
 temos $501$ envios/respostas. Essa quantidade de envios/respostas só é obtida na rede de maior latência
 quando passamos de $8$ para $10$ atores clientes, onde os valores mostrados na tabela
 \ref{tab:medidas-lentas} são respectivamente $491$ e $559$ envios/respostas. Quando passamos para $2$ atores
 clientes, temos $894$ envios/respostas na tabela \ref{tab:medidas}. Essa quantidade de envios/respostas
 só é aproximada na rede com maior latência quando utilizamos $80$ clientes. Nesse caso temos $889$ envios/respostas.
 
-Analogamente, se compararmos o valor da tabela \ref{tab:medidas} para experimentos com AMQP e $1$ ator cliente, 
+\begin{figure}[!h]
+		\centering
+		\includegraphics[scale=.70]{grafico-er-lento-e-normal} 
+ 		\caption{Comparação ??.}
+  		\label{fig:grafico-er-lento-e-normal}
+\end{figure}
+
+
+Analogamente, se verificarmos o valor da tabela \ref{tab:medidas} para experimentos com AMQP e $1$ ator cliente, 
 temos $263$ envios/respostas. Essa quantidade de envios/respostas só é aproximada na rede de maior latência,
 quando utilizamos $10$ atores clientes, onde o valor mostrado na tabela
 \ref{tab:medidas-lentas} é de $243$ envios/respostas. Quando passamos para $2$ atores
@@ -361,7 +369,9 @@ do seu ponto de saturação. Ao contrário, na rede com maior latência, o sistema t
 processamento próximo do volume que se teve para instâncias com $1$ e $2$ clientes na rede com
 menor latência. Em outras palavras, nosso entendimento é de que o trecho que vai de $10$ até $80$
 clientes do gráfico da figura \ref{fig:grafico-er-lento} está compreendido no trecho que vai de
-$1$ até $2$ clientes do gráfico da figura \ref{fig:grafico-er}.
+$1$ até $2$ clientes do gráfico da figura \ref{fig:grafico-er}, como mostra o gráfico da figura
+\ref{fig:grafico-er-lento-e-normal}.
+
 
 %Com as mensagens levando mais tempo para chegar ao \english{message broker} e ao seu destino
 %final, o volume de mensagens em um dado instante tende a ser menor. Com um volume menor de mensagens, a vantagem
