@@ -35,11 +35,11 @@ Os componentes são descritos a seguir:
 
 	\item \english{Trading System}: É o ator recepcionista do sistema. É responsável
 	por fazer a criação e a inicialização dos atores internos do sistema. O ator recepcionista
-	responde às mensagens vindas dos atores clientes com os endereços (referências) dos \english{order receivers}
+	responde às mensagens vindas dos atores clientes com as referências para os \english{order receivers}
 	que foram criados.
 
 	\item \english{Order}: É um componente que não é mostrado na figura, mas que representa
-	uma ordem. É definida em uma classe abstrata e possui como informações o código da ação, o volume e 
+	uma ordem. É definida em uma classe abstrata e possui como informação o código da ação, o volume e 
 	o valor da ordem. Suas implementações são \code{Ask}, para indicar uma ordem de venda, e \code{Bid}, 
 	para indicar uma ordem de compra.
 \end{itemize}
@@ -51,16 +51,16 @@ Os componentes são descritos a seguir:
   		\label{fig:trading-system}
 \end{figure}
 
-O sistem possui ainda atores rotulados como ``clientes''. Um ator cliente é um ator externo ao 
+O sistema possui ainda atores rotulados como ``clientes''. Um ator cliente é um ator externo ao 
 sistema de cotações que possui uma lista com ordens a serem enviadas ao \english{Trading System}. 
 Um ator cliente possui também dois atributos adicionais: o primeiro é um valor inteiro que indica
 quantas vezes as ordens que estão na lista do ator serão enviadas; o segundo atributo
-é o \english{order receiver} para onde as mensagens serão enviadas.
+é o \english{order receiver} em que as mensagens serão enviadas.
 A quantidade de atores clientes varia de acordo com a instância do experimento que
 se deseja fazer. A quantidade não precisa ser necessariamente igual à quantidade de \english{order receivers}.
 A associação de um ator cliente a um \english{order receiver} é feita em sequência. 
 Itera-se na lista de \english{order receivers} junto com a lista de atores clientes.
-Uma vez que se tenha alcançado o décimo \english{order receiver}, reinicia-se a iteração a partir do
+Uma vez tenha-se alcançado o décimo \english{order receiver}, reinicia-se a iteração a partir do
 primeiro \english{order receiver}. Dependendo da quantidade de atores clientes, alguns \english{order receivers}
 podem recebem mensagens de mais, de menos ou até mesmo de nenhum ator cliente quando comparados com
 os outros \english{order receivers}.
@@ -127,7 +127,7 @@ em um \english{laptop} Lenovo T410 com processador Intel Core i5 de $2.4$ GHz e 
 com Linux Ubuntu $10.10$. Por fim, a JVM onde o \english{Trading System} foi implantado ficou
 em execução em um \english{laptop} MacBook Pro com processador Core $2$ Duo de $2.4$ GHz e $4$ GB de RAM
 com Mac OS X $10.7$. Os três \english{laptops} foram conectados por um roteador D-Link DI-$524$.
-Apesar de este ser um roteador para redes \english{wireless}, optamos por conectá-los com cabos de rede.
+Apesar de ests ser um roteador para redes \english{wireless}, optamos por conectá-los com cabos de rede.
 
 Definimos o número de mensagens que cada cliente enviou da seguinte maneira: seja $n_c$ a 
 quantidade de atores clientes utilizada em um experimento e seja $r$ o número de repetições; cada ator cliente 
@@ -160,35 +160,35 @@ foi o valor que é apresentado na coluna média.
 {95\% ($\mu s$)} & {Dur. ($s$)} \\ \hline \hline
 Netty & 1 & 501 &  1995 & 1364 & 1433 & 1968 & 3266 & 59.85 \\
 AMQP  & 1 & 263 &  3797 & 3283 & 3361 & 3537 & 4550 & 113.91 \\ \hline
- & Delta & -47.50\% & 90.33\%  &  140.69\% &  134.54\% &  79.73\% &  39.31\% &  54.06 (90.33\%) \\ \hline
+ & Variação & -47.50\% & 90.33\%  &  140.69\% &  134.54\% &  79.73\% &  39.31\% &  54.06 (90.33\%) \\ \hline
 									
 Netty & 2 & 894 & 2238 & 1770 & 1796 & 1836 & 3290 & 33.57 \\
 AMQP  & 2 & 528 & 3789 & 3234 & 3359 & 3552 & 4208 & 56.83 \\ \hline
- & Delta & -40.99\% &  69.30\% &   82.71\% &  87.03\% &  93.46\% &  27.90\% &  23.26 (69.33\%) \\ \hline
+ & Variação & -40.99\% &  69.30\% &   82.71\% &  87.03\% &  93.46\% &  27.90\% &  23.26 (69.33\%) \\ \hline
 
 Netty & 4 & 1245 & 3212 & 2070 & 2517 & 2726 & 4214 & 24.09 \\
 AMQP  & 4 &  906 & 4416 & 3248 & 3614 & 4134 & 5088 & 33.12 \\ \hline
- & Delta  & -27.31\% &  37.48\% &  56.91\% &  43.58\% &  51.65\% &  20.74\% &  9.03 (37.48\%) \\ \hline
+ & Variação  & -27.31\% &  37.48\% &  56.91\% &  43.58\% &  51.65\% &  20.74\% &  9.03 (37.48\%) \\ \hline
 
 Netty & 8 & 1494 & 5353 & 3274 & 3771 & 4745 & 6168 & 20.07 \\
 AMQP & 8 & 1389 & 5760 & 3567 & 4149 & 5168 & 6425 & 21.60 \\ \hline
- & Delta & -7.10\% &  7.60\% &  8.95\% &  10.02\% &  8.91\% &  4.17\% &   1.52 (7.60\%) \\ \hline
+ & Variação & -7.10\% &  7.60\% &  8.95\% &  10.02\% &  8.91\% &  4.17\% &   1.52 (7.60\%) \\ \hline
 
 Netty & 10 & 1542 & 6484 & 4005 & 4330 & 5704 & 7041 & 19.45 \\
 AMQP & 10 & 1424 & 7023 & 4396 & 5107 & 6136 & 7610 & 21.06 \\ \hline
- & Delta & -7.72\% &  8.31\% &   9.76\% &  17.94\% &  7.57\% &  8.08\% &  1.61 (8.31\%) \\ \hline
+ & Variação & -7.72\% &  8.31\% &   9.76\% &  17.94\% &  7.57\% &  8.08\% &  1.61 (8.31\%) \\ \hline
 
 Netty & 20 & 1568 & 12757 & 8206 & 9646 & 10146 & 12015 & 19.13 \\
 AMQP & 20 & 1503 & 13309 & 8728 & 9964 & 10888 & 13430 & 19.96 \\ \hline
- & Delta & -4.15\% &  4.33\% &   6.36\% &  3.30\% &  7.31\% &  11.78\% &  0.82 (4.33\%) \\ \hline
+ & Variação & -4.15\% &  4.33\% &   6.36\% &  3.30\% &  7.31\% &  11.78\% &  0.82 (4.33\%) \\ \hline
 
 Netty & 40 & 1589 & 25176 & 17616 & 18183 & 19436 & 21350 & 18.82 \\
 AMQP & 40 & 1518 & 26345 & 18496 & 19525 & 20842 & 23360 & 19.75 \\ \hline
-& Delta & -4.41\% &  4.64\% &   5.00\% &  7.38\% &  7.23\% &  9.41\% &  0.87 (4.64\%) \\ \hline 
+& Variação & -4.41\% &  4.64\% &   5.00\% &  7.38\% &  7.23\% &  9.41\% &  0.87 (4.64\%) \\ \hline 
 
 Netty & 80 & 1615 & 49525 & 35403 & 36541 & 37863 & 40041 & 18.57 \\
 AMQP & 80 & 1535 & 52122 & 37915 & 39399 & 40943 & 43496 & 19.54 \\ \hline
- & Delta & -5.02\% & 5.24\% &  7.10\% & 7.82\% & 8.13\% & 8.63\% & 0.97 (5.24\%) \\
+ & Variação & -5.02\% & 5.24\% &  7.10\% & 7.82\% & 8.13\% & 8.63\% & 0.97 (5.24\%) \\
 
 \hline 
 \end{tabular}
@@ -200,45 +200,50 @@ AMQP & 80 & 1535 & 52122 & 37915 & 39399 & 40943 & 43496 & 19.54 \\ \hline
 
 O fato de adicionarmos um terceiro nó com um \english{message broker} na comunicação
 entre os atores remotos naturalmente adiciona mais passagens pela rede que conecta os nós.
-Um envio que utiliza o Netty faz com que duas mensagens trafeguem pela rede: a ordem é
-enviada pelo \lstinline{RemoteClient} direto ao \lstinline{RemoteServer} e a resposta
-faz o caminho inverso. Já quando utilizamos nossa implementação com AMQP, quatro mensagens
+Um envio que utilize o Netty faz com que duas mensagens trafeguem pela rede: a ordem é
+enviada pelo \lstinline{RemoteClient} diretamente ao \lstinline{RemoteServer}. A mensagem de resposta, por sua vez,
+faz o caminho inverso, indo do \lstinline{RemoteClient} para o \lstinline{RemoteServer}. 
+Já quando utilizamos nossa implementação com AMQP, quatro mensagens
 são trafegadas: a ordem é enviada pelo \lstinline{RemoteClient} ao \english{message broker},
-o \english{message broker} envia a ordem para o \lstinline{RemoteServer} e a resposta faz o caminho
-inverso. Por este motivo, esperávamos que o tempo gasto pela implementação com AMQP fosse, 
-aproximadamente, duas vezes maior do que o tempo gasto pela implementação com Netty. 
+o \english{message broker} envia a ordem para o \lstinline{RemoteServer}. A mensagem de resposta, por sua vez, 
+também faz o caminho inverso, saindo do \lstinline{RemoteClient} e indo para o \english{message broker}, e depois
+do \english{message broker} para o \lstinline{RemoteServer}. Por esse motivo, esperávamos que 
+o tempo gasto pela implementação com AMQP fosse por volta de duas vezes maior do que o tempo gasto pela 
+implementação com Netty. 
 
-Observando a comparação dos dados da tabela \ref{tab:medidas} para a instância com apenas $1$ ator cliente, 
+Observando a variação dos dados da tabela \ref{tab:medidas} para a instância com apenas um ator cliente, 
 podemos notar uma diferença bem próxima da esperada. O número de envios/respostas por segundo com nossa implementação 
-é quase metade ($-47.50\%$) e o valor médio para cada envio/resposta leva quase o dobro do tempo ($90.33\%$).
-Como consequência, a duração total também leva quase o dobro do tempo ($90.33$\%). Se observarmos os percentis, 
-podemos notar que a diferença de tempo nas execuções com AMQP que estão abaixo da mediana, 
-foram maior que duas vezes mais lentas em relação às execuções feitas com Netty ($140.69$\% e  $134.54$\%). 
-Entretanto, quando comparamos os percentis acima da mediana, observamos uma boa redução na diferença 
-($79.73$\% e  $39.31$\%). Em termos práticos, os resultados obtidos para $1$ ator cliente nos mostram
-que $95$\% das ordens enviadas pelo ator cliente possuem como limite superior
-de tempo de processamento $3260\mu s$ com Netty e $4550\mu s$ com AMQP, uma diferença de $39.31$\%,
-bem abaixo do dobro do tempo, como esperávamos inicialmente.
+é quase metade do valor obtido com o Netty ($-47.50\%$) e o valor médio para cada envio/resposta leva 
+quase o dobro do tempo ($90.33\%$). Como consequência, a duração total também leva quase o dobro 
+do tempo ($90.33$\%). 
+
+A análise por percentis nos ajuda a ter uma idéia muito interessante sobre o tempo 
+de resposta de um sistema. Por exemplo, no \english{Trading System}, quando observamos o $95\%$ percentil,
+para apenas um ator cliente, sabemos que $95\%$ dos envios/respostas são completados em 
+no máximo $3266 \mu s$ com o Netty e $4550 \mu s$ com AMQP,
+resultando em uma variação de $39.31$\%. Contudo, se observarmos os demais percentis, podemos notar 
+que a diferença de tempo nas execuções com AMQP que estão abaixo dos $50\%$ foram mais de duas 
+vezes mais lentas em relação às execuções feitas com Netty ($140.69$\% e  $134.54$\%). 
 
 Com o aumento do número de atores clientes, a diferença de tempo apresenta uma boa diminuição.
 O gráfico da figura \ref{fig:grafico-er} mostra a evolução da quantidade de envios/respostas com o aumento
-da quantidade de atores clientes. Podemos observar que conforme a quantidade de atores clientes foi aumentando, 
-os resultados com nossa implementação apresentaram uma boa melhora e se mantiveram muito
+da quantidade de atores clientes. Podemos observar que, conforme a quantidade de atores clientes foi aumentando, 
+os resultados obtidos com nossa implementação apresentaram uma boa melhora e se mantiveram muito
 próximos dos resultados obtidos com a implementação original do Akka. A diferença que era de quase 
 $-47.50\%$ envios/respostas cai até chegar em apenas $-5.02\%$, o que no nosso experimento representa pouco 
 menos de $1$ segundo para completar todos os envios/respostas. De um modo geral, se observarmos a diferença 
 do tempo de execução para os experimentos a partir de $8$ atores clientes, onde o sistema começa a atingir seu
 ponto de saturação, temos uma diferença de tempo abaixo de $1.6$ segundos. 
 
-Devemos relembrar que não adicionamos compressão de mensagens em nossa implementação com AMQP, e que
+Devemos relembrar que não adicionamos compressão nas mensagens em nossa implementação com AMQP, e que
 os experimentos feitos com Netty utilizaram compressão média. Como as mensagens são 
 menores que $1$KB, entendemos que a implementação com AMQP possa ter levado ligeira
-vantagem. Ademais, o terceiro nó colabora para a distribuição do processamento. Na implementação
-feita com Netty, tanto as classes responsáveis pelo envio e recebimento de mensagens quanto as classes
-do arcabouço compartilham mesma JVM que executa os atores do sistema de cotações. 
+vantagem em relação a implementação com Netty. Ademais, o terceiro nó também colabora com a distribuição 
+de processamento. Na implementação feita com Netty, tanto as classes responsáveis pelo envio e 
+recebimento de mensagens quanto as classes do Netty compartilham mesma JVM que executa os atores do sistema de cotações. 
 Já na implementação com AMQP, apenas as classes responsáveis pelo envio e recebimento de mensagens 
 compartilham a mesma JVM. Durante a execução dos experimentos, mesmo diante de um cenário com alta concorrência em que vários 
-atores clientes executaram diversos envios em paralelo para um \lstinline{RemoteClient} compartilhando, 
+atores clientes executaram diversos envios em paralelo para um \lstinline{RemoteClient} compartilhado, 
 não tivemos problemas comuns de concorrência como \english{deadlocks} e condições de corrida 
 em nossa implementação. 
 
@@ -249,16 +254,16 @@ em nossa implementação.
   		\label{fig:grafico-er}
 \end{figure}
 
-Pelo fato das mensagens serem trafegadas duas vezes a mais na rede, naturalmente, a latência da 
-rede é um dos principais fatores que impactam nos resultados. A tabela \ref{tab:medidas-lentas} apresenta 
-as melhores medidas obtidas em uma rede \english{wireless} com maior latência. Utilizamos a mesma 
-configuração descrita anteriormente, porém retiramos os cabos que ligavam os computadores e passamos a 
-conectá-los via \english{wireless}. Os dados da tabela \ref{tab:medidas-lentas} mostram 
-que a diferença de tempo chega no pior caso, com $4$ atores clientes, a pouco mais de $2.5$ vezes o tempo gasto
-pela implementação com Netty. Quando observamos os percentis, podemos notar que a 
-diferença no tempo das execuções com AMQP que estão abaixo da mediana foram aproximadamente $3$ vezes 
+Pelo fato das mensagens serem trafegadas duas vezes a mais na rede, naturalmente a latência da 
+rede é um dos principais fatores que podem impactar nos resultados. A tabela \ref{tab:medidas-lentas} apresenta 
+as melhores medidas obtidas em uma rede \english{wireless} que possui maior latência em relação a rede
+utilizada anteriormente. Utilizamos a mesma configuração descrita anteriormente, porém retiramos os cabos 
+que ligavam os computadores e passamos a conectá-los via \english{wireless}. Os dados da tabela 
+\ref{tab:medidas-lentas} mostram que a variação de tempo chega no pior caso, com $4$ atores clientes, 
+a pouco mais de duas vezes e meia o tempo gasto pela implementação com Netty. Quando observamos os percentis, 
+podemos notar que a diferença no tempo das execuções com AMQP que estão abaixo dos $50\%$ foram aproximadamente três vezes 
 mais lentas em relação às execuções feitas com Netty ($209.28$\% e $197.17$\%). Quando comparamos os 
-percentis acima da mediana, observamos uma redução razoável na diferença ($179.11$\% e  $145.07$\%). Assim como na 
+percentis acima dos $50\%$, observamos uma redução razoável na diferença ($179.11$\% e  $145.07$\%). Assim como na 
 tabela \ref{tab:medidas}, conforme aumentamos a quantidade de atores clientes, a diferença de tempo cai chegando
 a $26.74\%$, pouco menos que $9$ segundos para completar todos os envios/respostas. 
 
@@ -275,35 +280,35 @@ a $26.74\%$, pouco menos que $9$ segundos para completar todos os envios/respost
 
 Netty & 1 & 163 &  6129 & 3387 & 4279 & 6265 & 13403 & 183.87 \\
 AMQP  & 1 & 106 &  9464 & 5998 & 7223 & 9624 & 17360 & 283.92 \\ \hline
- & Delta & -34.97\% & 54.41\% &  77.09\% & 68.80\% & 53.62\% & 29.52\% & 100.05 (54.41\%) \\ \hline
+ & Variação & -34.97\% & 54.41\% &  77.09\% & 68.80\% & 53.62\% & 29.52\% & 100.05 (54.41\%) \\ \hline
 
 Netty & 2  &  341  &  5857  &  3418  &  4113  &  5635  &  11481  & 87.855 \\
 AMQP  & 2  &  152  &  13121  &  8963  &  10784  &  14077  &  22309 & 196.815 \\ \hline
- & Delta & -55.43\% & 124.02\%  &  162.23\%  &  162.19\%  &  149.81\%  &  94.31\%  &  108.96 (124.02\%) \\ \hline
+ & Variação & -55.43\% & 124.02\%  &  162.23\%  &  162.19\%  &  149.81\%  &  94.31\%  &  108.96 (124.02\%) \\ \hline
 
 Netty & 4  &  479  &  8337  &  5248  &  6334  &  8219  &  13892 & 62.5275 \\
 AMQP  & 4  &  183  &  21872  &  16231  &  18823  &  22940  &  34045 & 164.04 \\ \hline
- & Delta & -61.80\% & 162.35\%  &  209.28\%  &  197.17\%  &  179.11\%  &  145.07\%  &  101.51 (162.35\%) \\ \hline
+ & Variação & -61.80\% & 162.35\%  &  209.28\%  &  197.17\%  &  179.11\%  &  145.07\%  &  101.51 (162.35\%) \\ \hline
 
 Netty & 8  &  491  &  16292  &  10528  &  12692  &  15780  &  23123 & 61.095 \\
 AMQP  & 8  &  198  &  40463  &  26918  &  33224  &  41392  &  58513 & 151.73625 \\ \hline
- & Delta & -59.67\% & 148.36\%  &  155.68\%  &  161.77\%  &  162.31\%  &  153.05\%  &  90.64 (148.36\%) \\ \hline
+ & Variação & -59.67\% & 148.36\%  &  155.68\%  &  161.77\%  &  162.31\%  &  153.05\%  &  90.64 (148.36\%) \\ \hline
 
 Netty & 10  &  559  &  17883  &  12737  &  14918  &  18099  &  25705 & 53.649 \\
 AMQP & 10  &  243  &  40891  &  29653  &  34970  &  41936  &  56755 & 122.673 \\ \hline
- & Delta & -56.27\%  &  128.66\%  &  132.81\%  &  134.41\%  &  131.70\%  &  120.79\%  &  69.02 (128.66\%) \\ \hline
+ & Variação & -56.27\%  &  128.66\%  &  132.81\%  &  134.41\%  &  131.70\%  &  120.79\%  &  69.02 (128.66\%) \\ \hline
 
 Netty & 20  &  563  &  35486  &  22392  &  26879  &  32957  &  47837 & 53.23 \\
 AMQP & 20  &  323  &  61951  &  47710  &  55291  &  64509  &  84108 & 92.92 \\ \hline
- & Delta & -42.63\% & 74.58\%  &  113.07\%  &  105.70\%  &  95.74\%  &  75.82\%  &  39.69 (74.58\%) \\ \hline
+ & Variação & -42.63\% & 74.58\%  &  113.07\%  &  105.70\%  &  95.74\%  &  75.82\%  &  39.69 (74.58\%) \\ \hline
 
 Netty & 40  &  607  &  65782  &  41155  &  49748  &  60805  &  83042 & 49.33 \\
 AMQP & 40  &  390  &  98951  &  62679  &  77785  &  98463  &  150803 & 74.21 \\ \hline
- & Delta & -35.75\% & 50.42\%  &  52.30\%  &  56.36\%  &  61.93\%  &  81.60\%  &  24.87 (50.42\%) \\ \hline
+ & Variação & -35.75\% & 50.42\%  &  52.30\%  &  56.36\%  &  61.93\%  &  81.60\%  &  24.87 (50.42\%) \\ \hline
 
 Netty & 80  &  889  &  89089  &  36654  &  39031  &  50225  &  103695 & 33.41 \\
 AMQP & 80  &  628  &  112913  &  66128  &  77563  &  94990  &  139215 & 42.34 \\ \hline
- & Delta & -29.36\% & 26.74\%  &  80.41\%  &  98.72\%  &  89.13\%  &  34.25\%  &  8.93 (26.74\%) \\ 
+ & Variação & -29.36\% & 26.74\%  &  80.41\%  &  98.72\%  &  89.13\%  &  34.25\%  &  8.93 (26.74\%) \\ 
 
 \hline 
 \end{tabular}
@@ -331,26 +336,26 @@ do que no final.
 Argumentamos que na rede com maior latência, o sistema não conseguiu chegar próximo
 do seu ponto de saturação (como mostramos na figura \ref{fig:grafico-er}, o ponto de saturação
 foi o ponto onde a diferença de tempo das execuções com Netty e AMQP ficou abaixo dos $8$\%).
-Nosso argumento se baseia na comparação dos valores de ER/S obtidos para instâncias com $1$ e $2$ 
-clientes mostrados na tabela \ref{tab:medidas}, com os valores de ER/S obtidos para instâncias com $10$
+Nosso argumento é baseado na comparação dos valores de envios/respostas obtidos para instâncias com $1$ e $2$ 
+clientes mostrados na tabela \ref{tab:medidas}, com os valores de envios/respostas obtidos para instâncias com $10$
 e $80$ clientes mostrados na tabela \ref{tab:medidas-lentas}. 
 
 Se compararmos o valor da tabela \ref{tab:medidas} para experimentos com Netty e $1$ ator cliente, 
-temos $501$ ER/S. Essa quantidade de ER/S só é obtida na rede de maior latência,
+temos $501$ envios/respostas. Essa quantidade de envios/respostas só é obtida na rede de maior latência
 quando passamos de $8$ para $10$ atores clientes, onde os valores mostrados na tabela
-\ref{tab:medidas-lentas} são respectivamente $491$ e $559$ ER/S. Quando passamos para $2$ atores
-clientes, temos $894$ ER/S na tabela \ref{tab:medidas}. Essa quantidade de ER/S
-só é aproximada na rede com maior latência quando utilizamos $80$ clientes. Nesse caso temos $889$ ER/S.
+\ref{tab:medidas-lentas} são respectivamente $491$ e $559$ envios/respostas. Quando passamos para $2$ atores
+clientes, temos $894$ envios/respostas na tabela \ref{tab:medidas}. Essa quantidade de envios/respostas
+só é aproximada na rede com maior latência quando utilizamos $80$ clientes. Nesse caso temos $889$ envios/respostas.
 
 Analogamente, se compararmos o valor da tabela \ref{tab:medidas} para experimentos com AMQP e $1$ ator cliente, 
-temos $263$ ER/S. Essa quantidade de ER/S só é aproximada na rede de maior latência,
+temos $263$ envios/respostas. Essa quantidade de envios/respostas só é aproximada na rede de maior latência,
 quando utilizamos $10$ atores clientes, onde o valor mostrado na tabela
-\ref{tab:medidas-lentas} é de $243$ ER/S. Quando passamos para $2$ atores
-clientes temos $528$ como valor de ER/S na tabela \ref{tab:medidas}. Essa quantidade de ER/S
+\ref{tab:medidas-lentas} é de $243$ envios/respostas. Quando passamos para $2$ atores
+clientes temos $528$ como valor de envios/respostas na tabela \ref{tab:medidas}. Essa quantidade de envios/respostas
 só é obtida na rede com maior latência quando utilizamos $80$ clientes. Nesse caso temos $628$
-ER/S.
+envios/respostas.
 
-Com base na comparação da quantidade de ER/S, nossa conclusão é de que a quantidade de atores clientes
+Com base na variação da quantidade de envios/respostas, nossa conclusão é de que a quantidade de atores clientes
 utilizados na rede com maior latência não foi suficiente para fazer com que o sistema chegasse próximo
 do seu ponto de saturação. Ao contrário, na rede com maior latência, o sistema teve um volume de 
 processamento próximo do volume que se teve para instâncias com $1$ e $2$ clientes na rede com
@@ -362,14 +367,3 @@ $1$ até $2$ clientes do gráfico da figura \ref{fig:grafico-er}.
 %final, o volume de mensagens em um dado instante tende a ser menor. Com um volume menor de mensagens, a vantagem
 %que levamos com a distribuição do processamento dos envios e recebimentos de mensagens só começa a 
 %contar positivamente com o aumento do volume de mensagens concorrentes. 
-
-%% mover para outro lugar?? 
-Ainda que exista um processamento extra a cargo do \english{message broker} para recebimento, roteamento
-e entrega das mensagens, concluímos que existe uma vantagem relativa em relação a implementação feita com o Netty.
-Tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, como recebimento e entrega
-das mensagens, e de este processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
-o processamento das mensagens, como os atores. Conforme a frequência das mensagens foi aumentando, 
-houve uma redução considerável na diferença de tempo, como mostrado no gráfico da figura \ref{fig:grafico-er}.
-Assim, entendemos que a carga extra de processamento adicionada pelo \english{message broker}, não invalida
-o seu uso como suporte para a troca de mensagens entre atores remotos. Enfatizamos que em um cenário realista
-de um sistema de atores, é esperado um número razoável de atores executando em paralelo.

@@ -3,6 +3,16 @@
 \index{Conclusões}
 \label{cap:conclusoes}
 
+Ainda que exista um processamento extra a cargo do \english{message broker} para recebimento, roteamento
+e entrega das mensagens, concluímos que existe uma vantagem relativa em relação a implementação feita com o Netty.
+Tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, como recebimento e entrega
+das mensagens, e de este processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
+o processamento das mensagens, como os atores. Conforme a frequência das mensagens foi aumentando e o sistema
+foi chegando ao seu ponto de saturação, houve uma redução considerável na diferença de tempo (figura \ref{fig:grafico-er}).
+Assim, entendemos que a carga extra de processamento adicionada pelo \english{message broker}, não invalida
+o seu uso como suporte para a troca de mensagens entre atores remotos. Enfatizamos que em um cenário realista
+de um sistema de atores, é esperado um número razoável de atores executando em paralelo.
+
 Comentamos brevemente no capítulo \ref{cap:estrutura-troca-mensagens-amqp} sobre algumas das características
 da trocas de mensagens entre entidades conectadas ponto-a-ponto via \english{sockets}, como saber o endereço
 do hospedeiro e porta da outra parte no qual se está conectado, a possibilidade de identificar se a outra 
@@ -13,8 +23,8 @@ remotos do Akka, tanto para notificar  um \lstinline{RemoteClient} que o \lstinl
 não está mais conectado, quanto o contrário.
 
 O fato de utilizarmos filas para fazer o armazenamento intermediário das mensagens 
-(ainda que, na maior parte do tempo, por um período breve), permite que um \lstinline{RemoteServer} 
-ou \lstinline{RemoteClient} possam receber mensagens mesmo após sua execução ter sido interrompida. 
+(ainda que, na maior parte do tempo, por um período breve), permite que tanto um \lstinline{RemoteServer} 
+quanto um \lstinline{RemoteClient} possa receber mensagens mesmo após sua execução ter sido interrompida. 
 Para tal, basta que eles tenham executado alguma vez com uma configuração durável\footnote{O mesmo 
 vale para configurações transientes, desde que o \english{message broker} não tenha sido reiniciado}. 
 As mensagens ficam armazenadas até que um novo consumidor seja registrado. Um detalhe importante
