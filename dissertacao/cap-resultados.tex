@@ -348,14 +348,6 @@ quando passamos de $8$ para $10$ atores clientes, onde os valores mostrados na t
 clientes, temos $894$ envios/respostas na tabela \ref{tab:medidas}. Essa quantidade de envios/respostas
 só é aproximada na rede com maior latência quando utilizamos $80$ clientes. Nesse caso temos $889$ envios/respostas.
 
-\begin{figure}[!h]
-		\centering
-		\includegraphics[scale=.70]{grafico-er-lento-e-normal} 
- 		\caption{Comparação ??.}
-  		\label{fig:grafico-er-lento-e-normal}
-\end{figure}
-
-
 Analogamente, se verificarmos o valor da tabela \ref{tab:medidas} para experimentos com AMQP e $1$ ator cliente, 
 temos $263$ envios/respostas. Essa quantidade de envios/respostas só é aproximada na rede de maior latência,
 quando utilizamos $10$ atores clientes, onde o valor mostrado na tabela
@@ -372,6 +364,14 @@ menor latência. Em outras palavras, nosso entendimento é de que o trecho que vai
 clientes do gráfico da figura \ref{fig:grafico-er-lento} está compreendido no trecho que vai de
 $1$ até $2$ clientes do gráfico da figura \ref{fig:grafico-er}, como mostra o gráfico da figura
 \ref{fig:grafico-er-lento-e-normal}.
+
+
+\begin{figure}[!h]
+		\centering
+		\includegraphics[scale=.70]{grafico-er-lento-e-normal} 
+ 		\caption{Comparação ??.}
+  		\label{fig:grafico-er-lento-e-normal}
+\end{figure}
 
 
 %Com as mensagens levando mais tempo para chegar ao \english{message broker} e ao seu destino

@@ -4,8 +4,9 @@
 \label{cap:conclusoes}
 
 Ainda que exista um processamento extra a cargo do \english{message broker} para recebimento, roteamento
-e entrega das mensagens, concluímos que existe uma vantagem relativa em relação a implementação feita com o Netty.
-Tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, como recebimento e entrega
+e entrega das mensagens, concluímos que existe uma vantagem relativa da nossa implemetação
+para transporte de mensagens entre atores remotos com padrão AMQP em relação a implementação original do
+Akka feita com o Netty. Tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, como recebimento e entrega
 das mensagens, e de este processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
 o processamento das mensagens, como os atores. Conforme a frequência das mensagens foi aumentando e o sistema
 foi chegando ao seu ponto de saturação, houve uma redução considerável na diferença de tempo (figura \ref{fig:grafico-er}).
