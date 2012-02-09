@@ -231,15 +231,16 @@ da quantidade de atores clientes. Podemos observar que, conforme a quantidade de
 os resultados obtidos com nossa implementação apresentaram uma boa melhora e se mantiveram muito
 próximos dos resultados obtidos com a implementação original do Akka. A diferença que era de quase 
 $-47.50\%$ envios/respostas cai até chegar em apenas $-5.02\%$, o que no nosso experimento representa pouco 
-menos de $1$ segundo para completar todos os envios/respostas. De um modo geral, se observarmos a diferença 
-do tempo de execução para os experimentos a partir de $8$ atores clientes, onde o sistema começa a atingir seu
+menos de $1$ segundo para completar todos os envios/respostas na instância com $80$ atores clientes. 
+De um modo geral, se observarmos a diferença do tempo de execução para os experimentos a partir de 
+$8$ atores clientes, onde o sistema começa a atingir seu
 ponto de saturação, temos uma diferença de tempo abaixo de $1.6$ segundos. 
 
-Devemos relembrar que não adicionamos compressão nas mensagens em nossa implementação com AMQP, e que
+Devemos relembrar que não adicionamos compressão nas mensagens em nossa implementação com AMQP e que
 os experimentos feitos com Netty utilizaram compressão média. Como as mensagens são 
-menores que $1$KB, entendemos que a implementação com AMQP possa ter levado ligeira
-vantagem em relação a implementação com Netty. Ademais, o terceiro nó também colabora com a distribuição 
-de processamento. Na implementação feita com Netty, tanto as classes responsáveis pelo envio e 
+menores que $1$KB, entendemos que a implementação com AMQP possa ter sido ligeiramente
+beneficiada em relação a implementação com Netty. Ademais, o terceiro nó também colabora com a distribuição 
+doo processamento. Na implementação feita com Netty, tanto as classes responsáveis pelo envio e 
 recebimento de mensagens quanto as classes do Netty compartilham mesma JVM que executa os atores do sistema de cotações. 
 Já na implementação com AMQP, apenas as classes responsáveis pelo envio e recebimento de mensagens 
 compartilham a mesma JVM. Durante a execução dos experimentos, mesmo diante de um cenário com alta concorrência em que vários 
