@@ -8,7 +8,7 @@ e entrega das mensagens, concluímos que existe uma vantagem relativa da nossa im
 para transporte de mensagens entre atores remotos com padrão AMQP em relação a implementação original do
 Akka feita com o Netty. Tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, como recebimento e entrega
 das mensagens, e de este processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
-o processamento das mensagens, como os atores. Conforme a frequência das mensagens foi aumentando e o sistema
+o processamento das mensagens, como os atores. Conforme a frequência das mensagens foi aumentando, e o sistema
 foi chegando ao seu ponto de saturação, houve uma redução considerável na diferença de tempo (figura \ref{fig:grafico-er}).
 Assim, entendemos que a carga extra de processamento adicionada pelo \english{message broker}, não invalida
 o seu uso como suporte para a troca de mensagens entre atores remotos. Enfatizamos que em um cenário realista
@@ -124,7 +124,7 @@ reside como \english{proxy} durante o envio.
 O uso do RabbitMQ como \english{message broker} AMQP em conjunto com a estrutura descrita no capítulo
 \ref{cap:estrutura-troca-mensagens-amqp}, se mostrou eficaz em nossos experimentos para transportar mensagens
 entre atores remotos. O tempo extra de processamento adicionado com uso do \english{message broker} 
-se mostrou muito baixo para um cenário mais realista, em que exista uma quantidade razoável de atores executando
+se mostrou muito baixo para um cenário mais realista, em que existe uma quantidade razoável de atores executando
 em paralelo e baixa latência de rede, está bem abaixo do que esperávamos. Dependendo do tipo de aplicação, podemos
 afirmar que o tempo extra pode ser até considerado como desprezível. Nossa conclusão é de que as duas 
 classes de sistemas estudas neste trabalho possuem boa sinergia.
@@ -167,12 +167,12 @@ O uso de um \english{message broker} ainda trás outros benefícios, como por exem
 
 O fato de utilizarmos atores para encapsular as principais classes da biblioteca para clientes Java
 do RabbitMQ, permite que a hierarquia de atores que foi criada venha ser utilizada para o tratamento
-de erros. Ainda que nossa implementação seja de uma hierarquia de supervisão, o atores supervisores não
-possuem comportamento para o tratamento de erros em atores filhos. 
+de erros. Ainda que nossa implementação seja de uma hierarquia de supervisão, os atores supervisores não
+possuem comportamento para o tratamento de erros em atores supervisionados. 
 
-A implementação pode ser ampliada para que, em caso de erros nos atores filhos, como os responsáveis pelos
+A implementação pode ser ampliada para que, no caso de erros em atores supervisionados, como os responsáveis pelos
 canais ou conexões, os atores supervisores possam criar novos atores supervisionados no mesmo estado que 
-estavam antes do erro acontecer. A restauração do estado nos atores filhos deve obedecer as configurações 
+estavam antes do erro acontecer. A restauração do estado nos atores filhos deverá obedecer as configurações 
 originais dos objetos que foram criados no \english{message broker}. É necessário ainda que, quando
 não for possível restabelecer o sistema, seja por não se conseguir reconectar ao \english{message broker} ou
 por algum outro motivo, notificar a ponte AMQP para que ela possa propagar o erro para o nível da aplicação.
@@ -180,7 +180,7 @@ por algum outro motivo, notificar a ponte AMQP para que ela possa propagar o err
 
 \subsection{Experimentos em um ambiente de computação em nuvem}
 
-Nos últimos anos, o conceito de computação em nuvem vem ganhando
+Nos últimos anos o conceito de computação em nuvem vem ganhando
 bastante espaço, não só na comunidade acadêmica, mas também na indústria de tecnologia.
 Computação em nuvem é um conceito que se refere tanto a aplicações disponibilizadas como serviços 
 via internet quanto pelo \english{hardware} e sistemas de \english{software} que estão nos centros 
@@ -188,17 +188,17 @@ processamento de dados para prover estes serviços \cite{cloud2010}. O termo ``nu
 utilizado para denotar o \english{hardware} e o \english{software} que ficam no centro de processamento
 de dados. Um dos principais atrativos da computação em nuvem é a capacidade de elasticidade da nuvem.
 Caso a demanda por um serviço aumenta, recursos que estão disponíveis, como computadores e máquinas virtuais
-podem ser provisionados para aumentar a capacidade de processamento. Quando a demanda pelo serviço cai e 
+podem ser provisionados para aumentar a capacidade de processamento. Quando a demanda pelo serviço diminui e 
 a capacidade de processamento necessária passa a ser menor, parte recursos podem ser 
 liberados para atenderem outros serviços. 
 
 Algumas plataformas de computação em nuvem existentes no mercado, como EC2 (Amazon) \cite{ec2}, Nebula (NASA) 
-\cite{nebula}, Heroku \cite{heroku} e Cloud Foundry (VMWare) \cite{cloudfoundry}, ou possuem o RabbitMQ 
-como \english{message broker}, ou permitem que o RabbitMQ seja instalado. 
+\cite{nebula}, Heroku \cite{heroku} e Cloud Foundry (VMWare) \cite{cloudfoundry}, possuem o RabbitMQ 
+como \english{message broker} ou permitem que o RabbitMQ seja instalado. 
 Acreditamos que nossa implementação de atores remotos esteja muito próxima e necessite de poucas adaptações
 para poder ser implantada em uma infraestrutura de computação em nuvem. Acreditamos que a elasticidade da nuvem, 
-alinhada com a capacidade do RabbitMQ de trabalhar com um número alto de requisições, permita uma alta 
-escalabilidade no sistema que for desenvolvido. Deixamos como sugestão de experimento, fazer uma comparação 
+alinhada com a capacidade do RabbitMQ de trabalhar com um número alto de requisições, proporsione alta 
+escalabilidade para sistema que for desenvolvido. Deixamos como sugestão de experimento, fazer uma comparação 
 do \english{Trading System} com a quantidade de clientes bem maior da utilizada em nossos experimentos.
 
 
