@@ -13,10 +13,9 @@ a mensagem possam estar pervasivamente disponíveis nas redes das empresas,
 incentivando o desenvolvimento de aplicações interoperáveis baseadas em troca 
 de mensagens. 
 
-AMQP é um protocolo binário, assíncrono, seguro, portável, 
-neutro, eficiente e possui suporte a múltiplos canais. 
-A especificação apresenta o protocolo dividido em três camadas,
-como mostrado na figura \ref{fig:protocol_overview}.	
+AMQP é um protocolo binário e assíncrono, com suporte a múltiplos canais. 
+A especificação apresenta o protocolo dividido em três camadas, como mostrado 
+na figura \ref{fig:protocol_overview}.	
 
 \begin{figure}[!h]
  		\centering
@@ -42,10 +41,10 @@ A camada de modelo é a camada em que está definido o conjunto de comandos
 e dos objetos que as aplicações podem utilizar. 
 A especificação dos requisitos dessa camada inclui, entre outros itens: 
 garantir a interoperabilidade das implementações, prover controle explícito
-sobre a qualidade do serviço, proporcionar um mapeamento fácil entre os 
-comandos e as bibliotecas de nível de aplicação e ter clareza, de modo 
-que cada comando seja responsável por uma única ação. Os componentes desta camada
-são: 
+sobre a qualidade do serviço, oferecer um mapeamento natural entre os 
+comandos do protocolo e as bibliotecas do nível de aplicação e proporcionar clareza
+em tal mapeamento, de modo que cada comando seja responsável por uma única ação. 
+Os componentes desta camada são: 
 
 \begin{itemize}
 	\item Servidor: É o processo,  conhecido também como \english{broker}, que 
@@ -55,7 +54,7 @@ são:
 	\item Filas: São entidades internas do servidor que armazenam as mensagens, 
 	tanto em memória quanto em disco, até que elas sejam enviadas em sequência para 
 	as aplicações consumidoras. As filas são totalmente independentes umas das outras. 
-	Na criação de uma fila, várias propriedades podem ser especificadas: a fila de ser 
+	Na criação de uma fila, várias propriedades podem ser especificadas: a fila pode ser 
 	pública ou privada, armazenar mensagens de modo durável ou transiente, e ter 
 	existência permanente ou temporária (e.g.: a existência da fila é vinculada ao ciclo 
 	de vida de uma aplicação consumidora). A combinação de propriedades como essas viabiliza 
@@ -72,16 +71,11 @@ são:
 	na maioria dos casos, a chave de roteamento presente no cabeçalho de cada mensagem. 		
 	Com o auxílio da tabela de \english{bindings}, uma \english{exchange} decide como 
 	encaminhar as mensagens às respectivas filas, jamais armazenando mensagens.
-	\english{Exchanges} podem ser: diretas (\english{direct}), em que o valor da chave 
-	de roteamento, que é parte do cabeçalho da mensagem, deve ser exatamente igual 
+	Há vários tipos de \english{exchanges}, porém neste trabalho utilizamos apenas
+	\english{exchanges} diretas (\english{direct}). Em tais \english{exchanges}, 
+	o valor da chave de roteamento, que é parte do cabeçalho da mensagem, deve ser exatamente igual 
 	a uma entrada da tabela de \english{bindings} para que a mensagem seja 
-	roteada para a fila; tópicos (\english{topic}), em que é utilizado o casamento de
-	padrões para determinar o roteamento às filas. Os caracteres coringa 
-	suportados são *, que indica uma única palavra, e \#, que indica zero ou muitas palavras. 
-	A chave de roteamento deve ser formada por palavras e pontos. Por exemplo, 
-	o padrão *.stock.\# casa com usd.stock e eur.stock.db, nas não com stock.nasdaq; 
-	e \english{fanout}, em que o roteamento acontece para todas as filas 
-	associadas a \english{exchange}, indepententemente da chave de roteamento.
+	roteada para a fila.
 	  
 	\item \english{Bindings}: São relacionamentos entre \english{exchanges} e filas. 
 	Esses relacionamentos definem como deverá ser feito o roteamento das mensagens.
@@ -184,11 +178,11 @@ escopo de uma sessão.
 Os principais serviços providos pela camada de sessão para a camada de modelo são:
 \begin{itemize}
 	\item Identificação sequencial dos comandos: Cada comando emitido pelos pares
-	é identificado, única e individualmente, dentro da sessão para que o sistema 
-	seja capaz de garantir sua execução exatamente uma vez. Utiliza-se um esquema
+	é identificado, única e individualmente dentro da sessão, para que o sistema 
+	seja capaz de garantir a execução do comando exatamente uma vez. Utiliza-se um esquema
 	de numeração sequencial. A noção de identificação permite a correlação de comandos
 	e a devolução de resultados assíncronos. O identificador do comando é disponibilizado
-	para a camada de modelo e, quando um resultado é devolvido para um comando, o
+	para a camada de modelo e, quando um resultado de um comando é devolvido, o
 	identificador desse comando é utilizado para estabelecer a correlação entre o
 	comando e o resultado.
 	
@@ -201,7 +195,7 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 	ser entregues em lotes ou mesmo serem deferidas indefinidamente, no caso do par
 	solicitante não requerer a confirmação de que o comando será executado.
 	
-	\item Notificação de comandos completados: Diferente do conceito de confirmação,
+	\item Notificação de comandos completados: Diferentemente do conceito de confirmação,
 	este serviço notifica o par que solicitou a execução de um comando que o comando foi
 	executado por completo. As notificações de comandos completados tem como motivação
 	a sincronização e a garantia da ordem de execução entre diferentes sessões. Quando
@@ -209,8 +203,8 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 	confirmações podem ser acumuladas e enviadas em lotes, reduzindo o tráfego de rede.
 	
 	\item Reenvio e recuperação no caso de falhas na rede: Para que o sistema possa
-	se recuperar no caso de falhas na rede, a sessão deve ser capaz de reenviar comandos
-	cujos recebimentos pelo outro par são duvidosos. A camada de sessão provê as
+	se recuperar no caso de falhas na rede, a sessão deve ser capaz de reenviar um comando
+	cujo recebimento pelo outro par é duvidoso. A camada de sessão provê as
 	ferramentas necessárias para identificar o conjunto com os comandos rotulados
 	como duvidosos e reenviá-los, sem o risco de causar duplicidade.
 \end{itemize}
@@ -243,19 +237,19 @@ RabbitMQ \cite{rabbitmq}.
 O projeto Apache Qpid é uma implementação de código
 aberto com uma distribuição escrita em Java e uma outra escrita em C++. 
 A implementação está disponível sob a licença Apache $2.0$ \cite{apache-lic} e
-possui bibliotecas para aplicações cliente em diversas linguagens, como 
+possui bibliotecas para aplicações clientes em diversas linguagens, como 
 Java, C++, Ruby, Python e C\#.  A implementação da biblioteca cliente para Java é 
-compatível com o a versão $1.1$ do padrão Java \english{Message Service} \cite{jms}.
+compatível com a versão $1.1$ do padrão Java \english{Message Service} \cite{jms}.
 
-O projeto ZeroMQ também é uma implementação de código aberto feita em C++, com
-bibliotecas disponibilizadas para aplicações cliente em mais de vinte linguagens,
+O projeto ZeroMQ é uma implementação de código aberto feita C++, com
+bibliotecas disponibilizadas para aplicações clientes em mais de vinte linguagens,
 incluindo Java, Python, C++ e C. A implementação está disponível sob a 
 licença LGPL \cite{lgpl}. A biblioteca para clientes Java depende de
-outras bibliotecas nativas específicas para sistema operacional suportado. 
+outras bibliotecas nativas específicas para cada sistema operacional. 
 
 Assim como os outros dois projetos, o projeto RabbitMQ também é um projeto de código aberto,
-porém é implementado na linguagem Erlang e  está disponível sob a licença MPL \cite{mpl}.
-Possui bibliotecas para aplicações cliente em diversas linguagens como Java, Erlang e Python. 
+porém é implementado na linguagem Erlang e está disponível sob a licença MPL \cite{mpl}.
+Ele possui bibliotecas para aplicações clientes em diversas linguagens como Java, Erlang e Python. 
 A implementação da biblioteca para clientes Java é totalmente feita em Java
 e não possui dependências de código nativo, sendo totalmente independente de plataforma.
 
@@ -312,10 +306,11 @@ a implementação de uma parte considerável da camada de transporte do padrão AMQP
 Como descrito na seção \ref{sec:amqp-transporte}, a camada de transporte deve ser
 capaz de prover a multiplexação de canais. A classe \lstinline{Connection} provê,
 dentre outros métodos, o método \lstinline{createChannel}. A invocação desse método resulta em
-uma instância de \lstinline{com.rabbitmq.client.Channel} no qual
+uma instância de \lstinline{com.rabbitmq.client.Channel}, na qual
 podemos executar os comandos definidos na camada de sessão (listagem \ref{lst:channels}). 
-Por exemplo a criação de filas (\lstinline{queueDeclare}) ou o envio (\lstinline{basicPublish}) e 
-recebimento de mensagens (\lstinline{basicConsume}).
+Tais comandos incluem os comandos para criação de \english{exchanges} (\lstinline{exchangeDeclare}),
+de filas (\lstinline{queueDeclare}), de \english{bindings} (\lstinline{queueBind}) e
+os comandos para envio (\lstinline{basicPublish}) e recebimento de mensagens (\lstinline{basicConsume}).
 	
 \begin{lstlisting}[caption={Criação e uso de canais.}, label={lst:channels}]
 val channel = connection.createChannel
@@ -335,14 +330,14 @@ uma fábrica de conexões, uma conexão, um canal e um consumidor estão relacionado
 Um exemplo completo de uma aplicação produtora e de uma aplicação consumidora com a biblioteca
 Java do RabbitMQ é apresentado no apêndice \ref{ape:sample-amqp}.
 	
-Um detalhe importante sobre a biblioteca para clientes Java do RabbitMQ, é a verificação
-da existênca de um objeto antes da criação efetiva do objeto. Por exemplo, se tivéssemos
-criado uma fila durável $F_1$, e tentássemos criar uma nova fila durável $F_1$, a fila não seria
+Um detalhe sobre a biblioteca para clientes Java do RabbitMQ é a verificação
+da existência de um objeto antes da criação efetiva do objeto. Por exemplo, se tivéssemos
+criado uma fila durável $F_1$ e tentássemos criar uma nova fila durável $F_1$, a fila não seria
 recriada e a execução seguiria normalmente. Eventuais mensagens em $F_1$ não sofreriam 
 alterações. Contudo, caso estivéssemos tentando recriar $F_1$ como não durável, uma exceção
-seria lançada e o canal utilizado para executar o comando de criação seria fechado. Para casos
-como este, a regra também vale para \english{exchanges}. O procedimento correto é remover, seja via código ou
-via alguma aplicação administrativa do RabbitMQ, para depois fazer a criação.
+seria lançada e o canal utilizado para executar o comando de criação seria fechado. 
+Nesse caso, o procedimento correto é remover $F_1$, seja via código ou via alguma aplicação 
+administrativa do RabbitMQ, para depois fazer a criação.
 
 \begin{lstlisting}[caption={Registro de um consumidor.}, label={lst:sample-consumer}]		
 class MyConsumer(channel: Channel) extends Consumer{
@@ -365,17 +360,15 @@ class MyConsumer(channel: Channel) extends Consumer{
   \caption{RabbitMQ Java API -- Relação entre classes de transporte e sessão.}
   \label{fig:rabbitmq-colaboracao}
 \end{figure} 	
-		
-Para finalizar este capítulo, é importante destacar que a implementação de canais 
-\cite{rabbit-channels} não é uma segura para acesso concorrente (\english{thread safe}), 
-de modo que é de responsabilidade da aplicação fazer a devida proteção para 
-evitar que diferentes \english{threads} façam uso dos canais concorrentemente. Canais
-permitem ainda que sejam registrados tratadores de erros (\lstinline{setReturnListener}), 
-como por exemplo para o caso em que mensagens não puderem ser enviadas ou entregues 
-aos seus respectivos destinatários. Em situações como essas, o corpo da mensagem e algumas
+
+Canais permitem ainda que sejam registrados tratadores de erros (\lstinline{setReturnListener}), 
+para lidar com casos como o de uma mensagem que não possa ser enviada ou entregue
+ao seu destinatário. Em situações como essa, o corpo da mensagem e algumas
 informações do envio, como o nome da \english{exchange}, a chave de roteamento e 
 o código de rejeição, são repassados para o tratador de erros que foi registrado no canal.
 A aplicação produtora passa a ter autonomia para fazer o tratamento apropriado.
-	
-
-	
+		
+Para finalizar este capítulo, é importante destacar que a implementação de canais 
+\cite{rabbit-channels} não é segura para acesso concorrente (\english{thread safe}).
+Assim sendo, a aplicação tem a responsabilidade de evitar que diferentes \english{threads}
+façam uso concorrente de um canal.

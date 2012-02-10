@@ -5,11 +5,11 @@
 Apresentamos nesse capítulo a estrutura que definimos para a troca de mensagens 
 entre entidades remotas via \english{message broker} AMQP. A estrutura apresentada
 neste capítulo foi utilizada como suporte para o desenvolvimento dos novos componentes 
-da camada de implementação para transporte de mensagens entre atores remoto do projeto Akka 
+da camada de implementação para transporte de mensagens entre atores remotos do projeto Akka 
 (figura \ref{fig:remote-actor-colaboracao}). Entretanto, 
 antes de apresentar a estrutura que definimos, comentamos brevemente algumas 
 características de entidades conectadas ponto-a-ponto via \english{sockets}
-que são impactadas ou deixam de fazer sentido com a nova abordagem.
+que são afetadas ou deixam de fazer sentido com a nova abordagem.
 
 \section{Entidades conectadas ponto-a-ponto via \english{sockets}}
 \index{Estrutura!ponto-a-ponto}
@@ -17,36 +17,35 @@ que são impactadas ou deixam de fazer sentido com a nova abordagem.
 
 Em uma transferência de mensagens entre duas entidades conectadas 
 ponto-a-ponto por \english{sockets} TCP ou UDP, ambas as entidades devem conhecer
-detalhes sobre a conexão e sobre o protocolo das mensagens que são enviadas. 
-O fato de não haver uma entidade intermediando a troca de mensagens, permite que 
+detalhes sobre a conexão e sobre o formato das mensagens que são enviadas. 
+O fato de não haver uma entidade intermediando a troca de mensagens permite que 
 uma das entidades identifique uma eventual desconexão da outra, ou ainda que uma 
 entidade conheça o endereço do nó hospedeiro onde está a outra entidade. Nos casos em que as 
 entidades estão em nós que não fazem parte de uma rede interna,
-a informação da localidade pode não indicar exatamente o nó corrente da entidade, 
+a informação de localidade pode não indicar exatamente o nó real da entidade, 
 mas o endereço de alguma porta de ligação (\english{gateway}). 
 
-Uma característica importante da transferência de mensagens entre entidades 
-conectadas ponto-a-ponto via \english{sockets}, é que cada \english{socket} utiliza 
-exclusivamente uma porta para aceitar as conexões remotas, criando uma relação de um 
-para um entre portas e entidades. Os protocolos TCP e UDP utilizam para a numeração
-de portas em seus cabeçalhos inteiros de $16$ bits sem sinal, limitando o número de
+A comunicação entre entidades conectadas ponto-a-ponto via \english{sockets} tem a seguinte característica:
+cada \english{socket} utiliza exclusivamente uma porta para aceitar as conexões remotas, criando uma relação um 
+para um entre portas e entidades. Para a numeração de portas, os protocolos TCP e UDP
+utilizam inteiros de $16$ bits sem sinal, limitando o número de
 portas a $65536$ ($0$ -- $65535$)\cite{tcp}. Ademais, algumas portas que são utilizadas 
 para serviços comuns, como por exemplo servidores de correio eletrônico, 
 possuem numeração fixa definida pela IANA (\english{Internet Assigned Numbers Authority})
-e não podem ser abertas para uso geral. 
+e não podem ser empregadas por outros serviços.
 
-Este tipo de abordagem não implica no uso de armazenamento intermediário das mensagens. Uma
-mensagem enviada de uma entidade para outra, até poderia ser armazenada pela entidade que 
-recebe a mensagem, mas não pelo mecanismo de transporte. Fica a cargo da entidade que recebe 
-a mensagem implementar o armazenamento temporário, caso haja necessidade.
+%Este tipo de abordagem não implica no uso de armazenamento intermediário das mensagens. Uma
+%mensagem enviada de uma entidade para outra, até poderia ser armazenada pela entidade que 
+%recebe a mensagem, mas não pelo mecanismo de transporte. Fica a cargo da entidade que recebe 
+%a mensagem implementar o armazenamento temporário, caso haja necessidade.
 
 \subsection{Atores remotos conectados ponto-a-ponto}
 \label{subsec:atores-remotos-ponto-a-ponto}
 
-Uma implementação de atores remotos que não imponha como limite à quantidade
-de atores remotos a serem criados em um nó, o número de portas disponíveis no
-próprio nó, deve de alguma maneira, permitir que conjuntos de atores sejam
-associados às portas TCP ou UDP.
+É indesejável que o número de portas disponíveis em um nó limite a quantidade
+de atores remotos que podem ser criados no nó. Assim, uma implementação de atores remotos 
+deve, de alguma maneira, permitir que múltiplos atores sejam
+associados a uma porta.
 
 Na implementação de atores remotos do Akka apresentada na seção 
 \ref{sec:atores_remotos_akka}, vimos que os atores são agrupados por endereço
@@ -54,50 +53,50 @@ do nó hospedeiro e da porta e ficam registrados no \lstinline{RemoteServerModule
 Vimos também, na seção \ref{sec:atores_locais}, que atores são identificáveis, 
 o que permite que eles sejam localizados no \lstinline{RemoteServerModule} 
 para que possam receber as mensagens. Ainda que a implementação de atores 
-remotos do Akka agrupe os atores, removendo a relação do limite do número de 
-atores com o número de portas disponíveis, as entidades \lstinline{RemoteServerModule} 
-e \lstinline{RemoteClientModule} ainda assim possuem o conhecimento 
-do hospedeiro e da porta no qual se está conectado.
+remotos do Akka agrupe os atores, evitando que o número de atores fique
+limitado pelo número de portas disponíveis, um \lstinline{RemoteClientModule} 
+possui conhecimento do hospedeiro e da porta ao qual está conectado.
+Além disso, o \lstinline{RemoteServerModule} que recebe uma mensagem pode obter
+o hospedeiro e a porta do \lstinline{RemoteClientModule} remetente.
 
 A implementação de atores remotos de Erlang não usa portas explicitamente. 
-Cada máquina virtual Erlang possui um nome associado, e esse nome é utilizado
-junto com a informação do hospedeiro durante a criação de atores remotos.
-O nome da máquina virtual é definido durante a inicialização da máquina virtual
-via parâmetro \lstinline{-name}. Diversas máquinas virtuais podem estar em
-execução em um determinado hospedeiro e são unicamente identificadas
-por \lstinline{name@host}. Vale ressaltar que as máquinas virtuais Erlang
-que estão em uma mesma rede de computadores estão por padrão em \english{cluster}.
+Cada máquina virtual Erlang possui um nome associado. O nome de uma máquina virtual é definido 
+durante a ativação da máquina virtual, por meio de um parâmetro na linha de comando.
+Diversas máquinas virtuais podem estar em execução em um determinado hospedeiro e são unicamente identificadas
+por \lstinline{name@host}. O nome de uma máquina virtual é utilizado,
+juntamente com a informação do hospedeiro, para especificar onde um ator remoto deve ser criado.
+Em outras palavras, pode-se criar um ator remoto numa máquina virtual especificada por
+\lstinline{name@host}. 
 
 \section{Entidades conectadas via \english{message broker} AMQP}
 \index{Estrutura!message broker amqp}
 \label{sec:entidades-via-broker-amqp}
 
-A substituição por um mecanismo baseado em troca de mensagens naturalmente
-introduz novas características à comunicação. As entidades passam 
-a não estarem mais conectadas diretamente, já que o \english{message broker} passa a ser 
-o componente central de conexão entre todas as entidades. Eventuais funcionalidades 
-baseadas na comunicação ponto-a-ponto, como por exemplo uma das partes saber que a 
-outra não está mais conectada, ainda que possíveis não são triviais. 
-O \english{message broker} passa a ser o responsável por abrir uma porta para que
-as demais entidades possam se conectar e é responsável por fazer o gerenciamento de
+A substituição de um mecanismo ponto-a-ponto por um mecanismo baseado em AMQP 
+naturalmente introduz novas características à interação entre as entidades. Elas deixam 
+de estar conectadas diretamente, já que o \english{message broker} passa a ser 
+o componente central de conexão entre todas as entidades. Funcionalidades 
+baseadas na comunicação ponto-a-ponto, como por exemplo a detecção de desconexão, 
+ainda que possíveis, não são triviais. O \english{message broker} passa a ser o responsável 
+por abrir uma porta para que as demais entidades possam se conectar e é responsável por fazer o gerenciamento de
 múltiplas conexões nesta porta. 
 
-Tanto a rotulação das entidades por hospedeiro e porta ou por 
-nome e hospedeiro deixam de fazer sentido pois são redundantes. 
-As entidades passam a ser identificadas somente por seus nomes.
-Cada nova entidade que entrar no sistema é responsável por registrar no \english{message broker} uma fila 
-e associá-la a uma \english{exchange} para poder receber mensagens. Dependendo
-do papel que a entidade exerce, além de definir a fila e o \english{binding}, a entidade
-precisa definir antes uma \english{exchange}. Entidades que possuem o papel de
-servidora têm essa responsabilidade. Tarefas administrativas como a 
+Rotulações de entidades por hospedeiro e porta ou por 
+nome e hospedeiro deixam de fazer sentido. Tais rotulações tornam-se redundantes, pois
+as entidades passam a ser identificadas somente por seus nomes.
+Para poder receber mensagens, cada nova entidade que entrar no sistema deve 
+criar uma fila no \english{message broker} e associá-la a uma \english{exchange}.
+Uma entidade que desempenhe o papel de servidora deve antes criar essa \english{exchange}.
+Por outro lado, uma entidade que desempenhe o papel de cliente faz o \english{binding} de 
+sua fila na \english{exchange} criada por alguma entidade servidora. Podemos fazer uma analogia 
+da \english{exchange} com uma \english{server socket}. Tarefas administrativas como a 
 criação de \english{virtual hosts}, a criação de usuários e a definição das permissões dos 
 usuários não são de responsabilidade das entidades. Essas tarefas devem ter sido executadas previamente.
 
 O suporte ao desenvolvimento dos novos componentes da camada de implementação
-de transporte remoto do projeto Akka é
-dado com a ajuda de alguns componentes intermediários. Esses componentes intermediários 
-formam uma ponte entre a nova camada de transporte remoto e a implementação 
-do \english{message broker} RabbitMQ.
+de transporte remoto do projeto Akka é dado com a ajuda de alguns componentes intermediários. 
+Esses componentes intermediários formam uma ponte entre a nova camada de transporte remoto e
+a biblioteca Java do \english{message broker} RabbitMQ.
 
 \subsection{Pontes AMQP}
 \index{Estrutura!message broker amqp!pontes}
@@ -114,7 +113,7 @@ entidade servidora. O módulo \lstinline{AMQPBridge} contém as seguintes classes:
 	de uma entidade conectada a um \english{message broker} AMQP. O construtor de \lstinline{AMQPBridge}
 	recebe como argumentos o nome que identifica a ponte e uma conexão para um \english{message broker} 
 	AMQP. Essa classe define ainda o padrão de nomeação utilizado na criação dos objetos,
-	como mostra a listagem \ref{lst:amqp-bridge}. A classe possui também um objeto companheiro que
+	como mostra a listagem \ref{lst:amqp-bridge}. A classe possui também um objeto acompanhante que
 	define métodos para a criação de instâncias das subclasses de \lstinline{AMQPBridge}.
 
 	\item \lstinline{MessageHandler}: É a feição que define os métodos a serem
@@ -140,11 +139,10 @@ entidade servidora. O módulo \lstinline{AMQPBridge} contém as seguintes classes:
 
 \begin{lstlisting}[frame=tb, caption={Classe AMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-bridge}]
 abstract class AMQPBridge(val name: String, 
-						  val connection: SupervisedConnectionWrapper) {
+                          val connection: SupervisedConnectionWrapper) {
   require(name != null)
   require(connection != null)
     
-  val id: String
   lazy val inboundExchangeName = "actor.exchange.in.%s".format(name)
   lazy val inboundQueueName    = "actor.queue.in.%s".format(name)
   lazy val outboundQueueName   = "actor.queue.out.%s".format(name)
@@ -159,8 +157,7 @@ abstract class AMQPBridge(val name: String,
 class ServerAMQPBridge(name: String, 
 					   connection: SupervisedConnectionWrapper) 
 					   		extends AMQPBridge(name, connection){
-  lazy val id = "server.%s".format(name)
-  
+ 
   def setup(handler: MessageHandler, 
   			exchangeParams: ExchangeConfig.ExchangeParameters,
             queueParams: QueueConfig.QueueParameters): ServerAMQPBridge = {
@@ -180,8 +177,7 @@ class ServerAMQPBridge(name: String,
 \begin{lstlisting}[frame=tb, caption={Classe ClientAMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-client-bridge}]
 class ClientAMQPBridge(name: String, 
 						connection: SupervisedConnectionWrapper, 
-							idSuffix: String) extends AMQPBridge(name, connection) {
-  lazy val id =  "client.%s.%s".format(name, idSuffix)
+							id: String) extends AMQPBridge(name, connection) {
   
   def setup(handler: MessageHandler, queueParams: QueueConfig.QueueParameters): ClientAMQPBridge = {
     connection.clientSetup(
@@ -189,7 +185,7 @@ class ClientAMQPBridge(name: String,
         ClientSetupInfo(config = queueParams, 
         				name = outboundQueueName + id, 
         				exchangeToBind = inboundExchangeName, 
-        				routingKey = id))
+        				routingKey = "client.%s.%s".format(name,id)))
     )
     this
   }
@@ -220,6 +216,38 @@ A combinação dos seus valores dão semântica às seguintes políticas:
 	a um único consumidor. O consumidor fica atrelado ao canal em que a criação da 
 	fila ocorreu.
 \end{enumerate}
+
+Mostramos na figura \ref{fig:bridges-broker-all-together} como ficaria, da perspectiva
+do \english{message broker}, a criação
+de uma ponte servidora de nome \lstinline{node1} com duas pontes clientes associadas
+a ela. A \english{exchange} e a fila que foram criadas pela ponte servidora estão 
+marcadas em preto. Pela figura \ref{fig:bridges-broker-all-together}, podemos notar 
+como a \english{exchange} definida pela ponte servidora tem o papel de ponto central
+para envio de mensagens para todas as filas criadas para o nó \lstinline{node1}. Podemos
+notar também como os padrões definidos para os nomes na classe \lstinline{AMQPBrigde} 
+(listagem \ref{lst:amqp-bridge}) são utilizados na criação dos objetos.
+A ponte servidora define a fila de entrada de mensagens. As pontes clientes definem as filas
+de saída de mensagens. As mensagens roteadas para as filas de saída,
+são as mensagens de resposta vindas da ponte servidora. Devemos observar que a ponte servidora
+precisa do identificador de uma ponte cliente para poder lhe enviar uma mensagem.
+
+\vspace{1ex}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.7]{bridges-broker-all-together} 
+  	\caption{Estrutura para troca de mensagens via message broker AMQP.}
+  	\label{fig:bridges-broker-all-together}
+\end{figure}
+
+Segundo a especificação do padrão AMQP \cite{amqp}, as implementações 
+de \english{brokers} devem suportar ao menos $256$ filas por \english{virtual host}. 
+Contudo, a recomendação é que não haja imposição de limites que não pela disponibilidade 
+de recursos. A especificação também menciona que o número mínimo de \english{exchanges} por
+\english{virtual host} é de $16$, e faz a mesma observação quanto a não imposição
+de limite que não seja pela disponibilidade de recursos. A implementação RabbitMQ
+utilizada neste trabalho deixa as limitações a cargo da quantidade de recursos
+do sistema hospedeiro. 
+
 
 \subsection{Gerenciamento de conexões e canais}
 \index{Estrutura!message broker amqp!gerenciamento de conexões}
@@ -498,37 +526,6 @@ a hierarquia que definimos do registro do Akka. Isso acontece após a inicializaç
 ator via método \lstinline{Actor.registry.unregister(actor)}. Nossa hierarquia de
 atores, por sua vez, pode ter sua execução interrompida via método 
 \lstinline{AMQPConnectionFactory.shutdownAll}.
-
-Mostramos na figura \ref{fig:bridges-broker-all-together} como ficaria, da perspectiva
-do \english{message broker}, a criação
-de uma ponte servidora de nome \lstinline{node1} com duas pontes clientes associadas
-a ela. A \english{exchange} e a fila que foram criadas pela ponte servidora estão 
-marcadas em preto. Pela figura \ref{fig:bridges-broker-all-together}, podemos notar 
-como a \english{exchange} definida pela ponte servidora tem o papel de ponto central
-para envio de mensagens para todas as filas criadas para o nó \lstinline{node1}. Podemos
-notar também como os padrões definidos para os nomes na classe \lstinline{AMQPBrigde} 
-(listagem \ref{lst:amqp-bridge}) são utilizados na criação dos objetos.
-A ponte servidora define a fila de entrada de mensagens. As pontes clientes definem as filas
-de saída de mensagens. As mensagens roteadas para as filas de saída,
-são as mensagens de resposta vindas da ponte servidora. Devemos observar que a ponte servidora
-precisa do identificador de uma ponte cliente para poder lhe enviar uma mensagem.
-
-\vspace{1ex}
-\begin{figure}[!h]
-	\centering
-	\includegraphics[scale=0.7]{bridges-broker-all-together} 
-  	\caption{Estrutura para troca de mensagens via message broker AMQP.}
-  	\label{fig:bridges-broker-all-together}
-\end{figure}
-
-Segundo a especificação do padrão AMQP \cite{amqp}, as implementações 
-de \english{brokers} devem suportar ao menos $256$ filas por \english{virtual host}. 
-Contudo, a recomendação é que não haja imposição de limites que não pela disponibilidade 
-de recursos. A especificação também menciona que o número mínimo de \english{exchanges} por
-\english{virtual host} é de $16$, e faz a mesma observação quanto a não imposição
-de limite que não seja pela disponibilidade de recursos. A implementação RabbitMQ
-utilizada neste trabalho deixa as limitações a cargo da quantidade de recursos
-do sistema hospedeiro. 
 
 
 \subsection{Envio e recebimento de mensagens via pontes AMQP}
