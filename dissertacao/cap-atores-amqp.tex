@@ -166,7 +166,7 @@ no \english{message broker}. Para exemplificar, vamos considerar o
 caso em que dois clientes remotos seriam criados em uma JVM para
 servidores remotos cujos nomes são \lstinline{node1} e \lstinline{node2}.
 Os objetos que seriam criados pelos primeiro cliente remoto teriam o sufixo
-\lstinline{client.node1.<id>} e \lstinline{client.node2.<id>}.	
+\lstinline{node1.<id>} e \lstinline{node2.<id>}.	
 Um outro detalhe importante é que, pelo fato de classe 
 \lstinline{AMQPRemoteClientModule} manter um registro com os clientes remotos, 
 não há a possibilidade de, na mesma JVM, ser criado mais de uma instância de 

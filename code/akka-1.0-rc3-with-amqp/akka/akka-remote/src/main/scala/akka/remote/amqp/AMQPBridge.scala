@@ -84,7 +84,7 @@ class ClientAMQPBridge(name: String, connection: SupervisedConnectionWrapper, id
   }
 
   def sendMessageTo(message: Array[Byte], to: String): Unit = {
-    connectio n.publishTo(exchange = inboundExchangeName, routingKey = to, message)
+    connection.publishTo(exchange = inboundExchangeName, routingKey = to, message)
   }
 }
 

@@ -28,9 +28,9 @@
      inkscape:window-height="697"
      id="namedview3108"
      showgrid="true"
-     inkscape:zoom="0.70417572"
-     inkscape:cx="424.66404"
-     inkscape:cy="726.83621"
+     inkscape:zoom="1.4083514"
+     inkscape:cx="311.05603"
+     inkscape:cy="812.04222"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -394,7 +394,7 @@
      x="101.77148"><tspan
        id="tspan5499"
        y="382.36218"
-       x="103.99999">5. declaração </tspan><tspan
+       x="103.99999">5. criação </tspan><tspan
        id="tspan5501"
        y="399.86218"
        x="101.77148">da fila</tspan></text>
@@ -451,7 +451,7 @@
        sodipodi:role="line"
        x="540"
        y="324.86218"
-       id="tspan3346">retornadas</tspan></text>
+       id="tspan3346">rejeitadas</tspan></text>
   <text
      sodipodi:linespacing="125%"
      id="text3352"

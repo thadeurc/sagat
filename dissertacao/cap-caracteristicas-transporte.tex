@@ -288,7 +288,8 @@ class SupervisedConnectionWrapper(connection: ActorRef,
 
   def serverSetup(setupInfo: RemoteServerSetup) { ... }
 
-  def publishTo(exchange: String, routingKey: String, message: Array[Byte]) { ... }
+  def publishTo(exchange: String, routingKey: String, 
+	            message: Array[Byte]) { ... }
   
   def close() { ... }
 

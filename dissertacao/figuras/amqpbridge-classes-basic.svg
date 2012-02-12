@@ -111,7 +111,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="563.49979"
+     inkscape:cx="248.1397"
      inkscape:cy="867.15363"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -281,7 +281,7 @@
          y="279.85498"
          x="69"
          id="tspan4045"
-         sodipodi:role="line">+setup(handler, queueConfig): ClientAMQPBridge</tspan></text>
+         sodipodi:role="line">+setup(handler, queueParams): ClientAMQPBridge</tspan></text>
     <rect
        y="225.85498"
        x="437.55713"
@@ -318,12 +318,12 @@
          x="439.55713"
          y="267.85498"
          style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-         id="tspan8013">+setup(handler, exchangeConfig, </tspan><tspan
+         id="tspan8013">+setup(handler, exchangeParams, </tspan><tspan
          sodipodi:role="line"
          x="439.55713"
          y="280.35498"
          style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif"
-         id="tspan8023">                          queueConfig): ServerAMQPBridge</tspan></text>
+         id="tspan8023">                          queueParams): ServerAMQPBridge</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#EmptyTriangleOutL)"
        d="m 198.00634,225.35584 0,-76.98708 89.98732,0"
@@ -553,5 +553,16 @@
        d="m 249.305,459.36218 265,0"
        id="path5458"
        inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:9px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       x="20.708126"
+       y="146.76044"
+       id="text3901"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3903"
+         x="20.708126"
+         y="146.76044" /></text>
   </g>
 </svg>
