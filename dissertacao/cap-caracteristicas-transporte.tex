@@ -271,7 +271,7 @@ na implementação de um dos módulos adicionais do projeto Akka.}.
 A classe \lstinline{SupervisedConnectionWrapper} define uma conexão supervisionada, expondo 
 uma interface muito simples com apenas quatro métodos. Os métodos dão suporte a funcionalidades básicas 
 para configuração da conexão (\lstinline{clientSetup} e \lstinline{serverSetup}),
-envio de mensagens (\lstinline{publishTo} e fechamento da conexão (\lstinline{close}), 
+envio de mensagens (\lstinline{publishTo}) e fechamento da conexão (\lstinline{close}), 
 como mostrado na listagem \ref{lst:amqp-supervised}. 
 Nessa listagem podemos notar também que o construtor da classe recebe como argumento 
 três atores, sendo o primeiro ator um ator referente a conexão, o segundo um ator referente 
