@@ -1,7 +1,53 @@
 %% ------------------------------------------------------------------------- %%
-\chapter{Conclusões}
-\index{Conclusões}
+\chapter{Considerações finais}
+\index{Considerações finais}
 \label{cap:conclusoes}
+
+\section{Trabalhos futuros} 
+\index{Considerações finais!Trabalhos futuros}
+\label{sec:conclusao:pesquisas_futuras}
+
+\subsection{Melhoria no tratamento de erros nas pontes AMQP}
+
+O fato de utilizarmos atores para encapsular as principais classes da biblioteca para clientes Java
+do RabbitMQ, permite que a hierarquia de atores que foi criada venha ser utilizada para o tratamento
+de erros. Ainda que nossa implementação seja de uma hierarquia de supervisão, os atores supervisores não
+possuem comportamento para o tratamento de erros em atores supervisionados. 
+
+A implementação pode ser ampliada para que, no caso de erros em atores supervisionados, como os responsáveis pelos
+canais ou conexões, os atores supervisores possam criar novos atores supervisionados no mesmo estado que 
+estavam antes do erro acontecer. A restauração do estado nos atores filhos deverá obedecer as configurações 
+originais dos objetos que foram criados no \english{message broker}. É necessário ainda que, quando
+não for possível restabelecer o sistema, seja por não se conseguir reconectar ao \english{message broker} ou
+por algum outro motivo, notificar a ponte AMQP para que ela possa propagar o erro para o nível da aplicação.
+
+\subsection{Experimentos em um ambiente de computação em nuvem}
+
+Nos últimos anos o conceito de computação em nuvem vem ganhando
+bastante espaço, não só na comunidade acadêmica, mas também na indústria de tecnologia.
+Computação em nuvem é um conceito que se refere tanto a aplicações disponibilizadas como serviços 
+via internet quanto pelo \english{hardware} e sistemas de \english{software} que estão nos centros 
+processamento de dados para prover estes serviços \cite{cloud2010}. O termo ``nuvem'' é
+utilizado para denotar o \english{hardware} e o \english{software} que ficam no centro de processamento
+de dados. Um dos principais atrativos da computação em nuvem é a capacidade de elasticidade da nuvem.
+Caso a demanda por um serviço aumenta, recursos que estão disponíveis, como computadores e máquinas virtuais
+podem ser provisionados para aumentar a capacidade de processamento. Quando a demanda pelo serviço diminui e 
+a capacidade de processamento necessária passa a ser menor, parte recursos podem ser 
+liberados para atenderem outros serviços. 
+
+Algumas plataformas de computação em nuvem existentes no mercado, como EC2 (Amazon) \cite{ec2}, Nebula (NASA) 
+\cite{nebula}, Heroku \cite{heroku} e Cloud Foundry (VMWare) \cite{cloudfoundry}, possuem o RabbitMQ 
+como \english{message broker} ou permitem que o RabbitMQ seja instalado. 
+Acreditamos que nossa implementação de atores remotos esteja muito próxima e necessite de poucas adaptações
+para poder ser implantada em uma infraestrutura de computação em nuvem. Acreditamos que a elasticidade da nuvem, 
+alinhada com a capacidade do RabbitMQ de trabalhar com um número alto de requisições, proporsione alta 
+escalabilidade para sistema que for desenvolvido. Deixamos como sugestão de experimento, fazer uma comparação 
+do \english{Trading System} com a quantidade de clientes bem maior da utilizada em nossos experimentos.
+
+
+\section{Conclusões} 
+\index{Considerações finais!conclusões}
+\label{sec:conclusao:consideracoes_finais}
 
 Concluímos que existe uma vantagem relativa da nossa implemetação
 para transporte de mensagens entre atores remotos com padrão AMQP em relação a implementação original do
@@ -50,75 +96,6 @@ compartilham as informações dos \english{virtual hosts}. O uso do RabbitMQ em \e
 o problema de o \english{message broker} ser um ponto central de falhas.
 
 %------------------------------------------------------
-\section{Trabalhos Relacionados} 
-\index{Conclusões!trabalhos relacionados}
-\label{sec:conclusao:trabalhos_relacionados}
-
-\subsection{Replicação de transações no Drizzle com RabbitMQ}
-
-Drizzle \cite{drizzle} é uma implementação de banco de dados voltado para computação em nuvem
-(\english{cloud computing}). A implementação desse banco de dados possui código aberto e foi 
-desenvolvida tomando como base o código da implementação do banco de dados MySQL \cite{mysql}.
-
-Uma das características do Drizzle é a replicação de transações. Transações como
-inserções ou atualizações que são executadas na instância principal (\english{master}) do banco de dados,
-são replicadas para uma ou mais instâncias secundárias (\english{slaves}) do banco de dados. 
-O módulo \cite{drizzle-slave} responsável por dar suporte a replicação de transações
-utiliza uma combinação de tabelas transacionais (InnoDB) e mensagens no formato 
-Protobuf. O uso das tabelas transacionais tem como 
-característica a criação de um arquivo para registro das transações executadas. Cada transação
-executada em uma tabela transacional gera uma entrada no arquivo de registro.
-
-O Drizzle oferece a possibilidade de replicação de transações via \english{message broker}
-AMQP. A implementação está disponível via módulo RabbitMQ Integration \cite{drizzle-replication-rabbitmq}.
-Quando o módulo de replicação RabbitMQ Integration está ativado, uma aplicação Java associada à
-instância principal coleta as informações do arquivo onde as transações foram registradas e faz
-envio de mensagens com as transações. As aplicações Java associadas às instâncias secundárias
-são responsáveis por fazer o consumo das mensagens vindas do RabbitMQ, a conversão da mensagem e tomar
-alguma ação, como executar as operações da transação na instância do Drizzle no qual está associada.
-
-Quando esse módulo é utilizado, deve-se informar as informações necessárias para conexão com o RabbitMQ,
-tais como endereço, porta, \english{virtual host}, usuário e senha. Deve-se informar também,
-o nome da \english{exchange} para onde as mensagens devem ser enviadas e a chave de roteamento.
-Vale destacar que as aplicações Java associadas às instâncias secundárias do Drizzle, são responsáveis
-por fazer a criação da fila onde esperam mensagens e definir seu \english{binding} com a \english{exchange}
-informada durante a ativação do módulo RabbitMQ Integration. As informações para a criação das filas
-e da instância do Drizzle para onde as transações serão replicadas, são informadas em um arquivo de propriedades.
-
-\subsection{Camada de comunicação entre agentes remotos com RabbitMQ}
-
-Arlekar e outros \cite{ctep} apresentam uma proposta de um arcabouço voltado para simulações baseadas
-no modelo de agentes. Ainda que nosso trabalho tenha sido voltado ao modelo de atores,
-observamos semelhança na definição da camada de comunicação entre agentes remotos utilizada nesse arcabouço.
-
-Esse arcabouço prove a infraestrutura necessária para a criação de agentes, a troca de mensagens entre agentes e
-o armazenamento e a exibição das informações geradas no sistema. O arcabouço possui diversos componentes, contudo,
-destacamos apenas os três cujo identificamos semelhança com nosso trabalho:
-
-\begin{itemize}
-	\item \english{Care Take Agent} (CTA): É um componente análogo ao \lstinline{RemoteSupport} existente 
-	na implementação de atores remotos do Akka. Um CTA possui como algumas de suas responsabilidades, 
-	criar agentes e controlar a troca de mensagens entre agentes residentes em diferentes CTAs.
-
-	\item Agente: É análogo a um ator. Um agente representa uma entidade que faz parte da simulação como, por exemplo,
-	uma pessoa.
-
-	\item Camada de comunicação: É análoga a implementação da camada de transporte do Akka. A camada de comunicação
-	é um componente fundamental no arcabouço que permite que agentes residentes em diferentes CTAs possam trocar
-	mensagens entre si. 
-\end{itemize}
-
-A implementação da camada de comunicação é feita com filas criadas no RabbitMQ. Cada CTA possui uma fila associada
-para recebimento de mensagens. As filas criadas no \english{message broker} são identificadas pelo endereço IP
-do CTA proprietário da fila e por um nome. É importante comentar que cada CTA é executado em sua própria JVM.
-As mensagens que são recebidas em um CTA são repassadas a um ou vários dos seus agentes. O CTA age também como 
-\english{proxy} no envio de uma mensagem. Agentes enviam mensagens a outros agentes utilizando o CTA no qual 
-reside como \english{proxy} durante o envio.
-
-
-\section{Considerações Finais} 
-\index{Conclusões!considerações finais}
-\label{sec:conclusao:consideracoes_finais}
 
 O uso do RabbitMQ como \english{message broker} AMQP em conjunto com a estrutura descrita no capítulo
 \ref{cap:estrutura-troca-mensagens-amqp}, se mostrou eficaz em nossos experimentos para transportar mensagens
@@ -158,48 +135,5 @@ O uso de um \english{message broker} ainda trás outros benefícios, como por exem
 
 
 %------------------------------------------------------
-\section{Sugestões para Pesquisas Futuras} 
-\index{Conclusões!sugestões para pesquisas futuras}
-\label{sec:conclusao:pesquisas_futuras}
-
-\subsection{Melhoria no tratamento de erros nas pontes AMQP}
-
-O fato de utilizarmos atores para encapsular as principais classes da biblioteca para clientes Java
-do RabbitMQ, permite que a hierarquia de atores que foi criada venha ser utilizada para o tratamento
-de erros. Ainda que nossa implementação seja de uma hierarquia de supervisão, os atores supervisores não
-possuem comportamento para o tratamento de erros em atores supervisionados. 
-
-A implementação pode ser ampliada para que, no caso de erros em atores supervisionados, como os responsáveis pelos
-canais ou conexões, os atores supervisores possam criar novos atores supervisionados no mesmo estado que 
-estavam antes do erro acontecer. A restauração do estado nos atores filhos deverá obedecer as configurações 
-originais dos objetos que foram criados no \english{message broker}. É necessário ainda que, quando
-não for possível restabelecer o sistema, seja por não se conseguir reconectar ao \english{message broker} ou
-por algum outro motivo, notificar a ponte AMQP para que ela possa propagar o erro para o nível da aplicação.
-
-
-\subsection{Experimentos em um ambiente de computação em nuvem}
-
-Nos últimos anos o conceito de computação em nuvem vem ganhando
-bastante espaço, não só na comunidade acadêmica, mas também na indústria de tecnologia.
-Computação em nuvem é um conceito que se refere tanto a aplicações disponibilizadas como serviços 
-via internet quanto pelo \english{hardware} e sistemas de \english{software} que estão nos centros 
-processamento de dados para prover estes serviços \cite{cloud2010}. O termo ``nuvem'' é
-utilizado para denotar o \english{hardware} e o \english{software} que ficam no centro de processamento
-de dados. Um dos principais atrativos da computação em nuvem é a capacidade de elasticidade da nuvem.
-Caso a demanda por um serviço aumenta, recursos que estão disponíveis, como computadores e máquinas virtuais
-podem ser provisionados para aumentar a capacidade de processamento. Quando a demanda pelo serviço diminui e 
-a capacidade de processamento necessária passa a ser menor, parte recursos podem ser 
-liberados para atenderem outros serviços. 
-
-Algumas plataformas de computação em nuvem existentes no mercado, como EC2 (Amazon) \cite{ec2}, Nebula (NASA) 
-\cite{nebula}, Heroku \cite{heroku} e Cloud Foundry (VMWare) \cite{cloudfoundry}, possuem o RabbitMQ 
-como \english{message broker} ou permitem que o RabbitMQ seja instalado. 
-Acreditamos que nossa implementação de atores remotos esteja muito próxima e necessite de poucas adaptações
-para poder ser implantada em uma infraestrutura de computação em nuvem. Acreditamos que a elasticidade da nuvem, 
-alinhada com a capacidade do RabbitMQ de trabalhar com um número alto de requisições, proporsione alta 
-escalabilidade para sistema que for desenvolvido. Deixamos como sugestão de experimento, fazer uma comparação 
-do \english{Trading System} com a quantidade de clientes bem maior da utilizada em nossos experimentos.
-
-
 
 

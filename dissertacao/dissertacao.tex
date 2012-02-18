@@ -181,7 +181,7 @@ basicstyle={\small\ttfamily}
 \thispagestyle{empty}
 \begin{center}
     \vspace*{2.3cm}
-    \textbf{\Large{Uso do Padrão AMQP para o Transporte de Mensagens entre Atores Remotos}}\\
+    \textbf{\Large{Uso do Padrão AMQP para Transporte de Mensagens entre Atores Remotos}}\\
     
     \vspace*{1.2cm}
     \Large{Thadeu de Russo e Carmo}
@@ -220,7 +220,7 @@ basicstyle={\small\ttfamily}
 \thispagestyle{empty}
     \begin{center}
         \vspace*{2.3 cm}
-        \textbf{\Large{Uso do Padrão AMQP para o Transporte de Mensagens entre Atores Remotos}}\\
+        \textbf{\Large{Uso do Padrão AMQP para Transporte de Mensagens entre Atores Remotos}}\\
         \vspace*{2 cm}
     \end{center}
 
@@ -285,9 +285,9 @@ basicstyle={\small\ttfamily}
 Gostaria de expressar minha enorme gratidão ao Institudo de Matemática e Estatística
 da Universidade de São Paulo por ter me dado a oportunidade de desenvolver este trabalho.
 Agradeço a todos os professores no qual tive o prazer de assistir aulas durante o curso. Em
-especial, agradeço muito ao meu orientador, o professor Dr. Francisco Carlos da Rocha Revebel,
+especial, agradeço muito ao meu orientador, o professor Dr. Francisco Carlos da Rocha Reverbel,
 pela oportunidade, tranquilidade e confiança que ele depositou em mim, além de toda sua experiência.
-%% agradecer os professores da banca
+
 
 Dedico esta dissertação aos meus pais, que apesar de não estarem mais entre nós, tenho certeza
 que estão muito felizes e orgulhosos. Dedico também esta dissertação a minha
@@ -305,9 +305,22 @@ mencionar minha família, em especial meus avós, Janete e Horácio, pelo apoio e s
 % ---------------------------------------------------------------------------- %
 % Resumo
 \chapter*{Resumo}
-Resumo em português ...
+  \par O modelo de atores tem sido visto como uma abordagem alternativa à programação concorrente convencional, 
+  baseada em travas e variáveis de condição. Atores são agentes computacionais que se comunicam por troca de 
+  mensagens e que possuem uma caixa de correio e um comportamento. As mensagens destinadas a um ator são 
+  armazenadas na caixa de correio do ator e processadas de maneira assíncrona.
+    
+  \par Sistemas de \english{middleware} orientados a mensagens trabalham com troca assíncrona de mensagens e 
+  formam uma base que simplifica o desenvolvimento de aplicações distribuídas. Tais sistemas permitem 
+  interoperabilidade com baixo acoplamento e provêm suporte para tratamento robusto de erros em caso de falhas. 
+  \english{Message brokers} são frequentemente apresentados como uma tecnologia que pode mudar a maneira com que sistemas distribuídos são construídos. A especificação AMQP é uma proposta recente de padronização de um protocolo para \english{message brokers}.
 
-\noindent \textbf{Palavras-chave:} palavra-chave1, palavra-chave2, palavra-chave3.
+  \par Neste trabalho exploramos a potencial sinergia entre um \english{message broker} e 
+  uma implementação do modelo de atores. Criamos uma versão modificada da implementação do modelo de 
+  atores do projeto Akka que utiliza um \english{message broker} AMQP como mecanismo de transporte de 
+  mensagens para atores remotos.
+
+\noindent \textbf{Palavras-chave:} Modelo de Atores, Padrão AMQP, Projeto Akka, Scala, \english{Message Broker}, Atores Remotos.
 
 % ---------------------------------------------------------------------------- %
 % Abstract
@@ -371,6 +384,7 @@ Abstract ...
 \input cap-caracteristicas-transporte		 % associado ao arquivo: 'cap-caracteristicas-transporte.tex'
 \input cap-atores-amqp		 % associado ao arquivo: 'cap-atores-amqp.tex'
 \input cap-resultados      % associado ao arquivo: 'cap-resultados.tex'
+\input cap-trabalhos-relacionados      % associado ao arquivo: 'cap-trabalhos-relacionados.tex'
 \input cap-conclusoes      % associado ao arquivo: 'cap-conclusoes.tex'
 
 % cabeçalho para os apêndices
