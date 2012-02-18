@@ -1,0 +1,83 @@
+\chapter{Trabalhos relacionados}
+\index{Trabalhos relacionados}
+\label{cap:trab-relacionados}
+
+\section{Replicação de transações no Drizzle com RabbitMQ}
+
+Drizzle \cite{drizzle} é um sistema gerenciador de bancos de dados voltado para computação em nuvem
+(\english{cloud computing}). Sua implementação é de código aberto e foi 
+desenvolvida tomando como base o código do sistema MySQL \cite{mysql}.
+
+Uma das características do Drizzle é a replicação de transações. Transações (como
+inserções ou atualizações) executadas na instância principal (\english{master}) de um banco de dados
+são replicadas para uma ou mais instâncias secundárias (\english{slaves}) do banco de dados. 
+O módulo \cite{drizzle-slave} responsável por dar suporte a replicação de transações
+utiliza uma combinação de tabelas transacionais (tabelas sobre as quais pode-se executar operações no escopo
+de uma transação\footnote{No caso do MySQL e do Drizzle, o suporte a essas tabelas é provido pelo componente InnoDB.}) 
+e mensagens no formato Protobuf. O uso das tabelas transacionais tem como 
+característica a criação de um arquivo para registro das transações executadas. Cada transação
+executada em uma tabela transacional gera uma entrada no arquivo de registro.
+
+O Drizzle oferece a possibilidade de replicação de transações via \english{message broker}
+AMQP. Tal suporte a replicação de transações é oferecido pelo módulo RabbitMQ \english{Integration}
+ \cite{drizzle-replication-rabbitmq}.
+Quando esse módulo está ativado, uma aplicação Java associada à
+instância principal coleta as informações do arquivo onde as transações foram registradas e envia
+ao \english{message broker} mensagens com as transações. As aplicações Java associadas às instâncias secundárias
+são responsáveis por consumir as mensagens vindas do RabbitMQ e tomar
+as ações que se fizerem necessárias, como, por exemplo, executar as operações de cada transação na 
+instância secundária do Drizzle ao qual está associada.
+
+Quando esse módulo é utilizado, deve-se configurá-lo com as informações necessárias para conexão ao RabbitMQ,
+tais como endereço, porta, \english{virtual host}, usuário e senha. Deve-se informar também
+o nome da \english{exchange} para onde as mensagens devem ser enviadas e a chave de roteamento.
+Vale destacar que a aplicação Java associadas à uma instância secundária do Drizzle é responsável
+por fazer a criação da fila e definir seu \english{binding} com a \english{exchange}
+configurada na ativação do módulo de integração com o RabbitMQ. 
+
+\subsubsection{Comparação com nosso trabalho}
+
+Tanto o módulo RabbitMQ \english{Integration} quanto o nosso trabalho fazem uso do RabbitMQ
+para interligar instâncias distrubuídas de um mesmo sistema (Drizzle ou Akka).
+Ainda que o propósito do módulo RabbitMQ \english{Integration} seja bem mais específico
+que o do nosso trabalho, esse módulo define uma estrutura de filas e \english{exchanges} que é similar à
+de nossas pontes AMQP. Contudo, ele se limita a fazer difusão (\english{broadcast}) de mensagens oriundas da
+instância principal do banco de dados. Não há envios específicos
+de mensagens, nem envios de respostas e nem tampouco mensagens originadas nas instâncias secundárias.
+
+\section{Camada de comunicação entre agentes remotos com RabbitMQ}
+
+Arlekar e outros \cite{ctep} apresentam uma proposta de um arcabouço voltado para simulações baseadas
+no modelo de agentes. Esse arcabouço prove a infraestrutura necessária para a criação de agentes, a troca de 
+mensagens entre agentes e o armazenamento e a exibição das informações geradas no sistema. 
+O arcabouço possui diversos componentes, contudo destacamos aqui apenas os três nos quais identificamos 
+semelhanças com nosso trabalho:
+
+\begin{itemize}
+	\item \english{Care Take Agent} (CTA):  Um CTA possui como algumas de suas responsabilidades 
+	criar agentes e controlar a troca de mensagens entre agentes residentes em diferentes CTAs.
+
+	\item Agente:  Um agente representa uma entidade que faz parte da simulação como, por exemplo,
+	uma pessoa.
+
+	\item Camada de comunicação:  A camada de comunicação
+	é um componente fundamental no arcabouço que permite que agentes residentes em diferentes CTAs possam trocar
+	mensagens entre si. 
+\end{itemize}
+
+A implementação da camada de comunicação é feita com filas criadas no RabbitMQ. Cada CTA possui uma fila associada
+para recebimento de mensagens. As filas criadas no \english{message broker} são identificadas pelo endereço IP
+do CTA proprietário da fila e por um nome. Cada CTA é executado em sua própria JVM.
+As mensagens recebidas em um CTA são repassadas a um ou vários dos seus agentes. O CTA age também como 
+\english{proxy} no envio de uma mensagem. Para enviar mensagens a outros agentes, uma agente utilizando como \english{proxy}
+o CTA no qual ele reside.
+
+\subsubsection{Comparação com nosso trabalho}
+
+Ainda que este arcabouço seja baseado em agentes e o nosso trabalho seja voltado ao modelo de atores,
+ambos apresentam semelhanças. Um agente é análogo a um ator. Um CTA é um componente análogo 
+ao \lstinline{RemoteSupport} existente na implementação de atores remotos do Akka.
+A camada de comunição deste arcabouço é análoga à implementação da camada de transporte do Akka.
+Entretanto, o escopo deste arcabouço é bem mais específico que o do Akka. Ademais, a estrutura
+de filas e \english{exchanges} definida pela camada de comunicação deste arcabouço é bem
+menos flexível que a nossa. Entre outras limitações, ela associa o endereço IP de um CTA ao nome da fila.
