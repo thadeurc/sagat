@@ -291,7 +291,7 @@ pela oportunidade, tranquilidade e confiança que ele depositou em mim, além de t
 
 Dedico esta dissertação aos meus pais, que apesar de não estarem mais entre nós, tenho certeza
 que estão muito felizes e orgulhosos. Dedico também esta dissertação a minha
-amada e querida noiva Juliana, pela paciência e apoio nos últimos anos.
+amada e querida noiva Juliana pela paciência e apoio nos últimos anos.
 Agradeço também a IBM, empresa que trabalhei durante o desenvolvimento deste trabalho, e
 a meus gerentes (Diego, Jamerson, Gerson e Alcântaro), que não pouparam esforços para 
 flexibilizar minha rotina nos momentos mais difíceis.
@@ -325,9 +325,22 @@ mencionar minha família, em especial meus avós, Janete e Horácio, pelo apoio e s
 % ---------------------------------------------------------------------------- %
 % Abstract
 \chapter*{Abstract}
-Abstract ...
 
-\noindent \textbf{Keywords:} keyword1, keyword2, keyword3.
+The actor model has been seen as an alternative for the conventional concurrent programming based on
+locks and condition variables. Actors are computational agents that comunicate
+by sending messages and have a mailbox and a behavior. The messages sent to an actor are stored in its
+mailbox and are asynchrously processed.
+    
+Message oriented middleware systems work with asynchronous message exchange and create a base that simplifies the development
+of distributed applications. These systems have interoperability with low coupling and provide support for robust
+error handling in case of failures. Message brokers are often presented as a technology that can change the way
+distributed systems are built. The AMQP specification is a recent proposal of a standard protocol for message brokers.
+
+In this document we explored the pontential sinergy between a message broker and an implementation of the actor model.
+We created a modified version of the actor model implemented in the Akka project that makes use of a AMQP message broker
+as the transport engine for messages to remote actors.
+
+\noindent \textbf{Keywords:} Actor Model, AMQP specification, Akka Project, Scala, Message Broker, Remote Actors.
 
 % ---------------------------------------------------------------------------- %
 % Sumário
