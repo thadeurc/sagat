@@ -209,8 +209,6 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 	como duvidosos e reenviá-los, sem o risco de causar duplicidade.
 \end{itemize}
 		
-	
-
 \section{A camada de transporte}
 \label{sec:amqp-transporte}
 \index{AMQP!padrão!transporte}
@@ -289,7 +287,19 @@ com o \english{broker}. A conexão acontece com uma instância de
 \lstinline{com.rabbitmq.client.ConnectionFactory}, via método \lstinline{newConnection}.
 É na classe \lstinline{ConnectionFactory} que informamos os valores dos parâmetros necessários
 para conexão com o \english{broker} (listagem \ref{lst:conn-factory}).
-	
+		
+As conexões têm como papel principal estabelecer a comunicação da
+aplicação cliente com o \english{broker}. Conexões podem ser vistas como sendo
+a implementação de uma parte considerável da camada de transporte do padrão AMQP.
+Como descrito na seção \ref{sec:amqp-transporte}, a camada de transporte deve ser
+capaz de prover a multiplexação de canais. A classe \lstinline{Connection} provê,
+dentre outros métodos, o método \lstinline{createChannel}. A invocação desse método resulta em
+uma instância de \lstinline{com.rabbitmq.client.Channel}, na qual
+podemos executar os comandos definidos na camada de sessão (listagem \ref{lst:channels}). 
+Tais comandos incluem os comandos para criação de \english{exchanges} (\lstinline{exchangeDecla-}\lstinline{re}),
+de filas (\lstinline{queueDeclare}), de \english{bindings} (\lstinline{queueBind}) e
+os comandos para envio (\lstinline{basicPublish}) e recebimento de mensagens (\lstinline{basicConsume}).
+
 \begin{lstlisting}[caption={Configuração e uso de uma ConnectionFactory.}, label={lst:conn-factory}]
 val factory = new ConnectionFactory()
 factory.setHost(...)
@@ -299,18 +309,6 @@ factory.setPassword(...)
 factory.setVirtualHost(...)
 val connection = factory.newConnection
 \end{lstlisting}
-	
-As conexões têm como papel principal estabelecer a comunicação da
-aplicação cliente com o \english{broker}. Conexões podem ser vistas como sendo
-a implementação de uma parte considerável da camada de transporte do padrão AMQP.
-Como descrito na seção \ref{sec:amqp-transporte}, a camada de transporte deve ser
-capaz de prover a multiplexação de canais. A classe \lstinline{Connection} provê,
-dentre outros métodos, o método \lstinline{createChannel}. A invocação desse método resulta em
-uma instância de \lstinline{com.rabbitmq.client.Channel}, na qual
-podemos executar os comandos definidos na camada de sessão (listagem \ref{lst:channels}). 
-Tais comandos incluem os comandos para criação de \english{exchanges} (\lstinline{exchangeDeclare}),
-de filas (\lstinline{queueDeclare}), de \english{bindings} (\lstinline{queueBind}) e
-os comandos para envio (\lstinline{basicPublish}) e recebimento de mensagens (\lstinline{basicConsume}).
 	
 \begin{lstlisting}[caption={Criação e uso de canais.}, label={lst:channels}]
 val channel = connection.createChannel
@@ -323,13 +321,9 @@ channel.basicPublish(...)
 O recebimento das mensagens é feito com o uso de consumidores que são instâncias de 
 \lstinline{com.rabbitmq.client.Consumer}. Os consumidores são registrados nos canais
 e podem receber as mensagens assincronamente através do método 
-\lstinline{handleDelivery} (listagem \ref{lst:sample-consumer}). 	
-
-A figura \ref{fig:rabbitmq-colaboracao} mostra como 
+\lstinline{handleDelivery} (listagem \ref{lst:sample-consumer}). A figura \ref{fig:rabbitmq-colaboracao} mostra como 
 uma fábrica de conexões, uma conexão, um canal e um consumidor estão relacionados. 
-Um exemplo completo de uma aplicação produtora e de uma aplicação consumidora com a biblioteca
-Java do RabbitMQ é apresentado no apêndice \ref{ape:sample-amqp}.
-	
+		
 Um detalhe sobre a biblioteca para clientes Java do RabbitMQ é a verificação
 da existência de um objeto antes da criação efetiva do objeto. Por exemplo, se tivéssemos
 criado uma fila durável $F_1$ e tentássemos criar uma nova fila durável $F_1$, a fila não seria

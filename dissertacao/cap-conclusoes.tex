@@ -4,7 +4,7 @@
 \label{cap:conclusoes}
 
 \section{Trabalhos futuros} 
-\index{Considerações finais!Trabalhos futuros}
+\index{Considerações finais!trabalhos futuros}
 \label{sec:conclusao:pesquisas_futuras}
 
 \subsection{Melhoria no tratamento de erros nas pontes AMQP}
@@ -48,16 +48,6 @@ do \english{Trading System} com a quantidade de clientes bem maior da utilizada 
 \section{Conclusões} 
 \index{Considerações finais!conclusões}
 \label{sec:conclusao:consideracoes_finais}
-
-Concluímos que existe uma vantagem relativa da nossa implemetação
-para transporte de mensagens entre atores remotos com padrão AMQP em relação a implementação original do
-Akka feita com o Netty. Ainda que exista um processamento extra a cargo do \english{message broker} para receber, 
-rotear e entregar as mensagens, tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, e desse
-processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
-o processamento das mensagens, como os atores. Vimos na figura \ref{fig:grafico-er} que, conforme a frequência das 
-mensagens foi aumentando e o sistema foi chegando ao seu ponto de saturação, houve uma redução considerável na diferença de tempo entre as execuções com Netty e AMQP. Assim, entendemos que a carga extra de processamento adicionada pelo \english{message broker}, não invalida o seu uso como suporte para a troca de mensagens entre atores remotos. 
-Enfatizamos que em um cenário realista de um sistema de atores é esperado um número razoável de atores 
-executando em paralelo.
 
 Comentamos brevemente no capítulo \ref{cap:estrutura-troca-mensagens-amqp} sobre algumas das características
 da trocas de mensagens entre entidades conectadas ponto-a-ponto via \english{sockets}, como conhecer o endereço

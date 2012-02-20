@@ -31,7 +31,7 @@ class SampleActor(val name: String) extends akka.actor.Actor {
 
   def receive = {
     case "hello" => println("%s received hello".format(name))
-    case          _ => println("%s received unknown".format(name))
+    case           _ => println("%s received unknown".format(name))
   }
 }
 \end{lstlisting}
@@ -39,7 +39,14 @@ class SampleActor(val name: String) extends akka.actor.Actor {
 Atores são criados pelo método \lstinline{actorOf} do objeto \lstinline{akka.actor.Actor}, um
 objeto \english{singleton} que é o objeto acompanhante da feição de mesmo nome. 
 A listagem \ref{lst:actorOf1} mostra o uso do método \lstinline{actorOf}, que devolve 
-uma instância de \lstinline{akka.actor.ActorRef}. A instância do ator criado
+uma instância de \lstinline{akka.actor.ActorRef}. 
+
+\begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via construtor padrão.}, label={lst:actorOf1}]
+  val theActor = Actor.actorOf[SampleActor].start
+  theActor ! "hello"
+\end{lstlisting}
+
+A instância do ator criado
 possui uma referência para uma instância da classe que define o comportamento do ator.
 Na listagem \ref{lst:actorOf1}, esta instância é criada por reflexão com base no tipo \lstinline{SampleActor}. 
 O construtor utilizado durante a reflexão é o construtor padrão. A listagem 
@@ -47,10 +54,6 @@ O construtor utilizado durante a reflexão é o construtor padrão. A listagem
 o envio assícrono da mensagem \lstinline{"hello"} ao ator referenciado por \lstinline{theActor}.
 O processamento dessa mensagem resultará na impressão do texto \lstinline{"No name received hello"}.
 
-\begin{lstlisting}[frame=tb, caption={Criação e inicialização de SampleActor via construtor padrão.}, label={lst:actorOf1}]
-  val theActor = Actor.actorOf[SampleActor].start
-  theActor ! "hello"
-\end{lstlisting}
 
 O método \lstinline{actorOf} é sobrecarregado para permitir que uma função de inicialização (uma função sem 
 argumentos e com tipo de retorno \lstinline{Actor}) possa ser utilizada como alternativa ao
@@ -123,7 +126,7 @@ possui em sua distribuição os quatro despachadores listados a seguir:
 	atores que não estejam processando mensagens possam ``roubar'' mensagens das filas dos atores
 	que estejam sobrecarregados. Dessa forma, o despachador dá suporte a uma forma de balanceamento 
 	do processamento das mensagens entre os atores.
-	É definido na classe \lstinline{ExecutorBasedEventDrivenWorkStealingDispatcher},
+	É definido na classe \lstinline{ExecutorBasedEventDrivenWorkStea}-\lstinline{lingDispatcher}.
 	
 	\item Despachador quente: 
 	É um despachador inspirado no \english{Grand Central Dispacher} do Mac OS X \cite{apple-gcd}. 
@@ -156,11 +159,13 @@ referência para o ator remetente (\english{sender}). Uma cópia da referência
 ao \english{sender} é enviada junto  com a mensagem para que o ator destinatário possa, 
 eventualmente, enviar uma mensagem de resposta. O ator destinatário pode enviar uma mensagem 
 de resposta via método \lstinline{self.reply}. No caso dos envios de mensagem com resposta
-ao remetente, a chamada \lstinline{self.reply} é obrigatória. A listagem \ref{lst:method!!}
+ao remetente, a chamada \lstinline{self.reply} é obrigatória. 
+
+A listagem \ref{lst:method!!}
 mostra a assinatura de um dos métodos de envio, o método \lstinline{!!}. Note a presença
 do parâmetro implícito \lstinline{sender}, que normalmente não é fornecido pelo chamador
 do método.
-
+\\
 \begin{lstlisting}[frame=tb, caption={Assinatura do método !!.}, label={lst:method!!}]
 def !!(message: Any, timeout: Long = this.timeout)
 	(implicit sender: Option[ActorRef] = None): Option[Any] = {
@@ -622,7 +627,8 @@ Para que a JVM destinatária possa fazer o processamento correto, a informação do
 seriação deve estar presente na mensagem. O atributo de manifesto da mensagem (linha $4$) é opcional, 
 porém é utilizado para forçar o carregamento da classe por um \english{class loader} da JVM
 destinatária.
-
+\\
+\\
 \begin{lstlisting}[frame=tb, caption={Formato de uma mensagem.}, label={lst:proto-message}]
 message MessageProtocol {
   required SerializationSchemeType serializationScheme = 1;
@@ -664,10 +670,7 @@ envelope para as mensagens remotas. Esse formato contém a mensagem envelopada
 (linha $5$) e uma referências remota para o remetente (linha $8$), além de outros atributos.
 Na linha $2$, o atributo \lstinline{uuid} é um identificador único da mensagem.
 O formato \lstinline{UuidProtocol} utiliza a biblioteca UUID \cite{uuid},
-que é uma implementação de identificadores globais únicos. Podemos notar na linha $5$ um 
-atributo booleano que indica se é esperada uma mensagem de resposta. As mensagens enviadas via 
-método \lstinline{!} possuem valor \lstinline{oneWay = true}, enquanto que as enviadas via métodos \lstinline{!!}
-e \lstinline{!!!} possuem valor \lstinline{oneWay = false}.
+que é uma implementação de identificadores globais únicos. 
 
 \begin{lstlisting}[frame=tb, caption={Formato do envelope para envio de mensagem remota.}, 
 label={lst:proto-remote-message}]
@@ -683,6 +686,11 @@ message RemoteMessageProtocol {
   optional string cookie = 9;
 }
 \end{lstlisting}
+
+Podemos notar na linha $5$ um 
+atributo booleano que indica se é esperada uma mensagem de resposta. As mensagens enviadas via 
+método \lstinline{!} possuem valor \lstinline{oneWay = true}, enquanto que as enviadas via métodos \lstinline{!!}
+e \lstinline{!!!} possuem valor \lstinline{oneWay = false}.
 
 Optamos por não detalhar os demais formatos utilizados que estão presentes no envelope de
 uma mensagem remota. Apesar de serem importantes para o suporte a atores remotos, 

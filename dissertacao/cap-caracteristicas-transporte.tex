@@ -143,6 +143,22 @@ tratamento de mensagens rejeitadas. Além disso, o módulo \lstinline{AMQPBridge} 
 	utilizado na figura \ref{fig:bridges-broker-all-together}. A classe possui também um objeto 
 	acompanhante que define métodos para a criação de instâncias das subclasses de \lstinline{AMQPBridge}.
 
+\begin{lstlisting}[frame=tb, caption={Classe AMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-bridge}]
+abstract class AMQPBridge(val name: String, 
+											   val connection: SupervisedConnectionWrapper) {
+  require(name != null) 
+  require(connection != null)
+    
+  lazy val inboundExchangeName	= "actor.exchange.in.%s".format(name)
+  lazy val inboundQueueName		= "actor.queue.in.%s".format(name)
+  lazy val outboundQueueName	= "actor.queue.out.%s".format(name)
+  lazy val routingKeyToServer	= "to.server.%s".format(name)
+
+  def sendMessageTo(message: Array[Byte], to: String): Unit
+  def shutdown: Unit = { ... }
+}
+\end{lstlisting}
+
 	\item \lstinline{MessageHandler}: É a feição que define os métodos a serem
 	invocados quando mensagens forem recebidas ou envios feitos pela entidade forem 
 	rejeitados pelo \english{message broker}.
@@ -165,22 +181,6 @@ tratamento de mensagens rejeitadas. Além disso, o módulo \lstinline{AMQPBridge} 
 	cliente. 
 \end{itemize}
 
-\begin{lstlisting}[frame=tb, caption={Classe AMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-bridge}]
-abstract class AMQPBridge(val name: String, 
-                          val connection: SupervisedConnectionWrapper) {
-  require(name != null)
-  require(connection != null)
-    
-  lazy val inboundExchangeName = "actor.exchange.in.%s".format(name)
-  lazy val inboundQueueName    = "actor.queue.in.%s".format(name)
-  lazy val outboundQueueName   = "actor.queue.out.%s".format(name)
-  lazy val routingKeyToServer  = "to.server.%s".format(name)
-
-  def sendMessageTo(message: Array[Byte], to: String): Unit
-  def shutdown: Unit = { ... }
-}
-\end{lstlisting}
-
 \begin{lstlisting}[frame=tb, caption={Classe ServerAMQPBridge do módulo AMQPBridge.scala.}, label={lst:amqp-server-bridge}]
 class ServerAMQPBridge(name: String, 
 					   connection: SupervisedConnectionWrapper) 
@@ -192,9 +192,9 @@ class ServerAMQPBridge(name: String,
     connection.serverSetup(
       RemoteServerSetup(handler,
         ServerSetupInfo(exchangeParams, queueParams,
-                        exchangeName = inboundExchangeName,
-                        queueName    = inboundQueueName,
-                        routingKey   = routingKeyToServer))
+                        exchangeName 	= inboundExchangeName,
+                        queueName 	= inboundQueueName,
+                        routingKey 	= routingKeyToServer))
     )
     this
   }

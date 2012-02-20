@@ -2,6 +2,11 @@
 \chapter{Resultados}
 \label{cap:resultados}
 
+Apresentamos nesse capítulo uma aplicação de \english{benchmark} desenvolida para
+medir o desempenho de nosso protótipo. Apresentamos também, uma comparação de desempenho entre a 
+implementação original de atores remotos do projeto Akka e o protótipo desenvolvido neste trabalho.
+Para finalizar, fazemos uma breve discussão dos resultados observados.
+
 \section{Trading System}
 \index{Resultados!Trading System}
 \label{sec:resultados:trading_system}
@@ -329,7 +334,6 @@ AMQP & 80  &  628  &  112913  &  66128  &  77563  &  94990  &  139215 & 42.34 \\
 \end{center}
 \end{table}
 
-
 O gráfico da figura \ref{fig:grafico-er-lento} mostra que, com o aumento de atores clientes, a
 quantidade de envios e respostas obtida com nossa implementação não teve a mesma melhora que a obtida
 com o Netty. Uma melhora mais significativa acontece somente quando a 
@@ -375,11 +379,20 @@ clientes do gráfico da figura \ref{fig:grafico-er-lento} corresponde ao trecho d
 $1$ a $2$ clientes do gráfico da figura \ref{fig:grafico-er}. A figura
 \ref{fig:grafico-er-lento-e-normal} ilustra esse fato.
 
-
 \begin{figure}[!h]
 		\centering
 		\includegraphics[scale=.70]{grafico-er-lento-e-normal} 
  		\caption{Fluxos nas redes de alta e de baixa latência.}
   		\label{fig:grafico-er-lento-e-normal}
 \end{figure}
+
+Concluímos que existe uma vantagem relativa da nossa implemetação
+para transporte de mensagens entre atores remotos com padrão AMQP em relação a implementação original do
+Akka feita com o Netty. Ainda que exista um processamento extra a cargo do \english{message broker} para receber, 
+rotear e entregar as mensagens, tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, e desse
+processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
+o processamento das mensagens, como os atores. Vimos na figura \ref{fig:grafico-er} que, conforme o fluxo das 
+mensagens foi aumentando e o sistema foi chegando ao seu ponto de saturação, houve uma redução considerável na diferença de tempo entre as execuções com Netty e AMQP. Assim, entendemos que a carga extra de processamento adicionada pelo \english{message broker}, não invalida o seu uso como suporte para a troca de mensagens entre atores remotos. 
+Enfatizamos que em um cenário realista de um sistema de atores é esperado um número razoável de atores 
+executando em paralelo.
 
