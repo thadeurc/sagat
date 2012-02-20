@@ -51,7 +51,7 @@ possui uma referência para uma instância da classe que define o comportamento do
 Na listagem \ref{lst:actorOf1}, esta instância é criada por reflexão com base no tipo \lstinline{SampleActor}. 
 O construtor utilizado durante a reflexão é o construtor padrão. A listagem 
 \ref{lst:actorOf1} ilustra também o uso do método \lstinline{!} para fazer
-o envio assícrono da mensagem \lstinline{"hello"} ao ator referenciado por \lstinline{theActor}.
+o envio assíncrono da mensagem \lstinline{"hello"} ao ator referenciado por \lstinline{theActor}.
 O processamento dessa mensagem resultará na impressão do texto \lstinline{"No name received hello"}.
 
 
@@ -148,7 +148,7 @@ que novos despachadores sejam criados.
 \index{Akka!atores locais!envios de respostas}
 \label{subsec:akka_envio_resposta}
 
-Além do método \lstinline{!}, que faz o envio assícrono de uma mensagem sem devolver resposta
+Além do método \lstinline{!}, que faz o envio assíncrono de uma mensagem sem devolver resposta
 alguma ao remetente, o Akka oferece dois métodos para envio de mensagem com
 resposta ao remetente. O primeiro deles é o método \lstinline{!!}, que faz envio síncrono
 da mensagem e deixa o remetente bloqueado aguardando uma resposta durante um tempo limite. 
@@ -355,7 +355,7 @@ Quando criamos uma ligação de supervisão entre dois atores, como na linha $4$ da
 Essa referência é acessível via método \lstinline{self.supervisor}. Um ator supervisor
 também pode ser supervisionado por outro ator, como mostrado na figura 
 \ref{fig:actor-hier}. O encadeamento de atores supervisores abre a possibilidade da
-criação de sub-hieraquias, cada uma com seu supervisor. 
+criação de sub-hierarquias, cada uma com seu supervisor. 
 
 \vspace{1ex}
 \begin{figure}[hbtp]
@@ -539,7 +539,7 @@ no caminho contrário ao mostrado na figura \ref{fig:remote-actor-message-flow}. 
 dessa mensagem de resposta (seja um resultado de sucesso ou uma exceção) é utilizado para completar
 o resultado futuro. Caso a mensagem de resposta contenha uma exceção e caso o ator que gerou a resposta
 possua um ator supervisor residente na JVM do lado cliente, esse ator supervisor é localizado
-no mapa de supervisores e recebe uma mensagem assícrona de notificação enviada localmente.
+no mapa de supervisores e recebe uma mensagem assíncrona de notificação enviada localmente.
 
 O Akka possui uma configuração opcional de segurança em que cada JVM pode definir 
 um \english{cookie}. O \english{cookie} nada mais é do que uma chave
@@ -612,7 +612,7 @@ possui um compilador que aceita definições de formatos de mensagens numa linguag
 específica do Protobuf e que converte tais definições em classes Java, Python e C++.
 
 A linguagem declarativa utiliza a palavra-chave \lstinline{message} para definir o formato de uma mensagem. 
-No contexto do Protobuf, o termo ``mensagem'' signfica ``tipo de dados estruturado''.
+No contexto do Protobuf, o termo ``mensagem'' significa ``tipo de dados estruturado''.
 Mensagens podem conter tipos primitivos de dados como números, cadeias de caracteres e valores booleanos,
 podem conter outras mensagens, e podem conter vetores de tipos primitivos ou de outras mensagens.
 Ademais, a linguagem permite que se defina a obrigatoriedade ou não de valores para os atributos,

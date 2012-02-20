@@ -9,7 +9,7 @@ o protocolo permite completa interoperabilidade para \english{middleware}
 orientado a mensagens. A especificação \cite{amqp-spec} define não somente o protocolo de rede, 
 mas também a semântica dos serviços da aplicação servidora. Também é parte 
 do foco que capacidades providas por sistemas de \english{middleware} orientados 
-a mensagem possam estar pervasivamente disponíveis nas redes das empresas, 
+a mensagem possam estar disponíveis nas redes das empresas, 
 incentivando o desenvolvimento de aplicações interoperáveis baseadas em troca 
 de mensagens. 
 
@@ -108,7 +108,7 @@ consumidoras. Vale frisar que filas, \english{exchanges} e \english{bindings}
 podem ser criados tanto de modo programático como por meio de ferramentas 
 administrativas.
 	
-Há uma analogia entre o modelo AMQP e sistemas de email:
+Há uma analogia entre o modelo AMQP e sistemas de \english{email}:
 \begin{enumerate}	
 	\item Uma mensagem AMQP é análoga a uma mensagem de \english{email}.
 	
@@ -215,12 +215,12 @@ Os principais serviços providos pela camada de sessão para a camada de modelo sã
 
 A camada de transporte é responsável por tarefas como 
 multiplexação de canais, detecção de falhas, representação de dados e 
-janelamento (\english{framing}).  A lista dos requisítos dessa camada 
+janelamento (\english{framing}).  A lista dos requisitos dessa camada 
 inclui, entre outros itens, possuir uma representação de dados binária 
 e compacta que seja rápida de se embrulhar e desembrulhar, trabalhar 
 com mensagens sem um limite significante de tamanho, permitir que 
 sessões não sejam perdidas no caso de falhas de rede ou de aplicação, 
-possuir assincronidade e neutralidade em relação à linguagens de 
+possuir assincronia e neutralidade em relação à linguagens de 
 programação.
 
 

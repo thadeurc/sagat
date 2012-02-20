@@ -282,7 +282,7 @@ basicstyle={\small\ttfamily}
 % Agradecimentos
 \chapter*{Agradecimentos}
 
-Gostaria de expressar minha enorme gratidão ao Institudo de Matemática e Estatística
+Gostaria de expressar minha enorme gratidão ao Instituto de Matemática e Estatística
 da Universidade de São Paulo por ter me dado a oportunidade de desenvolver este trabalho.
 Agradeço a todos os professores no qual tive o prazer de assistir aulas durante o curso. Em
 especial, agradeço muito ao meu orientador, o professor Dr. Francisco Carlos da Rocha Reverbel,
@@ -298,7 +298,7 @@ flexibilizar minha rotina nos momentos mais difíceis.
 
 É impossível não mencionar grandes pessoas que estiveram ao meu lado e me ajudaram, de alguma
 maneira, a realizar este sonho. Wanderley Guimarães e Alexandre Freire, amigos de longa data
-que sempre me ajudaram a ficar firme e acreditar no meu objetivo. Ricardo Hermann, 
+que sempre me ajudaram a ficar firme e acreditar no meu objetivo. Ricardo Herrmann, 
 Cristiano Breuel e Domingos Soares por me ajudarem em questões técnicas. Não poderia esquecer de
 mencionar minha família, em especial meus avós, Janete e Horácio, pelo apoio e suporte nos momentos mais difíceis.
 
@@ -327,16 +327,16 @@ mencionar minha família, em especial meus avós, Janete e Horácio, pelo apoio e s
 \chapter*{Abstract}
 
 The actor model has been seen as an alternative for the conventional concurrent programming based on
-locks and condition variables. Actors are computational agents that comunicate
+locks and condition variables. Actors are computational agents that communicate
 by sending messages and have a mailbox and a behavior. The messages sent to an actor are stored in its
-mailbox and are asynchrously processed.
+mailbox and are asynchronously processed.
     
 Message oriented middleware systems work with asynchronous message exchange and create a base that simplifies the development
 of distributed applications. These systems have interoperability with low coupling and provide support for robust
 error handling in case of failures. Message brokers are often presented as a technology that can change the way
 distributed systems are built. The AMQP specification is a recent proposal of a standard protocol for message brokers.
 
-In this document we explored the pontential sinergy between a message broker and an implementation of the actor model.
+In this document we explored the potential synergy between a message broker and an implementation of the actor model.
 We created a modified version of the actor model implemented in the Akka project that makes use of a AMQP message broker
 as the transport engine for messages to remote actors.
 

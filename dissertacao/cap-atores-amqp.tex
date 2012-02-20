@@ -83,7 +83,7 @@ Akka é mostrado na figura \ref{fig:atores-remotos-amqp-colaboracao}.
 \end{figure}
 
 A definição das feições para suporte a atores remotos do Akka utiliza assinaturas
-de métodos baseadas na indentificação do hospedeiro e na porta. Para não quebrar a compatibilidade 
+de métodos baseadas na identificação do hospedeiro e na porta. Para não quebrar a compatibilidade 
 em nossa implementação e nem alterar a interface dos métodos do Akka, optamos por criar internamente 
 uma ponte servidora e um servidor remoto identificado por um nome construído com base nos valores de \lstinline{host} e 
 \lstinline{port} informados. O nome das pontes servidoras e dos servidores remotos seguem o padrão \lstinline{host@port}. 

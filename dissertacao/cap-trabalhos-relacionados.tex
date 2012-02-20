@@ -38,7 +38,7 @@ configurada na ativação do módulo de integração com o RabbitMQ.
 \subsubsection{Comparação com nosso trabalho}
 
 Tanto o módulo RabbitMQ \english{Integration} quanto o nosso trabalho fazem uso do RabbitMQ
-para interligar instâncias distrubuídas de um mesmo sistema (Drizzle ou Akka).
+para interligar instâncias distribuídas de um mesmo sistema (Drizzle ou Akka).
 Ainda que o propósito do módulo RabbitMQ \english{Integration} seja bem mais específico
 que o do nosso trabalho, esse módulo define uma estrutura de filas e \english{exchanges} que é similar à
 de nossas pontes AMQP. Contudo, ele se limita a fazer difusão (\english{broadcast}) de mensagens oriundas da
@@ -77,7 +77,7 @@ o CTA no qual ele reside.
 Ainda que este arcabouço seja baseado em agentes e o nosso trabalho seja voltado ao modelo de atores,
 ambos apresentam semelhanças. Um agente é análogo a um ator. Um CTA é um componente análogo 
 ao \lstinline{RemoteSupport} existente na implementação de atores remotos do Akka.
-A camada de comunição deste arcabouço é análoga à implementação da camada de transporte do Akka.
+A camada de comunicação deste arcabouço é análoga à implementação da camada de transporte do Akka.
 Entretanto, o escopo deste arcabouço é bem mais específico que o do Akka. Ademais, a estrutura
 de filas e \english{exchanges} definida pela camada de comunicação deste arcabouço é bem
 menos flexível que a nossa. Entre outras limitações, ela associa o endereço IP de um CTA ao nome da fila.

@@ -2,7 +2,7 @@
 \chapter{Resultados}
 \label{cap:resultados}
 
-Apresentamos nesse capítulo uma aplicação de \english{benchmark} desenvolida para
+Apresentamos nesse capítulo uma aplicação de \english{benchmark} desenvolvida para
 medir o desempenho de nosso protótipo. Apresentamos também, uma comparação de desempenho entre a 
 implementação original de atores remotos do projeto Akka e o protótipo desenvolvido neste trabalho.
 Para finalizar, fazemos uma breve discussão dos resultados observados.
@@ -227,7 +227,7 @@ podemos notar uma diferença bem próxima da esperada. O número de envios e respos
 quase o dobro do tempo (variação de $90.33\%$). Como consequência, a duração total também leva quase o dobro 
 do tempo. 
 
-A análise por percentis nos ajuda a ter uma idéia muito interessante sobre o tempo 
+A análise por percentis nos ajuda a ter uma ideia muito interessante sobre o tempo 
 de resposta de um sistema. Por exemplo, no \english{Trading System}, quando observamos o $95\%$ percentil,
 para apenas um ator cliente, sabemos que $95\%$ dos envios e respostas são completados em 
 no máximo $3266 \mu s$ com o Netty e $4550 \mu s$ com AMQP,
@@ -386,7 +386,7 @@ $1$ a $2$ clientes do gráfico da figura \ref{fig:grafico-er}. A figura
   		\label{fig:grafico-er-lento-e-normal}
 \end{figure}
 
-Concluímos que existe uma vantagem relativa da nossa implemetação
+Concluímos que existe uma vantagem relativa da nossa implementação
 para transporte de mensagens entre atores remotos com padrão AMQP em relação a implementação original do
 Akka feita com o Netty. Ainda que exista um processamento extra a cargo do \english{message broker} para receber, 
 rotear e entregar as mensagens, tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, e desse
