@@ -1,9 +1,9 @@
 %% ------------------------------------------------------------------------- %%
-\chapter{Resultados}
+\chapter{Resultados Experimentais}
 \label{cap:resultados}
 
 Apresentamos nesse capítulo uma aplicação de \english{benchmark} desenvolvida para
-medir o desempenho de nosso protótipo. Apresentamos também, uma comparação de desempenho entre a 
+medir o desempenho de nosso protótipo. Apresentamos também uma comparação de desempenho entre a 
 implementação original de atores remotos do projeto Akka e o protótipo desenvolvido neste trabalho.
 Para finalizar, fazemos uma breve discussão dos resultados observados.
 
@@ -392,7 +392,5 @@ Akka feita com o Netty. Ainda que exista um processamento extra a cargo do \engl
 rotear e entregar as mensagens, tal vantagem deve-se ao fato do Netty também possuir tarefas semelhantes, e desse
 processamento acontecer nos mesmos nós onde estão em execução as classes que fazem
 o processamento das mensagens, como os atores. Vimos na figura \ref{fig:grafico-er} que, conforme o fluxo das 
-mensagens foi aumentando e o sistema foi chegando ao seu ponto de saturação, houve uma redução considerável na diferença de tempo entre as execuções com Netty e AMQP. Assim, entendemos que a carga extra de processamento adicionada pelo \english{message broker}, não invalida o seu uso como suporte para a troca de mensagens entre atores remotos. 
-Enfatizamos que em um cenário realista de um sistema de atores é esperado um número razoável de atores 
-executando em paralelo.
-
+mensagens foi aumentando e o sistema foi chegando ao seu ponto de saturação, houve uma redução considerável na diferença de tempo entre as execuções com Netty e AMQP. Assim, entendemos que a carga extra de processamento adicionada pelo \english{message broker} não invalida o seu uso como suporte para a troca de mensagens entre atores remotos. 
+Enfatizamos que em muitos cenários realistas espera-se que um sistema de atores tenha um alto número de atores clientes.

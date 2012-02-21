@@ -85,20 +85,17 @@ menos flexível que a nossa. Entre outras limitações, ela associa o endereço IP d
 \section{Akka AMQP Integration}
 
 O projeto Akka possui um módulo adicional cujo nome é AMQP \english{Integration} \cite{akka}. O módulo
-AMQP \english{Integration} provê funcionalidades para que objetos como conexões, canais
-RabbitMQ sejam abstraídos e implementados como atores. Esse módulo adiciona benefícios
-como a criação de hierarquia de supervisão para conexões e canais. No caso de uma falha que leve ao fechamento
+AMQP \english{Integration} permite que objetos como conexões e canais
+RabbitMQ sejam abstraídos e implementados como atores. Esse módulo permite ainda que
+os produtores e os consumidores das mensagens enviadas via \english{message broker} sejam definidos
+como atores. O módulo \english{AMQP Integration} adiciona benefícios
+como a criação de uma hierarquia de supervisão para conexões e canais. No caso de uma falha que leve ao fechamento
 de uma conexão ou de um canal, a hierarquia de supervisão tentará restabelecer a conexão ou recriar o canal.
-O módulo AMQP \english{Integration} permite ainda que classes com o papel de produtor ou consumidor de mensagens
-sejam definidas como atores.
- 
+
 \subsubsection{Comparação com nosso trabalho}
 
-Este módulo foi utilizado com inspiração na criação das pontes AMQP apresentadas no capítulo 
-\ref{cap:estrutura-troca-mensagens-amqp}. Abstrair a interação com o \english{message broker}
-via atores até poderia ser dito como um modo de enviar mensagens a atores residentes em diferentes
-nós. Ainda que o módulo AMQP \english{Integration} permita a criação de objetos como filas e \english{exchanges}
-no \english{message broker}, seu escopo é encapsular a implementação de consumidores e produtores
-para que aplicações possam interagir com atores ao invés das classes da biblioteca do RabbitMQ. Ademais,
-não há qualquer tipo de relação entre o formato do envelope para mensagens a atores remotos com o formato
-das mensagens utilizadas neste módulo, nem tampouco com a implementação de atores remotos do Akka.
+O módulo AMQP \english{Integration} oferece uma API que é baseada em atores e que dá acesso às funcionalidades da biblioteca do RabbitMQ para clientes Java. Uma aplicação pode usar esse módulo para fazer entidades remotas trocarem mensagens via AMQP. Entretanto, a aplicação precisará lidar explicitamente com as abstrações do módulo AMQP \english{Integration} que representam objetos do message broker. Além disso, a troca de mensagens será sempre mediada pelos atores do módulo 
+AMQP \english{Integration}. 
+
+Já em nosso trabalho um ator pode enviar mensagens diretamente a atores destinatários remotos. As mensagens são enviadas via message broker, sem que a aplicação precise tomar quaisquer providências. O uso de AMQP como camada de transporte de mensagens é completamente transparente para as aplicações. Embora o módulo AMQP \english{Integration} tenha objetivos bem diferentes dos nossos, foi o código desse módulo que nos inspirou a criar as pontes AMQP apresentadas no capitulo 
+\ref{cap:estrutura-troca-mensagens-amqp}.
