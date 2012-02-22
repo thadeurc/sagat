@@ -10,120 +10,118 @@
 \subsection{Melhoria no tratamento de erros nas pontes AMQP}
 
 O fato de utilizarmos atores para encapsular as principais classes da biblioteca para clientes Java
-do RabbitMQ, permite que a hierarquia de atores que foi criada venha ser utilizada para o tratamento
+do RabbitMQ permite que nossa hierarquia de atores venha ser utilizada para tratamento
 de erros. Ainda que nossa implementação seja de uma hierarquia de supervisão, os atores supervisores não
-possuem comportamento para o tratamento de erros em atores supervisionados. 
+possuem comportamento para tratamento de erros nos atores supervisionados. 
 
 A implementação pode ser ampliada para que, no caso de erros em atores supervisionados, como os responsáveis pelos
-canais ou conexões, os atores supervisores possam criar novos atores supervisionados no mesmo estado que 
-estavam antes do erro acontecer. A restauração do estado nos atores filhos deverá obedecer as configurações 
-originais dos objetos que foram criados no \english{message broker}. É necessário ainda que, quando
-não for possível restabelecer o sistema, seja por não se conseguir reconectar ao \english{message broker} ou
-por algum outro motivo, notificar a ponte AMQP para que ela possa propagar o erro para o nível da aplicação.
+canais ou conexões, os atores supervisores possam criar novos atores supervisionados.  
+A restauração do estado nos atores filhos deverá obedecer as configurações 
+originais dos objetos que foram criados no \english{message broker}. Quando não for possível restabelecer o 
+sistema, seja por não se conseguir reconectar ao \english{message broker} ou por algum outro motivo, é 
+necessário ainda notificar a ponte AMQP para que ela possa propagar o erro para o nível da aplicação.
 
 \subsection{Experimentos em um ambiente de computação em nuvem}
 
 Nos últimos anos o conceito de computação em nuvem vem ganhando
 bastante espaço, não só na comunidade acadêmica, mas também na indústria de tecnologia.
 Computação em nuvem é um conceito que se refere tanto a aplicações disponibilizadas como serviços 
-via internet quanto pelo \english{hardware} e sistemas de \english{software} que estão nos centros 
-processamento de dados para prover estes serviços \cite{cloud2010}. O termo ``nuvem'' é
+via internet quanto pelo \english{hardware} e pelos sistemas de \english{software} que estão nos centros de
+processamento de dados para prover aqueles serviços \cite{cloud2010}. O termo ``nuvem'' é
 utilizado para denotar o \english{hardware} e o \english{software} que ficam no centro de processamento
 de dados. Um dos principais atrativos da computação em nuvem é a capacidade de elasticidade da nuvem.
-Caso a demanda por um serviço aumenta, recursos que estão disponíveis, como computadores e máquinas virtuais
-podem ser provisionados para aumentar a capacidade de processamento. Quando a demanda pelo serviço diminui e 
-a capacidade de processamento necessária passa a ser menor, parte recursos podem ser 
-liberados para atenderem outros serviços. 
+Caso a demanda por um serviço aumente, recursos que estão disponíveis, como computadores e máquinas virtuais,
+podem ser alocados para aumentar a capacidade de processamento. Quando a demanda pelo serviço diminui e 
+a capacidade de processamento necessária passa a ser menor, esses recursos podem ser 
+liberados e utilizados para atender outros serviços. 
 
-Algumas plataformas de computação em nuvem existentes no mercado, como EC2 (Amazon) \cite{ec2}, Nebula (NASA) 
+Diversas plataformas de computação em nuvem existentes no mercado, como EC2 (Amazon) \cite{ec2}, Nebula (NASA) 
 \cite{nebula}, Heroku \cite{heroku} e Cloud Foundry (VMWare) \cite{cloudfoundry}, possuem o RabbitMQ 
 como \english{message broker} ou permitem que o RabbitMQ seja instalado. 
-Acreditamos que nossa implementação de atores remotos esteja muito próxima e necessite de poucas adaptações
-para poder ser implantada em uma infraestrutura de computação em nuvem. Acreditamos que a elasticidade da nuvem, 
+Acreditamos que nossa implementação de atores remotos esteja muito próxima de ser implantável em uma 
+infraestrutura de computação em nuvem e necessite de poucas adaptações para ser executada na nuvem. 
+Acreditamos que a elasticidade da nuvem, 
 alinhada com a capacidade do RabbitMQ de trabalhar com um número alto de requisições, proporcione alta 
-escalabilidade para sistema que for desenvolvido. Deixamos como sugestão de experimento, fazer uma comparação 
-do \english{Trading System} com a quantidade de clientes bem maior da utilizada em nossos experimentos.
-
+escalabilidade. Um trabalho futuro interessante seria usar o \english{Trading System} 
+para fazer uma avaliação experimental de nossa implementação em um ambiente de nuvem, com uma quantidade
+de clientes bem maior que a utilizada em nossos experimentos.
 
 \section{Conclusões} 
 \index{Considerações finais!conclusões}
 \label{sec:conclusao:consideracoes_finais}
 
-Comentamos brevemente no capítulo \ref{cap:estrutura-troca-mensagens-amqp} sobre algumas das características
-da trocas de mensagens entre entidades conectadas ponto-a-ponto via \english{sockets}, como conhecer o endereço
-do hospedeiro e porta do outra par no qual se está conectado, a possibilidade de identificar se a outra 
-parte continua conectada e o não armazenamento intermediário de mensagens.  
-A biblioteca do Netty fornece meios para obter informações tanto sobre o endereço da outra parte,
-como ser notificado em caso de falhas na conexão. Esses meios são utilizados na implementação de atores
-remotos do Akka, tanto para notificar  um \lstinline{RemoteClient} que o \lstinline{RemoteServer} correspondente
-não está mais conectado, quanto o contrário.
+%Comentamos brevemente no capítulo \ref{cap:estrutura-troca-mensagens-amqp} sobre algumas das características
+%da trocas de mensagens entre entidades conectadas ponto-a-ponto via \english{sockets}, como conhecer o endereço
+%do hospedeiro e porta do outra par no qual se está conectado, a possibilidade de identificar se a outra 
+%parte continua conectada e o não armazenamento intermediário de mensagens.  
+%A biblioteca do Netty fornece meios para obter informações tanto sobre o endereço da outra parte,
+%como ser notificado em caso de falhas na conexão. Esses meios são utilizados na implementação de atores
+%remotos do Akka, tanto para notificar  um \lstinline{RemoteClient} que o \lstinline{RemoteServer} correspondente
+%não está mais conectado, quanto o contrário.
 
-O fato de utilizarmos filas para fazer o armazenamento intermediário das mensagens 
-(ainda que, na maior parte do tempo, por um período breve), permite que tanto um \lstinline{RemoteServer} 
-quanto um \lstinline{RemoteClient} possa receber mensagens mesmo após sua execução ter sido interrompida. 
-Para tal, basta que eles tenham executado alguma vez com uma configuração durável\footnote{O mesmo 
-vale para configurações transientes, desde que o \english{message broker} não tenha sido reiniciado}. 
-As mensagens ficam armazenadas até que um novo consumidor seja registrado. Um detalhe importante
-a se destacar é em relação a \english{exchange} não existir no momento do envio. Em casos como esse, quem está
-fazendo o envio recebe uma exceção no mesmo momento que está tentando fazer o envio. Mensagens que foram
-armazenadas, por exemplo, porque o \lstinline{RemoteServer} ou \lstinline{RemoteClient} não estavam
-em execução podem deixar de ter a mesma semântica para o ator. O comportamento do ator no momento do recebimento
-da mensagem pode, eventualmente, ser diferente do comportamento que o ator possuía no momento do envio.
+A principal motivação para o uso de AMQP como mecanismo de transporte de mensagens para atores remotos é fazer a integração entre o modelo de atores e os sistemas de middleware orientado a mensagens. Embora venha ganhando muita atenção como um modelo não convencional de programação concorrente, o modelo de atores ainda não tem emprego difundido em ambientes corporativos. Nossa expectativa é que a integração com os sistemas orientados a mensagens amplamente usados em tais ambientes contribua para a adoção do modelo de atores em cenários de processamento de dados empresarial.
 
-Assim como o modelo de atores não prevê a ordem de entrega das mensagens, deixando a cargo das aplicações
-que utilizam o modelo fazer o tratamento, o recebimento de mensagens que ficaram armazenadas é uma situação
-que leva a um cenário semelhante, também deixando a cargo da aplicação a responsabilidade sobre o processamento
-de tais mensagens. Mensagens enviadas de forma síncrona para atores remotos que não estão acessíveis, causam
-estouro no tempo limite de espera no resultado futuro. Uma eventual resposta do ator remoto após o tempo limite,
-não causa erros. Do modo como está a implementação, o mapa de resultados futuros (seção \ref{subsec:akka_envio_resposta})
-mantém as referências para os resultados até que eles sejam completados.
-
-O uso do \english{message broker} como ponto central de comunicação de todos os atores remotos, cria um
-ponto crítico para o caso de falhas. Caso o nó onde o \english{message broker} está em execução sofra alguma
-avaria, a comunicação de todos os atores remotos é afetada. O RabbitMQ pode ser configurado
-em \english{cluster} \cite{rabbitmq-cluster}, no qual os nós 
-compartilham as informações dos \english{virtual hosts}. O uso do RabbitMQ em \english{cluster} minimiza
-o problema de o \english{message broker} ser um ponto central de falhas.
-
-%------------------------------------------------------
-
-O uso do RabbitMQ como \english{message broker} AMQP em conjunto com a estrutura descrita no capítulo
+Em nossos experimentos, o uso do RabbitMQ, em conjunto com a estrutura descrita no capítulo
 \ref{cap:estrutura-troca-mensagens-amqp}, se mostrou eficaz em nossos experimentos para transportar mensagens
-entre atores remotos. O tempo extra de processamento adicionado com uso do \english{message broker} 
-se mostrou muito baixo para um cenário mais realista, em que existe uma quantidade razoável de atores executando
-em paralelo e baixa latência de rede, está bem abaixo do que esperávamos. Dependendo do tipo de aplicação, podemos
-afirmar que o tempo extra pode ser até considerado como desprezível. Nossa conclusão é de que as duas 
-classes de sistemas estudas neste trabalho possuem boa sinergia.
+entre atores remotos. O tempo extra de processamento adicionado com o uso do \english{message broker} 
+se mostrou baixo no cenário mais realista, em que há baixa latência de rede e uma quantidade razoável de atores
+sendo executados concorrentemente. Nossa conclusão é de que as duas classes de sistemas estudadas 
+neste trabalho possuem boa sinergia.
 
-O uso de um \english{message broker} ainda trás outros benefícios, como por exemplo:
-\begin{itemize}
-	\item Ferramentas administrativas: A maioria dos \english{message brokers} possui ferramentas 
-	para administração e monitoramento. O uso deste tipo de ferramenta ajuda no monitoramento de uma
-	parte importante da infraestrutura de um sistema distribuído. O RabbitMQ, por exemplo, possui um
-	módulo para gerenciamento que é acessível de um navegador \english{web} \cite{rabbitmq-mgmt}. 
-	Com este módulo é possível criar, alterar e remover entidades, além de observar informações como, por exemplo,
-	o volume de mensagens em determinada entidade, a quantidade de clientes conectados e a quantidade 
-	de mensagens que está em uma fila aguardando confirmação de recebimento.
+O uso do \english{message broker} AMQP como ponto central de comunicação de todos os atores remotos cria um
+ponto crítico em caso de falhas. Caso o nó onde o \english{message broker} está em execução sofra alguma
+avaria, a comunicação de todos os atores remotos é afetada. Entretando, o RabbitMQ pode ser configurado
+em \english{cluster} \cite{rabbitmq-cluster}, com múltiplos nós 
+compartilhando as informações dos \english{virtual hosts}. O uso do RabbitMQ em \english{cluster} minimiza
+o problema do \english{message broker} ser um ponto central de falhas. Além das configurações de \english{cluster}, 
+o RabbitMQ dá suporte à criação de filas de alta disponibilidade \cite{rabbitmq-ha}.  
+O uso de filas de alta disponibilidade é uma solução complementar, baseada
+no espelhamento das filas, para o RabbitMQ prover alta disponibilidade dos seus serviços.
 
-	\item Alta disponibilidade: O RabbitMQ dá suporte, além das configurações de \english{cluster}, à
-	criação de filas de alta disponibilidade \cite{rabbitmq-ha}. A utilização do RabbitMQ em \english{cluster}
-	dá suporte a \english{exchanges} e suas associações no caso de avarias no nó onde elas residem, porém 
-	as filas e suas mensagens não. O uso de filas de alta disponibilidade é uma solução complementar, baseada
-	no espelhamento das filas, para o RabbitMQ prover alta disponibilidade dos seus serviços.
 
-	\item Simplificação de acesso: Com o uso de nomes ao invés de IPs e número de portas para identificar
-	os nós onde residem os atores remotos, conseguimos certa independência dos endereços IPs. O único endereço
-	que deve ser conhecido é o do nó onde o \english{message broker} está em execução.
-	Ainda que em nossa implementação tenhamos mantido as assinaturas dos métodos definidos no projeto Akka, 
-	nossa implementação não fica atrelada a esse detalhe. Os endereços IPs dos nós não possuem relação 
-	com os nomes utilizados para registrar ou localizar um ator remoto. Existe ainda uma outra vantagem que é
-	a redução do número de portas que devem ser desbloqueadas em um \english{firewall}. Não é necessário
-	desbloquear as portas que cada \lstinline{RemoteServer} estará disponível. A única porta que precisa estar
-	desbloqueada para aceitar conexões, é a porta que o \english{message broker} disponibilizou
-	para os clientes e somente no nó onde ele está em execução.
-\end{itemize}
+%Assim como o modelo de atores não prevê a ordem de entrega das mensagens, deixando a cargo das aplicações
+%que utilizam o modelo fazer o tratamento, o recebimento de mensagens que ficaram armazenadas é uma situação
+%que leva a um cenário semelhante, também deixando a cargo da aplicação a responsabilidade sobre o processamento
+%de tais mensagens. Mensagens enviadas de forma síncrona para atores remotos que não estão acessíveis, causam
+%estouro no tempo limite de espera no resultado futuro. Uma eventual resposta do ator remoto após o tempo limite,
+%não causa erros. Do modo como está a implementação, o mapa de resultados futuros (seção \ref{subsec:akka_envio_resposta})
+%mantém as referências para os resultados até que eles sejam completados.
 
 
 %------------------------------------------------------
+
+O emprego de um \english{message broker} ainda traz outros benefícios, como por exemplo:
+\begin{itemize}
+	\item Mensagens duráveis: O fato de utilizarmos filas para fazer o armazenamento 
+	intermediário das mensagens (ainda que, na maior parte das vezes, por um período breve), 
+	permite que tanto um \lstinline{RemoteServer} quanto um \lstinline{RemoteClient} possa 
+	receber mensagens mesmo após sua execução ter sido interrompida. 
+	Para tal, basta que o \lstinline{RemoteServer} ou \lstinline{RemoteClient} tenha sido executado 
+	com uma configuração durável\footnote{O mesmo vale para configurações transientes, desde que 
+	o \english{message broker} não seja reiniciado. No RabbitMQ, filas e \english{exchanges} criadas como
+	transientes só são removidas na reinicialização do RabbitMQ.}. As mensagens ficam armazenadas até que 
+	um novo consumidor seja registrado.
+
+	\item Ferramentas administrativas: A maioria dos \english{message brokers} possui ferramentas 
+	para administração e monitoramento. O uso deste tipo de ferramenta ajuda na administração de uma
+	parte importante da infraestrutura de um sistema distribuído. O RabbitMQ, por exemplo, possui um
+	módulo de gerenciamento que é acessível por meio de um navegador \english{web} \cite{rabbitmq-mgmt}. 
+	Com este módulo é possível criar, alterar e remover objetos como filas e \english{exchanges}, além de 
+	observar informações como, por exemplo,
+	o volume de mensagens em determinado objeto, a quantidade de clientes conectados ao \english{message broker} e 
+	a quantidade de mensagens que está em uma fila aguardando confirmação de recebimento.
+
+	\item Simplificação de acesso: 
+	Para identificar os nós onde residem os atores remotos, nossa implementação usa nomes ao invés de 
+	endereços IP e números de portas. Graças a esse uso de nomes, conseguimos certa independência dos endereços IP. 
+	O único endereço que deve ser conhecido é o do nó onde o \english{message broker} está em execução.
+	Ainda que tenhamos mantido as assinaturas dos métodos definidos pelo projeto Akka, 
+	nossa implementação não se atrela aos detalhes de hospedeiro e porta expostos pela API do Akka. 
+	Existe ainda uma outra vantagem que é
+	a redução do número de portas que devem ser desbloqueadas em um \english{firewall}. 
+	A única porta que deve necessariamente aceitar conexões é a porta que o \english{message broker} 
+	disponibilizou para os clientes, a qual precisa estar desbloqueada somente no nó onde o \english{message broker} 
+	está em execução.
+\end{itemize}
 
 
