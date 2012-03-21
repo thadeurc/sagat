@@ -9,7 +9,7 @@
 \author{Thadeu de Russo e Carmo \\ \texttt{thadeurc@ime.usp.br}}
 \institute{Orientador: Prof. Dr. Francisco da Rocha Reverbel\\ Instituto de Matem\'atica e Estat\'istica \\ Universidade de S\~ao Paulo}
 \date{Abril, 2012}
-\setbeameroption{show notes on second screen=left} 
+%\setbeameroption{show notes on second screen=left} 
 \begin{document}
 \frame{\titlepage}
 \section{Introdu\c{c}\~ao} 
@@ -134,7 +134,7 @@
 }
 \frame{
 \frametitle{Objetivos}
-	Este trabalho teve como objetivos a cria\c{c}\~ao de uma implementa\c{c}\~ao em Scala do modelo de atores que utilize o padr\~ao AMQP
+	Este trabalho teve como objetivo cruar uma implementa\c{c}\~ao do modelo de atores em Scala que utilize o padr\~ao AMQP
 	para o transporte de mensagens entre atores remotos.
 }
 \subsection{Atores}
@@ -160,7 +160,6 @@
 			\end{itemize}
 		\end{beamerboxesrounded}
 	}
-%% ainda nao estou certo de mostrar animado ou fixo
 	\only<2>{
  		\begin{figure}[hbtp]
 			\includegraphics[scale=1.0]{figuras/ator-state-machine0.pdf}
@@ -220,18 +219,34 @@
 	}
 	\only<2>{
  		\note{
- 			Para nao esquecer: comentar brevemente quem eh quem antes (adicionar outras notas) 					
+ 			Para nao esquecer: comentar brevemente quem eh quem antes (adicionar outras notas) 
+			comentar também de propriedades como transiente, persistente e auto_delete.					
  		}
 		\begin{figure}[hbtp]
-			\includegraphics[scale=.70]{figuras/amqp-overview.pdf}
+			\includegraphics[scale=.70]{figuras/amqp-overview-slides.pdf}
 		\end{figure}
-	}
+	}	
  	\only<3>{ 		
   		\begin{figure}[hbtp]
-			\includegraphics[scale=.70]{figuras/amqp-message-flow.pdf}
+			\includegraphics[scale=.70]{figuras/amqp-message-flow0.pdf}
 		\end{figure}
  	}
-	\only<4>{
+ 	\only<4>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.70]{figuras/amqp-message-flow1.pdf}
+		\end{figure}
+ 	}
+ 	\only<5>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.70]{figuras/amqp-message-flow2.pdf}
+		\end{figure}
+ 	}
+ 	\only<6>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.70]{figuras/amqp-message-flow3.pdf}
+		\end{figure}
+ 	}
+	\only<7>{
  		\begin{beamerboxesrounded}{Analogia com sistemas de \textit{email}:}
 	 		\begin{itemize}
 				\item Mensagens AMQP s\~ao an\'alogas a mensagens de correio eletr\^onico
@@ -244,7 +259,58 @@
  		\end{beamerboxesrounded}
  	}
 }
+\section{Atores no projeto Akka} 
+\frame{\frametitle{Atores no projeto Akka}
+	\note{lembrar que ator remoto eh sinonimo de ator remotamente acessivel.}
+	O projeto Akka disponibiliza dois tipos de atores:
+	\begin{enumerate}
+		\item Atores locais: Um ator local \'e um ator que pode receber mensagens apenas de atores residentes na mesma m\'aquina virtual.
+		\item Atores remotos: Um ator remoto \'e um ator que pode receber mensagens de quaisquer outros atores, inclusive daqueles residentes
+		em outras m\'aquinas virtuais.
+	\end{enumerate}
+}
+\subsection{Atores locais}
+\frame{\frametitle{Atores locais}
 
+}
+\subsection{Atores remotos}
+\frame{\frametitle{Atores remotos}
+
+}
+\section{Atores remotos com padr\~ao AMQP} 
+\subsection{Pontes AMQP}
+\frame{\frametitle{Estrutura}
+	explicar criacao das pontes
+}
+\subsection{Integra\c{c}\~ao com o Akka}
+\frame{\frametitle{Novos componentes}
+	explicar novos compontens
+}
+\frame{\frametitle{Adapta\c{c}\~oes feitas}
+	explicar adaptacoes
+}
+\frame{\frametitle{Fluxo de envio de mensagens}
+bla la bla
+}
+
+\section{Resultados experimentais} 
+\subsection{Trading System}
+\frame{\frametitle{Trading System}
+	explicar trading system
+}
+\subsection{Compara\c{c}\~ao de desempenho}
+\frame{\frametitle{Compara\c{c}\~ao de desempenho}
+	graficos
+}
+\section{Considera\c{c}\~oes finais e trabalhos futuros}
+\subsection{Considera\c{c}\~oes finais}
+\frame{\frametitle{Considera\c{c}\~oes finais}
+ consideracoes finais
+}
+\subsection{Trabalhos futuros}
+\frame{\frametitle{Trabalhos futuros}
+	trabalhos futuros
+}
 
 \frame{
  	\frametitle{Perguntas}
