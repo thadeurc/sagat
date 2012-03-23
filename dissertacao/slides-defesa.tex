@@ -9,6 +9,86 @@
 \author{Thadeu de Russo e Carmo \\ \texttt{thadeurc@ime.usp.br}}
 \institute{Orientador: Prof. Dr. Francisco da Rocha Reverbel\\ Instituto de Matem\'atica e Estat\'istica \\ Universidade de S\~ao Paulo}
 \date{Abril, 2012}
+\lstset{ %
+language=Java,                  % choose the language of the code
+basicstyle=\small,       % the size of the fonts that are used for the code
+numbers=none,                   % where to put the line-numbers
+numberstyle=\small,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it's 1 each line will be numbered
+numbersep=0pt,                  % how far the line-numbers are from the code
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,	                % adds a frame around the code
+framerule=0.6pt,
+tabsize=2,	                    % sets default tabsize to 2 spaces
+captionpos=b,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+escapeinside={\%*}{*)},         % if you want to add a comment within your code
+backgroundcolor=\color[rgb]{1.0,1.0,1.0}, % choose the background color.
+rulecolor=\color[rgb]{0.0,0.0,0.0},
+extendedchars=true,
+xleftmargin=10pt,
+xrightmargin=10pt,
+framexleftmargin=10pt,
+framexrightmargin=10pt
+}
+
+% ---------------------------------------------------------------------------- %
+
+% ---------------------------------------------------------------------------- %
+% Definição das opções para a formatação do código fonte em Scala
+% "define" Scala
+\lstdefinelanguage{scala}{
+morekeywords={
+   class,
+   object,
+   trait,
+   extends,
+   with,
+   new,
+   if,
+   else,
+   while,
+   for,
+   yield,
+   match,
+   case,
+   def,
+   val,
+   var,
+   this,
+   override,
+   lazy
+},
+otherkeywords={->,=>},
+sensitive=true,
+morecomment=[l]{//},
+morecomment=[s]{/*}{*/},
+morestring=[b]"
+}
+
+% Default settings for code listings
+\lstset{
+language=scala,
+frame=tb,              % desenha uma janela com linha simples ao redor do código
+aboveskip=4mm,             % espaço acima do código
+belowskip=4mm,             % espaço abaixo do código
+showspaces=false,          % não sublinha espaços no código
+showstringspaces=false,    % não sublinha espaços em strings
+columns=flexible,
+tabsize=3,                  % tamanho do espaço do TAB
+captionpos=b,               % coloca as legendas abaixo do codigo
+breaklines=true,           % automaticamente quebra linhas longas
+breakatwhitespace=false,   % define se a quebra de linhas automática deve ocorrer somente em espaços em branco
+xleftmargin=12pt,
+xrightmargin=12pt,
+escapeinside={(*@}{@*)},
+basicstyle={\tiny\ttfamily}
+} 
+
+
 %\setbeameroption{show notes on second screen=left} 
 \begin{document}
 \frame{\titlepage}
@@ -127,15 +207,20 @@
 
 		Potencial sinergia entre as duas classes:
 		\begin{itemize}
-			\item Atores em diferentes n\'os em uma rede de computadores podem trocar mensagens entre si
-			\item \textit{Message brokers} prov\^em robustez para a troca de mensagens entre entidades em diferentes n\'os de um sistema
+			\item Atores em diferentes n\'os de rede de computadores podem trocar mensagens entre si
+			\item \textit{Message brokers} prov\^em robustez para a troca de mensagens entre entidades em diferentes n\'os de uma
+			rede de computadores
 		\end{itemize}
 	}
 }
 \frame{
 \frametitle{Objetivos}
-	Este trabalho teve como objetivo cruar uma implementa\c{c}\~ao do modelo de atores em Scala que utilize o padr\~ao AMQP
-	para o transporte de mensagens entre atores remotos.
+	\begin{itemize}
+		\item Criar de uma implementa\c{c}\~ao em Scala do modelo de atores que use o padr\~ao AMQP 
+		para o transporte de mensagens entre atores remotos
+		\item Comparar o desempenho do prot\'otipo desenvolvido neste trabalho com o da implementa\c{c}\~ao
+		original de atores do projeto Akka
+	\end{itemize}
 }
 \subsection{Atores}
 \frame{
@@ -264,15 +349,59 @@
 	\note{lembrar que ator remoto eh sinonimo de ator remotamente acessivel.}
 	O projeto Akka disponibiliza dois tipos de atores:
 	\begin{enumerate}
-		\item Atores locais: Um ator local \'e um ator que pode receber mensagens apenas de atores residentes na mesma m\'aquina virtual.
-		\item Atores remotos: Um ator remoto \'e um ator que pode receber mensagens de quaisquer outros atores, inclusive daqueles residentes
-		em outras m\'aquinas virtuais.
+		\item Atores locais: um ator local \'e um ator que pode receber mensagens apenas de atores residentes na mesma m\'aquina virtual
+		\item Atores remotos: um ator remoto \'e um ator que pode receber mensagens de quaisquer outros atores, inclusive daqueles residentes
+		em outras m\'aquinas virtuais
 	\end{enumerate}
 }
 \subsection{Atores locais}
-\frame{\frametitle{Atores locais}
+\begin{frame}[fragile]{Atores locais}
 
+	\note{comentar sobre o envio assincrono, e que theActor na verdade eh uma ActorRef - LocalActorRef. e do self}
+	Declara\c{c}\~ao e uso de um ator:
+		\begin{lstlisting}[frame=tb]
+class SampleActor(val name: String) extends akka.actor.Actor {
+  def this() = this("No name")
+  
+  def receive = {
+    case "hello" => println("%s received hello".format(name))
+    case  _ => println("%s received unknown".format(name))
+  }
 }
+
+val theActor = Actor.actorOf[SampleActor].start
+theActor ! "hello"
+		\end{lstlisting}
+\end{frame}
+\frame{\frametitle{Envios ass\'incronos e sem resposta -- !}
+	\note{comentar dos tipos de despachadores}
+	\only<1>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.70]{figuras/local-actor-message0.pdf}
+		\end{figure}
+ 	}
+	\only<2>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.70]{figuras/local-actor-message1.pdf}
+		\end{figure}
+ 	}
+	\only<3>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.70]{figuras/local-actor-message2.pdf}
+		\end{figure}
+ 	}
+	\only<4>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.70]{figuras/local-actor-message3.pdf}
+		\end{figure}
+ 	}
+}
+
+\frame{\frametitle{Envios s\'incronos com resposta -- !! e !!!}
+	
+}
+
+
 \subsection{Atores remotos}
 \frame{\frametitle{Atores remotos}
 
@@ -296,12 +425,35 @@ bla la bla
 \section{Resultados experimentais} 
 \subsection{Trading System}
 \frame{\frametitle{Trading System}
-	explicar trading system
+	\begin{figure}[hbtp]
+		\includegraphics[scale=.4]{figuras/trading-system.pdf}
+	\end{figure}
 }
 \subsection{Compara\c{c}\~ao de desempenho}
-\frame{\frametitle{Compara\c{c}\~ao de desempenho}
-	graficos
+\frame{\frametitle{Rede de baixa lat\^encia}
+	\only<1>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.5]{figuras/grafico-er.pdf}
+		\end{figure}
+	}
 }
+%% os dois graficos abaixo estao um lixo
+\frame{\frametitle{Rede de alta lat\^encia (wireless)}
+	\only<1>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.5]{figuras/grafico-er-lento.pdf}
+		\end{figure}
+	}
+}
+
+\frame{\frametitle{Fluxo nas redes de alta e baixa lat\^encia}
+	\only<1>{
+		\begin{figure}[hbtp]
+			\includegraphics[scale=.5]{figuras/grafico-er-lento-e-normal.pdf}
+		\end{figure}
+	}
+}
+
 \section{Considera\c{c}\~oes finais e trabalhos futuros}
 \subsection{Considera\c{c}\~oes finais}
 \frame{\frametitle{Considera\c{c}\~oes finais}
