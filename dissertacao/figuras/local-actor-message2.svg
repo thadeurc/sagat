@@ -580,50 +580,6 @@
       </g>
     </g>
   </g>
-  <text
-     xml:space="preserve"
-     style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="225.32718"
-     y="149.24219"
-     id="text3248"><tspan
-       sodipodi:role="line"
-       id="tspan3250"
-       x="225.32718"
-       y="149.24219">...</tspan></text>
-  <g
-     id="g4091"
-     transform="translate(-222.9599,-5.3365811)">
-    <rect
-       style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1.0465126;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       id="rect4029"
-       width="25.889709"
-       height="11"
-       x="465.11029"
-       y="148.45865" />
-    <g
-       id="g4084">
-      <g
-         transform="translate(50.54538,17.246857)"
-         id="g4031">
-        <g
-           id="g4033">
-          <g
-             id="g4035">
-            <text
-               xml:space="preserve"
-               style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-               x="416.5"
-               y="138.86218"
-               id="text4037"><tspan
-                 sodipodi:role="line"
-                 id="tspan4039"
-                 x="416.5"
-                 y="138.86218">msgk</tspan></text>
-          </g>
-        </g>
-      </g>
-    </g>
-  </g>
   <path
      style="fill:none;stroke:#000000;stroke-width:1.02304387;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#marker1523)"
      d="m 58.53171,148.63145 122.0469,0"

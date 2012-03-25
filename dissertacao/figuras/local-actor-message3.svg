@@ -41,8 +41,8 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1260"
      inkscape:window-height="674"
-     inkscape:zoom="1"
-     inkscape:cx="486.8328"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="188.98475"
      inkscape:cy="943.31705"
      inkscape:window-x="31"
      inkscape:window-y="0"
@@ -529,45 +529,45 @@
      x="185.15515"
      y="133.89348"
      transform="matrix(0.99997439,0.00715653,0,1,0,0)" />
-  <text
-     xml:space="preserve"
-     style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="225.32718"
-     y="149.24219"
-     id="text3248"><tspan
-       sodipodi:role="line"
-       id="tspan3250"
-       x="225.32718"
-       y="149.24219">...</tspan></text>
   <g
      id="g4091"
-     transform="translate(-222.9599,-5.3365811)">
-    <rect
-       style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1.0465126;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       id="rect4029"
-       width="25.889709"
-       height="11"
-       x="465.11029"
-       y="148.45865" />
+     transform="translate(-337.04538,-73.746857)">
     <g
-       id="g4084">
+       id="g3443"
+       transform="translate(-18,-4)">
       <g
-         transform="translate(50.54538,17.246857)"
-         id="g4031">
+         id="g3440">
+        <rect
+           style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1.0465126;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4029"
+           width="25.889709"
+           height="11"
+           x="465.11029"
+           y="148.45865" />
+      </g>
+      <g
+         id="g4084">
         <g
+           transform="translate(50.54538,17.246857)"
            id="g4033">
           <g
              id="g4035">
-            <text
-               xml:space="preserve"
-               style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
-               x="416.5"
-               y="138.86218"
-               id="text4037"><tspan
-                 sodipodi:role="line"
-                 id="tspan4039"
-                 x="416.5"
-                 y="138.86218">msgk</tspan></text>
+            <g
+               id="g3435">
+              <g
+                 id="g3431">
+                <text
+                   xml:space="preserve"
+                   style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+                   x="416.5"
+                   y="138.86218"
+                   id="text4037"><tspan
+                     sodipodi:role="line"
+                     id="tspan4039"
+                     x="416.5"
+                     y="138.86218">msg1</tspan></text>
+              </g>
+            </g>
           </g>
         </g>
       </g>
@@ -576,14 +576,14 @@
   <text
      xml:space="preserve"
      style="font-size:6px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="91.271339"
-     y="68.719566"
+     x="91.257912"
+     y="64.719582"
      id="text3140"
      transform="matrix(0.99999436,0.0033573,-0.0033573,0.99999436,0,0)"><tspan
        sodipodi:role="line"
        id="tspan3142"
-       x="91.271339"
-       y="68.719566"
+       x="91.257912"
+       y="64.719582"
        style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Serif;-inkscape-font-specification:Serif">3.despacha</tspan></text>
   <path
      style="fill:none;stroke:#000000;stroke-width:1.03141367px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker1523)"

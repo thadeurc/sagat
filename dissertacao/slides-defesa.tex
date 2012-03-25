@@ -271,7 +271,7 @@ basicstyle={\tiny\ttfamily}
 		\end{figure}
 	}
 	\only<7>{
- 		\begin{beamerboxesrounded}{Algumas implementa\c{c}\~oes:}
+		Algumas implementa\c{c}\~oes:
 			\begin{itemize}
 				\item Linguagens: Axum, SALSA e Erlang
 				\item C++: Act++, Thal e Theron
@@ -282,7 +282,6 @@ basicstyle={\tiny\ttfamily}
 				\item Java: Akka, Kilim, Jetlang e Actor Foundry
 				\item Scala: Scala Actors, Akka e Scalaz
 			\end{itemize}
-		\end{beamerboxesrounded}
  	}
 }
 
@@ -306,6 +305,15 @@ basicstyle={\tiny\ttfamily}
  		\note{
  			Para nao esquecer: comentar brevemente quem eh quem antes (adicionar outras notas) 
 			comentar também de propriedades como transiente, persistente e auto_delete.					
+	 		Analogia com sistemas de \textit{email}:
+	 		\begin{itemize}
+				\item Mensagens AMQP s\~ao an\'alogas a mensagens de correio eletr\^onico
+				\item Filas s\~ao an\'alogas a caixas de correio
+				\item \textit{Exchanges} s\~ao an\'alogas a agentes de transfer\^encia de mensagens (MTA).
+				 Com base nas chaves de roteamento (To, Cc e Bcc no caso de correio eletr\^onico), eles verificam
+				as tabelas de registro e decidem como enviar as mensagens para uma ou mais caixas de correio
+				\item \textit{Bindings} correspondem a entradas nas tabelas de roteamento do MTA		
+			\end{itemize}
  		}
 		\begin{figure}[hbtp]
 			\includegraphics[scale=.70]{figuras/amqp-overview-slides.pdf}
@@ -331,17 +339,9 @@ basicstyle={\tiny\ttfamily}
 			\includegraphics[scale=.70]{figuras/amqp-message-flow3.pdf}
 		\end{figure}
  	}
+	
 	\only<7>{
- 		\begin{beamerboxesrounded}{Analogia com sistemas de \textit{email}:}
-	 		\begin{itemize}
-				\item Mensagens AMQP s\~ao an\'alogas a mensagens de correio eletr\^onico
-				\item Filas s\~ao an\'alogas a caixas de correio
-				\item \textit{Exchanges} s\~ao an\'alogas a agentes de transfer\^encia de mensagens (MTA).
-				 Com base nas chaves de roteamento (To, Cc e Bcc no caso de correio eletr\^onico), eles verificam
-				as tabelas de registro e decidem como enviar as mensagens para uma ou mais caixas de correio
-				\item \textit{Bindings} correspondem a entradas nas tabelas de roteamento do MTA		
-			\end{itemize}
- 		\end{beamerboxesrounded}
+ 		Utilizamos neste trabalho a implementa\c{c}\~ao de c\'odigo aberto RabbitMQ
  	}
 }
 \section{Atores no projeto Akka} 
@@ -369,8 +369,9 @@ class SampleActor(val name: String) extends akka.actor.Actor {
   }
 }
 
+/*  theActor representa uma LocalActorRef  */
 val theActor = Actor.actorOf[SampleActor].start
-theActor ! "hello"
+theActor ! "hello" 
 		\end{lstlisting}
 \end{frame}
 \frame{\frametitle{Envios ass\'incronos e sem resposta -- !}
@@ -397,26 +398,187 @@ theActor ! "hello"
  	}
 }
 
-\frame{\frametitle{Envios s\'incronos com resposta -- !! e !!!}
-	
+\begin{frame}[fragile]{Envios s\'incronos com resposta -- !! e !!!}
+\note{a diferenca para da interface do metodo !! para o metodo !!! eh o tipo de retorno. !!! devolve um Future[T].}
+Interface do m\'etodo !!:
+\begin{lstlisting}[frame=tb]
+def !!(message: Any, timeout: Long = this.timeout) (implicit sender: Option[ActorRef] = None): Option[Any] = {
+	...
 }
+\end{lstlisting}
 
+Fei\c{c}\~ao CompletableFuture:
+\begin{lstlisting}[frame=tb]
+trait CompletableFuture[T] extends Future[T] {
+  def completeWithResult(result: T)
+  def completeWithException(exception: Throwable)
+  def completeWith(other: Future[T])
+}
+\end{lstlisting}
+\end{frame}
+\frame{\frametitle{Envios s\'incronos com resposta -- !! e !!!}
+	Passos executados na execu\c{c}\~ao do m\'etodo !!!:
+ 		\begin{enumerate}
+			\item Uma inst\^ancia de CompletableFuture \'e criada
+			\item A mensagem \'e depositada na fila do ator junto com uma refer\^encia para a inst\^ancia do passo $1$
+			\item Uma outra refer\^encia para a inst\^ancia do passo $1$ \'e devolvida a quem fez a chamada do m\'etodo
+			\item O resultado do processamento da mensagem \'e utilizado para completar a inst\^ancia criada no passo $1$
+		\end{enumerate}
+}
 
 \subsection{Atores remotos}
 \frame{\frametitle{Atores remotos}
-
+	\only<1>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-colaboracao0.pdf}
+		\end{figure}
+ 	}
+	\only<2>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-colaboracao.pdf}
+		\end{figure}
+ 	}
 }
+\begin{frame}[fragile]{Atores remotos}
+
+Registro de um ator remotamente acess\'ivel:
+\begin{lstlisting}[frame=tb]
+object SampleRemoteServer extends Application {
+  Actor.remote.start("localhost", 2552)
+  Actor.remote.register("hello-service", Actor.actorOf[SampleActor])
+}
+\end{lstlisting}
+
+Pesquisa e uso de um ator remotamente aces\'ivel:
+
+\begin{lstlisting}[frame=tb]
+object SampleRemoteClient extends Application{
+  /* helloActor representa uma RemoteActorRef */
+  val helloActor = Actor.remote.actorFor("hello-service", "localhost", 2552)
+  helloActor ! "Hello"
+}
+\end{lstlisting}
+\end{frame}
+
+\frame{\frametitle{Atores remotos}
+	\only<1>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-message-flow0.pdf}
+		\end{figure}
+ 	}
+	\only<2>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-message-flow1.pdf}
+		\end{figure}
+ 	}
+	\only<3>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-message-flow2.pdf}
+		\end{figure}
+ 	}
+	\only<4>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-message-flow3.pdf}
+		\end{figure}
+ 	}
+	\only<5>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-message-flow4.pdf}
+		\end{figure}
+ 	}
+	\only<6>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-message-flow5.pdf}
+		\end{figure}
+ 	}
+	\only<7>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/remote-actor-message-flow6.pdf}
+		\end{figure}
+ 	}
+}
+
+\begin{frame}[fragile]{Formato e seria\c{c}\~ao das mensagens}
+\begin{lstlisting}[frame=tb]
+message RemoteMessageProtocol {
+  required UuidProtocol uuid = 1;
+  required ActorInfoProtocol actorInfo = 2;
+  required bool oneWay = 3;
+  optional MessageProtocol message = 4; // <- payload da mensagem
+  optional ExceptionProtocol exception = 5;
+  optional UuidProtocol supervisorUuid = 6;
+  optional RemoteActorRefProtocol sender = 7;
+  repeated MetadataEntryProtocol metadata = 8;
+  optional string cookie = 9;
+}
+\end{lstlisting}
+
+\begin{beamerboxesrounded}{Formatos suportados de seria\c{c}\~ao:}
+ 	\begin{itemize}
+		\item Java, SBinary, JSON e Protobuf
+	\end{itemize}		
+\end{beamerboxesrounded}
+
+\end{frame}
+
 \section{Atores remotos com padr\~ao AMQP} 
 \subsection{Pontes AMQP}
-\frame{\frametitle{Estrutura}
-	explicar criacao das pontes
+\frame{\frametitle{Estrutura das pontes AMQP}
+%% duvida: colocar estrutura dos atores para setup?!?!?!
+	\only<1>{
+ 		Caracter\'isticas:
+		\begin{itemize}
+			\item As entidades passam a ser rotuladas por nome (e.g.: node1)
+			\item Dois tipos de pontes AMQP para acesso ao \textit{message broker}:
+				\begin{enumerate}
+					\item ServerAMQPBridge: Define o comportamento para entidades com papel de servidora
+					\item ClientAMQPBridge: Define o comportamento para entidades com papel de cliente				
+				\end{enumerate}
+			\item Suporte a acesso concorrente \`as pontes
+			\item Pontes podem criar objetos dur\'aveis, transientes ou exclusivos com auto remo\c{c}\~ao
+		\end{itemize}
+	}
+	\only<2>{
+ 		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together0.pdf}
+		\end{figure}
+ 	}
+	\only<3>{
+ 		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together1.pdf}
+		\end{figure}
+ 	}
+	\only<4>{
+ 		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together2.pdf}
+		\end{figure}
+ 	}
+	\only<5>{
+ 		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together3.pdf}
+		\end{figure}
+ 	}
+	\only<6>{
+ 		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together4.pdf}
+		\end{figure}
+ 	}
+	\only<7>{
+ 		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together5.pdf}
+		\end{figure}
+ 	}
 }
 \subsection{Integra\c{c}\~ao com o Akka}
 \frame{\frametitle{Novos componentes}
-	explicar novos compontens
+	\only<1>{ 		
+  		\begin{figure}[hbtp]
+			\includegraphics[scale=.30]{figuras/remote-actor-amqp-colaboracao.pdf}
+		\end{figure}
+ 	}	
 }
 \frame{\frametitle{Adapta\c{c}\~oes feitas}
-	explicar adaptacoes
+
 }
 \frame{\frametitle{Fluxo de envio de mensagens}
 bla la bla
@@ -461,13 +623,27 @@ bla la bla
 }
 \subsection{Trabalhos futuros}
 \frame{\frametitle{Trabalhos futuros}
-	trabalhos futuros
+	\begin{itemize}
+		\item Melhoria no tratamento de erros nas pontes AMQP
+			\begin{itemize}
+				\item Aproveitar a hierarquia de supervis\~ao j\'a definida nas pontes AMQP para o tratamento de erros
+				\item Implementar suporte a reconex\~ao e restaura\c{c}\~ao do estado dos atores relacionados a ponte AMQP no
+				caso de desconex\~oes ou falhas de rede
+			\end{itemize}
+		\item Experimentos em um ambiente de computa\c{c}\~ao em nuvem
+			\begin{itemize}
+				\item Fazer as altera\c{c}\~oes necess\'arias para que nossa implementa\c{c}\~ao de atores remotos
+				possa ser implantada em uma infraestrutura de computa\c{c}\~ao em nuvem
+				\item Fazer uma avalia\c{c}\~ao experiemental do \textit{Trading System} na nuvem utilizando uma
+				quantidade de clientes bem maiores do que as utilizadas em nossos experimentos
+			\end{itemize}
+	\end{itemize}
 }
 
 \frame{
  	\frametitle{Perguntas}
 		\begin{figure}[hbtp]
-			\includegraphics[scale=0.5]{figuras/question.pdf}
+			\includegraphics[scale=0.3]{figuras/question.pdf}
 		\end{figure}
  	}
 
