@@ -341,6 +341,14 @@ basicstyle={\tiny\ttfamily}
  	}
 	
 	\only<7>{
+ 		Algumas implementa\c{c}\~oes:
+		\begin{itemize}
+			\item Apache Qpid
+			\item ZeroMQ
+			\item RabbitMQ
+		\end{itemize}
+
+		\vspace{0.2in}
  		Utilizamos neste trabalho a implementa\c{c}\~ao de c\'odigo aberto RabbitMQ
  	}
 }
@@ -524,7 +532,6 @@ message RemoteMessageProtocol {
 \section{Atores remotos com padr\~ao AMQP} 
 \subsection{Pontes AMQP}
 \frame{\frametitle{Estrutura das pontes AMQP}
-%% duvida: colocar estrutura dos atores para setup?!?!?!
 	\only<1>{
  		Caracter\'isticas:
 		\begin{itemize}
@@ -534,36 +541,47 @@ message RemoteMessageProtocol {
 					\item ServerAMQPBridge: Define o comportamento para entidades com papel de servidora
 					\item ClientAMQPBridge: Define o comportamento para entidades com papel de cliente				
 				\end{enumerate}
-			\item Suporte a acesso concorrente \`as pontes
-			\item Pontes podem criar objetos dur\'aveis, transientes ou exclusivos com auto remo\c{c}\~ao
+			\item Suporte a acesso concorrente \`as pontes 
+			\item Suporte a separa\c{c}\~ao do fluxo de leitura/escrita em canais distintos
+			\item Suporte a cria\c{c}\~ao de objetos dur\'aveis, transientes ou exclusivos com auto remo\c{c}\~ao
 		\end{itemize}
 	}
 	\only<2>{
  		\begin{figure}[hbtp]
-			\includegraphics[scale=.50]{figuras/bridges-broker-all-together0.pdf}
+			\includegraphics[scale=.35]{figuras/server-amqp-bridge-setup.pdf}
 		\end{figure}
  	}
 	\only<3>{
  		\begin{figure}[hbtp]
-			\includegraphics[scale=.50]{figuras/bridges-broker-all-together1.pdf}
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together0.pdf}
 		\end{figure}
  	}
 	\only<4>{
  		\begin{figure}[hbtp]
-			\includegraphics[scale=.50]{figuras/bridges-broker-all-together2.pdf}
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together1.pdf}
 		\end{figure}
  	}
 	\only<5>{
  		\begin{figure}[hbtp]
-			\includegraphics[scale=.50]{figuras/bridges-broker-all-together3.pdf}
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together2.pdf}
 		\end{figure}
  	}
 	\only<6>{
  		\begin{figure}[hbtp]
-			\includegraphics[scale=.50]{figuras/bridges-broker-all-together4.pdf}
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together3.pdf}
 		\end{figure}
  	}
 	\only<7>{
+ 		\begin{figure}[hbtp]
+			\includegraphics[scale=.35]{figuras/client-amqp-bridge-setup.pdf}
+		\end{figure}
+ 	}
+	\only<8>{
+ 		\begin{figure}[hbtp]
+			\includegraphics[scale=.50]{figuras/bridges-broker-all-together4.pdf}
+		\end{figure}
+ 	}
+	\only<9>{
  		\begin{figure}[hbtp]
 			\includegraphics[scale=.50]{figuras/bridges-broker-all-together5.pdf}
 		\end{figure}
@@ -573,16 +591,31 @@ message RemoteMessageProtocol {
 \frame{\frametitle{Novos componentes}
 	\only<1>{ 		
   		\begin{figure}[hbtp]
-			\includegraphics[scale=.30]{figuras/remote-actor-amqp-colaboracao.pdf}
+			\includegraphics[scale=.35]{figuras/remote-actor-amqp-colaboracao.pdf}
 		\end{figure}
  	}	
 }
-\frame{\frametitle{Adapta\c{c}\~oes feitas}
-
+\frame{\frametitle{Adapta\c{c}\~oes e altera\c{c}\~oes necess\'arias}
+	\only<1>{
+ 		\begin{enumerate}
+			\item Adapta\c{c}\~ao dos valores para host e porta recebidos nos m\'etodos da biblioteca do Akka para o padr\~ao host@porta
+			\item Novas entradas na se\c{c}\~ao remote do arquivo de configura\c{c}\~oes do Akka:
+				\begin{itemize}
+					\item Informa\c{c}\~oes para conex\~ao com o \textit{message broker}
+					\item Pol\'iticas de armazemanto e compartilhamento de canais
+					\item Identificador utilizado na cria\c{c}\~ao de pontes clientes
+				\end{itemize}
+			\item Novo campo no formato das mensagens (RemoteMessageProtocol) para que o servidor remoto possa identificar o cliente remetente
+		\end{enumerate}
+	}
 }
 \frame{\frametitle{Fluxo de envio de mensagens}
-bla la bla
-}
+	\only<1>{ 		
+	  		\begin{figure}[hbtp]
+				\includegraphics[scale=.55]{figuras/remote-actor-message-flow-amqp.pdf}
+			\end{figure}
+	 	}
+	}
 
 \section{Resultados experimentais} 
 \subsection{Trading System}
@@ -599,7 +632,7 @@ bla la bla
 		\end{figure}
 	}
 }
-%% os dois graficos abaixo estao um lixo
+
 \frame{\frametitle{Rede de alta lat\^encia (wireless)}
 	\only<1>{
 		\begin{figure}[hbtp]
